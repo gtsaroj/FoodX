@@ -1,0 +1,15 @@
+@import "tailwindcss/base";
+@import "tailwindcss/utilities";
+@import "tailwindcss/components";
+
+@layer base {
+  :root {
+    --primary-color:#005aab ;
+    --primary-light: #00a3d9;
+    --primary-dark: #0e76a8;
+
+    --secondary-color: #d90081;
+    --secondary-light: #ec008d;
+    --secondary-dark: #ec008e;
+  }
+}
