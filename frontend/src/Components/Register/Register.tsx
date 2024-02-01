@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { RegisterInputs } from "./RegisterType";
 
+//! model wala folder ma make separate page for interfaces. 
 interface ValidationType {
   firstname: string;
   lastname: string;
