@@ -1,7 +1,9 @@
-export const App: React.FC = () => {
+import React from 'react'
+import Register from './Components/Register/Register'
+
+ export const App : React.FC = () => {
   return (
-    <>
-      <h1>Hello</h1>
-    </>
-  );
-};
+    <div> <Register/></div>
+  )
+}
+
