@@ -14,6 +14,7 @@ export default {
       "--dark-secondary-text": "#8a8495",
       "--light-background": "#efeff1",
       "--light-border": "#dedde2",
+      "--light-foreground": "#fbfbfb",
     },
     extend: {},
   },
