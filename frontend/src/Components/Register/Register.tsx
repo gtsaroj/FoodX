@@ -5,7 +5,8 @@ import { Eye, EyeOff } from "lucide-react";
 
 
   export const Register: React.FC = () => {
-  const[RegisterValue, setRegisterValue] = useState<ValidationType>({
+    const [RegisterValue, setRegisterValue] = useState<ValidationType>({
+  avatar : "",
   firstname: "",
   lastname: "",
   email: "",
@@ -35,8 +36,11 @@ import { Eye, EyeOff } from "lucide-react";
   if (!event.target.files) {
   throw new Error("Uploading failed...");
   }
-  const file = event.target.files[0];
-  setSelectedImage(file);
+    const file = event.target.files[0];
+    const FileUrl = URL.createObjectURL(file)
+    console.log(file)
+    setRegisterValue({ ...RegisterValue, avatar: FileUrl })
+    setSelectedImage(file)
   
   };
   function Validation(error: Record<string, string>) {
@@ -110,12 +114,12 @@ import { Eye, EyeOff } from "lucide-react";
         <img
           src="../../../public/logo/Fx.png"
           alt=""
-          className="lg:w-[500px] lg:h-[300px] w-[125px] mb-5  "
+          className="lg:w-[500px]  w-[125px] mb-5  "
         />
       </div>
       <div className="flex flex-col items-center">
         <div className="flex flex-col items-center  -bg--light-foreground rounded-md sm:px-[50px] sm:py-[20px]  px-[10px] py-[6px]">
-        <div className=" px-5 py-6 text-[25px] font-bold text-[var(--primary-color)] tracking-wide text-center">
+        <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
           <h1 className="md:hidden">Signin</h1>
           <h1 className="hidden md:block">Signin with Email</h1>
         </div>
@@ -123,13 +127,14 @@ import { Eye, EyeOff } from "lucide-react";
           <form
             action=""
             onSubmit={handleFormSubmit}
-            className="flex flex-col items-center  gap-[3px]  sm:items-center w-full"
+            className="flex flex-col items-center  gap-[7px]  sm:items-center w-full"
           >
             <div className="flex flex-col items-center  gap-1 justify-center">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
                   alt=""
+                
                   className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] -bg--light-background outline-none"
                 />
               ) : (
@@ -154,13 +159,13 @@ import { Eye, EyeOff } from "lucide-react";
               </button>
             </div>
             <div className="flex items-center gap-[10px] justify-between w-full">
-              <div className="flex flex-col items-start h-[73px]">
+              <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
                 <label htmlFor={RegisterValue["firstname"]}>firstname</label>
                 <input
                   type="text"
                   value={RegisterValue["firstname"]}
                   onChange={(e) => handleInputChange(e, "firstname")}
-                  className="w-[150px] outline-none py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
+                  className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {
                   <div className="text-[12px] text-[#af2e2e]">
@@ -168,23 +173,23 @@ import { Eye, EyeOff } from "lucide-react";
                   </div>
                 }
               </div>
-              <div className="flex flex-col items-start h-[73px]">
+              <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
                 <label htmlFor={RegisterValue["lastname"]}>lastname</label>
                 <input
                   type="text"
                   value={RegisterValue["lastname"]}
                   onChange={(e) => handleInputChange(e, "lastname")}
-                  className="w-[150px] outline-none py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
+                  className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {ValidateError && (
                   <div className="text-[12px] text-[#af2e2e] ">
-                    {ValidateError.lastname}
+                    {ValidateError. lastname}
                   </div>
                 )}
               </div>
             </div>
             {RegisterInputs?.map((input, index) => (
-              <div key={index} className="flex flex-col h-[73px]  items-start ">
+              <div key={index} className="flex flex-col h-[65px] lg:h-[73px]  items-start ">
                 <label htmlFor={input.name} className="font-Poppins text-[15px]">
                   {input.name}
                 </label>
@@ -195,8 +200,10 @@ import { Eye, EyeOff } from "lucide-react";
                   onChange={(e) =>
                     handleInputChange(e, input.name as keyof ValidationType)
                   }
-                  className="outline-none py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
+                  className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
+                
                 />
+                 
                 {ValidateError[input.name] && (
                   <div className="text-[12px] text-[#af2e2e] flex flex-col ">
                     {ValidateError[input.name]}

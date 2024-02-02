@@ -1,4 +1,5 @@
- export interface ValidationType {
+export interface ValidationType {
+   avatar : string
     firstname: string;
     lastname: string;
     email: string;
