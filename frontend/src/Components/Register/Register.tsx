@@ -3,124 +3,127 @@ import { RegisterInputs } from "./RegisterType";
 import { ValidationType } from "../../models/Register.model";
 import { Eye, EyeOff } from "lucide-react";
 
-const Register: React.FC = () => {
-  const [RegisterValue, setRegisterValue] = useState<ValidationType>({
-    firstname: "",
-    lastname: "",
-    email: "",
-    password: "",
-    confirmpassword: "",
+
+  export const Register: React.FC = () => {
+  const[RegisterValue, setRegisterValue] = useState<ValidationType>({
+  firstname: "",
+  lastname: "",
+  email: "",
+  password: "",
+  confirmpassword: "",
   });
-  const [ValidateError, setValidateError] = useState<Record<string, string>>(
-    {}
+  const[ValidateError, setValidateError] = useState<Record<string, string>>(
+  { }
   );
-  const [SelectedImage, setSelectedImage] = useState<File | null>(null);
+  const[SelectedImage, setSelectedImage] = useState<File | null>(null);
 
   const Ref = useRef<HTMLInputElement | null>(null);
 
 
   function fileUPload() {
-    Ref.current?.click();
+  Ref.current?.click();
   }
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    inputField: string
+  e: ChangeEvent<HTMLInputElement>,
+  inputField: string
   ) => {
-    setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
+  setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
 
   const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) {
-      throw new Error("Uploading failed...");
-    }
-    const file = event.target.files[0];
-    setSelectedImage(file);
+  if (!event.target.files) {
+  throw new Error("Uploading failed...");
+  }
+  const file = event.target.files[0];
+  setSelectedImage(file);
   
   };
   function Validation(error: Record<string, string>) {
-    const symbols = `!@#$%^&*()<>"`;
-    const numbers = `1234567890`;
+  const symbols = `!@#$%^&*()<>"`;
+  const numbers = `1234567890`;
 
-    for (const inputValue in RegisterValue) {
-      if (
-        RegisterValue.hasOwnProperty(inputValue) &&
-        RegisterValue[inputValue as keyof ValidationType] === ""
-      )
-        error[inputValue] = `* Required`;
-    }
+  for (const inputValue in RegisterValue) {
+  if (
+  RegisterValue.hasOwnProperty(inputValue) &&
+  RegisterValue[inputValue as keyof ValidationType]=== ""
+  )
+  error[inputValue] = `* Required`;
+  }
 
-    if (Object.keys(error).length !== 0) return error;
+  if (Object.keys(error).length !== 0) return error;
 
-    const regex = /^[\w-]+(\.[\w-]+)*@texascollege\.edu\.np$/;
-    if (!regex.test(RegisterValue.email)) {
-      error.email = "Not a valid  email";
-    }
-    if (
-      RegisterValue.password.charAt(0) !==
-      RegisterValue.password.charAt(0).toUpperCase()
-    ) {
-      error.password = "Password start with capital letter";
-    }
-    if (RegisterValue.password.length < 8) {
-      error.password = "Password atleast contains 8 characters"
-    }
-    if (
-      !symbols
-        .split("")
-        .some((symbol) => RegisterValue.password.includes(symbol)) &&
-      !numbers
-        .split("")
-        .some((number) => RegisterValue.password.includes(number))
-    ) {
-      error.password = "password should atleast contains numbers or symbols";
-    }
-    if (RegisterValue.password !== RegisterValue.confirmpassword) {
-      error.password = "password does not match";
-    }
-    if (Object.keys(error).length === 0) {
-      return null;
-    } else {
-      return error;
-    }
+  const regex = /^[\w-]+(\.[\w-]+) *@texascollege\.edu\.np$/;
+  if (!regex.test(RegisterValue.email)) {
+  error.email = "Not a valid  email";
+  }
+  if (
+  RegisterValue.password.charAt(0) !==
+  RegisterValue.password.charAt(0).toUpperCase()
+  ) {
+  error.password = "Password start with capital letter";
+  }
+  if (RegisterValue.password.length < 8) {
+  error.password = "Password atleast contains 8 characters"
+  }
+  if (
+  !symbols
+  .split("")
+  .some((symbol) => RegisterValue.password.includes(symbol)) &&
+  !numbers
+  .split("")
+  .some((number) => RegisterValue.password.includes(number))
+  ) {
+  error.password = "password should atleast contains numbers or symbols";
+  }
+  if (RegisterValue.password !== RegisterValue.confirmpassword) {
+  error.password = "password does not match";
+  }
+  if (Object.keys(error).length === 0) {
+  return null;
+  } else {
+  return error;
+  }
   }
 
   const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const error: Record<string, string> = {};
-    Validation(error);
-    setValidateError(error);
+  e.preventDefault();
+  const error: Record<string, string> = { };
+  Validation(error);
+  setValidateError(error);
 
-    try {
-      const validatedRegister = Validation(error);
-      if (validatedRegister === null || undefined) {
-        console.log(
-          `Form submitted successfully : ${JSON.stringify(RegisterValue)}`
+  try {
+  const validatedRegister = Validation(error);
+  if (validatedRegister === null || undefined) {
+  console.log(
+  `Form submitted successfully : ${JSON.stringify(RegisterValue) }`
         );
       }
     } catch (error) {
-      console.error(`Failed while sending form : ${error}`);
+      console.error(`Failed while sending form: ${error}`);
     }
   };
+    
   return (
     <div className="lg:flex  lg:flex-row md:flex-col -bg--light-background  sm:h-[100vh] h-full items-center justify-around  sm:justify-between lg:px-[150px] lg:py-[50px] md:py-[5px]">
-      <div>
+      <div className="-bg--light-foreground lg:bg-[#726c6c00]">
         <img
           src="../../../public/logo/Fx.png"
           alt=""
-          className="lg:w-[500px] lg:h-[500px] w-[125px] h-[113px] "
+          className="lg:w-[500px] lg:h-[300px] w-[125px] mb-5  "
         />
       </div>
-      <div className="flex flex-col items-center     ">
+      <div className="flex flex-col items-center">
         <div className="flex flex-col items-center  -bg--light-foreground rounded-md sm:px-[50px] sm:py-[20px]  px-[10px] py-[6px]">
-          <h3 className="-text--primary-color font-Poppins text-[25px] font-bold mb-5 ">
-            Sigin With Email
-          </h3>
+        <div className=" px-5 py-6 text-[25px] font-bold text-[var(--primary-color)] tracking-wide text-center">
+          <h1 className="md:hidden">Signin</h1>
+          <h1 className="hidden md:block">Signin with Email</h1>
+        </div>
 
           <form
             action=""
             onSubmit={handleFormSubmit}
-            className="flex flex-col items-center justify-between  gap-[5px]  sm:items-center w-full"
+            className="flex flex-col items-center  gap-[3px]  sm:items-center w-full"
           >
             <div className="flex flex-col items-center  gap-1 justify-center">
               {SelectedImage ? (
@@ -182,7 +185,7 @@ const Register: React.FC = () => {
             </div>
             {RegisterInputs?.map((input, index) => (
               <div key={index} className="flex flex-col h-[73px]  items-start ">
-                <label htmlFor={input.name} className="font-Poppins ">
+                <label htmlFor={input.name} className="font-Poppins text-[15px]">
                   {input.name}
                 </label>
                 <input
@@ -192,7 +195,7 @@ const Register: React.FC = () => {
                   onChange={(e) =>
                     handleInputChange(e, input.name as keyof ValidationType)
                   }
-                  className="outline-none py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[350px] "
+                  className="outline-none py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
                 />
                 {ValidateError[input.name] && (
                   <div className="text-[12px] text-[#af2e2e] flex flex-col ">
@@ -218,4 +221,3 @@ const Register: React.FC = () => {
   );
 };
 
-export default Register;
