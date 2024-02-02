@@ -1,4 +1,4 @@
-import Logo from "../../assets/logo/Fx.png";
+import Logo from "../../../public/logo/Fx.png";
 export const AuthNavbar: React.FC = () => {
   return (
     <div className="w-full min-w-[100vw] h-[85px] px-5 py-4 flex justify-start items-center md:hidden bg-[var(--light-foreground)] ">
