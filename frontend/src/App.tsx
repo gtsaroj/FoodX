@@ -1,10 +1,12 @@
-import React from 'react'
-import { Register } from './Components/Register/Register';
-import Login from './Components/Login/Login';
+import React from "react";
+import { Register } from "./Components/Register/Register";
+// import Login from "./Components/Login/Login";
 
- export const App : React.FC = () => {
+export const App: React.FC = () => {
   return (
-    <div> <Register/></div>
-  )
-}
-
+    <div>
+      {" "}
+      <Register />
+    </div>
+  );
+};
