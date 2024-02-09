@@ -1,11 +1,12 @@
-import React from "react";
-import Card from "./Components/Card/Card";
+import { Header } from "./Components/Navbar/Navbar";
 
 export const App: React.FC = () => {
   return (
-    <div>
-      {" "}
-      <Card />
+    <div className="">
+      <div className="mb-[100px]">
+        <Header />
+      </div>
+      <div className=""></div>
     </div>
   );
 };
