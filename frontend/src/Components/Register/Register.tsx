@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, LegacyRef, useRef, useState } from "react";
 import { RegisterInputs } from "./RegisterType";
 import { ValidationType } from "../../models/Register.model";
-import { Eye, EyeOff } from "lucide-react";
+// import { Eye, EyeOff } from "lucide-react";
 
 
   export const Register: React.FC = () => {
