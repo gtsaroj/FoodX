@@ -7,7 +7,11 @@ import React, {
 } from "react";
 import { RegisterInputs } from "./RegisterType";
 import { ValidationType } from "../../models/Register.model";
+<<<<<<< HEAD
 import { Columns2, Eye, EyeOff } from "lucide-react";
+=======
+// import { Eye, EyeOff } from "lucide-react";
+>>>>>>> b2d64ba4e218893c03296d53fc23c0db13b08383
 
 export const Register: React.FC = () => {
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
@@ -154,7 +158,7 @@ export const Register: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center  gap-[7px]  sm:items-center w-full"
           >
-            <div className="flex flex-col items-center  gap-1 justify-center">
+            <div className="flex flex-col items-center justify-center gap-1">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
