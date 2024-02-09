@@ -1,14 +1,11 @@
-import React from "react";
-// import { Register } from "./Components/Register/Register";
-// import Login from "./Components/Login/Login";
-import { Navbar } from "./Components/Navbar/Navbar";
+import React from 'react'
+import { Register } from './Components/Register/Register';
+import Login from './Components/Login/Login';
+import Card from './Components/Card/Card';
 
-export const App: React.FC = () => {
+ export const App : React.FC = () => {
   return (
-    <div>
-      {/* <Register /> */}
-      {/* <Login /> */}
-      <Navbar />
-    </div>
-  );
-};
+    <div> <Card/></div>
+  )
+}
+
