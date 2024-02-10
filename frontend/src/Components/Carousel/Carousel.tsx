@@ -1,0 +1,74 @@
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+const Carousel: React.FC<Slides> = (props) => {
+  const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const sliderRef = useRef<number>();
+
+  const prevSlide = () => {
+    const newSlide =
+      currentSlide === 0 ? props.slides.length - 1 : currentSlide - 1;
+    setCurrentSlide(newSlide);
+    imageRef.current?.classList.add("fade-in");
+  };
+  const nextSlide = () => {
+    const newSlide =
+      currentSlide === props.slides.length - 1 ? 0 : currentSlide + 1;
+    setCurrentSlide(newSlide);
+    imageRef.current?.classList.add("fade-in");
+  };
+
+  const removeAnimation = () => {
+    imageRef.current?.classList.remove("fade-in");
+  };
+
+  const pauseSlider = () => {
+    clearInterval(sliderRef.current);
+  };
+
+  const autoPlay = () => {
+    sliderRef.current = setInterval(() => {
+      nextSlide();
+    }, 3000);
+  };
+
+  useEffect(() => {
+    imageRef.current?.addEventListener("animationend", removeAnimation);
+
+    autoPlay();
+    return () => {
+      pauseSlider();
+      imageRef.current?.addEventListener("animationend", removeAnimation);
+    };
+  }, [currentSlide]);
+
+  return (
+    <div className="relative w-full h-full px-5 py-8 group z-1">
+      <div
+        className="w-full h-full overflow-hidden duration-500 bg-center bg-cover rounded-xl bg-gradient-to-r from-[black] to-[white] bg-no-repeat"
+        ref={imageRef}
+        style={{
+          backgroundImage: `url(${props.slides[currentSlide].url})`,
+        }}
+      >
+        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] left-8 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
+          <ArrowLeft className="" onClick={prevSlide} />
+        </div>
+        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] right-8 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
+          <ArrowRight className="" onClick={nextSlide} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Carousel;
+
+{
+  /* <img
+          src={props.slides[currentSlide].url}
+          alt="banner"
+          className="object-cover object-center w-full h-full"
+        /> */
+}

@@ -29,11 +29,24 @@
   ::-webkit-scrollbar {
     width: 0px;
   }
-  
+
   body {
     font-family: "Poppins", sans-serif;
     overflow-x: hidden;
     background: var(--light-background);
     scroll-behavior: smooth;
+  }
+
+  .fade-in img {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
