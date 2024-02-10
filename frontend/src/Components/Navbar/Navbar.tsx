@@ -40,13 +40,13 @@ export const Navbar: React.FC = () => {
               key={index}
               onClick={() => setActiveNav(index)}
               className={
-                "h-full px-5 py-4 hover:bg-[var(--primary-color)] hover:text-[var(--secondary-color)] hover:font-bold w-[100px] " +
+                "h-full px-5 py-4 hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)] w-[100px] " +
                 (activeNav === index
                   ? " font-bold text-[var(--secondary-color)] "
                   : " ")
               }
             >
-              <p className="flex items-center justify-center h-full text-lg tracking-wider">
+              <p className="flex items-center justify-center h-full tracking-wider text-md">
                 {item.name}
               </p>
             </a>
