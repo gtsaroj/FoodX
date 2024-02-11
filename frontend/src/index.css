@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --primary-color: #005aab;
+    --primary-color: #2c398d;
     --primary-light: #00a3d9;
     --primary-dark: #0e76a8;
 
@@ -26,9 +26,27 @@
     --dark-secondary-text: #8a8495;
   }
 
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+
   body {
     font-family: "Poppins", sans-serif;
     overflow-x: hidden;
-    background: var(--light-border);
+    background: var(--light-background);
+    scroll-behavior: smooth;
+  }
+
+  .fade-in img {
+    animation: fadeIn 0.5s ease-in;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
