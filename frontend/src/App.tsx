@@ -1,4 +1,5 @@
 import Banner from "./Components/Carousel/Banner";
+import Cart from "./Components/Cart/Cart";
 import { MenuType } from "./Components/Category/MenuType";
 import Footer from "./Components/Footer/Footer";
 import { Header } from "./Components/Navbar/Navbar";
@@ -10,8 +11,9 @@ export const App: React.FC = () => {
         <div className="mb-[100px] z-50">
           <Header />
         </div>
-        <div className="">
+        <div className="flex gap-[10px] justify-between items-stretch">
           <Banner />
+          <Cart />
         </div>
         <div>
         <MenuType/>

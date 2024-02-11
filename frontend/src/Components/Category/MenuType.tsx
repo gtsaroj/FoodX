@@ -1,11 +1,10 @@
-import React, { HtmlHTMLAttributes, useEffect, useState } from "react";
+import React, { useState } from "react";
 import { MenuCategory, category } from "./Data";
 import { Pizza, CoffeeIcon } from "lucide-react";
 import Card from "../Card/Card";
 import { DataType, menuType } from "./Data";
 
 export const MenuType: React.FC = () => {
-  const [Index, setIndex] = useState<number>();
   const [Data, setData] = useState<DataType[]>(category[0]?.data);
   const [Items, setItems] = useState<menuType[]>(MenuCategory);
 
