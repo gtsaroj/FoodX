@@ -44,9 +44,9 @@ const Carousel: React.FC<Slides> = (props) => {
   }, [currentSlide]);
 
   return (
-    <div className="relative w-full h-full px-5 py-8 group z-1">
+    <div className="relative w-full h-full py-8 group z-1">
       <div
-        className="w-full h-full overflow-hidden duration-500 bg-center bg-cover rounded-xl bg-gradient-to-r from-[black] to-[white] bg-no-repeat"
+        className="w-full h-full overflow-hidden duration-500 bg-center bg-no-repeat bg-cover rounded-xl"
         ref={imageRef}
         style={{
           backgroundImage: `url(${props.slides[currentSlide].url})`,
@@ -71,4 +71,10 @@ export default Carousel;
           alt="banner"
           className="object-cover object-center w-full h-full"
         /> */
+}
+
+export const MultiCardSlider:React.FC = () => {
+  return (
+    <div className="w-full h-full">Carousel</div>
+  )
 }
