@@ -1,4 +1,5 @@
 import { SpecialCards } from "../../Components/Card/SpecialCards";
+import Cart from "../Cart/Cart";
 
 const specialItems: CardProp[] = [
   {
@@ -42,7 +43,9 @@ const Specials: React.FC = () => {
         >
           <SpecialCardsContainer />
         </div>
-        <div className="bg-[red] col-span-2 hidden lg:flex">Cart</div>
+        <div className="h-full bg-[var(--light-background)] items-center justify-center flex-grow hidden col-span-2 lg:flex">
+          <Cart />
+        </div>
       </div>
     </div>
   );

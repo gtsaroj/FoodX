@@ -12,9 +12,7 @@ const Cart: React.FC = () => {
           My Order
         </h3>
         {product?.map((item, index) => (
-          <>
-            <SingleCard prop={item} key={index} />
-          </>
+          <SingleCard prop={item} key={index} />
         ))}
       </div>
       <div className="flex flex-col  w-full justify-evenly gap-[20px]">

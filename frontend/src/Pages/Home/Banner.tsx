@@ -18,11 +18,7 @@ const slides: SlideProp[] = [
 const Banner: React.FC = () => {
   return (
     <div className="flex items-center justify-center w-full h-full">
-
       <div className="lg:h-[600px] lg:w-[1000px] min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[700px] md:h-[450px] duration-500 xl:w-[1200px] flex-grow">
-
-      <div className="xl:h-[600px] xl:w-[1000px] min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[700px] md:h-[450px] duration-500">
-
         <Carousel slides={slides} />
       </div>
     </div>
