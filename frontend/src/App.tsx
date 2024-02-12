@@ -13,10 +13,11 @@ export const App: React.FC = () => {
         </div>
         <div className="flex gap-[10px] justify-between items-stretch">
           <Banner />
-          <Cart />
+       
         </div>
-        <div>
-        <MenuType/>
+        <div className="flex">
+          <MenuType />
+          <Cart />
      </div>
         <div>
           <Footer />

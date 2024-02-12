@@ -16,7 +16,6 @@ export const MenuType: React.FC = () => {
     });
   };
 
-
   return (
     <div className="flex flex-col gap-[20px] py-[100px]">
       <div className="flex items-center gap-[10px] justify-evenly w-[full] py-[7px] -bg--dark-secondary-text rounded-sm ">

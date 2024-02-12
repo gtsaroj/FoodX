@@ -2,10 +2,17 @@ import { ShoppingCart } from "lucide-react";
 import { addToCart } from "../../Reducer/CardReducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
+import React from "react";
+import { DataType } from "../Category/Data";
 
-const Card: React.FC = ({ prop }: any) => {
-  
-  const dispatch : AppDispatch = useDispatch();
+interface MenuProp {
+  prop: DataType;
+}
+
+const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
+  const dispatch: AppDispatch = useDispatch();
+
+  const [Quantity, setQuantity] = React.useState(1);
 
   return (
     <div className="flex flex-col bg-[white] w-[225px] rounded-xl gap-2 p-2 shadow-sm">
@@ -39,8 +46,9 @@ const Card: React.FC = ({ prop }: any) => {
                 addToCart({
                   id: prop.id,
                   title: prop.title,
+                  image: prop.image,
                   price: prop.price,
-                  quantity: prop.id,
+                  quantity: Quantity > 1 ? Quantity + 1 : 1,
                 })
               );
             }}

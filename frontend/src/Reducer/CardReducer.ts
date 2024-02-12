@@ -1,8 +1,9 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
 
-interface ProductType {
+export interface ProductType {
   id: string;
   title: string;
+  image : string,
   price: number;
   quantity: number;
 }
