@@ -12,18 +12,6 @@ export const RegisterInputs : RegisterType[] = [
         id: "email",
         placeholder : "Enter your email"
     },
-    {
-        type: "text",
-        name: "password",
-        id: "password",
-        placeholder : "Enter your password"
-    },
-    {
-        type: "text",
-        name: "confirmpassword",
-        id: "confirmpassword",
-        placeholder : "Enter your confirmpassword"
-    }
 
 ]
 
