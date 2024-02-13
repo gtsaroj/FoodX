@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { MenuCategory, category } from "./Data";
-import { Pizza, CoffeeIcon } from "lucide-react";
-import { Card } from "../Card/Card";
+import { CoffeeIcon } from "lucide-react";
 import { DataType, menuType } from "./Data";
+import { SpecialCards } from "../Card/SpecialCards";
 
 export const MenuType: React.FC = () => {
   const [Data, setData] = useState<DataType[]>(category[0]?.data);
@@ -17,25 +17,29 @@ export const MenuType: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-[20px] py-[100px]">
-      <div className="flex items-center gap-[10px] justify-evenly w-[full] py-[7px] -bg--dark-secondary-text rounded-sm ">
+    <div className="flex flex-col gap-8 py-8">
+      <div className="flex items-center gap-3 justify-evenly w-[full] py-3 ">
         {Items?.map((items) => (
           <div
             key={items.id}
-            className="font-Poppins text-[15px] -text--light-text -bg--primary-color rounded-md   py-[6px] px-[9px] w-[150px] cursor-pointer"
+            className="p-3 rounded-full cursor-pointer -text--light-text -bg--primary-color"
             onClick={() => ChangedCategory(items.id)}
           >
-            <div className="flex flex-col items-center justify-between">
-              <CoffeeIcon className="w-[30px] h-[32px]" />
-              <div className="text-[10px]"> {items.type}</div>
+            <div className="flex flex-col items-center justify-between p-2">
+              <CoffeeIcon size={40} />
             </div>
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-[20px]">
-        {Data?.map((singleObject) => (
-          <Card prop={singleObject} key={singleObject.id} />
-        ))}
+      <div className="flex flex-col gap-8 rounded-md bg-[var(--light-foreground)] px-5 py-8">
+        <div className="w-full p-2">
+          <p className="text-2xl font-bold tracking-wider">Category Title</p>
+        </div>
+        <div className="flex flex-wrap items-center justify-start gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
+          {Data?.map((singleObject) => (
+            <SpecialCards slides={singleObject} color="primary" />
+          ))}
+        </div>
       </div>
     </div>
   );

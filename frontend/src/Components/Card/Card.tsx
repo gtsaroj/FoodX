@@ -26,7 +26,7 @@ export const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       <div className="flex justify-between items-center cursor-pointer relative group/cart group/cart:transition-all group/cart:duration-[1s] group/cart:ease-in-out px-2 pt-2">
         <div className="flex justify-between items-center space-x-3  py-[2px]">
           <p className="text-[15px] font-bold tracking-wider font-Poppins">
-            {prop.title}
+            {prop.name}
           </p>
           <p
             className={`w-[7px] h-[7px] rounded-full  ${
@@ -45,7 +45,7 @@ export const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
               dispatch(
                 addToCart({
                   id: prop.id,
-                  title: prop.title,
+                  title: prop.name,
                   image: prop.image,
                   price: prop.price,
                   quantity: Quantity > 1 ? Quantity + 1 : 1,

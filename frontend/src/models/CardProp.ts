@@ -1,5 +1,5 @@
 interface CardProp {
-  id: number  
+  id: number;
   name: string;
   image: string;
   price: number;
@@ -7,4 +7,5 @@ interface CardProp {
 
 interface CardSlides {
   slides: CardProp;
+  color: "primary" | "secondary";
 }

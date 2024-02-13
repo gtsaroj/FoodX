@@ -27,7 +27,14 @@ export const SpecialCards: React.FC<CardSlides> = (props) => {
   };
 
   return (
-    <div className="bg-[var(--light-background)] h-full w-[250px] rounded-xl  pb-3 overflow-hidden shadow-sm relative shrink-0 snap-start">
+    <div
+      className={
+        " h-full w-[250px] rounded-xl  pb-3 overflow-hidden shadow-sm relative snap-start" +
+        (props.color === "secondary"
+          ? " bg-[var(--light-background)]"
+          : " bg-[var(--light-foreground)]")
+      }
+    >
       <div className="">
         <img
           src={props.slides.image}
@@ -46,7 +53,7 @@ export const SpecialCards: React.FC<CardSlides> = (props) => {
 
       <div
         className={
-          "p-2  bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  " +
+          "p-2  bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  " +
           (activeCart
             ? " border-[var(--primary-color)]"
             : "  hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] border-none cursor-pointer")
