@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MenuCategory, category } from "./Data";
 import { Pizza, CoffeeIcon } from "lucide-react";
-import Card from "../Card/Card";
+import { Card } from "../Card/Card";
 import { DataType, menuType } from "./Data";
 
 export const MenuType: React.FC = () => {

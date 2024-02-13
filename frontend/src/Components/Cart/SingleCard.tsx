@@ -1,26 +1,22 @@
-import React, { useState } from "react";
-import { UseDispatch, useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Reducer/Store";
+import { useState } from "react";
 import { ProductType, addToCart } from "../../Reducer/CardReducer";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Reducer/Store";
 
 interface SingleCardProp {
   prop: ProductType;
 }
 
-const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
+ export const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
+  console.log(prop)
   const [InitialQuantity, setInitialQuantity] = useState<number>(1);
-
   const dispatch: AppDispatch = useDispatch();
-  console.log(prop);
 
   return (
-    <div
-      className="flex gap-[5px] items-center  h-[80px]  w-[300px] bg-[var(--light-background)] rounded-lg"
-      key={prop.id}
-    >
+    <div className="flex gap-[5px] items-center  h-[80px]  w-[300px] bg-[var(--light-background)] rounded-lg">
       <div>
         <img
-          className="w-[100px]  h-[70px] rounded-lg"
+          className="w-[100px]  h-[80px] rounded-lg"
           src={prop.image}
           alt=""
         />
@@ -39,7 +35,7 @@ const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
                 dispatch(
                   addToCart({
                     id: prop.id,
-                    quantity: prop.quantity === 1 ? 1 : -InitialQuantity,
+                    quantity: prop.quantity < 1 ? 1 : -1,
                   })
                 )
               }
@@ -48,6 +44,7 @@ const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
               -
             </button>
             <h3 className="w-[25px] h-[25px] rounded-full flex justify-center items-center -bg--dark-secondary-text ">
+              {" "}
               {prop.quantity}
             </h3>
             <button
@@ -74,4 +71,4 @@ const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
   );
 };
 
-export default SingleCard;
+

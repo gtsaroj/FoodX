@@ -9,7 +9,7 @@ interface MenuProp {
   prop: DataType;
 }
 
-const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
+export const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const dispatch: AppDispatch = useDispatch();
 
   const [Quantity, setQuantity] = React.useState(1);
@@ -63,4 +63,4 @@ const Card: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   );
 };
 
-export default Card;
+

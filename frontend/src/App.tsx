@@ -1,8 +1,9 @@
-import Banner from "./Components/Carousel/Banner";
 import Cart from "./Components/Cart/Cart";
 import { MenuType } from "./Components/Category/MenuType";
 import Footer from "./Components/Footer/Footer";
 import { Header } from "./Components/Navbar/Navbar";
+import Banner from "./Pages/Home/Banner";
+import Home from "./Pages/Home/Home";
 
 export const App: React.FC = () => {
   return (
@@ -11,14 +12,18 @@ export const App: React.FC = () => {
         <div className="mb-[100px] z-50">
           <Header />
         </div>
-        <div className="flex gap-[10px] justify-between items-stretch">
+        <div className="w-full h-full flex justify-between items-stretch px-[20px]"> 
+          <div className="w-[900px] h-[400px]">
           <Banner />
-       
         </div>
-        <div className="flex">
+          <Cart/>
+        </div>
+        <div className="flex gap-[10px] justify-between items-stretch">
+          <Home />
+        </div>
+        <div>
           <MenuType />
-          <Cart />
-     </div>
+        </div>
         <div>
           <Footer />
         </div>
