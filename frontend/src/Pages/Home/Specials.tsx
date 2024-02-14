@@ -48,7 +48,7 @@ const Specials: React.FC = () => {
         </h2>
       </div>
       <div className="grid grid-cols-5 gap-8 " id="specials">
-        <div className="bg-[var(--light-background)] rounded-md px-5 py-8 overflow-x-scroll col-span-5 lg:col-span-3 w-full h-full ">
+        <div className="bg-[var(--light-background)] rounded-md px-5 py-8 col-span-5 lg:col-span-3 w-full h-full overflow-x-scroll">
           <SpecialCardsContainer />
         </div>
         <div className="bg-[var(--light-background)] h-full hidden lg:flex lg:col-span-2 w-full px-5 py-8 rounded-md">

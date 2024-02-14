@@ -22,11 +22,11 @@ export const MenuType: React.FC = () => {
         {Items?.map((items) => (
           <div
             key={items.id}
-            className="p-3 rounded-full cursor-pointer -text--light-text -bg--primary-color"
+            className="p-3 rounded-full cursor-pointer -text--light-text bg-[var(--light-foreground)]"
             onClick={() => ChangedCategory(items.id)}
           >
-            <div className="flex flex-col items-center justify-between p-2">
-              <CoffeeIcon size={40} />
+            <div className="flex flex-col items-center justify-center p-2">
+              <img src={items.icon} className="max-h-[50px] mix-blend-darken" />
             </div>
           </div>
         ))}
@@ -35,7 +35,7 @@ export const MenuType: React.FC = () => {
         <div className="w-full p-2">
           <p className="text-2xl font-bold tracking-wider">Category Title</p>
         </div>
-        <div className="flex flex-wrap items-center justify-start gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
+        <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
           {Data?.map((singleObject) => (
             <SpecialCards slides={singleObject} color="primary" />
           ))}

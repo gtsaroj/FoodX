@@ -1,6 +1,13 @@
 import { useState } from "react";
 import CollegeLogo from "/logo/texas.png";
-import { MenuIcon, Phone, Search, UserCircleIcon, X } from "lucide-react";
+import {
+  MenuIcon,
+  Phone,
+  Search,
+  ShoppingCart,
+  UserCircleIcon,
+  X,
+} from "lucide-react";
 const navbarItems = [
   {
     name: "Home",
@@ -22,13 +29,13 @@ export const Navbar: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
 
   return (
-    <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5  text-[var(--dark-secondary-text)] relative">
+    <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">
       {/* Logo */}
-      <div className="flex items-center h-full overflow-hidden shrink-0">
+      <div className="flex items-center h-full overflow-hidden shrink-0 ">
         <img
           src={CollegeLogo}
           alt="college logo"
-          className="max-h-[80px] h-full p-2 "
+          className="max-h-[80px] h-full p-2  "
         />
       </div>
       {/*  */}
@@ -53,23 +60,33 @@ export const Navbar: React.FC = () => {
           ))}
       </div>
       {/*  */}
-      <div className="h-full flex items-center space-x-4 text-[var(--dark-text)] px-3">
-        <div className="flex items-center justify-center h-full space-x-5">
-          <Search
-            onClick={() => setSearch((search) => !search)}
-            size={50}
-            className="p-2 cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out "
-          />
-          <UserCircleIcon
-            className="hidden p-2 transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer"
-            size={50}
-          />
+      <div className="h-full  flex items-center text-[var(--dark-text)] px-3">
+        <div className="flex items-center justify-center h-full space-x-3 place-items-center">
+          <div className="flex items-center justify-center shrink-0">
+            <Search
+              onClick={() => setSearch((search) => !search)}
+              size={30}
+              className=" cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out lg:hidden "
+            />
+          </div>
+          <div className="hidden lg:flex">
+            <DesktopSearch />
+          </div>
+          <div className="flex items-center justify-center">
+            <ShoppingCart size={30} />
+          </div>
+          <div className="">
+            <UserCircleIcon
+              className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
+              size={30}
+            />
+          </div>
         </div>
         <div>
           {!mobileMenu ? (
             <MenuIcon
               onClick={() => setMobileMenu((mobileMenu) => !mobileMenu)}
-              size={40}
+              size={30}
               className={
                 "hover:text-[var(--secondary-color)] cursor-pointer transition-colors ease-in-out duration-500 md:hidden"
               }
@@ -77,16 +94,16 @@ export const Navbar: React.FC = () => {
           ) : (
             <X
               onClick={() => setMobileMenu((mobileMenu) => !mobileMenu)}
-              size={40}
+              size={30}
               className={
-                "hover:text-[var(--secondary-color)] cursor-pointer transition-colors ease-in-out duration-500 md:hidden"
+                "text-[var(--secondary-color)] cursor-pointer transition-colors ease-in-out duration-500 md:hidden"
               }
             />
           )}
         </div>
       </div>
       {search && (
-        <form className="absolute bottom-[-60px] right-5 text-[var(--dark-text)]">
+        <form className="absolute bottom-[-60px] right-5 text-[var(--dark-text)] lg:hidden">
           <input
             className="p-3 text-md rounded-md focus:outline focus:outline-[var(--primary-color)] placeholder:text-[var(--dark-secondary-text)]"
             placeholder="Search..."
@@ -153,6 +170,39 @@ export const MobileMenu: React.FC = () => {
       >
         Profile
       </a>
+    </div>
+  );
+};
+
+export const DesktopSearch = () => {
+  const [search, setSearch] = useState<boolean>();
+  return (
+    <div
+      className={
+        "flex items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
+        (search ? " bg-[var(--light-foreground)]" : " ")
+      }
+    >
+      <div
+        className={"order-2 cursor-pointer  " + (search ? " order" : " ")}
+        onClick={() => setSearch((search) => !search)}
+      >
+        <Search size={30} />
+      </div>
+      <form
+        className={"items-center  " + (search ? " flex order-2" : " hidden")}
+      >
+        <input
+          type="text"
+          placeholder="Search..."
+          className="px-3 py-2 focus:outline-none rounded-lg max-w-[250px] w-full bg-transparent  "
+        />
+        <X
+          size={20}
+          className="cursor-pointer text-[var(--secondary-color)] "
+          onClick={() => setSearch((search) => !search)}
+        />
+      </form>
     </div>
   );
 };

@@ -7,29 +7,31 @@ interface SingleCardProp {
   prop: ProductType;
 }
 
- export const SingleCard: React.FC<SingleCardProp> = ({ prop }: SingleCardProp) => {
-  console.log(prop)
+export const SingleCard: React.FC<SingleCardProp> = ({
+  prop,
+}: SingleCardProp) => {
+  console.log(prop);
   const [InitialQuantity, setInitialQuantity] = useState<number>(1);
   const dispatch: AppDispatch = useDispatch();
 
   return (
-    <div className="flex gap-[5px] items-center  h-[80px]  w-[300px] bg-[var(--light-background)] rounded-lg">
+    <div className="flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
       <div>
         <img
-          className="w-[100px]  h-[80px] rounded-lg"
+          className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />
       </div>
-      <div className="flex flex-col items-stretch justify-between gap-[2px] py-5">
-        <h3 className=" text-[18px] font-Poppins -text--dark-text">
+      <div className="flex flex-col gap-2 px-3 justfy-between">
+        <p className="text-xl text-[var(--dark-text)] font-bold tracking-wide">
           {prop.title}
-        </h3>
-        <h3 className="text-[12px] font-Poppins -text--dark-secondary-text] ">
-          {prop.price}
-        </h3>
+        </p>
+        <p className="text-sm text-[var(--dark-secondary-text)] ">
+          Rs {prop.price}
+        </p>
         <div className="flex gap-[40px]  items-center ">
-          <div className="flex gap-[4px] text-[14px] font-Poppins">
+          <div className="flex gap-2 text-md text-[var(--primary-color)]">
             <button
               onClick={() =>
                 dispatch(
@@ -39,14 +41,14 @@ interface SingleCardProp {
                   })
                 )
               }
-              className=" h-[25px] flex items-center justify-center  text-[10px] font-bold -bg--dark-secondary-text  w-[25px] py-[4px] px-[6px] rounded-full  text-center"
+              className=" h-[25px] flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
             >
               -
             </button>
-            <h3 className="w-[25px] h-[25px] rounded-full flex justify-center items-center -bg--dark-secondary-text ">
+            <p className="w-[25px] h-[25px] text-sm rounded-full flex justify-center items-center   ">
               {" "}
               {prop.quantity}
-            </h3>
+            </p>
             <button
               onClick={() =>
                 dispatch(
@@ -56,19 +58,17 @@ interface SingleCardProp {
                   })
                 )
               }
-              className=" h-[25px] justify-center flex items-center text-[10px]  w-[25px] font-bold -bg--dark-secondary-text py-[4px] px-[6px] rounded-full  text-center"
+              className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
             >
               +
             </button>
           </div>
-          <h3 className="text-[12px]  flex items-center justify-center font-Poppins -bg--dark-secondary-text w-[60px] px-[3px] py-[2px] rounded-sm">
+          <p className=" text-sm  flex items-center justify-center  w-[60px] px-[3px] py-[2px] rounded-sm">
             {" "}
             {prop.quantity} × {prop.price}
-          </h3>
+          </p>
         </div>
       </div>
     </div>
   );
 };
-
-

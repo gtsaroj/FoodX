@@ -11,7 +11,7 @@ const Cart: React.FC = () => {
           My Order
         </h3>
       </div>
-      <div className="flex-grow w-full bg-[red]">
+      <div className="flex-grow w-full py-5 overflow-y-scroll">
         <CartContainer />
       </div>
       <div className="flex flex-col w-full gap-5">
@@ -22,7 +22,9 @@ const Cart: React.FC = () => {
           </p>
         </div>
         <div className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
-          <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">Checkout</button>
+          <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">
+            Checkout
+          </button>
         </div>
       </div>
     </div>
@@ -34,11 +36,26 @@ export default Cart;
 export const CartContainer: React.FC = () => {
   const product = useSelector((state: RootState) => state.cart.products);
   console.log(product);
+  const demoProduct = [
+    {
+      id: 1,
+      title: "Momo",
+      image:
+        "https://cuisinenepal.com/wp-content/uploads/2019/08/steamed-pork-momo-optimized-1-825x550.jpg",
+      price: 150,
+      quantity: 2,
+    },
+  ];
   return (
-    <div>
-      {product?.map((item) => (
+    <div className="flex flex-col w-full gap-5 overflow-y-scroll max-h-[450px]">
+      {/* {product?.map((item) => (
         <SingleCard prop={item} key={item.id} />
-      ))}
+      ))} */}
+      <SingleCard prop={demoProduct[0]} key={"Demo"} />
+      <SingleCard prop={demoProduct[0]} key={"Demo"} />
+      <SingleCard prop={demoProduct[0]} key={"Demo"} />
+      <SingleCard prop={demoProduct[0]} key={"Demo"} />
+      <SingleCard prop={demoProduct[0]} key={"Demo"} />
     </div>
   );
 };
