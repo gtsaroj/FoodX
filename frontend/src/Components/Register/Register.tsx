@@ -5,9 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { RegisterInputs } from "./RegisterType";
 import { ValidationType } from "../../models/Register.model";
-import { Columns2, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export const Register: React.FC = () => {
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
@@ -134,8 +133,8 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <div className="lg:flex  lg:flex-row md:flex-col -bg--light-background  sm:h-[100vh] h-full items-center justify-around  sm:justify-between lg:px-[150px] lg:py-[50px] md:py-[5px]">
-      <div className="-bg--light-foreground lg:bg-[#726c6c00]">
+    <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center justify-around  sm:justify-between lg:px-[150px] lg:py-[50px] md:py-[5px]">
+      <div className="bg-[var(--light-foreground)] lg:bg-[#726c6c00]">
         <img
           src="../../../public/logo/Fx.png"
           alt=""
@@ -143,7 +142,7 @@ export const Register: React.FC = () => {
         />
       </div>
       <div className="flex flex-col items-center">
-        <div className="flex flex-col items-center  -bg--light-foreground rounded-md sm:px-[50px] sm:py-[20px]  px-[10px] py-[6px]">
+        <div className="flex flex-col items-center  bg-[var(--light-foreground)] rounded-md sm:px-[50px] sm:py-[20px]  px-[10px] py-[6px]">
           <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
             <h1 className="md:hidden">Signin</h1>
             <h1 className="hidden md:block">Signin with Email</h1>
@@ -159,24 +158,24 @@ export const Register: React.FC = () => {
                 <img
                   src={URL.createObjectURL(SelectedImage)}
                   alt=""
-                  className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] -bg--light-background outline-none"
+                  className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
                 />
               ) : (
                 <img
                   src="../../../public/defaultimages/default.webp"
                   alt=""
-                  className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] -bg--light-background outline-none"
+                  className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
                 />
               )}
               <input
                 type="file"
                 accept="image/*"
-                className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] -bg--light-background outline-none  hidden"
+                className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none  hidden"
                 ref={Ref as LegacyRef<HTMLInputElement>}
                 onChange={imageChange}
               />
               <button
-                className="-bg--primary-color  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] rounded-md"
+                className="bg-[var(--primary-color)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] rounded-md"
                 onClick={fileUPload}
               >
                 select image
@@ -290,7 +289,7 @@ export const Register: React.FC = () => {
 
             <button
               type="submit"
-              className="-bg--primary-color text-[white] w-full py-[6px] rounded-md mt-[20px] hover:-bg--primary-dark"
+              className="bg-[var(--primary-color)] text-[white] w-full py-[6px] rounded-md mt-[20px] hover:bg-[var(--primary-dark)]"
             >
               {" "}
               submit

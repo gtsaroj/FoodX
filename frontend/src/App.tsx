@@ -2,6 +2,7 @@ import Footer from "./Components/Footer/Footer";
 import { Header } from "./Components/Navbar/Navbar";
 import Home from "./Pages/Home/Home";
 
+
 export const App: React.FC = () => {
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">

@@ -22,7 +22,7 @@ export const MenuType: React.FC = () => {
         {Items?.map((items) => (
           <div
             key={items.id}
-            className="p-3 rounded-full cursor-pointer -text--light-text bg-[var(--light-foreground)]"
+            className="p-3 rounded-full cursor-pointer text-[var( --light-text)] bg-[var(--light-foreground)]"
             onClick={() => ChangedCategory(items.id)}
           >
             <div className="flex flex-col items-center justify-center p-2">
