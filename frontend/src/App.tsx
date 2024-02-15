@@ -1,7 +1,6 @@
 import Footer from "./Components/Footer/Footer";
 import { Header } from "./Components/Navbar/Navbar";
 import Home from "./Pages/Home/Home";
-import {Payment} from "./Components/Payment/Payment.tsx"
 
 export const App: React.FC = () => {
   return (
@@ -13,7 +12,6 @@ export const App: React.FC = () => {
         <div className="w-full">
           <Home />
         </div>
-        <Payment/>
         <div>
           <Footer />
         </div>
