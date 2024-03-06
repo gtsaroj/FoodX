@@ -7,3 +7,5 @@ const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`SERVER WAS STARTED AT ${PORT}`);
 });
+
+export {app}
