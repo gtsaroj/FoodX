@@ -1,19 +1,25 @@
-import { createUser } from "../firebase/Authentication.js";
 import { auth } from "../firebase/index.js";
 import { app } from "../index.js";
-import { Register } from "../models/user.model.js";
 
 app.post("/register", async (req, res) => {
-  const { email, password, firstName, lastName, avatar, phoneNumber } =
-    req.body;
-  const userData: Register = {
-    email,
-    password,
-    firstName,
-    lastName,
-    avatar,
-    phoneNumber,
-  };
-  const uid = await createUser(userData);
-  //create token
+  const idToken = req.body.idToken.toString();
+  const csrfToken = req.body.csrfToken.toString();
+
+  if (csrfToken !== req.cookies.csrfToken) {
+    res.status(401).send("Unauthorized Request.");
+    return;
+  }
+  const expiresIn = 60 * 60 * 24 * 5 * 1000;
+
+  try {
+    await auth
+      .createSessionCookie(idToken, { expiresIn })
+      .then((sessionCookie) => {
+        const options = { maxAge: expiresIn, secure: true };
+        res.cookie("session", sessionCookie, options);
+        res.end(JSON.stringify({ status: "success" }));
+      });
+  } catch (err) {
+    return err as string;
+  }
 });
