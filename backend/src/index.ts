@@ -5,7 +5,7 @@ import { getUser } from "./firebase/Authentication.js";
 dotenv.config();
 export const app: Express = express();
 
-const PORT = 4000;
+const PORT = 5000;
 
 app.listen(PORT, () => {
   console.log(`SERVER WAS STARTED AT ${PORT}`);

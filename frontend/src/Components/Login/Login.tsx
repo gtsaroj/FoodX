@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import Logo from "../../../public/logo/Fx.png"
+import Logo from "../../../public/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
+import { makeRequest } from "../../makeRequest";
 
 const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -11,10 +12,27 @@ const LoginContainer: React.FC = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
+  const [DataSend, SetDataSend] = useState<boolean>(true);
 
   const showPassword = () => {
     setShow((show) => !show);
     setPasswordType(passwordType === "text" ? "password" : "text");
+  };
+
+  const LoginFormSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    try {
+      SetDataSend(true);
+      const sendingLoginData = await makeRequest().post("/send-form/login", {
+        email,
+        password,
+      });
+      SetDataSend(false);
+    } catch (error) {
+      console.error(`Error occuring while sending form : ${error}`);
+      SetDataSend(false);
+    }
   };
 
   return (
@@ -25,7 +43,7 @@ const LoginContainer: React.FC = () => {
           <h1 className="hidden md:block">Login with Email</h1>
         </div>
         <div className="px-3 py-4">
-          <form className="flex flex-col gap-4 p-2">
+          <form className="flex flex-col gap-4 p-2" onSubmit={LoginFormSubmit}>
             <div className="relative flex flex-col gap-2">
               <label htmlFor="logEmail" className="text-sm">
                 Email
@@ -78,7 +96,7 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              Submit
+              {DataSend ? "submit" : "sending..."}
             </button>
             <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none">
               Don't have an account?{" "}

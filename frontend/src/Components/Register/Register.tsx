@@ -6,7 +6,8 @@ import React, {
   useState,
 } from "react";
 import { ValidationType } from "../../models/Register.model";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye } from "lucide-react";
+import { makeRequest } from "../../makeRequest";
 
 export const Register: React.FC = () => {
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
@@ -27,17 +28,9 @@ export const Register: React.FC = () => {
   function fileUPload() {
     Ref.current?.click();
   }
-  const [PasswordType, setPasswordType] = useState<"password" | "text">(
-    "password"
-  );
-  const [ShowPassword, setShowPassword] = useState(true);
+  const [ShowPassword, setShowPassword] = useState(false);
+  const [DataSend, SetDataSend] = useState<boolean>(true);
 
-  React.useEffect(() => {
-    if (!ShowPassword) {
-      setPasswordType("text");
-    }
-    setPasswordType("password");
-  });
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
     inputField: string
@@ -45,19 +38,12 @@ export const Register: React.FC = () => {
     setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
 
-  function showPassword() {
-   setShowPassword(!ShowPassword)
-  }
-  
-  console.log(ShowPassword)
-
   const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {
       throw new Error("Uploading failed...");
     }
     const file = event.target.files[0];
     const FileUrl = URL.createObjectURL(file);
-    console.log(file);
     setRegisterValue({ ...RegisterValue, avatar: FileUrl });
     setSelectedImage(file);
   };
@@ -73,7 +59,9 @@ export const Register: React.FC = () => {
         error[inputValue] = `* Required`;
     }
 
-    if (Object.keys(error).length !== 0) return error;
+    if (Object.keys(error).length !== 0) {
+      return error;
+    }
 
     const regex = /^[\w-]+(\.[\w-]+) *@texascollege\.edu\.np$/;
     if (!regex.test(RegisterValue.email)) {
@@ -108,9 +96,10 @@ export const Register: React.FC = () => {
     }
   }
 
-  const handleFormSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const error: Record<string, string> = {};
+
     Validation(error);
     setValidateError(error);
 
@@ -120,6 +109,12 @@ export const Register: React.FC = () => {
         console.log(
           `Form submitted successfully : ${JSON.stringify(RegisterValue)}`
         );
+        SetDataSend(true);
+        const sendFormData = await makeRequest().post(
+          "/submitData",
+          RegisterValue
+        );
+
         RegisterValue.avatar = "";
         RegisterValue.firstname = "";
         RegisterValue.lastname = "";
@@ -127,10 +122,13 @@ export const Register: React.FC = () => {
         RegisterValue.confirmpassword = "";
         RegisterValue.email = "";
       }
+      SetDataSend(false);
     } catch (error) {
       console.error(`Failed while sending form: ${error}`);
+      SetDataSend(false);
     }
   };
+  console.log(ValidateError);
 
   return (
     <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center justify-around  sm:justify-between lg:px-[150px] lg:py-[50px] md:py-[5px]">
@@ -166,6 +164,11 @@ export const Register: React.FC = () => {
                   alt=""
                   className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
                 />
+              )}
+              {ValidateError["avatar"] && (
+                <div className="text-[12px] text-[#af2e2e] ">
+                  {ValidateError["avatar"]}
+                </div>
               )}
               <input
                 type="file"
@@ -226,19 +229,19 @@ export const Register: React.FC = () => {
                 }
                 className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
               />
-              {ValidateError[RegisterValue.email] && (
+              {ValidateError["email"] && (
                 <div className="text-[12px] text-[#af2e2e] flex flex-col ">
-                  {ValidateError[RegisterValue.email]}
+                  {ValidateError["email"]}
                 </div>
               )}
             </div>
             <div className="flex flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
-              <label htmlFor="email" className="font-Poppins text-[15px]">
+              <label htmlFor="password" className="font-Poppins text-[15px]">
                 Password
               </label>
               <input
-                type={PasswordType}
-                id="email"
+                type={ShowPassword ? "text" : "password"}
+                id="password"
                 value={RegisterValue.password}
                 onChange={(e) =>
                   handleInputChange(e, "password" as keyof ValidationType)
@@ -247,12 +250,12 @@ export const Register: React.FC = () => {
               />
               <Eye
                 className="absolute top-[33px] right-[14px] w-[15px] h-[15px]"
-                onClick={() => showPassword}
+                onClick={() => setShowPassword(!ShowPassword)}
               />
 
-              {ValidateError[RegisterValue.password] && (
+              {ValidateError["password"] && (
                 <div className="text-[12px] text-[#af2e2e] flex flex-col ">
-                  {ValidateError[RegisterValue.password]}
+                  {ValidateError["password"]}
                 </div>
               )}
             </div>
@@ -264,7 +267,7 @@ export const Register: React.FC = () => {
                 ConfirmPassword
               </label>
               <input
-                type={PasswordType}
+                type={ShowPassword ? "text" : "password"}
                 id="confirmpassword"
                 value={RegisterValue.confirmpassword}
                 onChange={(e) =>
@@ -278,11 +281,11 @@ export const Register: React.FC = () => {
 
               <Eye
                 className="absolute top-[33px] right-[14px] w-[15px] h-[15px]"
-                onClick={() => showPassword}
+                onClick={() => setShowPassword(!ShowPassword)}
               />
-              {ValidateError[RegisterValue.confirmpassword] && (
+              {ValidateError["confirmpassword"] && (
                 <div className="text-[12px] text-[#af2e2e] flex flex-col ">
-                  {ValidateError[RegisterValue.confirmpassword]}
+                  {ValidateError["confirmpassword"]}
                 </div>
               )}
             </div>
@@ -291,8 +294,7 @@ export const Register: React.FC = () => {
               type="submit"
               className="bg-[var(--primary-color)] text-[white] w-full py-[6px] rounded-md mt-[20px] hover:bg-[var(--primary-dark)]"
             >
-              {" "}
-              submit
+              {DataSend ? "submit" : "sending..."}
             </button>
           </form>
           <h3 className="sm:text-[15px] text-[13px] font-Poppins mt-[5px]">
