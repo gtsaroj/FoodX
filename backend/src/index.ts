@@ -1,40 +1,64 @@
-import express, { Express } from "express";
+import {
+  createUser,
+  getUserDataByEmail,
+  getUserDataById,
+} from "./firebase/Authentication.js";
 import dotenv from "dotenv";
-import { getUser } from "./firebase/Authentication.js";
-import { auth } from "./firebase/index.js";
 
+import { logOutUser, loginUser } from "./controllers/user.controller.js";
+import { Login, Register } from "./models/user.model.js";
+import { app } from "./app.js";
+import { getAccessToken } from "./firebase/TokenHandler.js";
+import { verifyJwt } from "./middlewares/auth.middlewares.js";
 dotenv.config();
-export const app: Express = express();
 
-const PORT = 5000;
 
-app.listen(PORT, () => {
-  console.log(`SERVER WAS STARTED AT ${PORT}`);
+
+
+
+const userId = await getUserDataByEmail("aayush@gmail.com");
+console.log(userId);
+
+app.listen(process.env.PORT || 8000, () => {
+  console.log(`Server is running in port ${process.env.PORT}`);
 });
-app.get("/test", (req, res) => {
-  console.log(req.body);
-  res.json("Hello");
+app.get("/test", (_, res) => {
+  res.json("Tesing..");
 });
+app.post("/login", loginUser);
+app.post("/logout", verifyJwt);
 
-app.post("/register", async (req, res) => {
-  const idToken = req.body?.idToken.toString();
-  const csrfToken = req.body?.csrfToken.toString();
 
-  if (csrfToken !== req.cookies.csrfToken) {
-    res.status(401).send("Unauthorized Request.");
-    return;
-  }
-  const expiresIn = 60 * 60 * 24 * 5 * 1000;
 
-  try {
-    await auth
-      .createSessionCookie(idToken, { expiresIn })
-      .then((sessionCookie) => {
-        const options = { maxAge: expiresIn, secure: true };
-        res.cookie("session", sessionCookie, options);
-        res.end(JSON.stringify({ status: "success" }));
-      });
-  } catch (err) {
-    return err as string;
-  }
-});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//! Test Data. Remove Later
+const data: Register | Login = {
+  email: "aayush02@gmail.com",
+  password: "helloworld",
+  avatar: "img.png",
+  firstName: "Aayush",
+  lastName: "Lamichhane",
+  phoneNumber: "+9779813490002",
+};
+
+// const userId = await getUser({
+//   email: "aayush@gmail.com",
+//   password: "sadasdsadsa",
+// });
+// const uid = await createUser(data);
+// console.log(userId);
+// console.log(uid);

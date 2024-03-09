@@ -8,3 +8,7 @@ export interface Register extends Login {
   lastName: string;
   phoneNumber: string;
 }
+
+export interface User extends Register {
+  token?: string;
+}
