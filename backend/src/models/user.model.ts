@@ -9,6 +9,15 @@ export interface Register extends Login {
   phoneNumber: string;
 }
 
-export interface User extends Register {
-  token?: string;
+export interface User {
+  uid: string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  avatar: string;
+  refreshToken: string;
+}
+
+export interface AccessType {
+  privilage: "admins" | "customers";
 }

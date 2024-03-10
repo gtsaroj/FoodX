@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { getUserDataByEmail } from "../firebase/Authentication.js";
+import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
 import dotenv from "dotenv";
 import { ApiResponse } from "../utils/ApiResponse.js";
 dotenv.config();

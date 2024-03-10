@@ -1,18 +1,23 @@
-import { getUserDataByEmail } from "../firebase/Authentication.js";
-import { generateAccessAndRefreshToken } from "../firebase/TokenHandler.js";
+import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
+import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
+import { addUserToFirestore } from "../firebase/db/user.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
+//Cookie options
+const options = {
+  httpOnly: true,
+  secure: true,
+};
+
 const loginUser = asyncHandler(async (req: any, res: any) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new ApiError(400, "Email and Password is required");
+  const { email } = req.body;
+  if (!email) {
+    throw new ApiError(400, "Email is required");
   }
 
   try {
-    //TODO: sign in
-
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
@@ -20,10 +25,12 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       user?.uid
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
+
+    //TODO: send privilage value somehow from frontend or firebase and store accordingly.
+    await addUserToFirestore(
+      { ...user, refreshToken },
+      { privilage: "customers" }
+    );
 
     return res
       .status(200)
@@ -42,6 +49,16 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const logOutUser = asyncHandler(async (req: any, res: any) => {});
+const logOutUser = asyncHandler(async (_: any, res: any) => {
+  try {
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User logged out successfully", true));
+  } catch (error) {
+    throw new ApiError(400, "Error logging out.");
+  }
+});
 
 export { loginUser, logOutUser };

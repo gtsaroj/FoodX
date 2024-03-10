@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { ApiError } from "../utils/ApiError.js";
-import { getUserDataByEmail, getUserDataById } from "./Authentication.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { getUserDataById } from "./Authentication.js";
 
 export const getAccessToken = async (uid: string) => {
   try {
@@ -39,8 +39,6 @@ export const generateAccessAndRefreshToken = async (uid: string) => {
   try {
     const accessToken = await getAccessToken(uid);
     const refreshToken = await getRefreshtoken(uid);
-
-    //TODO: add refresh token to database
 
     return { accessToken, refreshToken };
   } catch (error) {
