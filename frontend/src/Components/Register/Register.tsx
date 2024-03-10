@@ -151,7 +151,7 @@ export const Register: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center  gap-[7px]  sm:items-center w-full"
           >
-            <div className="flex flex-col items-center  gap-1 justify-center">
+            <div className="flex flex-col items-center justify-center gap-1">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}

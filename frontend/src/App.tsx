@@ -15,7 +15,8 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <Outlet />
+          {/* <Outlet /> */}
+          <Login />
         </div>
         <div>
           <Footer />
