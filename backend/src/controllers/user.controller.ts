@@ -1,4 +1,3 @@
-import  express  from 'express';
 import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import { addUserToFirestore } from "../firebase/db/user.firestore.js";
@@ -12,7 +11,7 @@ const options = {
   secure: true,
 };
 
-const loginUser = asyncHandler(async (req: express.Request, res: express.Response) => {
+const loginUser = asyncHandler(async (req: any, res: any) => {
   const { email } = req.body;
   if (!email) {
     throw new ApiError(400, "Email is required");
@@ -27,11 +26,11 @@ const loginUser = asyncHandler(async (req: express.Request, res: express.Respons
     );
 
 
-    // //TODO: send privilage value somehow from frontend or firebase and store accordingly.
-    // await addUserToFirestore(
-    //   { ...user, refreshToken },
-    //   { privilage: "customers" }
-    // );
+    //TODO: send privilage value somehow from frontend or firebase and store accordingly.
+    await addUserToFirestore(
+      { ...user, refreshToken },
+      { privilage: "customers" }
+    );
 
     return res
       .status(200)
