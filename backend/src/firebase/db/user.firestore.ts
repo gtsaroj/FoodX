@@ -42,4 +42,37 @@ const deleteUserFromFireStore = async (uid: string, access: AccessType) => {
   }
 };
 
-export { addUserToFirestore, deleteUserFromFireStore };
+const updateUserDataInFirestore = async (
+  uid: string,
+  access: AccessType,
+  field: keyof User,
+  data: string
+) => {
+  console.log(uid);
+  if (!uid) throw new ApiError(400, "UID is required to update user.");
+  const customerDocRef = db.collection("users").doc(access.privilage);
+  try {
+    const doc = await customerDocRef.get();
+    if (!doc.exists) throw new ApiError(404, "Document doesn't exist.");
+
+    const docData = doc.data();
+    const userData = docData?.users as User[];
+
+    const foundUser = userData.find((user) => user.uid === uid);
+    if (!foundUser) throw new ApiError(401, "User not found to update.");
+
+    foundUser[`${field}`] = data;
+    await customerDocRef.update({
+      users: userData,
+    });
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(400, "Unable to update data.");
+  }
+};
+
+export {
+  addUserToFirestore,
+  deleteUserFromFireStore,
+  updateUserDataInFirestore,
+};

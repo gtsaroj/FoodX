@@ -12,9 +12,9 @@ import { verifyJwt } from "./middlewares/auth.middlewares.js";
 import {
   addUserToFirestore,
   deleteUserFromFireStore,
+  updateUserDataInFirestore,
 } from "./firebase/db/user.firestore.js";
 dotenv.config();
-
 
 app.listen(process.env.PORT || 8000, () => {
   console.log(`Server is running in port ${process.env.PORT}`);
@@ -22,8 +22,6 @@ app.listen(process.env.PORT || 8000, () => {
 app.get("/test", (_, res) => {
   res.json("Tesing..");
 });
-app.post("/login", loginUser);
-app.post("/logout", verifyJwt);
 
 //!Testing
 // const userId = await getUserDataByEmail("aayush@gmail.com");
@@ -47,18 +45,18 @@ const user2: User = {
   refreshToken: "aasdddddddddffffffffffascccccccccasdawdsdarwfafwaf",
 };
 
-// await addUserToFirestore(user2, { privilage: "admins" });
-// await deleteUserFromFireStore(user2.uid, { privilage: "customers" });
-
 //! Test Data. Remove Later
-const data: Register | Login = {
+const data: User = {
   email: "aayush02@gmail.com",
-  password: "helloworld",
   avatar: "img.png",
-  firstName: "Aayush",
-  lastName: "Lamichhane",
+  fullName: "Aayush",
+  refreshToken: "",
+  uid: "newUser",
   phoneNumber: "+9779813490002",
 };
+
+// await addUserToFirestore(data, { privilage: "customers" });
+// await deleteUserFromFireStore(user2.uid, { privilage: "customers" });
 
 // const userId = await getUser({
 //   email: "aayush@gmail.com",
