@@ -2,20 +2,28 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "./index";
 
-const signUpNewUser = async (email: string, password: string) => {
+const signUpNewUser = async (
+  email: string,
+  password: string,
+  dipslayname: string,
+  avatar: string
+) => {
   if (!email || !password)
     throw new Error("Please provide an email and a password");
   try {
-    const userInfo = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
+    await createUserWithEmailAndPassword(auth, email, password).then(
+      (usercredential) => {
+        const user = usercredential.user;
+        updateProfile(user, {
+          displayName: dipslayname,
+          photoURL: avatar,
+        });
+      }
     );
-
-    return userInfo.user;
   } catch (error) {
     throw new Error(`Error while signing new user. ${error}`);
   }

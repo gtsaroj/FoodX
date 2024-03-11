@@ -8,8 +8,15 @@ import React, {
 import { ValidationType } from "../../models/Register.model";
 import { Eye } from "lucide-react";
 import { makeRequest } from "../../makeRequest";
+import { signUpNewUser } from "../../firebase/Authentication";
+import { registerNewUser } from "../../Reducer/authActions";
+import { useDispatch } from "react-redux";
+import { AnyAction, UnknownAction } from "redux";
+import { AsyncThunkAction } from "@reduxjs/toolkit";
+import { AppDispatch } from "../../Reducer/Store";
 
 export const Register: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
     avatar: "",
     firstname: "",
@@ -106,26 +113,36 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        console.log(
-          `Form submitted successfully : ${JSON.stringify(RegisterValue)}`
-        );
-        SetDataSend(true);
-        const sendFormData = await makeRequest().post(
-          "/submitData",
-          RegisterValue
-        );
+        const { avatar, password, email, lastname, firstname } = RegisterValue;
+        await signUpNewUser(
+          email,
+          password,
+          `${firstname + " " + lastname}`,
+          avatar
+        )
+          .then(async () => {
+            SetDataSend(false);
+            const dispatchingData = dispatch(registerNewUser(email));
 
-        RegisterValue.avatar = "";
-        RegisterValue.firstname = "";
-        RegisterValue.lastname = "";
-        RegisterValue.password = "";
-        RegisterValue.confirmpassword = "";
-        RegisterValue.email = "";
+            if (!dispatchingData) {
+              throw new Error(`please enter correct email : ${error}`);
+            }
+            RegisterValue.avatar = "";
+            RegisterValue.firstname = "";
+            RegisterValue.lastname = "";
+            RegisterValue.password = "";
+            RegisterValue.confirmpassword = "";
+            RegisterValue.email = "";
+            SetDataSend(true);
+          })
+
+          .catch((error) => {
+            throw new Error(`All fields are required : ${error}`);
+          });
       }
-      SetDataSend(false);
     } catch (error) {
       console.error(`Failed while sending form: ${error}`);
-      SetDataSend(false);
+      SetDataSend(true);
     }
   };
   console.log(ValidateError);

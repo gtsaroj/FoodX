@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./Components/Footer/Footer";
 import Login from "./Components/Login/Login";
 import { Header } from "./Components/Navbar/Navbar";
@@ -6,6 +6,8 @@ import { Register } from "./Components/Register/Register";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "./Reducer/Store";
 
 const HomePage = () => {
   return (
@@ -15,8 +17,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          {/* <Outlet /> */}
-          <Login />
+          <Outlet />
         </div>
         <div>
           <Footer />
@@ -27,6 +28,18 @@ const HomePage = () => {
 };
 export const App: React.FC = () => {
   const [ShowContent, SetShowContent] = useState<boolean>(false);
+
+  const authUser = useSelector((state: RootState) => state.auth);
+
+  console.log(authUser.success);
+  useEffect(() => {
+    if (authUser.success === true) {
+      SetShowContent(true);
+    } else {
+      SetShowContent(false);
+    }
+  }, [authUser]);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -34,7 +47,7 @@ export const App: React.FC = () => {
       children: [
         {
           path: "/",
-          element: ShowContent ? <Home /> : <Login />,
+          element: ShowContent ? <Home /> : <Register />,
         },
         {
           path: "/register",
