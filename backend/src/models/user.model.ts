@@ -21,3 +21,10 @@ export interface User {
 export interface AccessType {
   privilage: "admins" | "customers";
 }
+
+export interface DecodeToken {
+  uid: string;
+  email: string;
+  iat: number;
+  exp: number;
+}

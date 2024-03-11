@@ -1,6 +1,10 @@
 import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
-import { addUserToFirestore } from "../firebase/db/user.firestore.js";
+import {
+  addUserToFirestore,
+  updateUserDataInFirestore,
+} from "../firebase/db/user.firestore.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -24,12 +28,14 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
       user?.uid
     );
-
+    user.refreshToken = refreshToken;
 
     //TODO: send privilage value somehow from frontend or firebase and store accordingly.
-    await addUserToFirestore(
-      { ...user, refreshToken },
-      { privilage: "customers" }
+    await updateUserDataInFirestore(
+      user.uid,
+      { privilage: "customers" },
+      "refreshToken",
+      refreshToken
     );
 
     return res
@@ -49,8 +55,44 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const logOutUser = asyncHandler(async (_: any, res: any) => {
+const signUpNewUser = asyncHandler(async (req: any, res: any) => {
+  const { firstName, lastName, email, avatar, phoneNumber } = req.body;
   try {
+    // const user = await getUserDataByEmail(email);
+    // if (!user) throw new ApiError(404, "User not found.");
+    // const { uid } = user;
+
+    const userInfo: User = {
+      fullName: `${firstName} ${lastName}`,
+      email,
+      avatar,
+      phoneNumber,
+      uid:"",
+      refreshToken: "",
+    };
+
+    await addUserToFirestore(userInfo, { privilage: "customers" });
+    return res
+      .status(201)
+      .json(
+        new ApiResponse(201, { userInfo }, "User successfully added", true)
+      );
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(400, "Error while adding new user in database.");
+  }
+});
+
+const logOutUser = asyncHandler(async (req: any, res: any) => {
+  try {
+    const user = req.user as User;
+
+    await updateUserDataInFirestore(
+      user.uid,
+      { privilage: "customers" },
+      "refreshToken",
+      ""
+    );
     return res
       .status(200)
       .clearCookie("accessToken", options)
@@ -61,4 +103,4 @@ const logOutUser = asyncHandler(async (_: any, res: any) => {
   }
 });
 
-export { loginUser, logOutUser };
+export { loginUser, logOutUser, signUpNewUser };
