@@ -16,6 +16,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
 //route handling
-app.use("/api/users", userRouter);
+app.use("/users", userRouter);
 
 export { app };

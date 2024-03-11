@@ -58,16 +58,16 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
   const { firstName, lastName, email, avatar, phoneNumber } = req.body;
   try {
-    // const user = await getUserDataByEmail(email);
-    // if (!user) throw new ApiError(404, "User not found.");
-    // const { uid } = user;
+    const user = await getUserDataByEmail(email);
+    if (!user) throw new ApiError(404, "User not found.");
+    const { uid } = user;
 
     const userInfo: User = {
       fullName: `${firstName} ${lastName}`,
       email,
       avatar,
       phoneNumber,
-      uid:"",
+      uid: uid || "",
       refreshToken: "",
     };
 
