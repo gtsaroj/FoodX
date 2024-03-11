@@ -3,15 +3,15 @@ import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../../public/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
-import { makeRequest } from "../../makeRequest";
-import { UseDispatch, useDispatch } from "react-redux";
-import { adduserDetails } from "../../Reducer/authReducer";
-import { and } from "firebase/firestore";
+import { useDispatch } from "react-redux";
 import { registerNewUser } from "../../Reducer/authActions";
 import { AppDispatch } from "../../Reducer/Store";
 import { signInUser } from "../../firebase/Authentication";
 
+
 const LoginContainer: React.FC = () => {
+
+  
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [show, setShow] = useState<boolean>(false);
@@ -33,9 +33,8 @@ const LoginContainer: React.FC = () => {
     try {
       SetDataSend(false);
       await signInUser(email, password)
-        .then(() => {
-          
-          const dispatchingloginData = dispatch(registerNewUser(email));
+        .then(async () => {
+          const dispatchingloginData = await dispatch(registerNewUser(email));
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }

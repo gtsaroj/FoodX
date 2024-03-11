@@ -5,11 +5,6 @@ export const registerNewUser = createAsyncThunk(
   "auth/register" as any,
   async (email: string, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
 
       // await makeRequest()
       //   .post("/login", { email }, config)
@@ -23,9 +18,10 @@ export const registerNewUser = createAsyncThunk(
       //   })
 
       //   .catch((err) => console.log(`error occured while rending : ${err}`));
+      const response = await makeRequest().post("/login", { email });
 
-      const response = await makeRequest().post("/login", { email }, config);
-      const responseData = response.data.data;
+      const responseData = await response.data.data;
+      console.log(responseData)
       const userToken = {
         refreshToken: responseData.refreshToken,
         accessToken: responseData.accessToken,

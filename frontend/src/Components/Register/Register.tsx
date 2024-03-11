@@ -122,7 +122,9 @@ export const Register: React.FC = () => {
         )
           .then(async () => {
             SetDataSend(false);
-            const dispatchingData = dispatch(registerNewUser(email));
+            const dispatchingData = await dispatch(
+              registerNewUser(RegisterValue.email)
+            );
 
             if (!dispatchingData) {
               throw new Error(`please enter correct email : ${error}`);

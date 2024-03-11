@@ -6,7 +6,7 @@ import { registerNewUser } from "./authActions";
 const initialState: authState = {
   error: null || [],
   loading: true || false,
-  success: true || false,
+  success: false,
   userInfo: [],
 };
 
@@ -26,7 +26,9 @@ const authSlice = createSlice({
           (state.userInfo = action.payload);
       }),
       builder.addCase(registerNewUser.rejected, (state, action) => {
-        (state.loading = false), (state.error = action.payload);
+        (state.loading = false),
+          state.success = false,
+          (state.error = action.payload);
       });
   },
 });
