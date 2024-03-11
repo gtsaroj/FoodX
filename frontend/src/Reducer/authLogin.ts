@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { makeRequest } from "../makeRequest";
-import { ValidationType } from "../models/Register.model";
 
-export const registerNewUser = createAsyncThunk(
-  "auth/register" as any,
-  async (RegisterValue: ValidationType, { rejectWithValue }) => {
+export const LoginUser = createAsyncThunk(
+  "auth/login" as any,
+  async (email: string, { rejectWithValue }) => {
     try {
+
       // await makeRequest()
       //   .post("/login", { email }, config)
       //   .then((res : any) => {
@@ -18,15 +18,7 @@ export const registerNewUser = createAsyncThunk(
       //   })
 
       //   .catch((err) => console.log(`error occured while rending : ${err}`));
-      const { firstname, lastname, email, password, avatar } = RegisterValue;
-
-      const response = await makeRequest().post("/users/signIn", {
-        firstname,
-        lastname,
-        email,
-        password,
-        avatar,
-      });
+      const response = await makeRequest().post("/users/login", { email });
 
       const responseData = await response.data.data;
       const userToken = {

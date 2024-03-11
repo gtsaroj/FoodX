@@ -31,12 +31,12 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     user.refreshToken = refreshToken;
 
     //TODO: send privilage value somehow from frontend or firebase and store accordingly.
-    await updateUserDataInFirestore(
-      user.uid,
-      { privilage: "customers" },
-      "refreshToken",
-      refreshToken
-    );
+    // await updateUserDataInFirestore(
+    //   user.uid,
+    //   { privilage: "customers" },
+    //   "refreshToken",
+    //   refreshToken
+    // );
 
     return res
       .status(200)
