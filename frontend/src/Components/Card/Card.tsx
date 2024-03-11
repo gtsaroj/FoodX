@@ -1,5 +1,5 @@
 import { ShoppingCart } from "lucide-react";
-import { addToCart } from "../../Reducer/CardReducer";
+import { addToCart } from "../../Reducer/Reducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import React from "react";

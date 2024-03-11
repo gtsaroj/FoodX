@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProductType, addToCart } from "../../Reducer/CardReducer";
+import { ProductType, addToCart } from "../../Reducer/Reducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 

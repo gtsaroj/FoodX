@@ -1,9 +1,15 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../../public/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { makeRequest } from "../../makeRequest";
+import { UseDispatch, useDispatch } from "react-redux";
+import { adduserDetails } from "../../Reducer/authReducer";
+import { and } from "firebase/firestore";
+import { registerNewUser } from "../../Reducer/authActions";
+import { AppDispatch } from "../../Reducer/Store";
+import { signInUser } from "../../firebase/Authentication";
 
 const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -19,19 +25,29 @@ const LoginContainer: React.FC = () => {
     setPasswordType(passwordType === "text" ? "password" : "text");
   };
 
+  const dispatch = useDispatch<AppDispatch>();
+
   const LoginFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
     try {
-      SetDataSend(true);
-      const sendingLoginData = await makeRequest().post("/send-form/login", {
-        email,
-        password,
-      });
       SetDataSend(false);
+      await signInUser(email, password)
+        .then(() => {
+          
+          const dispatchingloginData = dispatch(registerNewUser(email));
+          if (!dispatchingloginData) {
+            throw new Error("your password or email is invalid");
+          }
+          SetDataSend(true);
+        })
+        .catch((error) => {
+          console.log(`Error occuring while rendering : ${error}`);
+          SetDataSend(true);
+        });
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
-      SetDataSend(false);
+      SetDataSend(true);
     }
   };
 
