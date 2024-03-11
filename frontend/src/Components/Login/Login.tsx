@@ -4,13 +4,14 @@ import Logo from "../../../public/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
-import { registerNewUser } from "../../Reducer/authActions";
 import { AppDispatch } from "../../Reducer/Store";
 import { signInUser } from "../../firebase/Authentication";
+import { LoginUser } from "../../Reducer/authLogin";
+import { useNavigate } from "react-router-dom";
 
 
 const LoginContainer: React.FC = () => {
-
+ const navigate = useNavigate()
   
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -34,7 +35,7 @@ const LoginContainer: React.FC = () => {
       SetDataSend(false);
       await signInUser(email, password)
         .then(async () => {
-          const dispatchingloginData = await dispatch(registerNewUser(email));
+          const dispatchingloginData = await dispatch(LoginUser(email as string));
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }
@@ -113,7 +114,7 @@ const LoginContainer: React.FC = () => {
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
               {DataSend ? "submit" : "sending..."}
             </button>
-            <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none">
+            <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none" onClick={()=> navigate("/register")}>
               Don't have an account?{" "}
               <span className="hover:text-[var(--primary-color)]">
                 Register Here.

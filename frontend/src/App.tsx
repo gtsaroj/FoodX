@@ -8,10 +8,9 @@ import Home from "./Pages/Home/Home";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, persistor } from "./Reducer/Store";
-import { auth } from "./firebase";
-
 
 const HomePage = () => {
+  // persistor.purge();
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
@@ -31,13 +30,16 @@ const HomePage = () => {
 export const App: React.FC = () => {
   const [ShowContent, SetShowContent] = useState<boolean>(false);
 
-  const authUser = useSelector((state: RootState) => state.root.auth);
+  const loginUser = useSelector((state: RootState) => state.root.loginAuth);
+  const signin = useSelector((state: RootState) => state.root.loginAuth);
+
+  // console.log(loginUser.success)
 
 
-  console.log(authUser.success);
+  
   useEffect(() => {
-    authUser.success ? SetShowContent(true) : SetShowContent(false)
-  }, [ authUser] );
+    loginUser.success || signin.success ? SetShowContent(true) : SetShowContent(false);
+  }, [loginUser, signin ]);
 
   const router = createBrowserRouter([
     {
@@ -49,11 +51,11 @@ export const App: React.FC = () => {
           element: ShowContent ? <Home /> : <Login />,
         },
         {
-          path: "/register",
+          path: `${ShowContent ? "/" : "/register"}`,
           element: <Register />,
         },
         {
-          path: "/login",
+          path: `${ShowContent ? "/" : "/login"}`,
           element: <Login />,
         },
         {

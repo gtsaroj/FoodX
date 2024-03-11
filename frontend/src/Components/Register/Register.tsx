@@ -7,15 +7,14 @@ import React, {
 } from "react";
 import { ValidationType } from "../../models/Register.model";
 import { Eye } from "lucide-react";
-import { makeRequest } from "../../makeRequest";
 import { signUpNewUser } from "../../firebase/Authentication";
 import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
-import { AnyAction, UnknownAction } from "redux";
-import { AsyncThunkAction } from "@reduxjs/toolkit";
 import { AppDispatch } from "../../Reducer/Store";
+import { useNavigate } from "react-router-dom";
 
 export const Register: React.FC = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
     avatar: "",
@@ -114,6 +113,7 @@ export const Register: React.FC = () => {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
         const { avatar, password, email, lastname, firstname } = RegisterValue;
+        SetDataSend(false);
         await signUpNewUser(
           email,
           password,
@@ -121,9 +121,8 @@ export const Register: React.FC = () => {
           avatar
         )
           .then(async () => {
-            SetDataSend(false);
             const dispatchingData = await dispatch(
-              registerNewUser(RegisterValue.email)
+              registerNewUser(RegisterValue as ValidationType)
             );
 
             if (!dispatchingData) {
@@ -141,6 +140,8 @@ export const Register: React.FC = () => {
           .catch((error) => {
             throw new Error(`All fields are required : ${error}`);
           });
+          SetDataSend(true)
+        
       }
     } catch (error) {
       console.error(`Failed while sending form: ${error}`);
@@ -316,8 +317,11 @@ export const Register: React.FC = () => {
               {DataSend ? "submit" : "sending..."}
             </button>
           </form>
-          <h3 className="sm:text-[15px] text-[13px] font-Poppins mt-[5px]">
-            Not have an Account? <a href="">Login</a>
+          <h3
+            className="sm:text-[15px] text-[13px] font-Poppins mt-[5px] hover:underline cursor-pointer"
+            onClick={() => navigate("/login")}
+          >
+            Not have an Account? <a>SignIn</a>
           </h3>
         </div>
       </div>
