@@ -7,7 +7,9 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
+import { auth } from "./firebase";
+
 
 const HomePage = () => {
   return (
@@ -29,16 +31,13 @@ const HomePage = () => {
 export const App: React.FC = () => {
   const [ShowContent, SetShowContent] = useState<boolean>(false);
 
-  const authUser = useSelector((state: RootState) => state.auth);
+  const authUser = useSelector((state: RootState) => state.root.auth);
+
 
   console.log(authUser.success);
   useEffect(() => {
-    if (authUser.success === true) {
-      SetShowContent(true);
-    } else {
-      SetShowContent(false);
-    }
-  }, [authUser]);
+    authUser.success ? SetShowContent(true) : SetShowContent(false)
+  }, [ authUser] );
 
   const router = createBrowserRouter([
     {
@@ -47,7 +46,7 @@ export const App: React.FC = () => {
       children: [
         {
           path: "/",
-          element: ShowContent ? <Home /> : <Register />,
+          element: ShowContent ? <Home /> : <Login />,
         },
         {
           path: "/register",

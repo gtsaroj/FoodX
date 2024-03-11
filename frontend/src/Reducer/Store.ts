@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import CardReducer from "./Reducer";
 import authReducer from "./authReducer";
 import {
@@ -13,19 +13,22 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+const rootReducer = combineReducers({
+  cart: CardReducer,
+  auth: authReducer,
+});
+
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
 };
 
-const persistedCardReducer = persistReducer(persistConfig, CardReducer);
-const persistedAuthReducer = persistReducer(persistConfig, authReducer);
+const reducerPersist = persistReducer(persistConfig, rootReducer);
 
 export const Store = configureStore({
   reducer: {
-    cart: persistedCardReducer,
-    auth: persistedAuthReducer,
+    root: reducerPersist,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

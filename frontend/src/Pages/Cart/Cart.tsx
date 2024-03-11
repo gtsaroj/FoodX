@@ -33,8 +33,9 @@ const Cart: React.FC = () => {
 
 export default Cart;
 
+
 export const CartContainer: React.FC = () => {
-  const product = useSelector((state: RootState) => state.cart.products);
+  const product = useSelector((state: RootState) => state.root.cart.products);
   console.log(product);
   const demoProduct = [
     {
