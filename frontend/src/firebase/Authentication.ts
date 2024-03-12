@@ -2,10 +2,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  updatePhoneNumber,
   updateProfile,
 } from "firebase/auth";
 import { auth } from "./index";
+
 
 const signUpNewUser = async (
   firstname: string,
@@ -26,12 +26,11 @@ const signUpNewUser = async (
 
     const user = usercredentials.user;
 
-    await updateProfile(user ,{
+     await updateProfile(user ,{
       displayName: `${firstname} ${lastname}`,
       photoURL: avatar,
-    });
-    const currentUser = auth.currentUser;
-    //  await currentUser?.phoneNumber(phonenumber)
+    })
+  
   
   } catch (error) {
     throw new Error(`Error while signing new user. ${error}`);
