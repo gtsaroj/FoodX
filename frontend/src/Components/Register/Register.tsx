@@ -12,6 +12,12 @@ import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";
+import {
+  allFieldsRequired,
+  checkValidNumber,
+  validateEmail,
+  validatePasswordOnChange,
+} from "./RgisterHandler";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -20,6 +26,7 @@ export const Register: React.FC = () => {
     avatar: "",
     firstname: "",
     lastname: "",
+    phonenumber: "",
     email: "",
     password: "",
     confirmpassword: "",
@@ -54,47 +61,12 @@ export const Register: React.FC = () => {
     setSelectedImage(file);
   };
   function Validation(error: Record<string, string>) {
-    const symbols = `!@#$%^&*()<>"`;
-    const numbers = `1234567890`;
+    allFieldsRequired(RegisterValue, error);
 
-    for (const inputValue in RegisterValue) {
-      if (
-        RegisterValue.hasOwnProperty(inputValue) &&
-        RegisterValue[inputValue as keyof ValidationType] === ""
-      )
-        error[inputValue] = `* Required`;
-    }
+    validateEmail(RegisterValue, error);
+    checkValidNumber(RegisterValue, error);
+    validatePasswordOnChange(RegisterValue, error);
 
-    if (Object.keys(error).length !== 0) {
-      return error;
-    }
-
-    const regex = /^[\w-]+(\.[\w-]+) *@texascollege\.edu\.np$/;
-    if (!regex.test(RegisterValue.email)) {
-      error.email = "Not a valid  email";
-    }
-    if (
-      RegisterValue.password.charAt(0) !==
-      RegisterValue.password.charAt(0).toUpperCase()
-    ) {
-      error.password = "Password start with capital letter";
-    }
-    if (RegisterValue.password.length < 8) {
-      error.password = "Password atleast contains 8 characters";
-    }
-    if (
-      !symbols
-        .split("")
-        .some((symbol) => RegisterValue.password.includes(symbol)) &&
-      !numbers
-        .split("")
-        .some((number) => RegisterValue.password.includes(number))
-    ) {
-      error.password = "password should atleast contains numbers or symbols";
-    }
-    if (RegisterValue.password !== RegisterValue.confirmpassword) {
-      error.password = "password does not match";
-    }
     if (Object.keys(error).length === 0) {
       return null;
     } else {
@@ -112,43 +84,40 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastname, firstname } = RegisterValue;
+        const { avatar, password, email, lastname, firstname, phonenumber } =
+          RegisterValue;
         SetDataSend(false);
         await signUpNewUser(
+          firstname,
+          lastname,
+          phonenumber as string | null,
           email,
           password,
-          `${firstname + " " + lastname}`,
           avatar
-        )
-          .then(async () => {
-            const dispatchingData = await dispatch(
-              registerNewUser(RegisterValue as ValidationType)
-            );
+        );
 
-            if (!dispatchingData) {
-              throw new Error(`please enter correct email : ${error}`);
-            }
-            RegisterValue.avatar = "";
-            RegisterValue.firstname = "";
-            RegisterValue.lastname = "";
-            RegisterValue.password = "";
-            RegisterValue.confirmpassword = "";
-            RegisterValue.email = "";
-            SetDataSend(true);
-          })
+        const dispatchingData = await dispatch(
+          registerNewUser(RegisterValue as ValidationType)
+        );
 
-          .catch((error) => {
-            throw new Error(`All fields are required : ${error}`);
-          });
-          SetDataSend(true)
-        
+        if (!dispatchingData) {
+          throw new Error(`Error while sending form : ${error}`);
+        }
+        RegisterValue.avatar = "";
+        RegisterValue.firstname = "";
+        RegisterValue.lastname = "";
+        RegisterValue.password = "";
+        RegisterValue.confirmpassword = "";
+        RegisterValue.email = "";
+        (RegisterValue.phonenumber = ""), SetDataSend(true);
+
+        SetDataSend(true);
       }
     } catch (error) {
-      console.error(`Failed while sending form: ${error}`);
+      console.error(` line : 151 => ${error}`);
       SetDataSend(true);
     }
   };
-  console.log(ValidateError);
 
   return (
     <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center justify-around  sm:justify-between lg:px-[150px] lg:py-[50px] md:py-[5px]">
@@ -252,6 +221,27 @@ export const Register: React.FC = () => {
               {ValidateError["email"] && (
                 <div className="text-[12px] text-[#af2e2e] flex flex-col ">
                   {ValidateError["email"]}
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col h-[65px] lg:h-[73px]  items-start ">
+              phoneNumber
+              <label
+                htmlFor="phonenumber"
+                className="font-Poppins text-[15px]"
+              ></label>
+              <input
+                type="text"
+                id="text"
+                value={RegisterValue.phonenumber}
+                onChange={(e) =>
+                  handleInputChange(e, "phonenumber" as keyof ValidationType)
+                }
+                className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
+              />
+              {ValidateError["email"] && (
+                <div className="text-[12px] text-[#af2e2e] flex flex-col ">
+                  {ValidateError["number"]}
                 </div>
               )}
             </div>

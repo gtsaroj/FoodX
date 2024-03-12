@@ -3,6 +3,7 @@ export interface ValidationType {
   firstname: string;
   lastname: string;
   email: string;
+  phonenumber: string,
   password: string;
   confirmpassword: string;
 }
