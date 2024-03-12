@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { makeRequest } from "../makeRequest";
 import { ValidationType } from "../models/Register.model";
+import Cookies from "js-cookie";
 
 export const registerNewUser = createAsyncThunk(
   "auth/register" as any,
@@ -18,22 +19,27 @@ export const registerNewUser = createAsyncThunk(
       //   })
 
       //   .catch((err) => console.log(`error occured while rending : ${err}`));
-      const { firstname, lastname, email, password, avatar } = RegisterValue;
+      const { firstname, lastname, email, password, avatar, phonenumber } =
+        RegisterValue;
 
       const response = await makeRequest().post("/users/signIn", {
         firstname,
         lastname,
+        phonenumber,
         email,
         password,
         avatar,
       });
 
       const responseData = await response.data.data;
-      const userToken = {
-        refreshToken: responseData.refreshToken,
-        accessToken: responseData.accessToken,
-      };
-      localStorage.setItem("userToken", JSON.stringify(userToken));
+      Cookies.set("refreshToken", responseData.refreshToken, {
+        expires: 7,
+        secure: true,
+     });
+      Cookies.set("accessToken", responseData.accessToken, {
+        expires: 7,
+        secure : true,
+      })
       return responseData.user;
     } catch (error: any) {
       if (error.response && error.response.data.message) {

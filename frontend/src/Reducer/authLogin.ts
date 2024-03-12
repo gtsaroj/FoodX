@@ -1,11 +1,12 @@
+import Cookies from "js-cookie";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { makeRequest } from "../makeRequest";
+import { json } from "react-router-dom";
 
 export const LoginUser = createAsyncThunk(
   "auth/login" as any,
   async (email: string, { rejectWithValue }) => {
     try {
-
       // await makeRequest()
       //   .post("/login", { email }, config)
       //   .then((res : any) => {
@@ -21,11 +22,14 @@ export const LoginUser = createAsyncThunk(
       const response = await makeRequest().post("/users/login", { email });
 
       const responseData = await response.data.data;
-      const userToken = {
-        refreshToken: responseData.refreshToken,
-        accessToken: responseData.accessToken,
-      };
-      localStorage.setItem("userToken", JSON.stringify(userToken));
+     Cookies.set("refreshToken", responseData.refreshToken, {
+        expires: 7,
+        secure: true,
+     });
+      Cookies.set("accessToken", responseData.accessToken, {
+        expires: 7,
+        secure : true,
+      })
       return responseData.user;
     } catch (error: any) {
       if (error.response && error.response.data.message) {
