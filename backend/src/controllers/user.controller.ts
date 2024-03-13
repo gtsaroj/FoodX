@@ -1,10 +1,14 @@
-import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
+import jwt from "jsonwebtoken";
+import {
+  getUserDataByEmail,
+  getUserDataById,
+} from "../firebase/auth/Authentication.js";
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
-import { User } from "../models/user.model.js";
+import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -72,8 +76,6 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       refreshToken: "",
     };
 
-    console.log(userInfo);
-
     await addUserToFirestore(userInfo, { privilage: "customers" });
     return res
       .status(201)
@@ -106,4 +108,41 @@ const logOutUser = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-export { loginUser, logOutUser, signUpNewUser };
+const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
+  const incomingRefreshToken =
+    req.cokkies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
+
+  try {
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET as string
+    ) as DecodeToken;
+    const user = await getUserDataById(decodedToken.uid);
+    if (!user) throw new ApiError(401, "Invalid token");
+
+    if (incomingRefreshToken !== user.refreshToken)
+      throw new ApiError(401, "Refresh token is expired or used");
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateAccessAndRefreshToken(user.uid);
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken)
+      .cookie("refreshToken", newRefreshToken)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "Access Token refreshed",
+          true
+        )
+      );
+  } catch (error) {
+    throw new ApiError(400, "Error  on refreshing the Access Token");
+  }
+});
+
+export { loginUser, logOutUser, signUpNewUser, refreshAccessToken };

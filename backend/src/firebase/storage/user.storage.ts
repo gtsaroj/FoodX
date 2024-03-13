@@ -10,12 +10,9 @@ const uploadImageToFirebase = async (filePath: string) => {
     };
 
     const [uploadedData] = await bucket.upload(filePath, metaData);
-    console.log(uploadedData);
-    console.log("File uploaded", [uploadedData.name])
     return `${uploadedData}`;
   } catch (error) {
     fs.unlinkSync(filePath);
-    console.log(error);
     throw new ApiError(400, "Unable to upload image.");
   }
 };
