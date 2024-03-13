@@ -13,7 +13,6 @@ import {
 } from "./RgisterHandler";
 import { allFieldsRequired } from "./RgisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
-import { ImageFolders } from "../../models/UserModels";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -79,21 +78,23 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-   
-        const { avatar  , password, email, lastName, firstName } = RegisterValue;
-        const imageUrl = await storeImageInFirebase(avatar, { folder: "users" });
+        const { avatar, password, email, lastName, firstName, phoneNumber } =
+          RegisterValue;
+        const imageUrl = await storeImageInFirebase(avatar, {
+          folder: "users",
+        });
 
         const ConvertedForm = {
           firstName,
           lastName,
+          phoneNumber,
           email,
           password,
-          avatar : imageUrl
-        }
-        
-        
+          avatar: imageUrl,
+        };
+
         SetDataSend(false);
-      
+
         await signUpNewUser(firstName, lastName, email, password, imageUrl);
 
         const dispatchingData = await dispatch(
@@ -227,7 +228,7 @@ export const Register: React.FC = () => {
             <div className="flex flex-col h-[65px] lg:h-[73px]  items-start ">
               phoneNumber
               <label
-                htmlFor="phonenumber"
+                htmlFor="phoneNumber"
                 className="font-Poppins text-[15px]"
               ></label>
               <input

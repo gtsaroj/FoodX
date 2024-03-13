@@ -58,7 +58,6 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
   const { firstName, lastName, email, avatar, phoneNumber } = req.body;
 
-
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
@@ -73,7 +72,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       refreshToken: "",
     };
 
-    console.log(userInfo)
+    console.log(userInfo);
 
     await addUserToFirestore(userInfo, { privilage: "customers" });
     return res

@@ -24,10 +24,10 @@ export const registerNewUser = createAsyncThunk(
       const response = await makeRequest().post("/users/signIn", {
         firstName,
         lastName,
-        phoneNumber: phoneNumber || "",
+        phoneNumber,
         email,
         password,
-        avatar: avatar || "",
+        avatar,
       });
 
       const responseData = response.data.data;
