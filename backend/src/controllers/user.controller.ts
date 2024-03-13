@@ -31,12 +31,12 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     user.refreshToken = refreshToken;
 
     //TODO: send privilage value somehow from frontend or firebase and store accordingly.
-    // await updateUserDataInFirestore(
-    //   user.uid,
-    //   { privilage: "customers" },
-    //   "refreshToken",
-    //   refreshToken
-    // );
+    await updateUserDataInFirestore(
+      user.uid,
+      { privilage: "customers" },
+      "refreshToken",
+      refreshToken
+    );
 
     return res
       .status(200)
@@ -56,24 +56,24 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 });
 
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
-  const { firstName, lastName, email, phoneNumber } = req.body;
+  const { firstName, lastName, email, avatar, phoneNumber } = req.body;
+
+
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
     const { uid } = user;
-    const refreshToken = "";
-    const avatarPath = req.files?.avatar[0].path;
-    if (!avatarPath) throw new ApiError(404, "Avatar not found.");
 
-    console.log(avatarPath.url);
     const userInfo: User = {
       fullName: `${firstName} ${lastName}`,
       email,
-      avatar: avatarPath.url,
-      phoneNumber: phoneNumber || "",
-      uid,
-      refreshToken,
+      avatar,
+      phoneNumber,
+      uid: uid || "",
+      refreshToken: "",
     };
+
+    
 
     await addUserToFirestore(userInfo, { privilage: "customers" });
     return res

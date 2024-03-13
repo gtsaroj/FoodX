@@ -1,9 +1,9 @@
 export interface ValidationType {
-  avatar: string;
-  firstname: string;
-  lastname: string;
+  avatar: any;
+  firstName: string;
+  lastName: string;
   email: string;
-  phonenumber: string,
+  phoneNumber: string,
   password: string;
   confirmpassword: string;
 }

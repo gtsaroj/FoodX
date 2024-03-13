@@ -1,10 +1,4 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  LegacyRef,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
 import { Eye } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
@@ -13,24 +7,27 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";
 import {
-  allFieldsRequired,
   checkValidNumber,
   validateEmail,
   validatePasswordOnChange,
 } from "./RgisterHandler";
+import { allFieldsRequired } from "./RgisterHandler";
+import { storeImageInFirebase } from "../../firebase/storage";
+import { ImageFolders } from "../../models/UserModels";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
     avatar: "",
-    firstname: "",
-    lastname: "",
-    phonenumber: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
     email: "",
     password: "",
     confirmpassword: "",
   });
+
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
   );
@@ -56,13 +53,11 @@ export const Register: React.FC = () => {
       throw new Error("Uploading failed...");
     }
     const file = event.target.files[0];
-    const FileUrl = URL.createObjectURL(file);
-    setRegisterValue({ ...RegisterValue, avatar: FileUrl });
+    setRegisterValue({ ...RegisterValue, avatar: file.name });
     setSelectedImage(file);
   };
   function Validation(error: Record<string, string>) {
     allFieldsRequired(RegisterValue, error);
-
     validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
     validatePasswordOnChange(RegisterValue, error);
@@ -84,32 +79,37 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastname, firstname, phonenumber } =
-          RegisterValue;
-        SetDataSend(false);
-        await signUpNewUser(
-          firstname,
-          lastname,
-          phonenumber as string | null,
+   
+        const { avatar  , password, email, lastName, firstName } = RegisterValue;
+        const imageUrl = await storeImageInFirebase(avatar, { folder: "users" });
+
+        const ConvertedForm = {
+          firstName,
+          lastName,
           email,
           password,
-          avatar
-        );
+          avatar : imageUrl
+        }
+        
+        
+        SetDataSend(false);
+      
+        await signUpNewUser(firstName, lastName, email, password, imageUrl);
 
         const dispatchingData = await dispatch(
-          registerNewUser(RegisterValue as ValidationType)
+          registerNewUser(ConvertedForm as ValidationType)
         );
 
         if (!dispatchingData) {
           throw new Error(`Error while sending form : ${error}`);
         }
         RegisterValue.avatar = "";
-        RegisterValue.firstname = "";
-        RegisterValue.lastname = "";
+        RegisterValue.firstName = "";
+        RegisterValue.lastName = "";
         RegisterValue.password = "";
         RegisterValue.confirmpassword = "";
         RegisterValue.email = "";
-        (RegisterValue.phonenumber = ""), SetDataSend(true);
+        (RegisterValue.phoneNumber = ""), SetDataSend(true);
 
         SetDataSend(true);
       }
@@ -163,7 +163,7 @@ export const Register: React.FC = () => {
                 type="file"
                 accept="image/*"
                 className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none  hidden"
-                ref={Ref as LegacyRef<HTMLInputElement>}
+                ref={Ref as any}
                 onChange={imageChange}
               />
               <button
@@ -175,11 +175,11 @@ export const Register: React.FC = () => {
             </div>
             <div className="flex items-center gap-[10px] justify-between w-full">
               <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["firstname"]}>firstname</label>
+                <label htmlFor={RegisterValue["firstName"]}>firstname</label>
                 <input
                   type="text"
-                  value={RegisterValue["firstname"]}
-                  onChange={(e) => handleInputChange(e, "firstname")}
+                  value={RegisterValue["firstName"]}
+                  onChange={(e) => handleInputChange(e, "firstName")}
                   className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {
@@ -189,11 +189,11 @@ export const Register: React.FC = () => {
                 }
               </div>
               <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["lastname"]}>lastname</label>
+                <label htmlFor={RegisterValue["lastName"]}>lastname</label>
                 <input
                   type="text"
-                  value={RegisterValue["lastname"]}
-                  onChange={(e) => handleInputChange(e, "lastname")}
+                  value={RegisterValue["lastName"]}
+                  onChange={(e) => handleInputChange(e, "lastName")}
                   className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {ValidateError && (
@@ -233,9 +233,9 @@ export const Register: React.FC = () => {
               <input
                 type="text"
                 id="text"
-                value={RegisterValue.phonenumber}
+                value={RegisterValue.phoneNumber}
                 onChange={(e) =>
-                  handleInputChange(e, "phonenumber" as keyof ValidationType)
+                  handleInputChange(e, "phoneNumber" as keyof ValidationType)
                 }
                 className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
               />

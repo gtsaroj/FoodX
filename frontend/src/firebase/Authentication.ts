@@ -9,7 +9,6 @@ import { auth } from "./index";
 const signUpNewUser = async (
   firstname: string,
   lastname: string,
-  phonenumber: string | null,
   email: string,
   password: string,
   avatar: string

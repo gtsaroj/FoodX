@@ -7,7 +7,7 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 
 const HomePage = () => {
@@ -28,9 +28,11 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
+
+  // persistor.purge()
   const [ShowContent, SetShowContent] = useState<boolean>(true);
   const loginUser = useSelector((state: RootState) => state.root.loginAuth);
-  const signin = useSelector((state: RootState) => state.root.loginAuth);
+  const signin = useSelector((state: RootState) => state.root.signinAuth);
 
   useEffect(() => {
     loginUser.success || signin.success
