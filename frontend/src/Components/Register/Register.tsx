@@ -78,8 +78,8 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastName, firstName } = RegisterValue;
-        console.log(avatar);
+        const { avatar, password, email, lastName, firstName, phoneNumber } =
+          RegisterValue;
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",
         });
@@ -87,6 +87,7 @@ export const Register: React.FC = () => {
         const ConvertedForm = {
           firstName,
           lastName,
+          phoneNumber,
           email,
           password,
           avatar: imageUrl,
@@ -227,7 +228,7 @@ export const Register: React.FC = () => {
             <div className="flex flex-col h-[65px] lg:h-[73px]  items-start ">
               phoneNumber
               <label
-                htmlFor="phonenumber"
+                htmlFor="phoneNumber"
                 className="font-Poppins text-[15px]"
               ></label>
               <input
