@@ -13,7 +13,6 @@ import {
 } from "./RgisterHandler";
 import { allFieldsRequired } from "./RgisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
-import { ImageFolders } from "../../models/UserModels";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -53,7 +52,7 @@ export const Register: React.FC = () => {
       throw new Error("Uploading failed...");
     }
     const file = event.target.files[0];
-    setRegisterValue({ ...RegisterValue, avatar: file.name });
+    setRegisterValue({ ...RegisterValue, avatar: file });
     setSelectedImage(file);
   };
   function Validation(error: Record<string, string>) {
@@ -79,21 +78,22 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-   
-        const { avatar  , password, email, lastName, firstName } = RegisterValue;
-        const imageUrl = await storeImageInFirebase(avatar, { folder: "users" });
+        const { avatar, password, email, lastName, firstName } = RegisterValue;
+        console.log(avatar);
+        const imageUrl = await storeImageInFirebase(avatar, {
+          folder: "users",
+        });
 
         const ConvertedForm = {
           firstName,
           lastName,
           email,
           password,
-          avatar : imageUrl
-        }
-        
-        
+          avatar: imageUrl,
+        };
+
         SetDataSend(false);
-      
+
         await signUpNewUser(firstName, lastName, email, password, imageUrl);
 
         const dispatchingData = await dispatch(
