@@ -14,6 +14,7 @@ import {
   deleteUserFromFireStore,
   updateUserDataInFirestore,
 } from "./firebase/db/user.firestore.js";
+import { uploadImageToFirebase } from "./firebase/storage/user.storage.js";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -65,3 +66,5 @@ const data: User = {
 // const uid = await createUser(data);
 // console.log(userId);
 // console.log(uid);
+
+// await uploadImageToFirebase("../public/uploads/calculator.png");

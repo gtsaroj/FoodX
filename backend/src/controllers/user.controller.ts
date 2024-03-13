@@ -56,19 +56,23 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 });
 
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
-  const { firstName, lastName, email, avatar, phoneNumber } = req.body;
+  const { firstName, lastName, email, phoneNumber } = req.body;
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
     const { uid } = user;
+    const refreshToken = "";
+    const avatarPath = req.files?.avatar[0].path;
+    if (!avatarPath) throw new ApiError(404, "Avatar not found.");
 
+    console.log(avatarPath.url);
     const userInfo: User = {
       fullName: `${firstName} ${lastName}`,
       email,
-      avatar,
-      phoneNumber,
-      uid: uid || "",
-      refreshToken: "",
+      avatar: avatarPath.url,
+      phoneNumber: phoneNumber || "",
+      uid,
+      refreshToken,
     };
 
     await addUserToFirestore(userInfo, { privilage: "customers" });
