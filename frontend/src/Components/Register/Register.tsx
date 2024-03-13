@@ -53,7 +53,7 @@ export const Register: React.FC = () => {
       throw new Error("Uploading failed...");
     }
     const file = event.target.files[0];
-    setRegisterValue({ ...RegisterValue, avatar: file.name });
+    setRegisterValue({ ...RegisterValue, avatar: file });
     setSelectedImage(file);
   };
   function Validation(error: Record<string, string>) {

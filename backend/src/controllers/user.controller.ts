@@ -73,7 +73,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       refreshToken: "",
     };
 
-    
+    console.log(userInfo)
 
     await addUserToFirestore(userInfo, { privilage: "customers" });
     return res
