@@ -64,7 +64,7 @@ export const checkValidNumber = (
   registervalue: ValidationType,
   error: Record<string, string>
 ) => {
-  if (registervalue.phonenumber.length < 10) {
-    return (error.number = "invalid number");
-  }
+  // if (registervalue.phonenumber.length < 10) {
+  //   return (error.number = "invalid number");
+  // }
 };

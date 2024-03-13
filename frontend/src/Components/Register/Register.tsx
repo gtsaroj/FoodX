@@ -1,7 +1,6 @@
 import React, {
   ChangeEvent,
   FormEvent,
-  LegacyRef,
   useRef,
   useState,
 } from "react";
@@ -13,7 +12,6 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";
 import {
-  allFieldsRequired,
   checkValidNumber,
   validateEmail,
   validatePasswordOnChange,
@@ -24,13 +22,15 @@ export const Register: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
     avatar: "",
-    firstname: "",
-    lastname: "",
-    phonenumber: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
     email: "",
     password: "",
     confirmpassword: "",
   });
+
+  console.log(RegisterValue.avatar);
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
   );
@@ -51,17 +51,19 @@ export const Register: React.FC = () => {
     setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
 
-  const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files) {
-      throw new Error("Uploading failed...");
-    }
-    const file = event.target.files[0];
-    const FileUrl = URL.createObjectURL(file);
-    setRegisterValue({ ...RegisterValue, avatar: FileUrl });
-    setSelectedImage(file);
-  };
+  // const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   if (!event.target.files) {
+  //     throw new Error("Uploading failed...");
+  //   }
+  //   const file = event.target.files[0];
+  //   const FileUrl = new URL(file as any)
+  //   console.log(FileUrl)
+
+  //   setRegisterValue({ ...RegisterValue, avatar: file });
+  //   setSelectedImage(file);
+  // };
   function Validation(error: Record<string, string>) {
-    allFieldsRequired(RegisterValue, error);
+    // allFieldsRequired(RegisterValue, error);
 
     validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
@@ -84,13 +86,12 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastname, firstname, phonenumber } =
+        const { avatar, password, email, lastName, firstName } =
           RegisterValue;
         SetDataSend(false);
         await signUpNewUser(
-          firstname,
-          lastname,
-          phonenumber as string | null,
+          firstName,
+          lastName,
           email,
           password,
           avatar
@@ -104,12 +105,12 @@ export const Register: React.FC = () => {
           throw new Error(`Error while sending form : ${error}`);
         }
         RegisterValue.avatar = "";
-        RegisterValue.firstname = "";
-        RegisterValue.lastname = "";
+        RegisterValue.firstName = "";
+        RegisterValue.lastName = "";
         RegisterValue.password = "";
         RegisterValue.confirmpassword = "";
         RegisterValue.email = "";
-        (RegisterValue.phonenumber = ""), SetDataSend(true);
+        (RegisterValue.phoneNumber = ""), SetDataSend(true);
 
         SetDataSend(true);
       }
@@ -140,7 +141,7 @@ export const Register: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center  gap-[7px]  sm:items-center w-full"
           >
-            <div className="flex flex-col items-center justify-center gap-1">
+            {/* <div className="flex flex-col items-center justify-center gap-1">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
@@ -172,14 +173,14 @@ export const Register: React.FC = () => {
               >
                 select image
               </button>
-            </div>
+            </div> */}
             <div className="flex items-center gap-[10px] justify-between w-full">
               <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["firstname"]}>firstname</label>
+                <label htmlFor={RegisterValue["firstName"]}>firstname</label>
                 <input
                   type="text"
-                  value={RegisterValue["firstname"]}
-                  onChange={(e) => handleInputChange(e, "firstname")}
+                  value={RegisterValue["firstName"]}
+                  onChange={(e) => handleInputChange(e, "firstName")}
                   className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {
@@ -189,11 +190,11 @@ export const Register: React.FC = () => {
                 }
               </div>
               <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["lastname"]}>lastname</label>
+                <label htmlFor={RegisterValue["lastName"]}>lastname</label>
                 <input
                   type="text"
-                  value={RegisterValue["lastname"]}
-                  onChange={(e) => handleInputChange(e, "lastname")}
+                  value={RegisterValue["lastName"]}
+                  onChange={(e) => handleInputChange(e, "lastName")}
                   className="w-[150px] outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px]"
                 />
                 {ValidateError && (
@@ -233,9 +234,9 @@ export const Register: React.FC = () => {
               <input
                 type="text"
                 id="text"
-                value={RegisterValue.phonenumber}
+                value={RegisterValue.phoneNumber}
                 onChange={(e) =>
-                  handleInputChange(e, "phonenumber" as keyof ValidationType)
+                  handleInputChange(e, "phoneNumber" as keyof ValidationType)
                 }
                 className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-[300px] "
               />
