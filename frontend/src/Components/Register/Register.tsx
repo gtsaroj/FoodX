@@ -1,9 +1,4 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
 import { Eye } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
@@ -16,6 +11,9 @@ import {
   validateEmail,
   validatePasswordOnChange,
 } from "./RgisterHandler";
+import { allFieldsRequired } from "./RgisterHandler";
+import { storeImageInFirebase } from "../../firebase/storage";
+import { ImageFolders } from "../../models/UserModels";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +28,6 @@ export const Register: React.FC = () => {
     confirmpassword: "",
   });
 
-  console.log(RegisterValue.avatar);
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
   );
@@ -51,20 +48,16 @@ export const Register: React.FC = () => {
     setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
 
-  // const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
-  //   if (!event.target.files) {
-  //     throw new Error("Uploading failed...");
-  //   }
-  //   const file = event.target.files[0];
-  //   const FileUrl = new URL(file as any)
-  //   console.log(FileUrl)
-
-  //   setRegisterValue({ ...RegisterValue, avatar: file });
-  //   setSelectedImage(file);
-  // };
+  const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) {
+      throw new Error("Uploading failed...");
+    }
+    const file = event.target.files[0];
+    setRegisterValue({ ...RegisterValue, avatar: file.name });
+    setSelectedImage(file);
+  };
   function Validation(error: Record<string, string>) {
-    // allFieldsRequired(RegisterValue, error);
-
+    allFieldsRequired(RegisterValue, error);
     validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
     validatePasswordOnChange(RegisterValue, error);
@@ -86,19 +79,25 @@ export const Register: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastName, firstName } =
-          RegisterValue;
-        SetDataSend(false);
-        await signUpNewUser(
+   
+        const { avatar  , password, email, lastName, firstName } = RegisterValue;
+        const imageUrl = await storeImageInFirebase(avatar, { folder: "users" });
+
+        const ConvertedForm = {
           firstName,
           lastName,
           email,
           password,
-          avatar
-        );
+          avatar : imageUrl
+        }
+        
+        
+        SetDataSend(false);
+      
+        await signUpNewUser(firstName, lastName, email, password, imageUrl);
 
         const dispatchingData = await dispatch(
-          registerNewUser(RegisterValue as ValidationType)
+          registerNewUser(ConvertedForm as ValidationType)
         );
 
         if (!dispatchingData) {
@@ -141,7 +140,7 @@ export const Register: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center  gap-[7px]  sm:items-center w-full"
           >
-            {/* <div className="flex flex-col items-center justify-center gap-1">
+            <div className="flex flex-col items-center justify-center gap-1">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
@@ -164,7 +163,7 @@ export const Register: React.FC = () => {
                 type="file"
                 accept="image/*"
                 className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none  hidden"
-                ref={Ref as LegacyRef<HTMLInputElement>}
+                ref={Ref as any}
                 onChange={imageChange}
               />
               <button
@@ -173,7 +172,7 @@ export const Register: React.FC = () => {
               >
                 select image
               </button>
-            </div> */}
+            </div>
             <div className="flex items-center gap-[10px] justify-between w-full">
               <div className="flex flex-col items-start h-[65px] lg:h-[73px]">
                 <label htmlFor={RegisterValue["firstName"]}>firstname</label>
