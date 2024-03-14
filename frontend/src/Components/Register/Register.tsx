@@ -1,18 +1,17 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
-import { Eye } from "lucide-react";
+import { Eye, User } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
 import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";
-import {
-  checkValidNumber,
-  validateEmail,
-  validatePasswordOnChange,
-} from "./RgisterHandler";
+import { checkValidNumber, validateEmail, validatePasswordOnChange } from "./RgisterHandler";
 import { allFieldsRequired } from "./RgisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
+import { emailVerification } from "../../firebase/utils";
+import firebase from "firebase/compat/app";
+import { auth } from "../../firebase";
 
 export const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -80,6 +79,7 @@ export const Register: React.FC = () => {
       if (validatedRegister === null || undefined) {
         const { avatar, password, email, lastName, firstName, phoneNumber } =
           RegisterValue;
+        SetDataSend(false);
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",
         });
@@ -93,9 +93,14 @@ export const Register: React.FC = () => {
           avatar: imageUrl,
         };
 
-        SetDataSend(false);
-
         await signUpNewUser(firstName, lastName, email, password, imageUrl);
+
+        await emailVerification();
+
+        const currentUser = auth.currentUser;
+        if (!currentUser?.emailVerified) {
+          return navigate("/email-verification");
+        }
 
         const dispatchingData = await dispatch(
           registerNewUser(ConvertedForm as ValidationType)

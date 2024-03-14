@@ -28,7 +28,8 @@ export const LoginUser = createAsyncThunk(
      });
       Cookies.set("accessToken", responseData.accessToken, {
         expires: 7,
-        secure : true,
+        secure: true,
+    
       })
       return responseData.user;
     } catch (error: any) {

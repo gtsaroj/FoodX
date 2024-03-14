@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import CardReducer from "./Reducer";
-import { registerSlice, loginSlice } from "./authReducer";
 import {
   persistStore,
   persistReducer,
@@ -12,6 +11,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import authReducer from "./authReducer";
 
 // const loginRoot = combineReducers({
 //   authRegister: registerSlice,
@@ -19,9 +19,8 @@ import storage from "redux-persist/lib/storage";
 // });
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   cart: CardReducer,
-  loginAuth: loginSlice,
-  signinAuth: registerSlice,
 });
 
 const persistConfig = {

@@ -7,8 +7,8 @@ import {
 import { auth } from "./index";
 
 const signUpNewUser = async (
-  firstname: string,
-  lastname: string,
+  firstName: string,
+  lastName: string,
   email: string,
   password: string,
   avatar: string
@@ -25,7 +25,7 @@ const signUpNewUser = async (
     const user = usercredentials.user;
 
     await updateProfile(user, {
-      displayName: `${firstname} ${lastname}`,
+      displayName: `${firstName} ${lastName}`,
       photoURL: avatar,
     });
   } catch (error) {
