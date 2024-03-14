@@ -48,7 +48,6 @@ const updateUserDataInFirestore = async (
   field: keyof User,
   data: string
 ) => {
-  console.log(uid);
   if (!uid) throw new ApiError(400, "UID is required to update user.");
   const customerDocRef = db.collection("users").doc(access.privilage);
   try {

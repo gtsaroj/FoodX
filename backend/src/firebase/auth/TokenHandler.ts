@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../../utils/ApiError.js";
 import { getUserDataById } from "./Authentication.js";
+import { updateUserDataInFirestore } from "../db/user.firestore.js";
 
 export const getAccessToken = async (uid: string) => {
   try {
@@ -39,6 +40,14 @@ export const generateAccessAndRefreshToken = async (uid: string) => {
   try {
     const accessToken = await getAccessToken(uid);
     const refreshToken = await getRefreshtoken(uid);
+    const user = await getUserDataById(uid);
+    user.refreshToken = refreshToken;
+    await updateUserDataInFirestore(
+      uid,
+      { privilage: "customers" },
+      "refreshToken",
+      refreshToken
+    );
 
     return { accessToken, refreshToken };
   } catch (error) {
