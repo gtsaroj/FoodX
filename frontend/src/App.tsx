@@ -12,7 +12,7 @@ import PrivateRoute from "./PrivateRoute";
 
 const HomePage = () => {
 
-  persistor.purge()
+  // persistor.purge()
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">

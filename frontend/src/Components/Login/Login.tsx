@@ -8,6 +8,7 @@ import { AppDispatch } from "../../Reducer/Store";
 import { signInUser } from "../../firebase/Authentication";
 import { LoginUser } from "../../Reducer/authLogin";
 import { useNavigate } from "react-router-dom";
+import { Ban } from "lucide-react";
 
 
 const LoginContainer: React.FC = () => {
@@ -19,7 +20,8 @@ const LoginContainer: React.FC = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [DataSend, SetDataSend] = useState<boolean>(true);
+  const [dataSend, setDataSend] = useState<boolean>(true);
+  const [errorContainer, setErrorContainer] = useState<string>("")
 
   const showPassword = () => {
     setShow((show) => !show);
@@ -32,31 +34,34 @@ const LoginContainer: React.FC = () => {
     event.preventDefault();
 
     try {
-      SetDataSend(false);
+      setDataSend(false);
       await signInUser(email, password)
         .then(async () => {
           const dispatchingloginData = await dispatch(LoginUser(email as string));
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }
-          SetDataSend(true);
+          setDataSend(true);
         })
         .catch((error) => {
+          setErrorContainer("Invalid email or password")
           console.log(`Error occuring while rendering : ${error}`);
-          SetDataSend(true);
+          setDataSend(true);
         });
     } catch (error) {
+      
       console.error(`Error occuring while sending form : ${error}`);
-      SetDataSend(true);
+      setDataSend(true);
     }
   };
 
   return (
     <div className="flex items-center justify-center w-full h-full px-5 py-8">
       <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
-        <div className="w-full px-5 py-6 text-5xl font-bold text-[var(--primary-color)] tracking-wide text-center">
+        <div className="w-full flex flex-col items-center gap-3 px-5 py-6 text-5xl font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1 className="md:hidden">Login</h1>
           <h1 className="hidden md:block">Login with Email</h1>
+     { errorContainer?.length > 0 ? <div className=" bg-[var(--light-foreground)] px-5 py-3 border-[1px] border-[red] rounded-sm text-red-600 flex items-center justify-center gap-2 text-[15px]"> <Ban className="w-[16px] h-[16px]"/> <h1 className="text-[15px] font-normal">Invalid email or password</h1> </div> : "" } 
         </div>
         <div className="px-3 py-4">
           <form className="flex flex-col gap-4 p-2" onSubmit={LoginFormSubmit}>
@@ -112,7 +117,7 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              {DataSend ? "submit" : "sending..."}
+              {dataSend ? "submit" : "sending..."}
             </button>
             <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none" onClick={()=> navigate("/register")}>
               Don't have an account?{" "}
