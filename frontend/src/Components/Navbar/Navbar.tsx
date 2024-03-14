@@ -8,6 +8,12 @@ import {
   UserCircleIcon,
   X,
 } from "lucide-react";
+import { signOutUser } from "../../firebase/Authentication";
+import { useDispatch } from "react-redux";
+import { authLogout } from "../../Reducer/authReducer";
+import { makeRequest } from "../../makeRequest";
+import Cookies from "js-cookie";
+
 const navbarItems = [
   {
     name: "Home",
@@ -28,6 +34,15 @@ export const Navbar: React.FC = () => {
   const [search, setSearch] = useState<boolean>(false);
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    await signOutUser();
+    await makeRequest().post("/users/logout");
+    dispatch(authLogout());
+    Cookies.remove("accessToken");
+    Cookies.remove("accessToken");
+  };
   return (
     <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">
       {/* Logo */}
@@ -62,6 +77,12 @@ export const Navbar: React.FC = () => {
       {/*  */}
       <div className="h-full  flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full space-x-3 place-items-center">
+          <button
+            onClick={handleLogout}
+            className="text-[15px] px-7 py-2 rounded-sm font-semibold bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)]"
+          >
+            logout
+          </button>
           <div className="flex items-center justify-center shrink-0">
             <Search
               onClick={() => setSearch((search) => !search)}

@@ -9,10 +9,9 @@ import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
+import VerificationPage from "./Components/VericationPage/VerificationPage";
 
 const HomePage = () => {
-
-  // persistor.purge()
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
@@ -30,17 +29,13 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
-
   // persistor.purge()
   const [ShowContent, SetShowContent] = useState<boolean>(true);
-  const loginUser = useSelector((state: RootState) => state.root.loginAuth);
-  const signin = useSelector((state: RootState) => state.root.signinAuth);
+  const auth = useSelector((state: RootState) => state.root.auth);
 
   useEffect(() => {
-    loginUser.success || signin.success
-      ? SetShowContent(true)
-      : SetShowContent(false);
-  }, [loginUser, signin]);
+    auth.success ? SetShowContent(true) : SetShowContent(false);
+  }, [auth]);
   return (
     <BrowserRouter>
       <Routes>
@@ -52,6 +47,7 @@ export const App: React.FC = () => {
           path="/register"
           element={ShowContent ? <Navigate to={"/"} /> : <Register />}
         />
+        <Route path="/email-verification" element={<VerificationPage/>}/>
         <Route
           path="/"
           element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}
