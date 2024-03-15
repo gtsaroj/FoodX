@@ -27,12 +27,15 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 
   try {
     const user = await getUserDataByEmail(email);
+    console.log(user)
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
       user?.uid
     );
     user.refreshToken = refreshToken;
+
+    console.log(refreshToken, accessToken)
 
     //TODO: send privilage value somehow from frontend or firebase and store accordingly.
     await updateUserDataInFirestore(
@@ -67,6 +70,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
     if (!user) throw new ApiError(404, "User not found.");
     const { uid } = user;
 
+
     const userInfo: User = {
       fullName: `${firstName} ${lastName}`,
       email,
@@ -75,8 +79,9 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       uid: uid || "",
       refreshToken: "",
     };
+  
 
-    await addUserToFirestore(userInfo, { privilage: "customers" });
+   await addUserToFirestore(userInfo, { privilage: "customers" });
     return res
       .status(201)
       .json(
@@ -110,7 +115,7 @@ const logOutUser = asyncHandler(async (req: any, res: any) => {
 
 const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
   const incomingRefreshToken =
-    req.cokkies.refreshToken || req.body.refreshToken;
+    req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
 
