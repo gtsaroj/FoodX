@@ -13,7 +13,6 @@ import { useDispatch } from "react-redux";
 import { authLogout } from "../../Reducer/authReducer";
 import { makeRequest } from "../../makeRequest";
 import Cookies from "js-cookie";
-
 const navbarItems = [
   {
     name: "Home",
@@ -37,11 +36,12 @@ export const Navbar: React.FC = () => {
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
+   const response =   await makeRequest.post("/users/logout");
+   console.log(response.data)
     await signOutUser();
-    await makeRequest().post("/users/logout");
     dispatch(authLogout());
     Cookies.remove("accessToken");
-    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken")
   };
   return (
     <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">

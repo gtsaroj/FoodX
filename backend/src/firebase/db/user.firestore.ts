@@ -11,6 +11,7 @@ const addUserToFirestore = async (user: User, access: AccessType) => {
     await customerDocRef.update({
       users: FieldValue.arrayUnion(user),
     });
+    console.log("successfully add user")
   } catch (error) {
     throw new ApiError(
       400,
