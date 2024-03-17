@@ -4,4 +4,13 @@ export interface Product {
   quantity: number;
   price: number;
   image: string;
+  tag: Category;
+}
+
+export interface Category {
+  types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
+}
+
+export interface Collection {
+  name: "products" | "specials";
 }

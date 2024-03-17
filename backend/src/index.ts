@@ -1,5 +1,14 @@
 import dotenv from "dotenv";
 import { app } from "./app.js";
+import {
+  addProductToFirestore,
+  getAllProducts,
+  getProductByTag,
+  getProductByName,
+  updateProduct,
+} from "./firebase/db/product.firestore.js";
+import { Product } from "./models/product.model.js";
+import { nanoid } from "nanoid";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -8,3 +17,17 @@ app.listen(process.env.PORT || 8000, () => {
 app.get("/test", (_, res) => {
   res.json("Tesing..");
 });
+
+const product: Product = {
+  id: nanoid() as string,
+  image: ".jpg",
+  name: "Mushroom Pizza",
+  price: 250,
+  quantity: 1000,
+  tag: { types: "pizza" },
+};
+// addProductToFirestore(product,"products" );
+// getProductByName("Buff Momo", "products")
+// getProductByTag("momo", "products");
+// getAllProducts("products");
+// await updateProduct("products", "price", "Chicken Momo", 900);
