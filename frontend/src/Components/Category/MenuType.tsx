@@ -36,8 +36,8 @@ export const MenuType: React.FC = () => {
           <p className="text-2xl font-bold tracking-wider">Category Title</p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
-          {Data?.map((singleObject) => (
-            <SpecialCards slides={singleObject} color="primary" />
+          {Data?.map((singleObject , index) => (
+            <SpecialCards slides={singleObject} key={index} color="primary" />
           ))}
         </div>
       </div>

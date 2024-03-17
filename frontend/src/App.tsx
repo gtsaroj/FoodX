@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
+import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 
 const HomePage = () => {
   return (
@@ -47,7 +48,11 @@ export const App: React.FC = () => {
           path="/register"
           element={ShowContent ? <Navigate to={"/"} /> : <Register />}
         />
-        <Route path="/email-verification" element={<VerificationPage/>}/>
+        <Route
+          path="forgot-password"
+          element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
+        />
+        <Route path="/email-verification" element={<VerificationPage />} />
         <Route
           path="/"
           element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}

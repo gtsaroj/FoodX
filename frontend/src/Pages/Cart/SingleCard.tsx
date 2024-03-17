@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ProductType, addToCart } from "../../Reducer/Reducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
@@ -10,8 +9,7 @@ interface SingleCardProp {
 export const SingleCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
-  console.log(prop);
-  const [InitialQuantity, setInitialQuantity] = useState<number>(1);
+  // const [InitialQuantity, setInitialQuantity] = useState<number>(1);
   const dispatch: AppDispatch = useDispatch();
 
   return (

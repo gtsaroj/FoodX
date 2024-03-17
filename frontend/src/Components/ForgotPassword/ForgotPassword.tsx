@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import Logo from "../../../public/logo/Fx.png"
+import Logo from "../../../public/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
+import { useNavigate } from "react-router-dom";
 
 const LoginContainer: React.FC = () => {
   const [email, setEmail] = useState<string>("");
 
-
+  const navigate = useNavigate();
   return (
     <div className="flex items-center justify-center w-full h-full px-5 py-8">
       <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
@@ -31,8 +32,15 @@ const LoginContainer: React.FC = () => {
                 className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
             </div>
-            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-md font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-             Send For Verification
+
+            <p
+              onClick={() => navigate("/login")}
+              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline select-none"
+            >
+              Have an Account?
+            </p>
+            <button className="h-[40px] sm:text-[16px] text-[14px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-md font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+              Send For Verification
             </button>
           </form>
         </div>
@@ -45,18 +53,18 @@ export const ForgotPassword: React.FC = () => {
   return (
     <div className=" min-w-[100vw] w-full max-w-[1800px] min-h-[100vh] h-full bg-[var(--light-background)] overflow-x-hidden">
       {/* Mobile */}
-      <div className="flex flex-col w-full h-full md:hidden min-h-[90vh] gap-8">
+      <div className="flex items-center flex-col w-full h-full md:hidden min-h-[90vh] gap-8">
         <AuthNavbar />
-        <div className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center sm:w-[600px] w-full h-full">
           <LoginContainer />
         </div>
       </div>
       {/* Tablet and Desktop */}
       <div className="items-center justify-around hidden min-h-[90vh] w-full gap-5 px-3 py-4 overflow-x-hidden md:flex">
-        <div className="flex items-center justify-center">
+        <div className=" items-center justify-center hidden lg:flex">
           <img
             src={Logo}
-            className="w-full max-w-[800px] max-h-[800px] min-h-[500px] "
+            className="w-full h-full "
             alt="logo"
           />
         </div>
@@ -68,4 +76,3 @@ export const ForgotPassword: React.FC = () => {
     </div>
   );
 };
-
