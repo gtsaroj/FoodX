@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CollegeLogo from "/logo/texas.png";
+import CollegeLogo from "../../logo/texas.png";
 import {
   MenuIcon,
   Phone,

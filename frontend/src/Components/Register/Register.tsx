@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Plus } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
 import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
@@ -9,8 +9,10 @@ import { useNavigate } from "react-router-dom";
 import { checkValidNumber, validatePasswordOnChange } from "./RegisterHandler";
 import { allFieldsRequired } from "./RegisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
-import { validateEmail } from "./RegisterHandler";
 import { AuthFooter } from "../Footer/AuthFooter";
+import avatar from "../../logo/avatar.png";
+import logo from "../../logo/Fx.png";
+import toast, { Toaster } from "react-hot-toast";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -55,7 +57,7 @@ export const RegisterContainer: React.FC = () => {
   };
   function Validation(error: Record<string, string>) {
     allFieldsRequired(RegisterValue, error);
-    validateEmail(RegisterValue, error);
+    // validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
     validatePasswordOnChange(RegisterValue, error);
 
@@ -92,13 +94,6 @@ export const RegisterContainer: React.FC = () => {
         };
 
         await signUpNewUser(firstName, lastName, email, password, imageUrl);
-        // await emailVerification();
-        // const currentUser = auth.currentUser;
-        // console.log(currentUser);
-        // if (!currentUser?.emailVerified) {
-        //   return navigate("/email-verification");
-        // }
-
         const dispatchingData = await dispatch(
           registerNewUser(ConvertedForm as ValidationType)
         );
@@ -115,24 +110,28 @@ export const RegisterContainer: React.FC = () => {
         (RegisterValue.phoneNumber = ""), SetDataSend(true);
 
         SetDataSend(true);
+        toast.success("Congratulations!, You logged in");
       }
     } catch (error) {
-      console.error(` line : 151 => ${error}`);
+      RegisterValue.avatar = "";
+      RegisterValue.firstName = "";
+      RegisterValue.lastName = "";
+      RegisterValue.password = "";
+      RegisterValue.confirmpassword = "";
+      RegisterValue.email = "";
+      RegisterValue.phoneNumber = "";
+      toast.error(`User already logged in`);
       SetDataSend(true);
     }
   };
 
   return (
-    <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center lg:gap-40 justify-center  lg:px-[20px] lg:py-[50px] md:py-[5px]">
+    <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center lg:gap-40 justify-center  lg:px-[20px] lg:py-7">
       <div className="bg-[var(--light-foreground)] lg:bg-[#726c6c00]">
-        <img
-          src="../../../public/logo/Fx.png"
-          alt=""
-          className="lg:w-[500px]  w-[125px] mb-5"
-        />
+        <img src={logo} alt="" className="lg:w-[500px]  w-[125px] mb-5" />
       </div>
-      <div className="flex flex-col items-center px-3 sm:px-0">
-        <div className="flex flex-col items-center  bg-[var(--light-foreground)] rounded-md sm:px-[50px] sm:py-[10px]  px-[10px] py-[6px]">
+      <div className="flex flex-col items-center px-3 py-7">
+        <div className="flex flex-col items-center  bg-[var(--light-foreground)] rounded-md sm:px-[50px]   px-[10px] py-[6px]">
           <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
             <h1 className="md:hidden">Signin</h1>
             <h1 className="hidden md:block">Signin with Email</h1>
@@ -152,7 +151,7 @@ export const RegisterContainer: React.FC = () => {
                 />
               ) : (
                 <img
-                  src="../../../public/defaultimages/default.webp"
+                  src={avatar}
                   alt=""
                   className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
                 />
@@ -170,10 +169,10 @@ export const RegisterContainer: React.FC = () => {
                 onChange={imageChange}
               />
               <div
-                className="cursor-pointer bg-[var(--primary-color)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] rounded-md"
+                className=" w-16 flex justify-center items-center cursor-pointer bg-[var(--primary-color)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] rounded-md"
                 onClick={fileUPload}
               >
-                select image
+                <Plus className="font-extrabold" />
               </div>
             </div>
             {/* fullname */}
@@ -316,16 +315,17 @@ export const RegisterContainer: React.FC = () => {
 
             <button
               type="submit"
-              className="bg-[var(--primary-color)] text-[white] w-full py-[6px] rounded-md mt-[20px] hover:bg-[var(--primary-dark)]"
+              className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
             >
-              {DataSend ? "submit" : "sending..."}
+              {DataSend ? "Submit" : "Sending..."}
             </button>
           </form>
           <h3
-            className="sm:text-[15px] text-[13px] font-Poppins mt-[5px] hover:underline cursor-pointer"
+            className=" my-5  text-sm text-[var(--dark-secondary-text)]  font-Poppins hover:underline cursor-pointer"
             onClick={() => navigate("/login")}
           >
-            Not have an Account? <a>SignIn</a>
+            Already have an account?
+            <a className="hover:text-[var(--primary-color)]">SignIn</a>
           </h3>
         </div>
       </div>
@@ -336,8 +336,9 @@ export const RegisterContainer: React.FC = () => {
 export const Register = () => {
   return (
     <div className="w-full h-full justify-center items-center">
-    <RegisterContainer />
-    <AuthFooter />
-  </div>
-)
+      <RegisterContainer />
+      <AuthFooter />
+      <Toaster />
+    </div>
+  );
 };

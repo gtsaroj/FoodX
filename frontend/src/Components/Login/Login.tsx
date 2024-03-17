@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import Logo from "../../../public/logo/Fx.png";
+import Logo from "../../logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
@@ -8,7 +8,6 @@ import { AppDispatch } from "../../Reducer/Store";
 import { signInUser } from "../../firebase/Authentication";
 import { LoginUser } from "../../Reducer/authLogin";
 import { useNavigate } from "react-router-dom";
-import { Ban } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 
 const LoginContainer: React.FC = () => {
@@ -39,6 +38,10 @@ const LoginContainer: React.FC = () => {
           const dispatchingloginData = await dispatch(
             LoginUser(email as string)
           );
+          toast.success("Welcome back! You're now logged in", {
+            duration: 5000,
+            position : "top-center"
+          });
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }
@@ -57,9 +60,9 @@ const LoginContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-full px-5 py-8">
+    <div className="flex items-center justify-center w-full h-full px-3 py-8">
       <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
-        <div className="w-full flex flex-col items-center gap-3 px-5 py-6 text-5xl font-bold text-[var(--primary-color)] tracking-wide text-center">
+        <div className="w-full flex flex-col items-center gap-3 px-3 py-6 text-5xl font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1 className="md:hidden">Login</h1>
           <h1 className="hidden md:block">Login with Email</h1>
         </div>
@@ -118,7 +121,7 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              {dataSend ? "submit" : "sending..."}
+              {dataSend ? "Submit" : "sending..."}
             </button>
             <p
               className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"

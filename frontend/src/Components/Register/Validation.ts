@@ -6,3 +6,8 @@ export interface errorValidationObject {
   password: string | number;
   confirmpassword: string;
 }
+
+export enum Role {
+  customer = "customor",
+  admin = "admin",
+}

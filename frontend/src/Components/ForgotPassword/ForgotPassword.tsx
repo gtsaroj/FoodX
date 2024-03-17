@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../../../public/logo/Fx.png";
+import Logo from "../../logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useNavigate } from "react-router-dom";

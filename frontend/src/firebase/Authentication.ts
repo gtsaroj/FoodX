@@ -4,8 +4,10 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth } from "./index";
 
+import { auth } from "./index";
+// import { Role } from "../Components/Register/Validation";
+// import { Admin } from "./index";
 const signUpNewUser = async (
   firstName: string,
   lastName: string,
@@ -28,6 +30,9 @@ const signUpNewUser = async (
       displayName: `${firstName} ${lastName}`,
       photoURL: avatar,
     });
+
+    // const uid = user.uid;
+    // await Admin.auth().setCustomUserClaims(uid, { admin: Role.customer });
   } catch (error) {
     throw new Error(`Error while signing new user. ${error}`);
   }
