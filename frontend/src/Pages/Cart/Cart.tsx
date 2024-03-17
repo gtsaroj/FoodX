@@ -33,30 +33,13 @@ const Cart: React.FC = () => {
 
 export default Cart;
 
-
 export const CartContainer: React.FC = () => {
   const product = useSelector((state: RootState) => state.root.cart.products);
-  console.log(product);
-  const demoProduct = [
-    {
-      id: 1,
-      title: "Momo",
-      image:
-        "https://cuisinenepal.com/wp-content/uploads/2019/08/steamed-pork-momo-optimized-1-825x550.jpg",
-      price: 150,
-      quantity: 2,
-    },
-  ];
   return (
     <div className="flex flex-col w-full gap-5 overflow-y-scroll max-h-[450px]">
-      {/* {product?.map((item) => (
+      {product?.map((item) => (
         <SingleCard prop={item} key={item.id} />
-      ))} */}
-      <SingleCard prop={demoProduct[0]} key={"Demo"} />
-      <SingleCard prop={demoProduct[0]} key={"Demo"} />
-      <SingleCard prop={demoProduct[0]} key={"Demo"} />
-      <SingleCard prop={demoProduct[0]} key={"Demo"} />
-      <SingleCard prop={demoProduct[0]} key={"Demo"} />
+      ))}
     </div>
   );
 };

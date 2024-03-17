@@ -9,11 +9,11 @@ import { signInUser } from "../../firebase/Authentication";
 import { LoginUser } from "../../Reducer/authLogin";
 import { useNavigate } from "react-router-dom";
 import { Ban } from "lucide-react";
-
+import toast, { Toaster } from "react-hot-toast";
 
 const LoginContainer: React.FC = () => {
- const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [show, setShow] = useState<boolean>(false);
@@ -21,7 +21,6 @@ const LoginContainer: React.FC = () => {
     "password"
   );
   const [dataSend, setDataSend] = useState<boolean>(true);
-  const [errorContainer, setErrorContainer] = useState<string>("")
 
   const showPassword = () => {
     setShow((show) => !show);
@@ -37,19 +36,21 @@ const LoginContainer: React.FC = () => {
       setDataSend(false);
       await signInUser(email, password)
         .then(async () => {
-          const dispatchingloginData = await dispatch(LoginUser(email as string));
+          const dispatchingloginData = await dispatch(
+            LoginUser(email as string)
+          );
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }
           setDataSend(true);
         })
-        .catch((error) => {
-          setErrorContainer("Invalid email or password")
-          console.log(`Error occuring while rendering : ${error}`);
+        .catch(() => {
+          toast.error("Invalid email or password");
           setDataSend(true);
+          setEmail("");
+          setPassword("");
         });
     } catch (error) {
-      
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);
     }
@@ -61,7 +62,6 @@ const LoginContainer: React.FC = () => {
         <div className="w-full flex flex-col items-center gap-3 px-5 py-6 text-5xl font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1 className="md:hidden">Login</h1>
           <h1 className="hidden md:block">Login with Email</h1>
-     { errorContainer?.length > 0 ? <div className=" bg-[var(--light-foreground)] px-5 py-3 border-[1px] border-[red] rounded-sm text-red-600 flex items-center justify-center gap-2 text-[15px]"> <Ban className="w-[16px] h-[16px]"/> <h1 className="text-[15px] font-normal">Invalid email or password</h1> </div> : "" } 
         </div>
         <div className="px-3 py-4">
           <form className="flex flex-col gap-4 p-2" onSubmit={LoginFormSubmit}>
@@ -72,7 +72,6 @@ const LoginContainer: React.FC = () => {
               <input
                 type="email"
                 name="email"
-                id="logEmail"
                 autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -87,7 +86,6 @@ const LoginContainer: React.FC = () => {
               <input
                 type={passwordType}
                 name="password"
-                id="logPassword"
                 autoComplete="off"
                 maxLength={25}
                 value={password}
@@ -113,13 +111,19 @@ const LoginContainer: React.FC = () => {
               )}
             </div>
 
-            <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline select-none">
+            <p
+              onClick={() => navigate("/forgot-password")}
+              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline select-none"
+            >
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
               {dataSend ? "submit" : "sending..."}
             </button>
-            <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none" onClick={()=> navigate("/register")}>
+            <p
+              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"
+              onClick={() => navigate("/register")}
+            >
               Don't have an account?{" "}
               <span className="hover:text-[var(--primary-color)]">
                 Register Here.
@@ -134,28 +138,25 @@ const LoginContainer: React.FC = () => {
 
 const Login: React.FC = () => {
   return (
-    <div className=" min-w-[100vw] w-full max-w-[1800px] min-h-[100vh] h-full bg-[var(--light-background)] overflow-x-hidden">
+    <div className=" min-w-[100vw] w-full  h-full bg-[var(--light-background)] overflow-x-hidden">
       {/* Mobile */}
-      <div className="flex flex-col w-full h-full md:hidden min-h-[90vh] gap-8">
+      <div className="flex flex-col items-center w-full h-full lg:hidden min-h-[90vh] gap-8">
         <AuthNavbar />
-        <div className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center w-full sm:w-[600px] h-full">
           <LoginContainer />
         </div>
       </div>
       {/* Tablet and Desktop */}
-      <div className="items-center justify-around hidden min-h-[90vh] w-full gap-5 px-3 py-4 overflow-x-hidden md:flex">
+      <div className="items-center justify-around hidden min-h-[90vh] w-full gap-5 px-3 py-4 overflow-x-hidden lg:flex">
         <div className="flex items-center justify-center">
-          <img
-            src={Logo}
-            className="w-full max-w-[800px] max-h-[800px] min-h-[500px] "
-            alt="logo"
-          />
+          <img src={Logo} className="w-full max-w-[800px]  " alt="logo" />
         </div>
         <div className=" max-w-[700px] w-full pr-8">
           <LoginContainer />
         </div>
       </div>
       <AuthFooter />
+      <Toaster position="top-center" />
     </div>
   );
 };
