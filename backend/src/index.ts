@@ -9,6 +9,11 @@ import {
 } from "./firebase/db/product.firestore.js";
 import { Product } from "./models/product.model.js";
 import { nanoid } from "nanoid";
+import {
+  addUserToFirestore,
+  deleteUserFromFireStore,
+  updateUserDataInFirestore,
+} from "./firebase/db/user.firestore.js";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -31,3 +36,19 @@ const product: Product = {
 // getProductByTag("momo", "products");
 // getAllProducts("products");
 // await updateProduct("products", "price", "Chicken Momo", 900);
+
+// addUserToFirestore(
+//   {
+//     avatar: "sad.png",
+//     email: "123aayush@gmail",
+//     fullName: "Aayush Lamichhane",
+//     phoneNumber: "9847697816",
+//     refreshToken: "",
+//     uid: "aayush2911",
+//   },
+//   "customers"
+// );
+
+// deleteUserFromFireStore("aayush2911", "customers");
+
+// updateUserDataInFirestore("aayush2911", "customers", "refreshToken", "123aayush")

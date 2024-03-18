@@ -44,7 +44,7 @@ export const generateAccessAndRefreshToken = async (uid: string) => {
     user.refreshToken = refreshToken;
     await updateUserDataInFirestore(
       uid,
-      { privilage: "customers" },
+      "customers",
       "refreshToken",
       refreshToken
     );
