@@ -1,43 +1,6 @@
 import { SpecialCards } from "../../Components/Card/SpecialCards";
+import { UseFetch } from "../../UseFetch";
 import Cart from "../Cart/Cart";
-
-const specialItems: CardProp[] = [
-  {
-    id: 0,
-    name: "Chicken Momo",
-    price: 250,
-    image:
-      "https://i.pinimg.com/564x/98/13/31/9813314076f31996a326287ca74b4960.jpg",
-  },
-  {
-    id: 1,
-    name: "Chicken Pizza",
-    price: 750,
-    image:
-      "https://i.pinimg.com/564x/b6/94/0e/b6940e530fa87fdf8f4e9cdf5ccafc36.jpg",
-  },
-  {
-    id: 2,
-    name: "Chicken Burger",
-    price: 450,
-    image:
-      "https://i.pinimg.com/736x/39/e9/7f/39e97f890fb372074fa0e06e202ef665.jpg",
-  },
-  {
-    id: 3,
-    name: "Fries",
-    price: 150,
-    image:
-      "https://i.pinimg.com/736x/57/22/00/57220047fc59da5722f2daf2bf683b67.jpg",
-  },
-  {
-    id: 0,
-    name: "Chicken Momo",
-    price: 250,
-    image:
-      "https://i.pinimg.com/564x/98/13/31/9813314076f31996a326287ca74b4960.jpg",
-  },
-];
 
 const Specials: React.FC = () => {
   return (
@@ -62,19 +25,22 @@ const Specials: React.FC = () => {
 export default Specials;
 
 const SpecialCardsContainer: React.FC = () => {
-  const firstGroup = specialItems.slice(0, 4);
+
+ const {data} = UseFetch("/products/all")
+  const firstGroup = data?.slice(0, 4)
+  const secondGroup = data?.slice(4)
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
         {firstGroup &&
           firstGroup.map((item, index) => (
-            <SpecialCards slides={item} key={index} color="primary" />
+            <SpecialCards prop={item} key={index}/>
           ))}
       </div>
       <div className="flex gap-5 pr-5 overflow-x-scroll justify-evenly w-fit">
-        {firstGroup &&
-          firstGroup.map((item, index) => (
-            <SpecialCards slides={item} key={index} color="primary" />
+        {secondGroup &&
+          secondGroup.map((item) => (
+            <SpecialCards prop={item} key={item.id} />
           ))}
       </div>
     </div>

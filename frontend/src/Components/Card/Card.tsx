@@ -3,7 +3,6 @@ import { addToCart } from "../../Reducer/Reducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import React from "react";
-import { DataType } from "../Category/Data";
 
 interface MenuProp {
   prop: DataType;
