@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
-import { Eye, EyeOff, Plus } from "lucide-react";
+import { Eye, EyeOff, PencilLine } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
 import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
@@ -142,7 +142,7 @@ export const RegisterContainer: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center gap-[7px]  sm:items-center max-w-[400px] sm:w-full"
           >
-            <div className="flex flex-col items-center justify-center gap-1">
+            <div className="relative duration-150 group/image  flex flex-col items-center justify-center gap-1">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
@@ -164,15 +164,15 @@ export const RegisterContainer: React.FC = () => {
               <input
                 type="file"
                 accept="image/*"
-                className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none hidden "
+                className=" hidden rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none  "
                 ref={Ref as any}
                 onChange={imageChange}
               />
               <div
-                className=" w-16 flex justify-center items-center cursor-pointer bg-[var(--primary-color)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] rounded-md"
+                className="absolute group-hover/image:visible invisible w-[100px] h-[100px] rounded-full flex justify-center items-center cursor-pointer bg-[var(--dark-secondary-text)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] "
                 onClick={fileUPload}
               >
-                <Plus className="font-extrabold" />
+                <PencilLine className="text-[var(--primary-color)] w-9 h-9" />
               </div>
             </div>
             {/* fullname */}
