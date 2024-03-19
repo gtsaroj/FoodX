@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 //importing routes
 import userRouter from "./routes/user.routes.js";
+import { productRouter } from "./routes/products.routes.js";
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(express.static("public"));
 
 //route handling
 app.use("/users", userRouter);
+app.use("/products", productRouter);
 
 export { app };

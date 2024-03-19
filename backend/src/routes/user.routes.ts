@@ -19,6 +19,8 @@ router.route("/signIn").post(
   ]),
   signUpNewUser
 );
-router.route("/logout").post(verifyJwt, logOutUser);
 router.route("/refresh-token").post(refreshAccessToken);
+
+// secured Routes
+router.route("/logout").post(verifyJwt, logOutUser);
 export default router;
