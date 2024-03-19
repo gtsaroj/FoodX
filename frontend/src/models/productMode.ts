@@ -1,11 +1,10 @@
-
-
 export interface ProductType {
   id: string;
-  title: string;
   image: string;
+  name: string;
   price: number;
   quantity: number;
+  tag: string;
 }
 
 export interface ProductsType {
