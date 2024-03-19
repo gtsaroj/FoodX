@@ -4,7 +4,7 @@ export interface Product {
   quantity: number;
   price: number;
   image: string;
-  tag: Category;
+  tag: Category["types"];
 }
 
 export interface Category {

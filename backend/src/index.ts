@@ -14,6 +14,11 @@ import {
   deleteUserFromFireStore,
   updateUserDataInFirestore,
 } from "./firebase/db/user.firestore.js";
+import { Order } from "./models/order.model.js";
+import {
+  addNewOrderToDatabase,
+  getOrdersByUserId,
+} from "./firebase/db/order.firestore.js";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -29,7 +34,7 @@ const product: Product = {
   name: "Mushroom Pizza",
   price: 250,
   quantity: 1000,
-  tag: { types: "pizza" },
+  tag: "pizza",
 };
 // addProductToFirestore(product,"products" );
 // getProductByName("Buff Momo", "products")
@@ -52,3 +57,16 @@ const product: Product = {
 // deleteUserFromFireStore("aayush2911", "customers");
 
 // updateUserDataInFirestore("aayush2911", "customers", "refreshToken", "123aayush")
+
+// *orders
+
+const order: Order = {
+  uid: "asdasd",
+  orderFullFilled: "today",
+  orderId: "",
+  orderRequest: "today",
+  products: [product, product, product],
+};
+
+// addNewOrderToDatabase(order);
+// getOrdersByUserId("asdasd");

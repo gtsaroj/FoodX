@@ -11,7 +11,7 @@ const addProductToFirestore = async (
   if (!productRef) throw new ApiError(501, "No document found.");
   try {
     const { id, image, name, price, quantity, tag } = product;
-    await productRef.add({ id, name, price, image, quantity, tag: tag?.types });
+    await productRef.add({ id, name, price, image, quantity, tag: tag });
   } catch (error) {
     throw new ApiError(
       400,
