@@ -38,17 +38,14 @@ const LoginContainer: React.FC = () => {
           const dispatchingloginData = await dispatch(
             LoginUser(email as string)
           );
-          toast.success("Welcome back! You're now logged in", {
-            duration: 5000,
-            position : "top-center"
-          });
           if (!dispatchingloginData) {
             throw new Error("your password or email is invalid");
           }
           setDataSend(true);
         })
-        .catch(() => {
+        .catch((err) => {
           toast.error("Invalid email or password");
+          console.log(err)
           setDataSend(true);
           setEmail("");
           setPassword("");

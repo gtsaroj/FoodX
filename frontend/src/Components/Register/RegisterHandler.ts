@@ -28,7 +28,7 @@ export const validateEmail = (
   const emailAddress = email.toLowerCase().trim();
   const validateCollegeEmail = emailAddress.split("@")[1];
   if (!emailAddress || validateCollegeEmail !== collegeEmail)
-    return (error.email = "please enter valid email");
+    return (error.email = "Please enter valid email");
 };
 
 export const validatePasswordOnChange = (
@@ -65,6 +65,6 @@ export const checkValidNumber = (
   error: Record<string, string>
 ) => {
   if (registervalue.phoneNumber.length < 10) {
-    return (error.number = "invalid number");
+    return (error.number = "Invalid Number");
   }
 };

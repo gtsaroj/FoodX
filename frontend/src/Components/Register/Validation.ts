@@ -5,6 +5,7 @@ export interface errorValidationObject {
   email: string | number;
   password: string | number;
   confirmpassword: string;
+  role?: Role;
 }
 
 export enum Role {
