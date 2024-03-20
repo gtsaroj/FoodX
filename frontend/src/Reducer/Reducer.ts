@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface ProductType {
   id: string;
-  title: string;
+  name: string;
   image: string;
   price: number;
   quantity: number;
@@ -31,7 +31,9 @@ const productSlice = createSlice({
       }
     },
     removeCart: (state, action) => {
-      state.products.filter((product) => product.id !== action.payload.id);
+      state.products = state.products.filter(
+        (product) => product.id !== action.payload
+      );
     },
     resetCart: (state, action) => {
       state.products = [];

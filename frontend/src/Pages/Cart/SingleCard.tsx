@@ -1,6 +1,7 @@
-import { ProductType, addToCart } from "../../Reducer/Reducer";
+import { ProductType, addToCart, removeCart } from "../../Reducer/Reducer";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
+import { DeleteIcon, Trash2 } from "lucide-react";
 
 interface SingleCardProp {
   prop: ProductType;
@@ -10,10 +11,10 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
   // const [InitialQuantity, setInitialQuantity] = useState<number>(1);
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className="flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
+    <div className=" duration-1000  group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
       <div>
         <img
           className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
@@ -23,7 +24,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
       </div>
       <div className="flex flex-col gap-2 px-3 justfy-between">
         <p className="text-xl text-[var(--dark-text)] font-bold tracking-wide">
-          {prop.title}
+          {prop.name}
         </p>
         <p className="text-sm text-[var(--dark-secondary-text)] ">
           Rs {prop.price}
@@ -35,7 +36,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
                 dispatch(
                   addToCart({
                     id: prop.id,
-                    quantity: prop.quantity < 1 ? 1 : -1,
+                    quantity: prop.quantity <= 1 ? 1 : -1,
                   })
                 )
               }
@@ -66,6 +67,14 @@ export const SingleCard: React.FC<SingleCardProp> = ({
             {prop.quantity} × {prop.price}
           </p>
         </div>
+      </div>
+      <div
+        onClick={() => {
+          dispatch(removeCart(prop.id));
+        }}
+        className=" cursor-pointer absolute px-3 bg-[var(--primary-color)] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible "
+      >
+        <Trash2 className="text-[var(--light-text)]" />
       </div>
     </div>
   );

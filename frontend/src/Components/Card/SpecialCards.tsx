@@ -1,33 +1,36 @@
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { useState } from "react";
-import { ProductType } from "../../models/productMode";
+import {  useState } from "react";
+import { ProductType } from "../../Reducer/Reducer";
+import {  useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../../Reducer/Reducer";
+import { RootState } from "../../Reducer/Store";
 
 interface MenuProp {
-  prop : ProductType
+  prop: ProductType;
 }
-export const SpecialCards: React.FC<MenuProp> = ({prop}: MenuProp) => {
+export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
-  const [cartQuantity, setCartQuantity] = useState<number>();
+  const [cartQuantity, setCartQuantity] = useState<number>(1);
 
- 
-  const handleCart = () => {
-    setActiveCart((activateCart) => !activateCart);
-    setCartQuantity(1);
-  };
+  const dispatch = useDispatch();
 
-  const addCart = () => {
-    if (cartQuantity) {
-      setCartQuantity(cartQuantity + 1);
-    } else {
-      setCartQuantity(1);
-    }
-  };
-  const decreaseCart = () => {
-    if (cartQuantity === 1) {
-      setCartQuantity(0);
-      setActiveCart(false);
-    } else {
-      setCartQuantity(cartQuantity && cartQuantity - 1);
+  const selectedProductsQuantity = useSelector(
+    (state: RootState) => state.root.cart.products
+  );
+
+  const handleClick = () => {
+    setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
+
+    const findQuantity = selectedProductsQuantity?.find(
+      (singleProduct) => singleProduct.id == prop.id
+    );
+    if (findQuantity?.quantity) {
+      dispatch(
+        addToCart({
+          id: prop.id,
+          quantity: findQuantity.quantity <= 1 ? 1 : -1,
+        })
+      );
     }
   };
 
@@ -39,11 +42,11 @@ export const SpecialCards: React.FC<MenuProp> = ({prop}: MenuProp) => {
         //   ? " bg-[var(--light-background)]"
         //   : " bg-[var(--light-foreground)]")
       }
+      key={prop.id}
     >
       <div className="">
         <img
           src={prop?.image}
-        
           className="w-full h-[180px] object-cover object-center rounded-t-md"
         />
       </div>
@@ -69,16 +72,41 @@ export const SpecialCards: React.FC<MenuProp> = ({prop}: MenuProp) => {
             <Minus
               size={20}
               className="cursor-pointer"
-              onClick={decreaseCart}
+              onClick={() => handleClick()}
             />
+
             <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
-            <Plus size={20} className="cursor-pointer" onClick={addCart} />
+            <Plus
+              size={20}
+              className="cursor-pointer"
+              onClick={() => {
+                setCartQuantity((prevValue) => prevValue + 1);
+                dispatch(
+                  addToCart({
+                    id: prop.id,
+                    quantity: +1,
+                  })
+                );
+              }}
+            />
           </div>
         ) : (
-          <ShoppingCart onClick={handleCart} />
+          <ShoppingCart
+            onClick={() => {
+              setActiveCart((prevValue) => !prevValue);
+              dispatch(
+                addToCart({
+                  id: prop.id,
+                  name: prop.name,
+                  image: prop.image,
+                  price: prop.price,
+                  quantity: 1,
+                })
+              );
+            }}
+          />
         )}
       </div>
     </div>
-  
   );
 };

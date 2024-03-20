@@ -7,7 +7,7 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState, persistor } from "./Reducer/Store";
+import { RootState } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
