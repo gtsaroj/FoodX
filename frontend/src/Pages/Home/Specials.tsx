@@ -26,15 +26,16 @@ export default Specials;
 
 const SpecialCardsContainer: React.FC = () => {
 
- const {data} = UseFetch("/products/all")
+  const { data } = UseFetch("/products/specials")
+  console.log(data)
   const firstGroup = data?.slice(0, 4)
   const secondGroup = data?.slice(4)
   return (
     <div className="flex flex-col gap-5">
       <div className="flex gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
         {firstGroup &&
-          firstGroup.map((item, index) => (
-            <SpecialCards prop={item} key={index}/>
+          firstGroup.map((item) => (
+            <SpecialCards prop={item} key={item.id}/>
           ))}
       </div>
       <div className="flex gap-5 pr-5 overflow-x-scroll justify-evenly w-fit">

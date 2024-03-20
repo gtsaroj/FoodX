@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/Register.model";
-import { Eye, EyeOff, PencilLine } from "lucide-react";
+import { Eye, EyeOff, Pencil } from "lucide-react";
 import { signUpNewUser } from "../../firebase/Authentication";
 import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
@@ -126,15 +126,15 @@ export const RegisterContainer: React.FC = () => {
   };
 
   return (
-    <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]  sm:h-[100vh] h-full items-center lg:gap-40 justify-center  lg:px-[20px] lg:py-7">
+    <div className="lg:flex  lg:flex-row md:flex-col bg-[var(--light-background)]   h-full items-center lg:gap-40 justify-center  lg:px-[20px] lg:py-7">
       <div className="bg-[var(--light-foreground)] lg:bg-[#726c6c00]">
         <img src={logo} alt="" className="lg:w-[500px]  w-[125px] mb-5" />
       </div>
       <div className="flex flex-col items-center px-3 py-7">
-        <div className="flex flex-col items-center  bg-[var(--light-foreground)] rounded-md sm:px-[50px]   px-[10px] py-[6px]">
+        <div className="flex flex-col  py-5 items-center  bg-[var(--light-foreground)] rounded-md sm:px-[50px]   px-[10px]">
           <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
-            <h1 className="md:hidden">Signin</h1>
-            <h1 className="hidden md:block">Signin with Email</h1>
+            <h1 className="md:hidden">Sign In</h1>
+            <h1 className="hidden md:block">Sign In With Email</h1>
           </div>
 
           <form
@@ -147,7 +147,7 @@ export const RegisterContainer: React.FC = () => {
                 <img
                   src={URL.createObjectURL(SelectedImage)}
                   alt=""
-                  className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
+                  className="rounded-full w-[100px] h-[100px] border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[var(--light-background)] outline-none"
                 />
               ) : (
                 <img
@@ -169,16 +169,21 @@ export const RegisterContainer: React.FC = () => {
                 onChange={imageChange}
               />
               <div
-                className="absolute group-hover/image:visible invisible w-[100px] h-[100px] rounded-full flex justify-center items-center cursor-pointer bg-[var(--dark-secondary-text)]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] "
+                className="absolute p-2  group-hover/image:visible invisible w-[100px] h-[100px] rounded-full flex justify-end items-end cursor-pointer bg-[#86b1e75e]  text-[white] py-[3px] px-[5px] font-Poppins text-[14px] "
                 onClick={fileUPload}
               >
-                <PencilLine className="text-[var(--primary-color)] w-9 h-9" />
+                <div className="bg-[var(--light-background)] rounded-full p-[4px] ">
+                  <Pencil
+                    fill="#2c398d"
+                    className="  text-[var(--light-text)] size-[19px] "
+                  />
+                </div>
               </div>
             </div>
             {/* fullname */}
             <div className="flex items-center gap-[10px] justify-between w-full">
               <div className="flex w-full flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["firstName"]}>Firstname</label>
+                <label htmlFor={RegisterValue["firstName"]}>First Name</label>
                 <input
                   type="text"
                   value={RegisterValue["firstName"]}
@@ -192,7 +197,7 @@ export const RegisterContainer: React.FC = () => {
                 }
               </div>
               <div className="flex w-full flex-col items-start h-[65px] lg:h-[73px]">
-                <label htmlFor={RegisterValue["lastName"]}>Lastname</label>
+                <label htmlFor={RegisterValue["lastName"]}>Last Name</label>
                 <input
                   type="text"
                   value={RegisterValue["lastName"]}
@@ -230,7 +235,7 @@ export const RegisterContainer: React.FC = () => {
             </div>
             {/* phoneNumber */}
             <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start ">
-              Phonenumber
+              Phone Number
               <label
                 htmlFor="phoneNumber"
                 className="font-Poppins text-[15px]"
@@ -282,7 +287,7 @@ export const RegisterContainer: React.FC = () => {
               <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
                 <label
                   htmlFor="confirmpassword"
-                  className="font-Poppins text-[15px]"
+                  className=" text-[15px]"
                 >
                   Confirm Password
                 </label>
@@ -320,13 +325,13 @@ export const RegisterContainer: React.FC = () => {
               {DataSend ? "Submit" : "Sending..."}
             </button>
           </form>
-          <h3
+          <p
             className=" my-5  text-sm text-[var(--dark-secondary-text)]  font-Poppins hover:underline cursor-pointer"
             onClick={() => navigate("/login")}
           >
-            Already have an account?
+            Already have an account? {" "}
             <a className="hover:text-[var(--primary-color)]">SignIn</a>
-          </h3>
+          </p>
         </div>
       </div>
     </div>

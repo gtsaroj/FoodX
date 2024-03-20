@@ -9,4 +9,10 @@ export const MenuTypes: MenuDataType[] = [
   {
     tag: "pizza",
   },
+  {
+    tag: "cold drinks",
+  },
+  {
+    tag: "burger",
+  },
 ];
