@@ -6,6 +6,7 @@ import {
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
+  getUserFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
 import { DecodeToken, User } from "../models/user.model.js";
@@ -27,6 +28,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 
   try {
     const user = await getUserDataByEmail(email);
+    const userDataFromDatabase = await getUserFromDatabase(user.uid);
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
@@ -34,11 +36,10 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     );
     user.refreshToken = refreshToken;
 
-
     //TODO: send privilage value somehow from frontend or firebase and store accordingly.
     await updateUserDataInFirestore(
       user.uid,
-      "customers",
+      userDataFromDatabase.role,
       "refreshToken",
       refreshToken
     );
@@ -61,8 +62,8 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 });
 
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
-  const { firstName, lastName, email, avatar, phoneNumber } = req.body;
-
+  const { firstName, lastName, email, avatar, phoneNumber, role } = req.body;
+  console.log(role);
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
@@ -75,9 +76,10 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       phoneNumber,
       uid: uid || "",
       refreshToken: "",
+      role,
     };
 
-    await addUserToFirestore(userInfo, "customers");
+    await addUserToFirestore(userInfo, role);
     return res
       .status(201)
       .json(
@@ -92,8 +94,13 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
 const logOutUser = asyncHandler(async (req: any, res: any) => {
   try {
     const user = req.user as User;
-
-    await updateUserDataInFirestore(user.uid, "customers", "refreshToken", "");
+    const userFromDatabase = await getUserFromDatabase(user.uid);
+    await updateUserDataInFirestore(
+      user.uid,
+      userFromDatabase.role,
+      "refreshToken",
+      ""
+    );
     return res
       .status(200)
       .clearCookie("accessToken", options)

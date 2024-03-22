@@ -16,6 +16,7 @@ export interface User {
   phoneNumber: string;
   avatar: string;
   refreshToken: string;
+  role: "customers" | "admins";
 }
 
 export interface AccessType {

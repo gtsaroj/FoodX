@@ -12,6 +12,7 @@ import { nanoid } from "nanoid";
 import {
   addUserToFirestore,
   deleteUserFromFireStore,
+  getUserFromDatabase,
   updateUserDataInFirestore,
 } from "./firebase/db/user.firestore.js";
 import { Order } from "./models/order.model.js";
@@ -19,6 +20,7 @@ import {
   addNewOrderToDatabase,
   getOrdersByUserId,
 } from "./firebase/db/order.firestore.js";
+import { User } from "./models/user.model.js";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -70,3 +72,18 @@ const order: Order = {
 
 // addNewOrderToDatabase(order);
 // getOrdersByUserId("asdasd");
+
+const user: User = {
+  avatar: "asad.png",
+  email: "aa@gma.com",
+  fullName: "aayush",
+  phoneNumber: "988312421",
+  refreshToken: "",
+  role: "customers",
+  uid: "aaaa",
+};
+// addUserToFirestore(user, user.role);
+// deleteUserFromFireStore("aa123", user.role);
+// updateUserDataInFirestore("aa123", user.role, "phoneNumber", "9847697816");
+const userData = await getUserFromDatabase("aa123");
+console.log(userData);

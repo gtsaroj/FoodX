@@ -10,7 +10,9 @@ const addUserToFirestore = async (
   const customerDocRef = db.collection(access);
   if (!customerDocRef) throw new ApiError(501, "No document found.");
   try {
-    await customerDocRef.add(user);
+    const oldUser = await customerDocRef.where("uid", "==", user.uid).get();
+    if (oldUser.size !== 0) throw new ApiError(400, "User already exist.");
+    await customerDocRef.doc(user.uid).set(user);
   } catch (error) {
     throw new ApiError(
       400,
@@ -27,12 +29,10 @@ const deleteUserFromFireStore = async (
   const customerDocRef = db.collection(access);
 
   try {
-    const query = customerDocRef.where("uid", "==", uid);
+    const query = customerDocRef.doc(uid);
     const doc = await query.get();
-
-    const user = doc.docs[0];
-    if (!user.exists) throw new ApiError(404, "User not found.");
-    user.ref.delete();
+    if (!doc.exists) throw new ApiError(404, "User not found.");
+    doc.ref.delete();
   } catch (error) {
     throw new ApiError(401, "Unable to delete user from database.");
   }
@@ -44,15 +44,16 @@ const updateUserDataInFirestore = async (
   field: keyof User,
   data: string
 ) => {
-  if (!uid) throw new ApiError(400, "UID is required to update user.");
-  const customerDocRef = db.collection(access);
+  const customerDocRef = db.collection(access).doc(uid);
+  if (!customerDocRef)
+    throw new ApiError(400, "User doesnt exist in the database.");
   try {
-    const query = customerDocRef.where("uid", "==", uid);
-    const doc = await query.get();
-    const userDoc = doc.docs[0];
-    if (!userDoc.exists) throw new ApiError(404, "User doesnt exist");
+    const userDoc = await customerDocRef.get();
+    const docData = userDoc.data();
+    if (!docData)
+      throw new ApiError(401, "Unable to fetch data from database.");
 
-    await customerDocRef.doc(userDoc.id).update({
+    await customerDocRef.update({
       [`${field}`]: data,
     });
   } catch (error) {
@@ -61,8 +62,31 @@ const updateUserDataInFirestore = async (
   }
 };
 
+const getUserFromDatabase = async (uid: string) => {
+  try {
+    const userRef = db.collection("customers").doc(uid);
+    const adminRef = db.collection("admins").doc(uid);
+
+    const customerInfo = await userRef.get();
+    const adminInfo = await adminRef.get();
+
+    if (customerInfo.exists) {
+      const customerData = customerInfo.data() as User;
+      return customerData;
+    } else if (adminInfo.exists) {
+      const adminData = adminInfo.data() as User;
+      return adminData;
+    }
+    throw new ApiError(404, "No user found. Please sign up or login");
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(404, "User not found.");
+  }
+};
+
 export {
   addUserToFirestore,
   deleteUserFromFireStore,
   updateUserDataInFirestore,
+  getUserFromDatabase,
 };
