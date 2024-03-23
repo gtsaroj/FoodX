@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import CollegeLogo from "../../logo/texas.png";
 import {
   MenuIcon,
@@ -9,10 +9,16 @@ import {
   X,
 } from "lucide-react";
 import { signOutUser } from "../../firebase/Authentication";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authLogout } from "../../Reducer/authReducer";
 import { makeRequest } from "../../makeRequest";
 import Cookies from "js-cookie";
+import { UseFetch } from "../../UseFetch";
+import { ProductType } from "../../models/productMode";
+import { useNavigate } from "react-router-dom";
+import { Root } from "postcss";
+import { RootState } from "../../Reducer/Store";
+import ProductSearch from "./ProductSearch";
 const navbarItems = [
   {
     name: "Home",
@@ -32,17 +38,31 @@ export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
   const [search, setSearch] = useState<boolean>(false);
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
+  const [filteredData, setFilteredData] = useState<string>("");
+  const [storeFilteredData, setStoreFilteredData] = useState<
+    ProductType[] | undefined
+  >();
 
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
-   const response =   await makeRequest.post("/users/logout");
-   console.log(response.data)
+    const response = await makeRequest.post("/users/logout");
+    console.log(response.data);
     await signOutUser();
     dispatch(authLogout());
     Cookies.remove("accessToken");
-    Cookies.remove("refreshToken")
+    Cookies.remove("refreshToken");
   };
+  const { data, loading, error } = UseFetch("/products/all");
+  const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
+
+  useEffect(() => {
+    const filteringData: any = data?.filter((singleProduct) =>
+      singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
+    );
+    setStoreFilteredData(filteringData);
+  }, [filteredData]);
+  console.log(filteredData);
   return (
     <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">
       {/* Logo */}
@@ -93,15 +113,28 @@ export const Navbar: React.FC = () => {
           <div className="hidden lg:flex">
             <DesktopSearch />
           </div>
-          <div className="flex items-center justify-center">
+          {/* <div className="flex items-center justify-center">
             <ShoppingCart size={30} />
-          </div>
-          <div className="">
-            <UserCircleIcon
-              className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
-              size={30}
-            />
-          </div>
+          </div> */}
+          {userImage?.avatar ? (
+            <div className=" cursor-pointer relative group/user size-10">
+              <img
+                className="size-full rounded-full"
+                src={userImage.avatar}
+                alt=""
+              />
+              <p className="  text-sm absolute w-full transition-all opacity-[0] group-hover/user:opacity-[1] group-hover/user:visible invisible">
+                {userImage?.fullName}
+              </p>
+            </div>
+          ) : (
+            <div className="">
+              <UserCircleIcon
+                className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
+                size={30}
+              />
+            </div>
+          )}
         </div>
         <div>
           {!mobileMenu ? (
@@ -124,14 +157,29 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
       {search && (
-        <form className="absolute bottom-[-60px] right-5 text-[var(--dark-text)] lg:hidden">
+        <form className="absolute w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
           <input
-            className="p-3 text-md rounded-md focus:outline focus:outline-[var(--primary-color)] placeholder:text-[var(--dark-secondary-text)]"
+            value={filteredData}
+            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+              setFilteredData(event.target.value)
+            }
+            className="p-3 text-md w-full rounded-md focus:outline focus:outline-[var(--primary-color)] placeholder:text-[var(--dark-secondary-text)]"
             placeholder="Search..."
             autoCorrect="off"
           />
         </form>
       )}
+      <div
+        className={`absolute w-full lg:hidden  ${
+          search ? "flex flex-col" : "hidden"
+        }  justify-center items-center px-5 top-44 left-0 `}
+      >
+        <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
+          {storeFilteredData?.map((filterData) => (
+            <ProductSearch prop={filterData} key={filterData.id} />
+          ))}
+        </div>
+      </div>
       {mobileMenu && <MobileMenu />}
     </nav>
   );
@@ -173,17 +221,18 @@ export const Header: React.FC = () => {
 };
 
 export const MobileMenu: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-center justify-center">
       {navbarItems &&
         navbarItems.map((item, index) => (
-          <a
-            href={item.url}
+          <div
             key={index}
-            className="border-b border-b-[var(--light-border)] w-full px-5 py-4 hover:bg-[var(--light-border)]"
+            className=" cursor-pointer border-b border-b-[var(--light-border)] w-full px-5 py-4 hover:bg-[var(--light-border)]"
+            onClick={() => navigate(item.url)}
           >
             <p>{item.name}</p>
-          </a>
+          </div>
         ))}
       <a
         href="/profile"
@@ -197,10 +246,23 @@ export const MobileMenu: React.FC = () => {
 
 export const DesktopSearch = () => {
   const [search, setSearch] = useState<boolean>();
+  const [filteredData, setFilteredData] = useState<string>("");
+  const [storeFilteredData, setStoreFilteredData] = useState<
+    ProductType[] | undefined
+  >();
+  const { data, loading, error } = UseFetch("/products/all");
+
+  useEffect(() => {
+    const filteringData: any = data?.filter((singleProduct) =>
+      singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
+    );
+    setStoreFilteredData(filteringData);
+  }, [filteredData]);
+
   return (
     <div
       className={
-        "flex items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
+        "flex relative items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
         (search ? " bg-[var(--light-foreground)]" : " ")
       }
     >
@@ -214,6 +276,10 @@ export const DesktopSearch = () => {
         className={"items-center  " + (search ? " flex order-2" : " hidden")}
       >
         <input
+          value={filteredData}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            setFilteredData(event.target.value)
+          }
           type="text"
           placeholder="Search..."
           className="px-3 py-2 focus:outline-none rounded-lg max-w-[250px] w-full bg-transparent  "
@@ -224,6 +290,17 @@ export const DesktopSearch = () => {
           onClick={() => setSearch((search) => !search)}
         />
       </form>
+      <div
+        className={`absolute w-full ${
+          search ? "flex flex-col" : "hidden"
+        }  justify-center items-center top-14 left-0 `}
+      >
+        <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
+          {storeFilteredData?.map((filterData) => (
+            <ProductSearch prop={filterData} key={filterData.id} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
