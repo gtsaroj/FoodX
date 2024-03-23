@@ -11,6 +11,7 @@ import { RootState } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
+import Cart, { MobileCart } from "./Pages/Cart/Cart";
 
 const HomePage = () => {
   return (
@@ -58,6 +59,7 @@ export const App: React.FC = () => {
           element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}
         >
           <Route index element={<HomePage />} />
+          <Route path="/cart" element ={<MobileCart/>} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
