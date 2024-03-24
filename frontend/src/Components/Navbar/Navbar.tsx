@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { Root } from "postcss";
 import { RootState } from "../../Reducer/Store";
 import ProductSearch from "./ProductSearch";
+import { Frown,Smile } from "lucide-react";
 const navbarItems = [
   {
     name: "Home",
@@ -39,9 +40,7 @@ export const Navbar: React.FC = () => {
   const [search, setSearch] = useState<boolean>(false);
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<string>("");
-  const [storeFilteredData, setStoreFilteredData] = useState<
-    ProductType[] | undefined
-  >();
+  const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
 
   const dispatch = useDispatch();
 
@@ -63,6 +62,7 @@ export const Navbar: React.FC = () => {
     setStoreFilteredData(filteringData);
   }, [filteredData]);
   console.log(filteredData);
+  console.log(storeFilteredData);
   return (
     <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">
       {/* Logo */}
@@ -175,9 +175,19 @@ export const Navbar: React.FC = () => {
         }  justify-center items-center px-5 top-44 left-0 `}
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {storeFilteredData?.map((filterData) => (
-            <ProductSearch prop={filterData} key={filterData.id} />
-          ))}
+          {filteredData.length <= 0 ? (
+            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">Find Your Products
+              <Smile className="size-16 text-[var(--primary-color)]"/>
+            </div>
+          ) : storeFilteredData?.length <= 0 ? (
+            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">Your Product Not Found
+            <Frown className="size-16 text-[var(--primary-color)]"/>
+          </div>
+          ) : (
+            storeFilteredData?.map((filterData) => (
+              <ProductSearch prop={filterData} key={filterData.id} />
+            ))
+          )}
         </div>
       </div>
       {mobileMenu && <MobileMenu />}
@@ -248,8 +258,8 @@ export const DesktopSearch = () => {
   const [search, setSearch] = useState<boolean>();
   const [filteredData, setFilteredData] = useState<string>("");
   const [storeFilteredData, setStoreFilteredData] = useState<
-    ProductType[] | undefined
-  >();
+    ProductType[] 
+  >([]);
   const { data, loading, error } = UseFetch("/products/all");
 
   useEffect(() => {
@@ -295,10 +305,20 @@ export const DesktopSearch = () => {
           search ? "flex flex-col" : "hidden"
         }  justify-center items-center top-14 left-0 `}
       >
-        <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {storeFilteredData?.map((filterData) => (
-            <ProductSearch prop={filterData} key={filterData.id} />
-          ))}
+     <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
+          {filteredData.length <= 0 ? (
+            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">Find Your Products
+              <Smile className="size-16 text-[var(--primary-color)]"/>
+            </div>
+          ) : storeFilteredData?.length <= 0 ? (
+            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">Your Product Not Found
+            <Frown className="size-16 text-[var(--primary-color)]"/>
+          </div>
+          ) : (
+            storeFilteredData?.map((filterData) => (
+              <ProductSearch prop={filterData} key={filterData.id} />
+            ))
+          )}
         </div>
       </div>
     </div>

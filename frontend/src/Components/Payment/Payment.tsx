@@ -1,61 +1,89 @@
 import React from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { SingleCard } from "../../Pages/Cart/SingleCard";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Reducer/Store";
+import { ProductType } from "../../models/productMode";
+import { data } from "autoprefixer";
+import { addToCart } from "../../Reducer/Reducer";
 
-export const SecondCard = () => {
+interface CartProp {
+  prop: ProductType;
+}
+export const SecondCard: React.FC<CartProp> = ({ prop }: CartProp) => {
+  const dispatch = useDispatch();
   return (
-    <div className="flex gap-[20px]    items-center pr-[5px] rounded-xl justify-evenly">
+    <div className="flex gap-[20px]  items-center pr-[5px] rounded-xl justify-between w-full">
       <div className="w-[100px]  ">
-        <img
-          src="https://www.biofournil.com/wp-content/uploads/2021/02/BRIOCHE-BIOFOURNIL_web.jpg"
-          alt=""
-          className="rounded-xl"
-        />
+        <img src={prop.image} alt="" className="rounded-xl" />
       </div>
       <div>
         <h3 className="text-[14px] font-semibold text-[var(--dark-foreground)]">
-          Burger XL
+          {prop.name}
         </h3>
         <h3 className="text-[13px] font-semibold text-[var(--dark-foreground)]">
-          RS 450
+          {prop.price}
         </h3>
-        <h3 className="text-[13px] text-[var(--dark-text)] ">QTY. 3</h3>
+        <h3 className="text-[13px] text-[var(--dark-text)] ">
+          QTY. {prop.quantity}
+        </h3>
       </div>
 
-      <div className="w-[80px] h-[30px] justify-center rounded-2xl py-[5px] px-[8px] flex gap-[15px] items-center border-[1px] border-[var(--dark-border)]">
-        <button className="text-[19px] font-bold focus:text-[var(--secondary-color)]">
-          {" "}
-          -{" "}
+      <div className="w-[100px] h-[30px] justify-center  rounded-2xl py-3 px-9 flex gap-[15px] items-center border-[1px] border-[var(--dark-border)]">
+        <button
+          disabled={prop.quantity <= 1 ? true : false}
+          onClick={() =>
+            dispatch(
+              addToCart({
+                id: prop.id,
+                quantity: prop.quantity <= 1 ? 1 : -1,
+              })
+            )
+          }
+          className=" h-[25px] flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+        >
+          -
         </button>
-        <span className="text-[14px] font-semibold"> 1</span>
-        <button className="text-[19px] font-bold focus:text-[var(--secondary-color)] ">
-          +
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export const SecondCart = () => {
-  return (
-    <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl    flex flex-col items-center gap-5">
-      <div className="flex flex-col gap-[30px] items-center border-b-[var(--dark-border)] border-b-[1px] w-full pb-8">
-        <h3 className="sm:text-[30px]  text-xl font-semibold">Your Cart</h3>
-        <SecondCard />
-        <SecondCard />
-        <SecondCard />
-      </div>
-      <div className="flex items-center justify-between w-[350px]  sm:px-[10px] px-[20px]">
-        <h3>Total : </h3>
-        <h3>550</h3>
+        <span className="text-[14px] font-semibold">{prop.quantity}</span>
+        <button
+              onClick={() =>
+                dispatch(
+                  addToCart({
+                    id: prop.id,
+                    quantity: +1,
+                  })
+                )
+              }
+              className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+            >
+              +
+            </button>
       </div>
     </div>
   );
 };
 
 export const Payment: React.FC = () => {
+  const selectedProduct = useSelector(
+    (state: RootState) => state.root.cart.products
+  );
+
+  const navigate = useNavigate();
+  const Total = () => {
+    let total = 0;
+    selectedProduct?.forEach(
+      (singleProduct) => (total += singleProduct.price * singleProduct.quantity)
+    );
+    return total;
+  };
   return (
-    <div className=" flex flex-col items-baseline justify-between w-full gap-20 sm:px-[30px] px-[5px]">
-      <h3 className="flex gap-[3px] hover:gap-[7px] transition-all cursor-pointer text-[15px] items-center">
+    <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
+      {/* <MobileCart/> */}
+      <h3
+        onClick={() => navigate("/")}
+        className="flex gap-[3px] hover:gap-[7px] transition-all cursor-pointer text-[15px] items-center"
+      >
         {" "}
         <span className="font-semibold ">
           {" "}
@@ -64,7 +92,20 @@ export const Payment: React.FC = () => {
         Back To Home
       </h3>
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
-        <SecondCart />
+        <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl  h-[500px]   flex flex-col items-center gap-5">
+          <div className="flex flex-col gap-[30px] items-center border-b-[var(--dark-border)] border-b-[1px] w-full pb-8">
+            <h3 className="sm:text-[30px]  text-xl font-semibold">Your Cart</h3>
+          </div>
+          <div className="flex overflow-y-auto flex-col items-baseline gap-5">
+          {selectedProduct?.map((singlProduct) => {
+            return <SecondCard prop={singlProduct} key={singlProduct.id} />;
+          })}
+        </div>
+          <div className="flex items-center justify-between w-[350px]  sm:px-[10px] px-[20px]">
+            <h3>Total : </h3>
+            <h3>RS. {Total()}</h3>
+          </div>
+        </div>
         <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[var(--light-foreground)] rounded-xl ">
           <h3 className="sm:text-[30px]  text-xl font-semibold">
             Payment Method
@@ -79,7 +120,7 @@ export const Payment: React.FC = () => {
                     alt=""
                   />
                 </div>
-                <span className="md:text-lg sm:text-md text-sm" >Esewa</span> 
+                <span className="md:text-lg sm:text-md text-sm">Esewa</span>
               </div>
               <div className=" bg-[var(--light-background)] flex  items-center  gap-[3px] hover:border-[1px] hover:border-[var(--primary-color)] cursor-pointer sm:w-[100px] w-full py-[7px] px-[10px] text-[var(--dark-text)]   h-[40px] rounded-md ">
                 <div className="">
@@ -89,7 +130,7 @@ export const Payment: React.FC = () => {
                     alt=""
                   />
                 </div>
-                <span className="md:text-lg sm:text-md text-sm" >Khalti</span> 
+                <span className="md:text-lg sm:text-md text-sm">Khalti</span>
               </div>
               <div className=" bg-[var(--light-background)] flex  items-center  gap-[3px] hover:border-[1px] hover:border-[var(--primary-color)] cursor-pointer sm:w-[100px] w-full  py-[7px] px-[10px] text-[var(--dark-text)]   h-[40px] rounded-md ">
                 <div className="">
@@ -99,7 +140,7 @@ export const Payment: React.FC = () => {
                     alt=""
                   />
                 </div>
-                <span className="md:text-lg sm:text-md text-sm" >Ime</span> 
+                <span className="md:text-lg sm:text-md text-sm">Ime</span>
               </div>
             </div>
             <div>
@@ -133,6 +174,58 @@ export const Payment: React.FC = () => {
                 </div>
               </form>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const MobileCart: React.FC = () => {
+  const selectedProducts = useSelector(
+    (state: RootState) => state.root.cart.products
+  );
+  const Navigate = useNavigate();
+
+  const Total = () => {
+    let total = 0;
+    selectedProducts?.forEach(
+      (singleProduct) => (total += singleProduct.price * singleProduct.quantity)
+    );
+    return total;
+  };
+
+  return (
+    // Desktop
+    <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col w-[500px] h-full gap-3 px-9">
+        <div className="flex flex-col items-start ">
+          <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
+            My Order
+          </h3>
+        </div>
+        <div className="flex flex-col items-center gap-2 w-full py-5 overflow-y-scroll">
+          {selectedProducts.length > 0 ? (
+            selectedProducts?.map((singleSelectedProduct) => (
+              <SingleCard
+                prop={singleSelectedProduct}
+                key={singleSelectedProduct.id}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-2">
+              <ShoppingBag className="size-16" />
+
+              <h1 className="text-[25px]">Your cart is empty</h1>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col w-full gap-5 border-t-[1px] border-[var(--dark-text)]">
+          <div className="flex justify-between p-2  text-[var(--dark-text)]">
+            <p className="text-lg font-bold tracking-wide">Total Amount:</p>
+            <p className="text-lg">
+              Rs <span>{Total()}</span>
+            </p>
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { ProductType } from "../../models/productMode";
 
 export const MenuType: React.FC = () => {
   const { data, loading, error } = UseFetch("/products/all");
+  const [collectionTags, setCollectionTags] = useState<[]>();
 
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
 
@@ -15,6 +16,13 @@ export const MenuType: React.FC = () => {
     );
     setCategorizedData(filteredData);
   };
+
+  const collectionOfTags = new Set();
+  data?.forEach((singleProduct) => {
+    collectionOfTags.add(singleProduct.tag);
+  });
+
+  const TagsArray = Array.from(collectionOfTags);
 
   useEffect(() => {
     if (data) {
@@ -28,15 +36,13 @@ export const MenuType: React.FC = () => {
   return (
     <div className="flex flex-col gap-8 py-8">
       <div className="flex items-center gap-3 justify-evenly w-[full] py-3 ">
-        {MenuTypes?.map((items, index) => (
+        {TagsArray?.map((items: any, index) => (
           <div
+            onClick={() => handleEvent(items)}
             key={index}
-            className="p-3 rounded-full cursor-pointer text-[var( --light-text)] bg-[var(--light-foreground)]"
-            onClick={() => handleEvent(items.tag)}
+            className=" shadow-black shadow-sm py-1 rounded-full h-[60px] sm:h-full sm:py-3 sm:rounded-md cursor-pointer hover:bg-[#8a849571] bg-[var(--dark-secondary-text)]   flex flex-col text-sm sm:text-[15px] w-full sm:w-[100px]  items-center justify-center  px-2"
           >
-            <div className="flex flex-col items-center justify-center p-2">
-              {items.tag}
-            </div>
+            {items}
           </div>
         ))}
       </div>

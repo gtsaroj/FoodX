@@ -1,7 +1,7 @@
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import {  useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductType } from "../../Reducer/Reducer";
-import {  useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../Reducer/Reducer";
 import { RootState } from "../../Reducer/Store";
 
@@ -33,14 +33,22 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       );
     }
   };
+  useEffect(() => {
+    const findQuantity = selectedProductsQuantity?.find(
+      (singleProduct) => singleProduct.id === prop.id
+    );
+    if (findQuantity) {
+      setCartQuantity(findQuantity.quantity);
+    }
+    if (findQuantity?.quantity === undefined || null) {
+      setActiveCart(false);
+    }
+  }, [selectedProductsQuantity]);
 
   return (
     <div
       className={
-        " h-full w-[250px] rounded-xl  pb-3 overflow-hidden shadow-sm relative snap-start" //+
-        // (props.color === "secondary"
-        //   ? " bg-[var(--light-background)]"
-        //   : " bg-[var(--light-foreground)]")
+        " h-full w-[250px] rounded-xl  pb-3 overflow-hidden shadow-sm relative snap-start"
       }
       key={prop.id}
     >
@@ -60,25 +68,29 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       </div>
 
       <div
-        className={
-          "p-2  bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  " //+
-          // (activeCart
-          //   ? " border-[var(--primary-color)]"
-          //   : "  hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] border-none cursor-pointer")
-        }
+        className={`p-2 ${
+          activeCart
+            ? ""
+            : "duration-200 cursor-pointer hover:bg-[var(--secondary-color)]"
+        }   bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  `}
       >
         {activeCart ? (
-          <div className="flex items-center gap-2 px-1 text-xs select-none">
-            <Minus
-              size={20}
-              className="cursor-pointer"
+          <div className=" flex items-center gap-2 px-1 text-xs select-none">
+            <button
               onClick={() => handleClick()}
-            />
+              disabled={cartQuantity <= 1 ? true : false}
+            >
+              <Minus
+                size={20}
+                className={` hover:text-[var(--secondary-color)]`}
+                aria-disabled={"true"}
+              />
+            </button>
 
             <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
             <Plus
               size={20}
-              className="cursor-pointer"
+              className=" cursor-pointer hover:text-[var(--secondary-color)]"
               onClick={() => {
                 setCartQuantity((prevValue) => prevValue + 1);
                 dispatch(
@@ -92,6 +104,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           </div>
         ) : (
           <ShoppingCart
+            className=""
             onClick={() => {
               setActiveCart((prevValue) => !prevValue);
               dispatch(
