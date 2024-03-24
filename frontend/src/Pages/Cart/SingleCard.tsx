@@ -32,6 +32,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         <div className="flex gap-[40px]  items-center ">
           <div className="flex gap-2 text-md text-[var(--primary-color)]">
             <button
+              disabled={prop.quantity <= 1 ? true : false}
               onClick={() =>
                 dispatch(
                   addToCart({
