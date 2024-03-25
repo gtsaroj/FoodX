@@ -71,7 +71,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         className={`p-2 ${
           activeCart
             ? ""
-            : "duration-200 cursor-pointer hover:bg-[var(--secondary-color)]"
+            : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
         }   bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  `}
       >
         {activeCart ? (

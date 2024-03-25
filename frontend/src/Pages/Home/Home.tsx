@@ -12,7 +12,7 @@ const Home = () => {
         <div>
           <Specials />
         </div>
-        <div>
+        <div className="w-full flex items-center justify-center">
           <Category />
         </div>
       </div>

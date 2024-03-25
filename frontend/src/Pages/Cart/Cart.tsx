@@ -21,7 +21,7 @@ const Cart: React.FC = () => {
 
   return (
     // Desktop
-    <div className="flex flex-col w-full h-[500px] gap-3">
+    <div className="flex flex-col w-full h-[580px] gap-3">
       <div className="flex flex-col items-start ">
         <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
           My Order
