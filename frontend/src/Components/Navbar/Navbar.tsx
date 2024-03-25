@@ -55,6 +55,8 @@ export const Navbar: React.FC = () => {
   const { data, loading, error } = UseFetch("/products/all");
   const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
 
+  
+
   useEffect(() => {
     const filteringData: any = data?.filter((singleProduct) =>
       singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
@@ -99,7 +101,9 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center justify-center h-full space-x-3 place-items-center">
           <button
             onClick={handleLogout}
-            className="text-[15px] px-7 py-2 rounded-sm font-semibold bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)]"
+            className={`text-[15px] ${
+              userImage ? "flex items-center justify-center" : "hidden"
+            } px-7 py-2 rounded-sm font-semibold bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)]`}
           >
             logout
           </button>
