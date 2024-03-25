@@ -12,7 +12,7 @@ import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 import Cart from "./Pages/Cart/Cart";
-import {Payment} from "./Components/Payment/Payment.tsx"
+import { Payment } from "./Components/Payment/Payment.tsx";
 
 const HomePage = () => {
   return (
@@ -22,7 +22,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <Home />
+          <PrivateRoute />
         </div>
         <div>
           <Footer />
@@ -42,27 +42,31 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/login"
-          element={ShowContent ? <Navigate to={"/"} /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={ShowContent ? <Navigate to={"/"} /> : <Register />}
-        />
-        <Route
-          path="forgot-password"
-          element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
-        />
-        <Route path="/email-verification" element={<VerificationPage />} />
-        <Route
-          path="/"
-          element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}
-        >
-          <Route index element={<HomePage />} />
-          <Route path="/cart" element ={<Payment/>} />
+        <Route path="/" element={<HomePage />}>
+          <Route
+            path="/login"
+            element={ShowContent ? <Navigate to={"/"} /> : <Login />}
+          />
+          <Route
+            path="/register"
+            element={ShowContent ? <Navigate to={"/"} /> : <Register />}
+          />
+          <Route
+            path="forgot-password"
+            element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
+          />
+          <Route path="/email-verification" element={<VerificationPage />} />
+          <Route
+            path="/"
+            element={
+              ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />
+            }
+          >
+            <Route path="/" element={<Home />} />
+            <Route path="/cart" element={<Payment />} />
+          </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -2,7 +2,7 @@ import { MenuType } from "../../Components/Category/MenuType";
 
 const Category = () => {
   return (
-    <div>
+    <div className="w-full">
       <MenuType />
     </div>
   );
