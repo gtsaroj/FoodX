@@ -1,6 +1,7 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../logo/texas.png";
 import {
+  ChevronDown,
   MenuIcon,
   Phone,
   Search,
@@ -15,15 +16,15 @@ import { makeRequest } from "../../makeRequest";
 import Cookies from "js-cookie";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
-import { useFetcher, useNavigate } from "react-router-dom";
-import { Root } from "postcss";
+import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../Reducer/Store";
 import ProductSearch from "./ProductSearch";
 import { Frown, Smile } from "lucide-react";
+import Profile from "../AuthProfile/Profile";
 const navbarItems = [
   {
     name: "Home",
-    url: "#",
+    url: "/",
   },
   {
     name: "Cart",
@@ -41,32 +42,40 @@ export const Navbar: React.FC = () => {
   const [mobileMenu, setMobileMenu] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<string>("");
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
+  const [closeFilter, setCloseFilter] = useState(false);
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
 
-  const dispatch = useDispatch();
-
-  const handleLogout = async () => {
-    const response = await makeRequest.post("/users/logout");
-    console.log(response.data);
-    await signOutUser();
-    dispatch(authLogout());
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-  };
   const { data, loading, error } = UseFetch("/products/all");
   const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  
+  const FilterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const filteringData: any = data?.filter((singleProduct) =>
       singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
     );
     setStoreFilteredData(filteringData);
-  }, [filteredData]);
-  console.log(filteredData);
-  console.log(storeFilteredData);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (FilterRef.current?.contains(event.target as Node)) {
+        setCloseFilter(false);
+      } else if (!FilterRef.current?.contains(event.target as Node)) {
+        setCloseFilter(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filteredData, closeFilter]);
+
   return (
-    <nav className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative">
+    <nav
+      ref={FilterRef}
+      className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
+    >
       {/* Logo */}
       <div className="flex items-center h-full overflow-hidden shrink-0 ">
         <img
@@ -79,8 +88,8 @@ export const Navbar: React.FC = () => {
       <div className="items-center justify-around hidden h-full md:flex">
         {navbarItems &&
           navbarItems.map((item, index) => (
-            <a
-              href={item.url}
+            <Link
+              to={item.url}
               key={index}
               onClick={() => setActiveNav(index)}
               className={
@@ -93,20 +102,12 @@ export const Navbar: React.FC = () => {
               <p className="flex items-center justify-center h-full tracking-wider text-md">
                 {item.name}
               </p>
-            </a>
+            </Link>
           ))}
       </div>
       {/*  */}
-      <div className="h-full  flex items-center text-[var(--dark-text)] px-3">
+      <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full space-x-3 place-items-center">
-          <button
-            onClick={handleLogout}
-            className={`text-[15px] ${
-              userImage ? "flex items-center justify-center" : "hidden"
-            } px-7 py-2 rounded-sm font-semibold bg-[var(--primary-color)] text-white hover:bg-[var(--secondary-color)]`}
-          >
-            logout
-          </button>
           <div className="flex items-center justify-center shrink-0">
             <Search
               onClick={() => setSearch((search) => !search)}
@@ -114,22 +115,24 @@ export const Navbar: React.FC = () => {
               className=" cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out lg:hidden "
             />
           </div>
-          <div className="hidden lg:flex">
+          <div className="hidden lg:flex" ref={FilterRef}>
             <DesktopSearch />
           </div>
-          {/* <div className="flex items-center justify-center">
-            <ShoppingCart size={30} />
-          </div> */}
           {userImage?.avatar ? (
-            <div className=" cursor-pointer relative group/user size-10">
-              <img
-                className="size-full rounded-full"
-                src={userImage.avatar}
-                alt=""
-              />
-              <p className="  text-sm absolute w-full transition-all opacity-[0] group-hover/user:opacity-[1] group-hover/user:visible invisible">
-                {userImage?.fullName}
-              </p>
+            <div className="flex flex-row-reverse items-center justify-center gap-1">
+              <div
+                onClick={() => setOpenProfile(!openProfile)}
+                className=" cursor-pointer hover:bg-[#8080807c] rounded-full p-1 "
+              >
+                <ChevronDown className="size-6" />
+              </div>
+              <div className=" hover:bg-[#8080807c] p-2 rounded-full cursor-pointer group/user">
+                <img
+                  className=" size-7 rounded-full"
+                  src={userImage.avatar}
+                  alt=""
+                />
+              </div>
             </div>
           ) : (
             <div className="">
@@ -176,7 +179,9 @@ export const Navbar: React.FC = () => {
       <div
         className={`absolute w-full lg:hidden  ${
           search ? "flex flex-col" : "hidden"
-        }  justify-center items-center px-5 top-44 left-0 `}
+        }  ${
+          closeFilter ? "hidden" : "flex"
+        } justify-center items-center px-5 top-44 left-0 `}
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
           {filteredData.length <= 0 ? (
@@ -197,6 +202,15 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
       {mobileMenu && <MobileMenu />}
+      <div
+        className={`absolute right-5 top-20 flex w-full justify-end items-center ${
+          openProfile ? "flex" : "hidden"
+        }`}
+      >
+        {
+          userImage &&  <Profile user={userImage} />
+        }
+      </div>
     </nav>
   );
 };
@@ -266,20 +280,38 @@ export const DesktopSearch = () => {
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
   const { data, loading, error } = UseFetch("/products/all");
   const { data: specials } = UseFetch("/products/specials");
+  const [closeFilter, setCloseFilter] = useState<boolean>(false);
 
   const TotalData = [...(data || []), ...(specials || [])];
 
+  const FilterRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const filteringData: any = TotalData?.filter((singleProduct) =>
+    const filteringData: any = data?.filter((singleProduct) =>
       singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
     );
     setStoreFilteredData(filteringData);
-  }, [filteredData]);
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (FilterRef.current?.contains(event.target as Node)) {
+        setCloseFilter(false);
+      } else if (!FilterRef.current?.contains(event.target as Node)) {
+        setCloseFilter(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [filteredData, closeFilter]);
 
   return (
     <div
+      ref={FilterRef}
       className={
-        "flex relative items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
+        " flex relative items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
         (search ? " bg-[var(--light-foreground)]" : " ")
       }
     >
@@ -308,9 +340,12 @@ export const DesktopSearch = () => {
         />
       </form>
       <div
-        className={`absolute w-full ${
-          search ? "flex flex-col" : "hidden"
-        }  justify-center items-center top-14 left-0 `}
+        className={
+          `absolute w-full ${
+            search ? "flex flex-col" : "hidden"
+          }  justify-center items-center top-14 left-0 ` +
+          (closeFilter ? "hidden" : "flex")
+        }
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
           {filteredData.length <= 0 ? (
