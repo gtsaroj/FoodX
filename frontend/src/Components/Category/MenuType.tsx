@@ -50,7 +50,7 @@ export const MenuType: React.FC = () => {
         <div className="w-full p-2">
           <p className="text-2xl font-bold tracking-wider">Category Title</p>
         </div>
-        <div className="flex flex-wrap items-center justify-center md:justify-start gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
+        <div className="flex flex-wrap items-center justify-center md:justify-evenly gap-5 bg-[var(--light-background)] p-8 rounded-md flex-shrink-0">
           {categorizedData?.map((singleObject) => (
             <SpecialCards prop={singleObject} key={singleObject.id} />
           ))}

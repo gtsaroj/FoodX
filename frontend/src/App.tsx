@@ -7,7 +7,7 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
@@ -42,31 +42,29 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />}>
-          <Route
-            path="/login"
-            element={ShowContent ? <Navigate to={"/"} /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={ShowContent ? <Navigate to={"/"} /> : <Register />}
-          />
-          <Route
-            path="forgot-password"
-            element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
-          />
-          <Route path="/email-verification" element={<VerificationPage />} />
-          <Route
-            path="/"
-            element={
-              ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />
-            }
-          >
+        <Route
+          path="/login"
+          element={ShowContent ? <Navigate to={"/"} /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={ShowContent ? <Navigate to={"/"} /> : <Register />}
+        />
+        <Route
+          path="forgot-password"
+          element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
+        />
+        <Route path="/email-verification" element={<VerificationPage />} />
+        <Route
+          path="/"
+          element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}
+        >
+          <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Payment />} />
           </Route>
-          <Route path="*" element={<NotFoundPage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

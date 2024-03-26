@@ -1,12 +1,17 @@
 import React from "react";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import {
+  ArrowLeft,
+  Delete,
+  DeleteIcon,
+  ShoppingBag,
+  Trash,
+} from "lucide-react";
 import { SingleCard } from "../../Pages/Cart/SingleCard";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { ProductType } from "../../models/productMode";
-import { data } from "autoprefixer";
-import { addToCart } from "../../Reducer/Reducer";
+import { addToCart, removeCart } from "../../Reducer/Reducer";
 
 interface CartProp {
   prop: ProductType;
@@ -14,7 +19,7 @@ interface CartProp {
 export const SecondCard: React.FC<CartProp> = ({ prop }: CartProp) => {
   const dispatch = useDispatch();
   return (
-    <div className="flex gap-[20px]  items-center pr-[5px] rounded-xl justify-between w-full">
+    <div className=" group/delete flex gap-[20px]   items-center h-full  rounded-xl justify-between w-full">
       <div className="w-[100px]  ">
         <img src={prop.image} alt="" className="rounded-xl" />
       </div>
@@ -47,19 +52,27 @@ export const SecondCard: React.FC<CartProp> = ({ prop }: CartProp) => {
         </button>
         <span className="text-[14px] font-semibold">{prop.quantity}</span>
         <button
-              onClick={() =>
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    quantity: +1,
-                  })
-                )
-              }
-              className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-            >
-              +
-            </button>
+          onClick={() =>
+            dispatch(
+              addToCart({
+                id: prop.id,
+                quantity: +1,
+              })
+            )
+          }
+          className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+        >
+          +
+        </button>
       </div>
+      <button
+        onClick={() => {
+          dispatch(removeCart(prop.id));
+        }}
+        className=" rounded-tr-md rounded-br-md group-hover/delete:visible invisible h-full flex items-center justify-center p-3 py-5 bg-[var(--secondary-color)]"
+      >
+        <Trash />
+      </button>
     </div>
   );
 };
@@ -80,27 +93,26 @@ export const Payment: React.FC = () => {
   return (
     <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
       {/* <MobileCart/> */}
-      <h3
-        onClick={() => navigate("/")}
-        className="flex gap-[3px] hover:gap-[7px] transition-all cursor-pointer text-[15px] items-center"
-      >
-        {" "}
-        <span className="font-semibold ">
-          {" "}
-          <ArrowLeft className="w-[10px]" />{" "}
-        </span>
-        Back To Home
-      </h3>
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
         <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl  h-[500px]   flex flex-col items-center gap-5">
           <div className="flex flex-col gap-[30px] items-center border-b-[var(--dark-border)] border-b-[1px] w-full pb-8">
             <h3 className="sm:text-[30px]  text-xl font-semibold">Your Cart</h3>
           </div>
           <div className="flex overflow-y-auto flex-col items-baseline gap-5">
-          {selectedProduct?.map((singlProduct) => {
-            return <SecondCard prop={singlProduct} key={singlProduct.id} />;
-          })}
-        </div>
+            {selectedProduct.length <= 0 ? (
+              <div className="flex flex-col items-center justify-center gap-2">
+                <ShoppingBag className="size-16" />
+
+                <h1 className="text-[25px]">Your cart is empty</h1>
+              </div>
+            ) : (
+              selectedProduct?.map((singlProduct) => (
+                <div className="w-full flex justify-center items-center pl-1 rounded-md   hover:bg-[#8080807c]">
+                  <SecondCard prop={singlProduct} key={singlProduct.id} />
+                </div>
+              ))
+            )}
+          </div>
           <div className="flex items-center justify-between w-[350px]  sm:px-[10px] px-[20px]">
             <h3>Total : </h3>
             <h3>RS. {Total()}</h3>

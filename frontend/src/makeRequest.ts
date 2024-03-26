@@ -19,12 +19,10 @@ makeRequest.interceptors.response.use(
     const status = error.response ? error.response.status : null;
     if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
-      axios.post(`${import.meta.env.VITE_API_URL}/users/`);
       if (!refreshToken) {
         window.location.href = "/login";
         return Promise.reject(error);
       }
-
       const response = await axios.post("/users/refresh-token", refreshToken);
       const responseData = response.data.data;
       const newRefreshToken = responseData.refreshToken;
