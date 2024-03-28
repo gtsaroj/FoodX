@@ -13,6 +13,8 @@ import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 import Cart from "./Pages/Cart/Cart";
 import { Payment } from "./Components/Payment/Payment.tsx";
+import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
+import EditProfile from "./Pages/UpdateProfile/EditProfile.tsx";
 
 const HomePage = () => {
   return (
@@ -62,6 +64,12 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Payment />} />
+            <Route path="/update-profile" element={<UpdateProfile />}>
+              <Route
+                path="/update-profile/:setting"
+                element={<UpdateProfile />}
+              ></Route>
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

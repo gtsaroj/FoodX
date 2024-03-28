@@ -5,15 +5,10 @@ import {
   MenuIcon,
   Phone,
   Search,
-  ShoppingCart,
   UserCircleIcon,
   X,
 } from "lucide-react";
-import { signOutUser } from "../../firebase/Authentication";
-import { useDispatch, useSelector } from "react-redux";
-import { authLogout } from "../../Reducer/authReducer";
-import { makeRequest } from "../../makeRequest";
-import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
 import { Link, useNavigate } from "react-router-dom";
@@ -49,6 +44,7 @@ export const Navbar: React.FC = () => {
   const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const filteringData: any = data?.filter((singleProduct) =>
@@ -63,13 +59,24 @@ export const Navbar: React.FC = () => {
         setCloseFilter(true);
       }
     };
+    
 
+    const closeProfile = (event: MouseEvent) => {
+      if (!profileRef?.current?.contains(event.target as Node)) {
+        setOpenProfile(false);
+      }
+    };
+
+    document.addEventListener("mousedown", closeProfile);
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      if (closeFilter) {
+        document.removeEventListener("mousedown", closeProfile);
+      }
     };
-  }, [filteredData, closeFilter]);
+  }, [filteredData, closeFilter, openProfile]);
 
   return (
     <nav
@@ -119,20 +126,15 @@ export const Navbar: React.FC = () => {
             <DesktopSearch />
           </div>
           {userImage?.avatar ? (
-            <div className="flex flex-row-reverse items-center justify-center gap-1">
-              <div
-                onClick={() => setOpenProfile(!openProfile)}
-                className=" cursor-pointer hover:bg-[#8080807c] rounded-full p-1 "
-              >
-                <ChevronDown className="size-6" />
-              </div>
-              <div className=" hover:bg-[#8080807c] p-2 rounded-full cursor-pointer group/user">
-                <img
-                  className=" size-7 rounded-full"
-                  src={userImage.avatar}
-                  alt=""
-                />
-              </div>
+            <div
+              onClick={() => setOpenProfile(!openProfile)}
+              className=" hover:bg-[#8080807c] p-2 rounded-full cursor-pointer group/user"
+            >
+              <img
+                className=" size-7 rounded-full"
+                src={userImage.avatar}
+                alt=""
+              />
             </div>
           ) : (
             <div className="">
@@ -164,7 +166,7 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
       {search && (
-        <form className="absolute w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
+        <form className="absolute flex  w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
           <input
             value={filteredData}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -174,6 +176,11 @@ export const Navbar: React.FC = () => {
             placeholder="Search..."
             autoCorrect="off"
           />
+           <X
+          size={20}
+          className=" top-4 right-10 absolute cursor-pointer text-[var(--secondary-color)] "
+          onClick={() => setSearch((search) => !search)}
+        />
         </form>
       )}
       <div
@@ -203,13 +210,12 @@ export const Navbar: React.FC = () => {
       </div>
       {mobileMenu && <MobileMenu />}
       <div
+        ref={profileRef}
         className={`absolute right-5 top-20 flex w-full justify-end items-center ${
           openProfile ? "flex" : "hidden"
         }`}
       >
-        {
-          userImage &&  <Profile user={userImage} />
-        }
+        {userImage && <Profile user={userImage} />}
       </div>
     </nav>
   );
