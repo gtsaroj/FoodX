@@ -11,10 +11,10 @@ import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
-import Cart from "./Pages/Cart/Cart";
+
 import { Payment } from "./Components/Payment/Payment.tsx";
 import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
-import EditProfile from "./Pages/UpdateProfile/EditProfile.tsx";
+
 
 const HomePage = () => {
   return (
