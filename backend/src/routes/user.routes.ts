@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  deleteAccount,
   logOutUser,
   loginUser,
   refreshAccessToken,
@@ -22,5 +23,7 @@ router.route("/signIn").post(
 router.route("/refresh-token").post(refreshAccessToken);
 
 // secured Routes
+router.route("/deleteUser").post(verifyJwt, deleteAccount);
+router.route("/updateUser").post(verifyJwt)
 router.route("/logout").post(verifyJwt, logOutUser);
 export default router;

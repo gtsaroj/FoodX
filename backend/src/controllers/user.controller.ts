@@ -6,6 +6,7 @@ import {
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
+  deleteUserFromFireStore,
   getUserFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
@@ -148,4 +149,38 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-export { loginUser, logOutUser, signUpNewUser, refreshAccessToken };
+const deleteAccount = asyncHandler(async (req: any, res: any) => {
+  try {
+    const user = req.user as User;
+    const foundUser = await getUserFromDatabase(user.uid);
+    if (!foundUser) throw new ApiError(404, "User not found.");
+
+    //
+    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User deleted successfully", true));
+  } catch (error) {
+    throw new ApiError(400, "Error deleting user from firestore.");
+  }
+});
+
+const updateUser = asyncHandler(async (req: any, res: any) => {
+  try {
+    const { fullName, phoneNumber, password, image } = req.body;
+    console.log(fullName, phoneNumber, password, image)
+  } catch (error) {
+    throw new ApiError(400, "Error updating user in database.");
+  }
+});
+
+export {
+  loginUser,
+  logOutUser,
+  signUpNewUser,
+  refreshAccessToken,
+  deleteAccount,
+  updateUser,
+};
