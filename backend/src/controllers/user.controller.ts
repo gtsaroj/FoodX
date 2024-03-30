@@ -17,6 +17,7 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 //Cookie options
 const options = {
   httpOnly: true,
+  secure: true,
 };
 
 const loginUser = asyncHandler(async (req: any, res: any) => {
@@ -45,12 +46,8 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, {
-        maxAge: 60 * 1000,
-      })
-      .cookie("refreshToken", refreshToken, {
-        maxAge: 60 * 60 * 1000,
-      })
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
           200,
@@ -117,18 +114,14 @@ const logOutUser = asyncHandler(async (req: any, res: any) => {
 const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
-  console.log(`Incoming Token = ${incomingRefreshToken}`);
 
   if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
 
   try {
-    console.log(`Trying to decode ....`);
     const decodedToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET as string
     ) as DecodeToken;
-
-    console.log(`Decoded ================> ${decodedToken}`);
     const user = await getUserDataById(decodedToken.uid);
     if (!user) throw new ApiError(401, "Invalid token");
 
