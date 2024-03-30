@@ -9,7 +9,12 @@ import { productRouter } from "./routes/products.routes.js";
 
 const app = express();
 
-app.use(cors());
+const corOrigin = {
+  origin: "http://localhost:5173",
+  Credential : true,
+};
+
+app.use(cors(corOrigin));
 app.use(cookieParser());
 
 app.use(express.json({ limit: "16kb" }));

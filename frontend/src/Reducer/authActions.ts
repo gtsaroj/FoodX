@@ -8,28 +8,18 @@ export const getAccessAndRefreshToken = async (email: string) => {
   const responseData = await makeRequest.post("/users/login", { email });
   const data = await responseData.data.data;
 
-  Cookies.set("refreshToken", data.refreshToken, {
-    expires: 7,
-    secure: true,
-  });
-  Cookies.set("accessToken", data.accessToken, {
-    expires: 7,
-    secure: true,
-  });
+  Cookies.set("accessToken", data.accessToken);
+  Cookies.set("refreshToken", data.refreshToken);
+
+  return data;
 };
 
 export const registerNewUser = createAsyncThunk(
   "auth/register" as any,
   async (RegisterValue: ValidationType, { rejectWithValue }) => {
     try {
-      const {
-        firstName,
-        lastName,
-        email,
-        password,
-        avatar,
-        phoneNumber,
-      } = RegisterValue;
+      const { firstName, lastName, email, password, avatar, phoneNumber } =
+        RegisterValue;
 
       const response = await makeRequest.post("/users/signIn", {
         firstName,

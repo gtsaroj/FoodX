@@ -7,17 +7,9 @@ export const LoginUser = createAsyncThunk(
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await makeRequest.post("/users/login", { email });
-
       const responseData = await response.data.data;
-
-      Cookies.set("refreshToken", responseData.refreshToken, {
-        expires: 7,
-        secure: true,
-      });
-      Cookies.set("accessToken", responseData.accessToken, {
-        expires: 7,
-        secure: true,
-      });
+      Cookies.set("refreshToken", responseData.refreshToken, {});
+      Cookies.set("accessToken", responseData.accessToken, {});
       return responseData.user;
     } catch (error: any) {
       if (error.response && error.response.data.message) {
