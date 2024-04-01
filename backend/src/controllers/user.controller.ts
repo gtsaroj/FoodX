@@ -127,11 +127,11 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
     console.log(`Decoded Token: \n ${decodedToken.uid}`);
 
     const user = await getUserFromDatabase(decodedToken.uid.trim());
-    if (!user) throw new ApiError(401, "Invalid token");
+    if (!user) throw new ApiError(404, "User not found.");
     console.log(`User refresh token from database: \n${user.refreshToken}`);
 
     if (incomingRefreshToken !== user.refreshToken)
-      throw new ApiError(401, "Refresh token is expired or used");
+      throw new ApiError(403, "Refresh token is expired or used");
 
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshToken(user.uid);
@@ -156,10 +156,10 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    res.status(401).clearCookie("accessToken").clearCookie("refreshToken");
+    res.status(403).clearCookie("accessToken").clearCookie("refreshToken");
     console.log(error);
     res;
-    throw new ApiError(402, "Error  on refreshing the Access Token");
+    throw new ApiError(403, "Error  on refreshing the Access Token");
   }
 });
 
@@ -183,8 +183,50 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
 
 const updateUser = asyncHandler(async (req: any, res: any) => {
   try {
-    const { fullName, phoneNumber, password, image } = req.body;
-    console.log(fullName, phoneNumber, password, image);
+    const { fullName, phoneNumber } = req.body;
+    const accessToken =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    const decodedToken = jwt.verify(
+      accessToken,
+      process.env.ACCESS_TOKEN_SECRET as string
+    ) as DecodeToken;
+
+    const user = await getUserFromDatabase(decodedToken.uid);
+    console.log(fullName, phoneNumber);
+
+    if (!fullName && !phoneNumber)
+      throw new ApiError(400, "No data provided to update.");
+
+    if (fullName) {
+      await updateUserDataInFirestore(
+        user.uid,
+        user.role,
+        "fullName",
+        fullName
+      );
+    }
+
+    if (phoneNumber) {
+      await updateUserDataInFirestore(
+        user.uid,
+        user.role,
+        "phoneNumber",
+        phoneNumber
+      );
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { fullName, phoneNumber },
+          "Successfully updated user data.",
+          true
+        )
+      );
   } catch (error) {
     throw new ApiError(400, "Error updating user in database.");
   }
