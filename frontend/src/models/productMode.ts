@@ -10,3 +10,15 @@ export interface ProductType {
 export interface ProductsType {
   products: ProductType[];
 }
+
+export interface Category {
+  icons: Categories;
+}
+
+interface Categories {
+  burger: string;
+  pizza: string;
+  cold_drinks: string;
+  hot_drinks: string;
+  momo: string;
+}
