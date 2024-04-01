@@ -112,42 +112,57 @@ const logOutUser = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
+const refreshAccessToken = asyncHandler(
+  async (req: any, res: any) => {
+    const incomingRefreshToken: string =
+      req.cookies.refreshToken || req.body.refreshToken;
 
-  if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
+    if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
+    console.log("-----------------------------------------------");
+    console.log(`From refresh Access token: \n ${incomingRefreshToken}`);
+    try {
+      const decodedToken = jwt.verify(
+        incomingRefreshToken,
+        process.env.REFRESH_TOKEN_SECRET as string
+      ) as DecodeToken;
+      console.log(`Decoded Token: \n ${decodedToken.uid}`);
 
-  try {
-    const decodedToken = jwt.verify(
-      incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET as string
-    ) as DecodeToken;
-    const user = await getUserDataById(decodedToken.uid);
-    if (!user) throw new ApiError(401, "Invalid token");
+      const user = await getUserFromDatabase(decodedToken.uid.trim());
+      if (!user) throw new ApiError(401, "Invalid token");
+      console.log(`User refresh token from database: \n${user.refreshToken}`);
 
-    if (incomingRefreshToken !== user.refreshToken)
-      throw new ApiError(401, "Refresh token is expired or used");
+      if (incomingRefreshToken !== user.refreshToken)
+        throw new ApiError(401, "Refresh token is expired or used");
 
-    const { accessToken, refreshToken: newRefreshToken } =
-      await generateAccessAndRefreshToken(user.uid);
+      const { accessToken, refreshToken: newRefreshToken } =
+        await generateAccessAndRefreshToken(user.uid);
 
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken)
-      .cookie("refreshToken", newRefreshToken)
-      .json(
-        new ApiResponse(
-          200,
-          { accessToken, refreshToken: newRefreshToken },
-          "Access Token refreshed",
-          true
-        )
+      await updateUserDataInFirestore(
+        user.uid,
+        user.role,
+        "refreshToken",
+        newRefreshToken
       );
-  } catch (error) {
-    throw new ApiError(400, "Error  on refreshing the Access Token");
+
+      return res
+        .status(200)
+        .cookie("accessToken", accessToken)
+        .cookie("refreshToken", newRefreshToken)
+        .json(
+          new ApiResponse(
+            200,
+            { accessToken, refreshToken: newRefreshToken },
+            "Access Token refreshed",
+            true
+          )
+        );
+    } catch (error) {
+      res.status(401).clearCookie("accessToken").clearCookie("refreshToken");
+      console.log(error);res;
+      throw new ApiError(401, "Error  on refreshing the Access Token");
+    }
   }
-});
+);
 
 const deleteAccount = asyncHandler(async (req: any, res: any) => {
   try {
@@ -170,7 +185,7 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
 const updateUser = asyncHandler(async (req: any, res: any) => {
   try {
     const { fullName, phoneNumber, password, image } = req.body;
-    console.log(fullName, phoneNumber, password, image)
+    console.log(fullName, phoneNumber, password, image);
   } catch (error) {
     throw new ApiError(400, "Error updating user in database.");
   }

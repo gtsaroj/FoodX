@@ -21,6 +21,7 @@ import {
   getOrdersByUserId,
 } from "./firebase/db/order.firestore.js";
 import { User } from "./models/user.model.js";
+import { getUserDataById } from "./firebase/auth/Authentication.js";
 dotenv.config();
 
 app.listen(process.env.PORT || 8000, () => {
@@ -87,3 +88,5 @@ const user: User = {
 // updateUserDataInFirestore("aa123", user.role, "phoneNumber", "9847697816");
 const userData = await getUserFromDatabase("aa123");
 console.log(userData);
+
+console.log(await getUserDataById("NPmkJaz0ySekcCVrt2mpEr8CpSf2"));

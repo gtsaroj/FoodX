@@ -1,15 +1,16 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../../utils/ApiError.js";
 import { getUserDataById } from "./Authentication.js";
-import { updateUserDataInFirestore } from "../db/user.firestore.js";
+import {
+  getUserFromDatabase,
+  updateUserDataInFirestore,
+} from "../db/user.firestore.js";
 
 export const getAccessToken = async (uid: string) => {
   try {
-    const { email } = await getUserDataById(uid);
     return jwt.sign(
       {
         uid: uid,
-        email: email,
       },
       process.env.ACCESS_TOKEN_SECRET as string,
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
@@ -35,16 +36,17 @@ const getRefreshtoken = async (uid: string) => {
 };
 
 export const generateAccessAndRefreshToken = async (uid: string) => {
-  if (!uid) throw new ApiError(401, "User doesnt exist.");
-
   try {
+    const user = await getUserFromDatabase(uid);
+    if (!user) throw new ApiError(401, "User doesnt exist.");
+
     const accessToken = await getAccessToken(uid);
     const refreshToken = await getRefreshtoken(uid);
-    const user = await getUserDataById(uid);
+
     user.refreshToken = refreshToken;
     await updateUserDataInFirestore(
       uid,
-      "customers",
+      user.role,
       "refreshToken",
       refreshToken
     );
