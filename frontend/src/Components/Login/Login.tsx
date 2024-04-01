@@ -9,6 +9,7 @@ import { signInUser } from "../../firebase/Authentication";
 import { LoginUser } from "../../Reducer/authLogin";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
+import ClipLoader from "react-spinners/HashLoader"
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              {dataSend ? "Submit" : "sending..."}
+              {dataSend ? "Submit" : <div className="flex items-center justify-center gap-2">Sending <ClipLoader  color="white" size={"20px"}/></div>}
             </button>
             <p
               className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"
