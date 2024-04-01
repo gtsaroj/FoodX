@@ -11,15 +11,15 @@ import { RootState } from "../../Reducer/Store";
 import { UpdateProfileType } from "./UpdateProfile";
 
 const EditProfile = () => {
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
   const navigate = useNavigate();
   // const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<UpdateProfileType>({
-    avatar: "",
-    fullName: "",
-    phoneNumber: "",
+    avatar: authUser.avatar,
+    fullName: authUser.fullName,
+    phoneNumber: authUser.phoneNumber,
   });
-
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const [editProfile, setEditProfile] = useState<boolean>(false);
 
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
@@ -106,7 +106,7 @@ const EditProfile = () => {
     }
   };
   return (
-    <div className="lg:flex w-full  flex-col rounded-md bg-[var(--light-foreground)] items-baseline">
+    <div className="lg:flex w-full  flex-col rounded-md items-center sm:items-baseline">
       <div className="flex flex-col items-baseline px-3 py-7 w-full">
         <div className="flex flex-col  py-5 items-baseline w-full  rounded-md md:px-[50px]   px-[10px]">
           <form
@@ -124,7 +124,7 @@ const EditProfile = () => {
                   />
                 ) : (
                   <img
-                    src={authUser.avatar}
+                    src={RegisterValue.avatar}
                     alt=""
                     className="rounded-full w-24 h-20 border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
                   />
@@ -162,7 +162,7 @@ const EditProfile = () => {
                 <p className="text-sm">{authUser.email}</p>
               </div>
             </div>
-            <div className="flex w-full  items-center justify-around gap-3">
+            <div className="flex sm:flex-row flex-col items-center w-full  sm:items-center justify-center sm:justify-around gap-3">
               {/* fullname */}
               <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start ">
                 Fullname
@@ -170,15 +170,34 @@ const EditProfile = () => {
                   htmlFor="fullName"
                   className="font-Poppins text-[15px]"
                 ></label>
-                <input
-                  type="email"
-                  id="fullName"
-                  value={RegisterValue.fullName}
-                  onChange={(e) =>
-                    handleInputChange(e, "fullName" as keyof UpdateProfileType)
-                  }
-                  className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9]  w-full rounded-md border-[1px]  "
-                />
+                {editProfile ? (
+                  <input
+                    type="email"
+                    id="fullName"
+                    value={RegisterValue.fullName}
+                    onChange={(e) =>
+                      handleInputChange(
+                        e,
+                        "fullName" as keyof UpdateProfileType
+                      )
+                    }
+                    className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9]  w-full rounded-md border-[1px]  "
+                  />
+                ) : (
+                  <input
+                    type="email"
+                    id="fullName"
+                    value={RegisterValue.fullName}
+                    onChange={(e) =>
+                      handleInputChange(
+                        e,
+                        "fullName" as keyof UpdateProfileType
+                      )
+                    }
+                    className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9]  w-full rounded-md border-[1px]  "
+                    readOnly
+                  />
+                )}
                 {ValidateError["fullName"] && (
                   <div className="text-[12px] text-[#af2e2e] flex flex-col ">
                     {ValidateError["fullName"]}
@@ -193,18 +212,34 @@ const EditProfile = () => {
                   htmlFor="phoneNumber"
                   className="font-Poppins text-[15px]"
                 ></label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  value={RegisterValue.phoneNumber}
-                  onChange={(e) =>
-                    handleInputChange(
-                      e,
-                      "phoneNumber" as keyof UpdateProfileType
-                    )
-                  }
-                  className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
-                />
+                {editProfile ? (
+                  <input
+                    type="text"
+                    id="phoneNumber"
+                    value={RegisterValue.phoneNumber}
+                    onChange={(e) =>
+                      handleInputChange(
+                        e,
+                        "phoneNumber" as keyof UpdateProfileType
+                      )
+                    }
+                    className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    id="phoneNumber"
+                    value={RegisterValue.phoneNumber}
+                    onChange={(e) =>
+                      handleInputChange(
+                        e,
+                        "phoneNumber" as keyof UpdateProfileType
+                      )
+                    }
+                    className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
+                    readOnly
+                  />
+                )}
                 {ValidateError["email"] && (
                   <div className="text-[12px] text-[#af2e2e] flex flex-col ">
                     {ValidateError["number"]}
@@ -213,12 +248,18 @@ const EditProfile = () => {
               </div>
             </div>
             <div className="flex w-full justify-end ">
-              <button
-                type="submit"
-                className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
-              >
-                {DataSend ? "Save Change" : "Sending..."}
-              </button>
+              {editProfile ? (
+                <button
+                  type="reset"
+                  className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
+                >
+                  Save Change
+                </button>
+              ) : (
+                <div className=" cursor-pointer w-[200px] flex items-center justify-center h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5">
+                  Edit Profile
+                </div>
+              )}
             </div>
           </form>
         </div>

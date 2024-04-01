@@ -77,6 +77,7 @@ export const Navbar: React.FC = () => {
       }
     };
   }, [filteredData, closeFilter, openProfile]);
+  const navigate = useNavigate()
 
   return (
     <nav
@@ -84,11 +85,11 @@ export const Navbar: React.FC = () => {
       className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
       {/* Logo */}
-      <div className="flex items-center h-full overflow-hidden shrink-0 ">
+      <div className="flex cursor-pointer items-center shrink-0 " onClick={()=>navigate("/")}>
         <img
           src={CollegeLogo}
           alt="college logo"
-          className="max-h-[80px] h-full p-2  "
+          className="max-h-[80px]  w-[160px]  sm:w-full h-full p-2  "
         />
       </div>
       {/*  */}

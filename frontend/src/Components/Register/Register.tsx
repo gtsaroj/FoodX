@@ -13,6 +13,7 @@ import { AuthFooter } from "../Footer/AuthFooter";
 import avatar from "../../logo/avatar.png";
 import logo from "../../logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
+import ClipLoader from "react-spinners/HashLoader"
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -322,7 +323,7 @@ export const RegisterContainer: React.FC = () => {
               type="submit"
               className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
             >
-              {DataSend ? "Submit" : "Sending..."}
+              {DataSend ? "Submit" : <div className="flex items-center justify-center gap-2">Sending <ClipLoader  color="white" size={"20px"}/></div>}
             </button>
           </form>
           <p

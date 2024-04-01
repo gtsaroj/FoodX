@@ -38,7 +38,7 @@ const authSlice = createSlice({
           (state.success = false),
           (state.error = action.payload);
       }),
-      builder.addCase(LoginUser.pending, (state) => {
+      builder.addCase(LoginUser?.pending, (state) => {
         state.loading = true;
         state.error = null;
       }),

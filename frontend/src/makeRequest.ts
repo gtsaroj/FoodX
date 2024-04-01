@@ -7,7 +7,6 @@ export const makeRequest: AxiosInstance = axios.create({
 
 makeRequest.interceptors.request.use((config) => {
   const accessToken = Cookies.get("accessToken");
-  console.log(accessToken);
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -16,23 +15,18 @@ makeRequest.interceptors.request.use((config) => {
 
 makeRequest.interceptors.response.use(
   (response) => {
-    console.log(response);
     return response;
   },
   async (error) => {
-
-
     const status = error.response ? error.response.status : null;
-    console.log(status)
-    if (status === 403) {
+    console.log(status);
+    if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
       Cookies.remove("accessToken");
-      if (!refreshToken) {
-        return Promise.reject(`You have not access, please login again...`);
-      }
-      console.log(`RefreshToken = ${refreshToken}`);
-      const response = await makeRequest.post("/users/refresh-token", {refreshToken});
-      
+      const response = await makeRequest.post("/users/refresh-token", {
+        refreshToken,
+      });
+
       const responseData = response.data.data;
       const newRefreshToken = responseData.refreshToken;
       const newAcessToken = responseData.accessToken;
@@ -40,13 +34,13 @@ makeRequest.interceptors.response.use(
       let previousRefreshToken = Cookies.get("refreshToken");
       if (previousRefreshToken) {
         Cookies.set("refreshToken", (previousRefreshToken = newRefreshToken));
-        console.log(
-          `${previousRefreshToken} ========================== ${newRefreshToken}`
-        );
       }
-      console.log(error);
       //  try with original request
-      return axios(error.config);
+      return makeRequest(error.config);
+    }
+    if (status === 402) {
+      Cookies.remove("refreshToken");
+      return Promise.reject("You have not access, please login again...");
     }
 
     return Promise.reject(error);
