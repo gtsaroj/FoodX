@@ -13,8 +13,10 @@ makeRequest.interceptors.request.use((config) => {
   return config;
 });
 
+
 makeRequest.interceptors.response.use(
   (response) => {
+    console.log(response)
     return response;
   },
   async (error) => {
@@ -38,7 +40,7 @@ makeRequest.interceptors.response.use(
       //  try with original request
       return makeRequest(error.config);
     }
-    if (status === 402) {
+    if (status === 403) {
       Cookies.remove("refreshToken");
       return Promise.reject("You have not access, please login again...");
     }

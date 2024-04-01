@@ -1,6 +1,19 @@
-import React from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { makeRequest } from "../../makeRequest";
 
 const DeleteAccount = () => {
+  const [confirmDelete, setConfirmDelete] = useState<string>();
+
+  const HandleDeleteAccount = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (confirmDelete !== "Delete My Account") {
+      return toast.error("Please Confirm To Delete ");
+    }
+    try {
+    } catch (error) {}
+  };
+
   return (
     <div className="flex flex-col w-full  items-baseline p-3 rounded-md justify-center gap-10 pb-5">
       <div className="flex flex-col items-start  justify-center gap-16">
@@ -14,13 +27,17 @@ const DeleteAccount = () => {
         </div>
       </div>
 
-      <form action="" className="w-full items-baseline flex flex-col pr-10">
+      <form
+        action=""
+        className="w-full items-baseline flex flex-col pr-10"
+        onSubmit={HandleDeleteAccount}
+      >
         <div className="flex flex-col w-[300px] items-start gap-1">
-          <label>Type "Delete My Account" Below</label>
+          <label htmlFor="">Type "Delete My Account" Below</label>
           <input
             type="text"
-            id="phoneNumber"
-            value=""
+            onChange={(e) => setConfirmDelete(e.target.value)}
+            value={confirmDelete}
             className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
           />
         </div>
@@ -33,6 +50,7 @@ const DeleteAccount = () => {
           </button>
         </div>
       </form>
+      <Toaster />
     </div>
   );
 };

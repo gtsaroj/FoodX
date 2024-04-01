@@ -8,7 +8,7 @@ import PasswordChange from "./PasswordChange";
 import DeleteAccount from "./DeleteAccount";
 
 export interface UpdateProfileType {
-  avatar: any;
+  avatar?: any;
   fullName: string;
   phoneNumber: string;
 }
@@ -16,7 +16,6 @@ export interface UpdateProfileType {
 export const UpdateProfile: React.FC = () => {
   const navigate = useNavigate();
 
-  const param = useParams().setting;
 
 
 

@@ -64,12 +64,8 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<Payment />} />
-            <Route path="/update-profile" element={<UpdateProfile />}>
-              <Route
-                path="/update-profile/:setting"
-                element={<UpdateProfile />}
-              ></Route>
-            </Route>
+            <Route path="/update-profile" element={<UpdateProfile />}/>
+           
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />
