@@ -183,7 +183,7 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
 
 const updateUser = asyncHandler(async (req: any, res: any) => {
   try {
-    const { fullName, phoneNumber } = req.body;
+    const { fullName, phoneNumber, avatar } = req.body;
     const accessToken =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
@@ -196,7 +196,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
     const user = await getUserFromDatabase(decodedToken.uid);
     console.log(fullName, phoneNumber);
 
-    if (!fullName && !phoneNumber)
+    if (!fullName && !phoneNumber && avatar)
       throw new ApiError(400, "No data provided to update.");
 
     if (fullName) {
@@ -215,6 +215,10 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
         "phoneNumber",
         phoneNumber
       );
+    }
+
+    if (avatar) {
+      await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
     }
 
     res
