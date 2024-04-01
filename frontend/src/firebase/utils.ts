@@ -1,4 +1,10 @@
-import { sendEmailVerification, sendPasswordResetEmail } from "firebase/auth";
+import {
+  deleteUser,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  updatePassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "./index";
 
 const emailVerification = async () => {
@@ -6,7 +12,6 @@ const emailVerification = async () => {
     const currentUser = auth.currentUser;
     if (!currentUser) throw new Error("Unable to send email verification");
     await sendEmailVerification(currentUser);
-   
   } catch (error) {
     throw new Error("Error sending verification email");
   }
@@ -22,4 +27,40 @@ const passwordResetEmail = async () => {
   }
 };
 
-export { emailVerification, passwordResetEmail };
+const deleteAccount = async () => {
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in. Login first!");
+    await deleteUser(user);
+  } catch (error) {
+    throw new Error("Error while deleting user.");
+  }
+};
+
+const updateUserProfile = async (photoURL: string) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in. Login first!");
+    await updateProfile(user, { photoURL });
+  } catch (error) {
+    throw new Error("Error updating user profile.");
+  }
+};
+
+const updateUserPassword = async (newPassword: string) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in. Login first!");
+    await updatePassword(user, newPassword);
+  } catch (error) {
+    throw new Error("Error updating password. ");
+  }
+};
+
+export {
+  emailVerification,
+  passwordResetEmail,
+  updateUserProfile,
+  updateUserPassword,
+  deleteAccount,
+};
