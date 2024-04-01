@@ -5,6 +5,7 @@ import {
   loginUser,
   refreshAccessToken,
   signUpNewUser,
+  updateUser,
 } from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middlewares.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -23,7 +24,7 @@ router.route("/signIn").post(
 router.route("/refresh-token").post(refreshAccessToken);
 
 // secured Routes
-router.route("/deleteUser").post(verifyJwt, deleteAccount);
-router.route("/updateUser").post(verifyJwt)
+router.route("/delete-user").post(verifyJwt, deleteAccount);
+router.route("/update-user").post(verifyJwt, updateUser);
 router.route("/logout").post(verifyJwt, logOutUser);
 export default router;
