@@ -1,17 +1,37 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { makeRequest } from "../../makeRequest";
+import { deleteAccount } from "../../firebase/utils";
+import { useDispatch } from "react-redux";
+import { authLogout } from "../../Reducer/authReducer";
+import Cookies from "js-cookie";
+import HashLoader from "react-spinners/HashLoader";
 
-const DeleteAccount = () => {
+const DeleteAccount: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
+  const [deletingAccount, setDeletingAccount] = useState<boolean>(false);
+  const dispatch = useDispatch();
 
-  const HandleDeleteAccount = (event: FormEvent<HTMLFormElement>) => {
+  console.log(deletingAccount);
+  const HandleDeleteAccount = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirmDelete !== "Delete My Account") {
       return toast.error("Please Confirm To Delete ");
     }
+
     try {
-    } catch (error) {}
+      setDeletingAccount(true);
+      await makeRequest.post("/users/delete-user");
+      await deleteAccount();
+      dispatch(authLogout());
+      Cookies.remove("refreshToken");
+      Cookies.remove("accessToken");
+      setDeletingAccount(false);
+    } catch (error) {
+      setDeletingAccount(true);
+      throw new Error("Failed To Delete Account" + error);
+    }
+    setDeletingAccount(false);
   };
 
   return (
@@ -42,11 +62,14 @@ const DeleteAccount = () => {
           />
         </div>
         <div className="w-full flex justify-end">
-          <button
-            type="submit"
-            className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
-          >
-            Delete My Account
+          <button className=" w-[200px] h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            {deletingAccount ? (
+              <div className="flex text-sm items-center justify-center gap-6">
+                Deleting <HashLoader color="white" size={"15px"} />
+              </div>
+            ) : (
+              "Delete Account"
+            )}
           </button>
         </div>
       </form>

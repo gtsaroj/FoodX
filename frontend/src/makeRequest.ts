@@ -1,6 +1,12 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 
+
+
+export const globalRequest: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+});
+
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
@@ -13,10 +19,8 @@ makeRequest.interceptors.request.use((config) => {
   return config;
 });
 
-
 makeRequest.interceptors.response.use(
   (response) => {
-    console.log(response)
     return response;
   },
   async (error) => {
@@ -24,6 +28,9 @@ makeRequest.interceptors.response.use(
     console.log(status);
     if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
+      if (!refreshToken) {
+          return console.log("Please Login First")
+      }
       Cookies.remove("accessToken");
       const response = await makeRequest.post("/users/refresh-token", {
         refreshToken,

@@ -6,9 +6,10 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { allFieldsRequired, checkValidNumber } from "./UpdateProfileValidation";
 import { AppDispatch, RootState } from "../../Reducer/Store";
-import { UpdateProfile, UpdateProfileType } from "./UpdateProfile";
+import { UpdateProfileType } from "./UpdateProfile";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import { updateUserProfile } from "../../firebase/utils";
+import HashLoader from "react-spinners/HashLoader";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,6 +22,7 @@ const EditProfile = () => {
     phoneNumber: authUser?.phoneNumber,
   });
   const [editProfile, setEditProfile] = useState<boolean>(false);
+  const [updateUser, setUpdateUser] = useState<boolean>(false);
 
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
@@ -67,12 +69,15 @@ const EditProfile = () => {
     const error: Record<string, string> = {};
     Validation(error);
     setValidateError(error);
-
+    setUpdateUser(true);
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
         const { avatar, fullName, phoneNumber } = RegisterValue;
         SetDataSend(false);
+        if (avatar) {
+          
+        }
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",
         });
@@ -92,12 +97,14 @@ const EditProfile = () => {
         if (!dispatchingData) {
           throw new Error(`Error while sending form : ${error}`);
         }
+        toast.success("Update Successfully");
         RegisterValue.fullName = "";
         RegisterValue.avatar = "";
         RegisterValue.phoneNumber = "";
         SetDataSend(true);
         SetDataSend(true);
         setEditProfile(false);
+        window.location.reload()
       }
     } catch (error) {
       RegisterValue.fullName = "";
@@ -106,6 +113,7 @@ const EditProfile = () => {
       toast.error(`User already logged in`);
       SetDataSend(true);
     }
+    setUpdateUser(false);
   };
   return (
     <div className="lg:flex w-full  flex-col rounded-md items-center sm:items-baseline">
@@ -261,7 +269,14 @@ const EditProfile = () => {
                   type="submit"
                   className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
                 >
-                  Save Change
+                  {updateUser ? (
+                    <div className="flex items-center justify-center gap-3">
+                      {" "}
+                      Save <HashLoader color="white" size={"15px"} />
+                    </div>
+                  ) : (
+                    "Save Change"
+                  )}
                 </button>
               ) : (
                 <div

@@ -9,6 +9,7 @@ import { updateUserPassword } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { authLogout } from "../../Reducer/authReducer";
+import HashLoader from "react-spinners/HashLoader";
 
 const PasswordChange = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
@@ -18,8 +19,7 @@ const PasswordChange = () => {
   let [ValidateError, setValidateError] = useState<Record<string, string>>({});
 
   const [changePassword, setChangePassword] = useState<boolean>(false);
-
-  console.log();
+  const [passwordChanging, setPasswordChanging] = useState<boolean>(false);
 
   function Validation(error: Record<string, string>) {
     const collectionOfPassword: ChangePasswordType = {
@@ -37,7 +37,7 @@ const PasswordChange = () => {
   }
 
   console.log(ValidateError);
-  const dispatch = useDispatch<AppDispatch>()
+  const dispatch = useDispatch<AppDispatch>();
 
   const HandlePasswordChange = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -47,10 +47,8 @@ const PasswordChange = () => {
 
     try {
       if (Validation(error) === null) {
-       const updatePassword =  await updateUserPassword(newPassword);
-        console.log(updatePassword)
-        dispatch(authLogout())
-      
+        await updateUserPassword(newPassword);
+        dispatch(authLogout());
       }
     } catch (error) {
       throw new Error("Password Change Failed =>" + error);
@@ -162,7 +160,14 @@ const PasswordChange = () => {
             type="submit"
             className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
           >
-            Save Change
+            {passwordChanging ? (
+              <div className="flex items-center justify-center gap-3 text-sm">
+             Save Change
+                <HashLoader color="white" size={"15px"} />
+              </div>
+            ) : (
+              "  Save Change"
+            )}
           </button>
         ) : (
           <p

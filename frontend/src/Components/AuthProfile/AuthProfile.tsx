@@ -28,13 +28,12 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
   };
- 
 
   return (
     <div className=" px-3 py-4 flex bg-[var(--light-text)] flex-col w-[300px]  rounded-md items-baseline justify-center gap-5">
       <div className="flex flex-col items-baseline justify-center gap-1 w-full">
         <p className="text-[12px] text-[var(--dark-text)]">Currently in</p>
-        <div className="flex items-center justify-start gap-3 w-full hover:bg-[#8080807c] p-1 rounded-md">
+        <div onClick={()=> navigate("/profile")} className="flex items-center justify-start gap-3 cursor-pointer w-full hover:bg-[#8080807c] p-1 rounded-md">
           <div>
             <img src={user.avatar} className="w-20 h-16 rounded-full" alt="" />
           </div>
@@ -43,15 +42,9 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
               <p className="text-[var(--dark-text)] text-[15px] font-semibold">
                 {user.fullName}
               </p>
-              <button
-                onClick={() => navigate("/update-profile")}
-                className="text-sm pr-2 text-[var(--dark-text)] hover:underline"
-              >
-                edit
-              </button>
             </div>
-            <p className="text-sm ">Personal</p>
-            <p className="text-sm">{user.email}</p>
+
+            <p className="text-[12px]">{user.email}</p>
           </div>
         </div>
       </div>
