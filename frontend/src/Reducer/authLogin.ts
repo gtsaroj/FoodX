@@ -1,12 +1,12 @@
 import Cookies from "js-cookie";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { makeRequest } from "../makeRequest";
+import { globalRequest, makeRequest } from "../makeRequest";
 
 export const LoginUser = createAsyncThunk(
   "auth/login" as any,
   async (email: string, { rejectWithValue }) => {
     try {
-      const response = await makeRequest.post("/users/login", { email });
+      const response = await globalRequest.post("/users/login", { email });
       const responseData = await response.data.data;
       Cookies.set("refreshToken", responseData.refreshToken, {});
       Cookies.set("accessToken", responseData.accessToken, {});

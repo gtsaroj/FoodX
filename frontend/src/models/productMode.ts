@@ -15,7 +15,7 @@ export interface Category {
   icons: Categories;
 }
 
-interface Categories {
+export interface Categories {
   burger: string;
   pizza: string;
   cold_drinks: string;

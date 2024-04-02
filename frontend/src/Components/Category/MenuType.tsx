@@ -3,10 +3,17 @@ import { MenuTypes } from "./Data";
 import { SpecialCards } from "../Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
+import { getCategory } from "../../firebase/db";
+
+interface categoriesTagOption {
+  tag: string;
+  photoUrl: string;
+}
 
 export const MenuType: React.FC = () => {
   const { data, loading, error } = UseFetch("/products/all");
   const [collectionTags, setCollectionTags] = useState<[]>();
+  const [categoriesTag, setCategoriesTag] = useState<categoriesTagOption[]>();
 
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
 
@@ -22,7 +29,32 @@ export const MenuType: React.FC = () => {
     collectionOfTags.add(singleProduct.tag);
   });
 
-  const TagsArray = Array.from(collectionOfTags);
+  const TagsArray = getCategory("color");
+
+  useEffect(() => {
+    const CategoriesData = async () => {
+      try {
+        const res = await TagsArray;
+        const categoryTags = await Promise.all(
+          Object.keys(res.icons).map(async (singleCategory) => {
+            const categoryImg = await getCategory("color");
+            return {
+              tag: singleCategory,
+              photoUrl:
+                categoryImg.icons[
+                  singleCategory as keyof typeof categoryImg.icons
+                ],
+            };
+          })
+        );
+        setCategoriesTag(categoryTags);
+      } catch (error) {
+        console.error("Error fetching tags:", error);
+      }
+    };
+
+    CategoriesData();
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -35,14 +67,22 @@ export const MenuType: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-8 py-8">
-      <div className="flex items-center gap-3 justify-evenly w-[full] py-3 ">
-        {TagsArray?.map((items: any, index) => (
+      <div className="flex items-center sm:gap-3 gap-1 sm:justify-evenly justify-center w-[full] py-3 ">
+        {categoriesTag?.map((items: categoriesTagOption, index) => (
           <div
-            onClick={() => handleEvent(items)}
+            onClick={() => handleEvent(items.tag.split("_").join(" "))}
             key={index}
-            className=" shadow-black shadow-sm py-1 rounded-full h-[60px] sm:h-full sm:py-3 sm:rounded-md cursor-pointer hover:bg-[#8a849571] bg-[var(--dark-secondary-text)]   flex flex-col text-sm sm:text-[15px] w-full sm:w-[100px]  items-center justify-center  px-2"
+            className=" py-1  rounded-full h-[60px] sm:h-full  sm:rounded-md cursor-pointer flex flex-col gap-2 text-sm sm:text-[15px] w-full sm:w-[100px]  items-center justify-center "
           >
-            {items}
+            <div className="bg-[#8a849571]  p-3 rounded-full">
+              <img
+                className="sm:w-[40px] w-[30px] sm:h-[40px] h-[30px] "
+                src={items.photoUrl}
+              />
+            </div>
+            <p className="sm:text-[16px] text-[12px]">
+              {items.tag.split("_").join(" ")}
+            </p>
           </div>
         ))}
       </div>

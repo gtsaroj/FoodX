@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { makeRequest } from "../makeRequest";
+import { globalRequest, makeRequest } from "../makeRequest";
 import { ValidationType } from "../models/Register.model";
 import Cookies from "js-cookie";
 import { Role } from "../Components/Register/Validation";
 
 export const getAccessAndRefreshToken = async (email: string) => {
-  const responseData = await makeRequest.post("/users/login", { email });
+  const responseData = await globalRequest.post("/users/login", { email });
   const data = await responseData.data.data;
 
   Cookies.set("accessToken", data.accessToken);
@@ -21,7 +21,7 @@ export const registerNewUser = createAsyncThunk(
       const { firstName, lastName, email, password, avatar, phoneNumber } =
         RegisterValue;
 
-      const response = await makeRequest.post("/users/signIn", {
+      const response = await globalRequest.post("/users/signIn", {
         firstName,
         lastName,
         phoneNumber,

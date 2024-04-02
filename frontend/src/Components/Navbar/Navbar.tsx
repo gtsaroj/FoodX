@@ -15,7 +15,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../Reducer/Store";
 import ProductSearch from "./ProductSearch";
 import { Frown, Smile } from "lucide-react";
-import Profile from "../AuthProfile/Profile";
+import Profile from "../AuthProfile/AuthProfile";
 const navbarItems = [
   {
     name: "Home",
@@ -129,10 +129,10 @@ export const Navbar: React.FC = () => {
           {userImage?.avatar ? (
             <div
               onClick={() => setOpenProfile(!openProfile)}
-              className=" hover:bg-[#8080807c] p-2 rounded-full cursor-pointer group/user"
+              className=" hover:bg-[#8080807c] p-1 rounded-full cursor-pointer group/user"
             >
               <img
-                className=" size-7 rounded-full"
+                className=" sm:size-9 size-8 rounded-full"
                 src={userImage.avatar}
                 alt=""
               />
@@ -260,7 +260,7 @@ export const Header: React.FC = () => {
 export const MobileMenu: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-center justify-center">
+    <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-baseline justify-center">
       {navbarItems &&
         navbarItems.map((item, index) => (
           <div
@@ -271,12 +271,12 @@ export const MobileMenu: React.FC = () => {
             <p>{item.name}</p>
           </div>
         ))}
-      <a
-        href="/profile"
-        className="w-full px-5 py-4 hover:bg-[var(--light-border)]"
+      <button
+        onClick={()=>navigate("/profile")}
+        className=" w-full text-start px-5 py-4 hover:bg-[var(--light-border)]"
       >
         Profile
-      </a>
+      </button>
     </div>
   );
 };
