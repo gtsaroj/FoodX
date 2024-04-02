@@ -1,11 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
-
-
-
-export const globalRequest: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-});
+import toast from "react-hot-toast";
 
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -25,11 +20,19 @@ makeRequest.interceptors.response.use(
   },
   async (error) => {
     const status = error.response ? error.response.status : null;
-    console.log(status);
+    console.log(error.response.statusText == "Unauthorized");
+
     if (status === 401) {
+      if (
+        (error.response.status =
+          401 && error.response.statusText == "Unauthorized")
+      ) {
+        return Promise.reject("Please Login First");
+      }
+
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
-          return console.log("Please Login First")
+        return console.log("Please Login First");
       }
       Cookies.remove("accessToken");
       const response = await makeRequest.post("/users/refresh-token", {
@@ -49,6 +52,7 @@ makeRequest.interceptors.response.use(
     }
     if (status === 403) {
       Cookies.remove("refreshToken");
+      toast.error("Session Expired, Please Login Again");
       return Promise.reject("You have not access, please login again...");
     }
 

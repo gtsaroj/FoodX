@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { globalRequest, makeRequest } from "../makeRequest";
+import { globalRequest } from "../GlobalRequest";
 import { ValidationType } from "../models/Register.model";
 import Cookies from "js-cookie";
 import { Role } from "../Components/Register/Validation";

@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { globalRequest, makeRequest } from "../makeRequest";
+import { globalRequest } from "../GlobalRequest";
 
 export const LoginUser = createAsyncThunk(
   "auth/login" as any,

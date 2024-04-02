@@ -5,6 +5,7 @@ import {
   MenuIcon,
   Phone,
   Search,
+  ShoppingBag,
   UserCircleIcon,
   X,
 } from "lucide-react";
@@ -122,6 +123,9 @@ export const Navbar: React.FC = () => {
               size={30}
               className=" cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out lg:hidden "
             />
+          </div>
+          <div onClick={()=> navigate("/cart")} className="flex items-center justify-center md:hidden">
+            <ShoppingBag/>
           </div>
           <div className="hidden lg:flex" ref={FilterRef}>
             <DesktopSearch />
