@@ -16,66 +16,6 @@ import { addToCart, removeCart } from "../../Reducer/Reducer";
 interface CartProp {
   prop: ProductType;
 }
-export const SecondCard: React.FC<CartProp> = ({ prop }: CartProp) => {
-  const dispatch = useDispatch();
-  return (
-    <div className=" group/delete flex gap-[20px]   items-center h-full  rounded-xl justify-between w-full">
-      <div className="w-[100px]  ">
-        <img src={prop.image} alt="" className="rounded-xl" />
-      </div>
-      <div>
-        <h3 className="text-[14px] font-semibold text-[var(--dark-foreground)]">
-          {prop.name}
-        </h3>
-        <h3 className="text-[13px] font-semibold text-[var(--dark-foreground)]">
-          {prop.price}
-        </h3>
-        <h3 className="text-[13px] text-[var(--dark-text)] ">
-          QTY. {prop.quantity}
-        </h3>
-      </div>
-
-      <div className="w-[100px] h-[30px] justify-center  rounded-2xl py-3 px-9 flex gap-[15px] items-center border-[1px] border-[var(--dark-border)]">
-        <button
-          disabled={prop.quantity <= 1 ? true : false}
-          onClick={() =>
-            dispatch(
-              addToCart({
-                id: prop.id,
-                quantity: prop.quantity <= 1 ? 1 : -1,
-              })
-            )
-          }
-          className=" h-[25px] flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-        >
-          -
-        </button>
-        <span className="text-[14px] font-semibold">{prop.quantity}</span>
-        <button
-          onClick={() =>
-            dispatch(
-              addToCart({
-                id: prop.id,
-                quantity: +1,
-              })
-            )
-          }
-          className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-        >
-          +
-        </button>
-      </div>
-      <button
-        onClick={() => {
-          dispatch(removeCart(prop.id));
-        }}
-        className=" rounded-tr-md rounded-br-md group-hover/delete:visible invisible h-full flex items-center justify-center p-3 py-5 bg-[var(--secondary-color)]"
-      >
-        <Trash />
-      </button>
-    </div>
-  );
-};
 
 export const Payment: React.FC = () => {
   const selectedProduct = useSelector(
@@ -94,11 +34,11 @@ export const Payment: React.FC = () => {
     <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
       {/* <MobileCart/> */}
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
-        <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl  h-[500px]   flex flex-col items-center gap-5">
+        <div className="py-[19px] px-[10px] w-full bg-[#dedde2] rounded-xl  h-[500px]   flex flex-col items-center gap-5">
           <div className="flex flex-col gap-[30px] items-center border-b-[var(--dark-border)] border-b-[1px] w-full pb-8">
             <h3 className="sm:text-[30px]  text-xl font-semibold">Your Cart</h3>
           </div>
-          <div className="flex overflow-y-auto flex-col items-baseline gap-5">
+          <div className="flex w-full overflow-y-auto flex-col items-center gap-5">
             {selectedProduct.length <= 0 ? (
               <div className="flex flex-col items-center justify-center gap-2">
                 <ShoppingBag className="size-16" />
@@ -107,8 +47,8 @@ export const Payment: React.FC = () => {
               </div>
             ) : (
               selectedProduct?.map((singlProduct) => (
-                <div className="w-full flex justify-center items-center pl-1 rounded-md   hover:bg-[#8080807c]">
-                  <SecondCard prop={singlProduct} key={singlProduct.id} />
+                <div className="w-full flex justify-center items-center  pl-1 rounded-md shadow-sm">
+                  <SingleCard prop={singlProduct} key={singlProduct.id} />
                 </div>
               ))
             )}
@@ -118,7 +58,7 @@ export const Payment: React.FC = () => {
             <h3>RS. {Total()}</h3>
           </div>
         </div>
-        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[var(--light-foreground)] rounded-xl ">
+        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[#dedde2] rounded-xl ">
           <h3 className="sm:text-[30px]  text-xl font-semibold">
             Payment Method
           </h3>
@@ -164,21 +104,21 @@ export const Payment: React.FC = () => {
                   <label htmlFor="">Full Name</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-[20px] py-2 border-[1px] border-[var(--light-border)] focus:bg-[var(--light-border)]   rounded-md outline-none"
+                    className="w-full text-sm px-[20px] py-2 border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-[1px] ">
                   <label htmlFor="">Contact No.</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-5 py-2 border-[1px] border-[var(--light-border)]  focus:bg-[var(--light-border)] rounded-md outline-none"
+                    className="w-full text-sm px-5 py-2 border-[1px] border-[var(--light-border)]   rounded-md outline-none"
                   />
                 </div>
                 <div className="flex flex-col gap-[1px]   ">
                   <label htmlFor="">Gmail</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-5 py-[6px] border-[1px] border-[var(--light-border)]  focus:bg-[var(--light-border)] rounded-md outline-none"
+                    className="w-full text-sm px-5 py-[6px] border-[1px] border-[var(--light-border)]   rounded-md outline-none"
                   />
                 </div>
                 <div className="flex  bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px] py-2 px-5">

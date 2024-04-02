@@ -14,7 +14,7 @@ import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 
 import { Payment } from "./Components/Payment/Payment.tsx";
 import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
-
+import Cart from "./Pages/Cart/Cart.tsx";
 
 const HomePage = () => {
   return (
@@ -63,9 +63,9 @@ export const App: React.FC = () => {
         >
           <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
-            <Route path="/cart" element={<Payment />} />
-            <Route path="/profile" element={<UpdateProfile />}/>
-           
+            <Route path="/cart" element={<Cart />}></Route>
+            <Route path="/cart/checkout" element={<Payment />} />
+            <Route path="/profile" element={<UpdateProfile />} />
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

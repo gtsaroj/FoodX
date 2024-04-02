@@ -21,7 +21,7 @@ const Cart: React.FC = () => {
 
   return (
     // Desktop
-    <div className="flex flex-col w-full h-[580px] gap-3">
+    <div className="flex flex-col w-full h-[580px] gap-3 px-9 sm:px-1">
       <div className="flex flex-col items-start ">
         <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
           My Order
@@ -50,11 +50,11 @@ const Cart: React.FC = () => {
             Rs <span>{Total()}</span>
           </p>
         </div>
-        <div className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
-          <button
-            onClick={() => navigate("/cart")}
-            className="text-[var(--light-text)] tracking-wider text-xl font-bold"
-          >
+        <div
+          onClick={() => navigate("/cart/checkout")}
+          className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
+        >
+          <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">
             Checkout
           </button>
         </div>

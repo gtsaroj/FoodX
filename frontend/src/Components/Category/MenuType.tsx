@@ -12,7 +12,7 @@ interface categoriesTagOption {
 
 export const MenuType: React.FC = () => {
   const { data, loading, error } = UseFetch("/products/all");
-  const [collectionTags, setCollectionTags] = useState<[]>();
+  console.log(error);
   const [categoriesTag, setCategoriesTag] = useState<categoriesTagOption[]>();
 
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
@@ -29,7 +29,7 @@ export const MenuType: React.FC = () => {
     collectionOfTags.add(singleProduct.tag);
   });
 
-  const TagsArray = getCategory("color");
+  const TagsArray = getCategory("bnw");
 
   useEffect(() => {
     const CategoriesData = async () => {
@@ -37,7 +37,7 @@ export const MenuType: React.FC = () => {
         const res = await TagsArray;
         const categoryTags = await Promise.all(
           Object.keys(res.icons).map(async (singleCategory) => {
-            const categoryImg = await getCategory("color");
+            const categoryImg = await getCategory("bnw");
             return {
               tag: singleCategory,
               photoUrl:
@@ -67,20 +67,20 @@ export const MenuType: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-8 py-8">
-      <div className="flex items-center sm:gap-3 gap-1 sm:justify-evenly justify-center w-[full] py-3 ">
+      <div className="flex   items-center sm:gap-3 gap-x-4 gap-y-7 sm:justify-evenly justify-center  sm:w-full flex-wrap ">
         {categoriesTag?.map((items: categoriesTagOption, index) => (
           <div
             onClick={() => handleEvent(items.tag.split("_").join(" "))}
             key={index}
-            className=" py-1  rounded-full h-[60px] sm:h-full  sm:rounded-md cursor-pointer flex flex-col gap-2 text-sm sm:text-[15px] w-full sm:w-[100px]  items-center justify-center "
+            className=" py-1   h-[60px] sm:h-full  sm:rounded-md cursor-pointer flex flex-col gap-2 text-sm sm:text-[15px]  sm:w-[100px]  items-center justify-center "
           >
-            <div className="bg-[#8a849571]  p-3 rounded-full">
+            <div className=" bg-[#dbd9e462]  hover:bg-[#8a84953a]  p-3 rounded-md">
               <img
                 className="sm:w-[40px] w-[30px] sm:h-[40px] h-[30px] "
                 src={items.photoUrl}
               />
             </div>
-            <p className="sm:text-[16px] text-[12px]">
+            <p className="sm:text-[16px]  text-[12px]">
               {items.tag.split("_").join(" ")}
             </p>
           </div>

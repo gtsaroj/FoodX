@@ -73,7 +73,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         onClick={() => {
           dispatch(removeCart(prop.id));
         }}
-        className=" cursor-pointer absolute px-3 bg-[var(--primary-color)] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible "
+        className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
         <Trash2 className="text-[var(--light-text)]" />
       </div>
