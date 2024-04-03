@@ -23,12 +23,6 @@ makeRequest.interceptors.response.use(
     console.log(error.response.statusText == "Unauthorized");
 
     if (status === 401) {
-      if (
-        (error.response.status =
-          401 && error.response.statusText == "Unauthorized")
-      ) {
-        return Promise.reject("Please Login First");
-      }
 
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
