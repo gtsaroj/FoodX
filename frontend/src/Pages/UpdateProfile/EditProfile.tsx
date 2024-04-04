@@ -10,7 +10,6 @@ import { UpdateProfileType } from "./UpdateProfile";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import { updateUserProfile } from "../../firebase/utils";
 import HashLoader from "react-spinners/HashLoader";
-import { auth } from "../../firebase";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,7 +22,7 @@ const EditProfile = () => {
   });
   const [editProfile, setEditProfile] = useState<boolean>(false);
   const [updateUser, setUpdateUser] = useState<boolean>(false);
-
+  const [valueChanged, setValueChanged] = useState<boolean>(true);
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
   );
@@ -35,21 +34,23 @@ const EditProfile = () => {
     Ref.current?.click();
   }
 
-
-
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
     inputField: string
   ) => {
+    const value = e.target.value;
+    if (value) {
+      setValueChanged(false);
+    }
     setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
 
   useEffect(() => {
     setRegisterValue({
       ...RegisterValue,
-      fullName: authUser.fullName,
-      avatar: authUser.avatar,
-      phoneNumber: authUser.phoneNumber,
+      fullName: authUser?.fullName,
+      avatar: authUser?.avatar,
+      phoneNumber: authUser?.phoneNumber,
     });
   }, [authUser]);
 
@@ -84,11 +85,8 @@ const EditProfile = () => {
       if (validatedRegister === null || undefined) {
         const { avatar, fullName, phoneNumber } = RegisterValue;
 
-
-      
         let imageUrl = null;
-        if (SelectedImage.name) {
-         
+        if (SelectedImage?.name) {
           imageUrl = await storeImageInFirebase(SelectedImage, {
             folder: "users",
           });
@@ -99,7 +97,6 @@ const EditProfile = () => {
         } else {
           imageUrl = avatar;
         }
-
 
         const ConvertedForm = {
           fullName,
@@ -225,7 +222,6 @@ const EditProfile = () => {
                         "fullName" as keyof UpdateProfileType
                       )
                     }
-                    required
                     className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9]  w-full rounded-md border-[1px]  "
                   />
                 ) : (
@@ -272,7 +268,6 @@ const EditProfile = () => {
                         "phoneNumber" as keyof UpdateProfileType
                       )
                     }
-                    required
                     className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
                   />
                 ) : (
@@ -300,6 +295,7 @@ const EditProfile = () => {
             <div className="flex w-full justify-end ">
               {editProfile ? (
                 <button
+                  disabled ={valueChanged}
                   type="submit"
                   className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
                 >
