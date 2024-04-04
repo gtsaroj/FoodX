@@ -1,4 +1,3 @@
-import { Key } from "lucide-react";
 import { UpdateProfileType } from "../UpdateProfile/UpdateProfile";
 
 export interface ChangePasswordType {

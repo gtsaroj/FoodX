@@ -11,8 +11,6 @@ const DeleteAccount: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
   const [deletingAccount, setDeletingAccount] = useState<boolean>(false);
   const dispatch = useDispatch();
-
-  console.log(deletingAccount);
   const HandleDeleteAccount = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (confirmDelete !== "Delete My Account") {

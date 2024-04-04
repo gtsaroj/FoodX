@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { authLogout } from "../../Reducer/authReducer";
 import HashLoader from "react-spinners/HashLoader";
+import toast from "react-hot-toast";
 
 const PasswordChange = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
@@ -47,12 +48,19 @@ const PasswordChange = () => {
 
     try {
       if (Validation(error) === null) {
-        await updateUserPassword(newPassword);
-        dispatch(authLogout());
+        setPasswordChanging(true);
+        await updateUserPassword(newPassword).then((res: any) => {
+          toast.success("Your password Changed SuccessFully");
+          console.log(res);
+          dispatch(authLogout());
+        });
+        setPasswordChanging(false);
       }
     } catch (error) {
+      setPasswordChanging(true);
       throw new Error("Password Change Failed =>" + error);
     }
+    setPasswordChanging(false);
   };
 
   return (
@@ -162,7 +170,7 @@ const PasswordChange = () => {
           >
             {passwordChanging ? (
               <div className="flex items-center justify-center gap-3 text-sm">
-             Save Change
+                Save Change
                 <HashLoader color="white" size={"15px"} />
               </div>
             ) : (
