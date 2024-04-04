@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Pencil } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,12 +10,12 @@ import { UpdateProfileType } from "./UpdateProfile";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import { updateUserProfile } from "../../firebase/utils";
 import HashLoader from "react-spinners/HashLoader";
+import { auth } from "../../firebase";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const navigate = useNavigate();
   const [RegisterValue, setRegisterValue] = useState<UpdateProfileType>({
     avatar: authUser?.avatar,
     fullName: authUser?.fullName,
@@ -27,15 +27,15 @@ const EditProfile = () => {
   const [ValidateError, setValidateError] = useState<Record<string, string>>(
     {}
   );
-  const [SelectedImage, setSelectedImage] = useState<File | null>(null);
+  const [SelectedImage, setSelectedImage] = useState<any>(null);
 
   const Ref = useRef<HTMLInputElement | null>(null);
 
   function fileUPload() {
     Ref.current?.click();
   }
-  const [ShowPassword, setShowPassword] = useState(false);
-  const [DataSend, SetDataSend] = useState<boolean>(true);
+
+
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -43,6 +43,15 @@ const EditProfile = () => {
   ) => {
     setRegisterValue({ ...RegisterValue, [inputField]: e.target.value });
   };
+
+  useEffect(() => {
+    setRegisterValue({
+      ...RegisterValue,
+      fullName: authUser.fullName,
+      avatar: authUser.avatar,
+      phoneNumber: authUser.phoneNumber,
+    });
+  }, [authUser]);
 
   const imageChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) {
@@ -74,20 +83,28 @@ const EditProfile = () => {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
         const { avatar, fullName, phoneNumber } = RegisterValue;
-        SetDataSend(false);
-        if (avatar) {
-          
-        }
-        const imageUrl = await storeImageInFirebase(avatar, {
-          folder: "users",
-        });
 
-        await updateUserProfile(imageUrl);
+
+      
+        let imageUrl = null;
+        if (SelectedImage.name) {
+         
+          imageUrl = await storeImageInFirebase(SelectedImage, {
+            folder: "users",
+          });
+        }
+
+        if (imageUrl) {
+          await updateUserProfile(imageUrl);
+        } else {
+          imageUrl = avatar;
+        }
+
 
         const ConvertedForm = {
           fullName,
           phoneNumber,
-          imageUrl,
+          avatar: imageUrl,
         };
 
         const dispatchingData = await dispatch(
@@ -101,34 +118,35 @@ const EditProfile = () => {
         RegisterValue.fullName = "";
         RegisterValue.avatar = "";
         RegisterValue.phoneNumber = "";
-        SetDataSend(true);
-        SetDataSend(true);
+
         setEditProfile(false);
-        window.location.reload()
       }
     } catch (error) {
       RegisterValue.fullName = "";
       RegisterValue.avatar = "";
       RegisterValue.phoneNumber = "";
       toast.error(`User already logged in`);
-      SetDataSend(true);
     }
     setUpdateUser(false);
   };
   return (
-    <div className="lg:flex w-full  flex-col rounded-md items-center sm:items-baseline">
-      <div className="flex flex-col items-baseline px-3 py-7 w-full">
+    <div className="lg:flex  w-full  flex-col rounded-md items-center sm:items-baseline">
+      <div className="flex  flex-col items-baseline px-3 py-7 w-full">
         <div className="flex flex-col  py-5 items-baseline w-full  rounded-md md:px-[50px]   px-[10px]">
           <form
             action=""
             onSubmit={handleFormSubmit}
             className="flex flex-col items-end gap-10  sm:items-center w-full"
           >
-            <div className="flex py-7 pl-3 pr-10 w-full rounded-md bg-[#8080807c] items-center justify-center gap-5">
+            <div
+              className={`  flex py-7 pl-3 pr-10 w-full rounded-md bg-[#8080807c] items-center justify-center gap-5 ${
+                updateUser ? "bg-[#8080807c] animate-pulse" : ""
+              }`}
+            >
               <div
-                className={`relative ${
-                  editProfile ? "group/image" : ""
-                }  duration-150   flex flex-col items-center justify-center gap-1`}
+                className={`relative ${editProfile ? "group/image" : ""} 
+                ${updateUser ? "invisible" : ""}
+                  duration-150   flex flex-col items-center justify-center gap-1`}
               >
                 {SelectedImage ? (
                   <img
@@ -167,7 +185,11 @@ const EditProfile = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex flex-col items-baseline justify-center gap-1 w-full">
+              <div
+                className={`flex flex-col items-baseline justify-center gap-1 w-full ${
+                  updateUser ? "invisible" : ""
+                }`}
+              >
                 <p className="text-[var(--dark-text)] text-[20px] font-semibold">
                   {authUser?.fullName}
                 </p>
@@ -176,9 +198,17 @@ const EditProfile = () => {
                 <p className="text-sm">{authUser?.email}</p>
               </div>
             </div>
-            <div className="flex sm:flex-row flex-col items-center w-full  sm:items-center justify-center sm:justify-around gap-3">
+            <div
+              className={`flex sm:flex-row flex-col items-center w-full  sm:items-center justify-center sm:justify-around gap-3 ${
+                updateUser ? "bg-[#8080807c] animate-pulse " : ""
+              }`}
+            >
               {/* fullname */}
-              <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start ">
+              <div
+                className={`flex w-full flex-col h-[65px] lg:h-[73px]  items-start  ${
+                  updateUser ? "invisible" : ""
+                }`}
+              >
                 Fullname
                 <label
                   htmlFor="fullName"
@@ -221,7 +251,11 @@ const EditProfile = () => {
               </div>
               {/* Email */}
               {/* phoneNumber */}
-              <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start ">
+              <div
+                className={`flex w-full flex-col h-[65px] lg:h-[73px]  items-start  ${
+                  updateUser ? "invisible" : ""
+                } `}
+              >
                 Phone Number
                 <label
                   htmlFor="phoneNumber"

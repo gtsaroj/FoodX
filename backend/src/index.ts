@@ -86,7 +86,7 @@ const user: User = {
 // addUserToFirestore(user, user.role);
 // deleteUserFromFireStore("aa123", user.role);
 // updateUserDataInFirestore("aa123", user.role, "phoneNumber", "9847697816");
-const userData = await getUserFromDatabase("aa123");
-console.log(userData);
+// const userData = await getUserFromDatabase("aa123");
+// console.log(userData);
 
-console.log(await getUserDataById("NPmkJaz0ySekcCVrt2mpEr8CpSf2"));
+// console.log(await getUserDataById("NPmkJaz0ySekcCVrt2mpEr8CpSf2"));

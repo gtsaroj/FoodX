@@ -57,6 +57,8 @@ const authSlice = createSlice({
       });
     builder.addCase(UpdateProfileUser.fulfilled, (state, action) => {
       if (state.userInfo) {
+     
+        state.userInfo.avatar = action?.payload?.avatar;
         state.userInfo.fullName = action.payload.fullName;
         state.userInfo.phoneNumber = action.payload.phoneNumber;
       }

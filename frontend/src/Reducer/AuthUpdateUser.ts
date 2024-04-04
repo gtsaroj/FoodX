@@ -6,6 +6,7 @@ export const UpdateProfileUser = createAsyncThunk(
   "/auth/update" as any,
   async (updateField: UpdateProfileType, { rejectWithValue }) => {
     const { fullName, phoneNumber, avatar } = updateField;
+    console.log(avatar)
 
     try {
       const response = await makeRequest.post("/users/update-user", {

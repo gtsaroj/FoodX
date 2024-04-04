@@ -194,7 +194,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
     ) as DecodeToken;
 
     const user = await getUserFromDatabase(decodedToken.uid);
-    console.log(fullName, phoneNumber);
+  
 
     if (!fullName && !phoneNumber && avatar)
       throw new ApiError(400, "No data provided to update.");
@@ -226,7 +226,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { fullName, phoneNumber },
+          { fullName, phoneNumber, avatar },
           "Successfully updated user data.",
           true
         )
