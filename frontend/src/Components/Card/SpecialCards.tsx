@@ -48,7 +48,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   return (
     <div
       className={
-        " h-full w-[250px] rounded-xl shadow-[#4c4b4b]  pb-3 overflow-hidden shadow relative snap-start"
+        " h-full w-[250px] rounded-xl shadow shadow-slate-400  pb-3 overflow-hidden  relative snap-start"
       }
       key={prop.id}
     >

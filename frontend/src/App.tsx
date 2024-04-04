@@ -55,8 +55,8 @@ export const App: React.FC = () => {
         <Route
           path="forgot-password"
           element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
-        />
-        <Route path="/email-verification" element={<VerificationPage />} />
+   />
+        {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
         <Route
           path="/"
           element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}

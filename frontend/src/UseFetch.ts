@@ -1,20 +1,26 @@
 import { makeRequest } from "./makeRequest";
 import { useEffect, useState } from "react";
 import { ProductType } from "./models/productMode";
-import { Store } from "./Reducer/Store";
+import { RootState, Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/authReducer";
+import { useSelector } from "react-redux";
 
 export const UseFetch = (url: string) => {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<ProductType[]>();
+  const authUser = useSelector((state: RootState) => state.root.auth);
 
   useEffect(() => {
     const fetchApiData = async () => {
       try {
-        setLoading(true);
+          setLoading(true);
+          console.log(authUser.success)
+        if (!authUser.success) {
+           return setLoading(true);
+        }
         const response = await makeRequest.get(url);
-        const responseData = response.data.data.products;
+        const responseData = await response.data.data.products;
         setLoading(false);
         setData(responseData);
       } catch (err: any) {

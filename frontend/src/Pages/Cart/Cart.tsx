@@ -21,7 +21,7 @@ const Cart: React.FC = () => {
 
   return (
     // Desktop
-    <div className="flex flex-col w-full h-[580px] gap-3 px-9 sm:px-1">
+    <div className="flex flex-col w-full h-[580px] gap-3  sm:px-1 px-[30px]">
       <div className="flex flex-col items-start ">
         <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
           My Order
@@ -37,7 +37,7 @@ const Cart: React.FC = () => {
           ))
         ) : (
           <div className="flex flex-col items-center justify-center gap-2">
-            <ShoppingBag className="size-16" />
+            <ShoppingBag className=" cursor-pointer size-16" />
 
             <h1 className="text-[25px]">Your cart is empty</h1>
           </div>
