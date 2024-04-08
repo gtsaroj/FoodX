@@ -2,8 +2,12 @@ export interface Order {
   orderId: string;
   uid: string;
   products: Product[];
-  orderRequest: Date;
-  orderFullFilled: Date;
+  orderRequest: RequestTime;
+  orderFullFilled: RequestTime;
+}
+interface RequestTime {
+  seconds: string | number,
+  nanoseconds : string | number
 }
 
 export interface Product {

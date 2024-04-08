@@ -182,7 +182,7 @@ const PasswordChange = () => {
             onClick={() => setChangePassword(!changePassword)}
             className=" flex cursor-pointer items-center justify-center w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
           >
-            Change Password
+            Edit
           </p>
         )}
       </form>

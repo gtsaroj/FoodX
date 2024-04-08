@@ -4,6 +4,8 @@ import { ProductType } from "./models/productMode";
 import { RootState, Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/authReducer";
 import { useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { Navigate } from "react-router-dom";
 
 export const UseFetch = (url: string) => {
   const [error, setError] = useState<boolean>(false);
@@ -14,10 +16,18 @@ export const UseFetch = (url: string) => {
   useEffect(() => {
     const fetchApiData = async () => {
       try {
-          setLoading(true);
-          console.log(authUser.success)
+        setLoading(true);
+        console.log(authUser.success);
         if (!authUser.success) {
-           return setLoading(true);
+          return setLoading(true);
+        }
+        const refresToken = Cookies.get("refreshToken");
+        if (!refresToken) {
+          Store.dispatch(authLogout())
+        }
+        const accessToken = Cookies.get("accessToken");
+        if (!accessToken) {
+          return setLoading(true);
         }
         const response = await makeRequest.get(url);
         const responseData = await response.data.data.products;

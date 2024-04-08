@@ -4,6 +4,11 @@ import { Order, Product } from "../../models/order.model";
 import { nanoid } from "@reduxjs/toolkit";
 import { ChevronsLeft, ChevronRight, ChevronsRight } from "lucide-react";
 import { auth } from "../../firebase";
+import { RootState, Store } from "../../Reducer/Store";
+import authReducer from "../../Reducer/authReducer";
+import { addToCart } from "../../Reducer/Reducer";
+import { addToList } from "../../Reducer/OrderReducer";
+import { useSelector } from "react-redux";
 
 const product: Product = {
   id: nanoid(),
@@ -18,21 +23,42 @@ const order1: Order = {
   orderId: nanoid(),
   uid: "X8LHXCdRffcKJMR9Rs1s87HJBm83",
   products: [product],
-  orderRequest: new Date(),
-  orderFullFilled: new Date(),
+  orderRequest: {
+    nanoseconds: 1,
+    seconds: 2,
+  },
+  orderFullFilled: {
+    nanoseconds: 3,
+    seconds: 4,
+  },
 };
 
+
 export const OrderComponent = () => {
+
+
+  const orderList = useSelector((state : RootState)=> state.root.Products.order.order)
   const [orders, setOrders] = useState<Order[]>([]);
   const [lastVisibleOrder, setLastVisibleOrder] = useState<any>();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [nextDisabled, setNextDisabled] = useState<boolean>(false);
-
+  const user = useSelector((state: RootState) => state.root.auth.userInfo);
   const fetchData = async (next?: boolean) => {
     try {
-      const user = auth.currentUser;
       if (!user) throw new Error("Please Login first.");
       const data = await getOrderByUser(user?.uid, lastVisibleOrder, next);
+      const serializeData = data?.map((order: Order) => ({
+        ...order,
+        orderRequest: {
+          seconds: order.orderRequest?.seconds,
+          nanoseconds: order.orderRequest?.nanoseconds,
+        },
+        orderFullFilled: {
+          seconds: order.orderFullFilled?.seconds,
+          nanoseconds: order.orderFullFilled?.nanoseconds,
+        },
+      }));
+      Store.dispatch(addToList([...serializeData]));
 
       if (data.length < 5) {
         setNextDisabled(true);
@@ -83,7 +109,7 @@ export const OrderComponent = () => {
         </div>
         <div className="flex flex-col gap-2 max-h-[400px] overflow-y-scroll">
           <div className="flex flex-col flex-grow-0 gap-2 py-2">
-            {orders.map((item: Order) => (
+            {orderList.map((item: Order) => (
               <OrderCard key={item.orderId} item={item} />
             ))}
           </div>

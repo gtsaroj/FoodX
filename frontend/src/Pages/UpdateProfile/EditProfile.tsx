@@ -149,7 +149,7 @@ const EditProfile = () => {
                   <img
                     src={URL.createObjectURL(SelectedImage)}
                     alt=""
-                    className="rounded-full w-20 h-20 border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[var(--light-background)] outline-none"
+                    className="rounded-full w-24 h-20 border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[var(--light-background)] outline-none"
                   />
                 ) : (
                   <img
@@ -313,7 +313,7 @@ const EditProfile = () => {
                   onClick={() => setEditProfile(!editProfile)}
                   className=" cursor-pointer w-[200px] flex items-center justify-center h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
                 >
-                  Edit Profile
+                  Edit
                 </div>
               )}
             </div>

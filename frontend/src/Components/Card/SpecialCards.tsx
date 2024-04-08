@@ -15,7 +15,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const dispatch = useDispatch();
 
   const selectedProductsQuantity = useSelector(
-    (state: RootState) => state.root.cart.products
+    (state: RootState) => state.root.Products.cart.products
   );
 
   const handleClick = () => {
@@ -48,7 +48,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   return (
     <div
       className={
-        " h-full w-[250px] rounded-xl shadow shadow-slate-400  pb-3 overflow-hidden  relative snap-start"
+        " h-full w-[250px] rounded-xl bg-[var(--light-text)] pb-3 overflow-hidden  relative snap-start"
       }
       key={prop.id}
     >

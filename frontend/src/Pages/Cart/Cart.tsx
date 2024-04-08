@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const Cart: React.FC = () => {
   const selectedProducts = useSelector(
-    (state: RootState) => state.root.cart.products
+    (state: RootState) => state.root.Products.cart.products
   );
 
   const navigate = useNavigate();
@@ -21,10 +21,10 @@ const Cart: React.FC = () => {
 
   return (
     // Desktop
-    <div className="flex flex-col w-full h-[580px] gap-3  sm:px-1 px-[30px]">
+    <div className="flex flex-col w-full h-[580px] gap-3   sm:px-1 px-[30px]">
       <div className="flex flex-col items-start ">
         <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
-          My Order
+          My Cart
         </h3>
       </div>
       <div className="flex flex-col items-center gap-2 w-full py-5 overflow-y-scroll">

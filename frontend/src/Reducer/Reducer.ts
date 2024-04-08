@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Order } from "../models/order.model";
 
 export interface ProductType {
   id: string;
@@ -8,14 +9,14 @@ export interface ProductType {
   quantity: number;
 }
 
+
 interface ProductsType {
   products: ProductType[];
 }
 
 const initialState: ProductsType = {
-  products: [],
+  products: []
 };
-
 const productSlice = createSlice({
   name: "cart",
   initialState,

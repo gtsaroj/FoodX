@@ -6,30 +6,25 @@ export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
-makeRequest.interceptors.request.use(
-   async(config) => {
-    const accessToken =   Cookies.get("accessToken");
-    config.headers.Authorization = `Bearer ${accessToken}`;
+makeRequest.interceptors.request.use(async (config) => {
+  const accessToken = Cookies.get("accessToken");
+  config.headers.Authorization = `Bearer ${accessToken}`;
 
-    return config;
-  },
-  async (error) => {
-    console.log(error);
-  }
-);
+  return config;
+});
 
 makeRequest.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
+
     const status = error.response ? error.response.status : null;
-    console.log(error.response.statusText == "Unauthorized");
 
     if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
-        return console.log("Please Login First");
+        return Promise.reject("You have not access, please login again...");
       }
       Cookies.remove("accessToken");
       console.log(
@@ -47,8 +42,6 @@ makeRequest.interceptors.response.use(
       if (previousRefreshToken) {
         Cookies.set("refreshToken", (previousRefreshToken = newRefreshToken));
       }
-
-      console.log(error);
       //  try with original request
       return await makeRequest(error.config);
     }

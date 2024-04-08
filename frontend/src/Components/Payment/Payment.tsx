@@ -149,7 +149,7 @@ export const MobileCart: React.FC = () => {
 
   return (
     // Desktop
-    <div className="w-full flex items-center justify-center ">
+    <div className="w-full flex items-center  py-6 justify-center ">
          <div className="flex flex-col w-[600px] items-center justify-center h-[580px] gap-3  sm:px-1 px-[30px]">
       <div className="flex flex-col items-start ">
         <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
