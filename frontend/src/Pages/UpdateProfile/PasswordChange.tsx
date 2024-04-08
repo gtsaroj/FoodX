@@ -5,7 +5,7 @@ import {
   allFieldsRequired,
   checkPassword,
 } from "./UpdateProfileValidation";
-import { updateUserPassword } from "../../firebase/utils";
+import { reAuthUser, updateUserPassword } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { authLogout } from "../../Reducer/authReducer";
@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 const PasswordChange = () => {
   const [oldPassword, setOldPassword] = useState<string>("");
   const [newPassword, SetNewPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [ShowPassword, setShowPassword] = useState<boolean>(false);
   let [ValidateError, setValidateError] = useState<Record<string, string>>({});
@@ -48,10 +49,15 @@ const PasswordChange = () => {
 
     try {
       if (Validation(error) === null) {
+        console.log(email, oldPassword, newPassword);
         setPasswordChanging(true);
+        await reAuthUser(email, oldPassword).catch((error) => {
+          setPasswordChanging(false);
+          return toast.error("Invalid Email or Password");
+        });
+
         await updateUserPassword(newPassword).then((res: any) => {
           toast.success("Your password Changed SuccessFully");
-          console.log(res);
           dispatch(authLogout());
         });
         setPasswordChanging(false);
@@ -64,43 +70,76 @@ const PasswordChange = () => {
   };
 
   return (
-    <div className="flex items-center w-full rounded-md  px-10     py-5 justify-center">
+    <div className="flex items-center w-full rounded-md  px-5     py-5 justify-center">
       <form
         action="
  "
         onSubmit={HandlePasswordChange}
         className="flex flex-col gap-3  w-full items-end "
       >
-        <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
-          <label htmlFor="confirmpassword" className=" text-[15px]">
-            Old Password
-          </label>
-          {changePassword ? (
-            <input
-              type={ShowPassword ? "text" : "password"}
-              id="confirmpassword"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-            />
-          ) : (
-            <input
-              type={ShowPassword ? "text" : "password"}
-              id="confirmpassword"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-              readOnly
-            />
-          )}
+        <div className="w-full flex items-center justify-center gap-3">
+          <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
+            <label htmlFor="email" className="font-Poppins text-[15px]">
+              Email
+            </label>
+            {changePassword ? (
+              <input
+                type={"email"}
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
+              />
+            ) : (
+              <input
+                type={ShowPassword ? "text" : "password"}
+                id="password"
+                value={newPassword}
+                onChange={(e) => SetNewPassword(e.target.value)}
+                className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
+                readOnly
+              />
+            )}
 
-          <div
-            className="absolute  top-[29px] lg:top-[33px]  right-[14px] w-[15px] h-[15px] text-[var(--dark-secondary-text)] "
-            onClick={() => setShowPassword(!ShowPassword)}
-          >
-            {ShowPassword ? <Eye /> : <EyeOff />}
+            <div
+              className="absolute top-[29px] lg:top-[33px] text-[var(--dark-secondary-text)]  right-[14px] w-[15px] h-[15px]"
+              onClick={() => setShowPassword(!ShowPassword)}
+            >
+              {ShowPassword ? <Eye /> : <EyeOff />}
+            </div>
+          </div>
+          <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
+            <label htmlFor="confirmpassword" className=" text-[15px]">
+              Old Password
+            </label>
+            {changePassword ? (
+              <input
+                type={ShowPassword ? "text" : "password"}
+                id="confirmpassword"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
+              />
+            ) : (
+              <input
+                type={ShowPassword ? "text" : "password"}
+                id="confirmpassword"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
+                readOnly
+              />
+            )}
+
+            <div
+              className="absolute  top-[29px] lg:top-[33px]  right-[14px] w-[15px] h-[15px] text-[var(--dark-secondary-text)] "
+              onClick={() => setShowPassword(!ShowPassword)}
+            >
+              {ShowPassword ? <Eye /> : <EyeOff />}
+            </div>
           </div>
         </div>
+
         <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-[10px]">
           <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
             <label htmlFor="password" className="font-Poppins text-[15px]">
