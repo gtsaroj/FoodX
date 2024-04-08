@@ -15,6 +15,7 @@ import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
 import Cart from "./Pages/Cart/Cart.tsx";
+import { OrderComponent } from "./Pages/Orders/Order.tsx";
 
 const HomePage = () => {
   return (
@@ -55,7 +56,7 @@ export const App: React.FC = () => {
         <Route
           path="forgot-password"
           element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
-   />
+        />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
         <Route
           path="/"
@@ -64,9 +65,10 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>
-            <Route path="/profile"  element={<UpdateProfile/>} />
+            <Route path="/profile" element={<UpdateProfile />} />
+            <Route path="/orders" element={<OrderComponent />} />
+
             <Route path="/cart/checkout" element={<Payment />} />
-         
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

@@ -1,5 +1,7 @@
 import {
+  EmailAuthProvider,
   deleteUser,
+  reauthenticateWithCredential,
   sendEmailVerification,
   sendPasswordResetEmail,
   updatePassword,
@@ -57,10 +59,24 @@ const updateUserPassword = async (newPassword: string) => {
   }
 };
 
+const reAuthUser = async (email: string, password: string) => {
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error("User not logged in.");
+
+    const credentials = EmailAuthProvider.credential(email, password);
+
+    await reauthenticateWithCredential(user, credentials);
+  } catch (error) {
+    throw new Error("Error reauthetication.");
+  }
+};
+
 export {
   emailVerification,
   passwordResetEmail,
   updateUserProfile,
   updateUserPassword,
   deleteAccount,
+  reAuthUser,
 };
