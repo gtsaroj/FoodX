@@ -8,14 +8,13 @@ import Cookies from "js-cookie";
 import HashLoader from "react-spinners/HashLoader";
 import { Eye, EyeOff } from "lucide-react";
 import { auth } from "../../firebase";
+import ReAuth from "./ReAuth";
 
 const DeleteAccount: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
   const [deletingAccount, setDeletingAccount] = useState<boolean>(false);
-  const [ShowPassword, setShowPassword] = useState<boolean>(false);
   const [step2, setStep2] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+
   const dispatch = useDispatch();
 
   const HandleDeleteAccount = async (event: FormEvent<HTMLFormElement>) => {
@@ -30,19 +29,17 @@ const DeleteAccount: React.FC = () => {
     event.preventDefault();
     try {
       setDeletingAccount(true);
-      await reAuthUser(email, password)
-        .then(async (res) => {
-          await makeRequest.post("/users/delete-user");
-          await deleteAccount();
-          dispatch(authLogout());
-          Cookies.remove("refreshToken");
-          Cookies.remove("accessToken");
-          setDeletingAccount(false);
-        })
-        .catch((error) => {
-          setDeletingAccount(false);
-          return toast.error("Invalid Email or Password");
-        });
+      await makeRequest.post("/users/delete-user");
+      await deleteAccount().then(() =>
+        setTimeout(() => {
+          toast.success("Account Deleted Successfully");
+        }, 2000)
+      );
+
+      dispatch(authLogout());
+      Cookies.remove("refreshToken");
+      Cookies.remove("accessToken");
+      setDeletingAccount(false);
     } catch (error) {
       setDeletingAccount(true);
       throw new Error("Failed To Delete Account" + error);
@@ -85,62 +82,19 @@ const DeleteAccount: React.FC = () => {
           </button>
         </div>
       </form>
-      <form
-        onSubmit={confirmToDelete}
-        action=""
-        className={`px-5 py-6 rounded-md bg-[var(--light-foreground)] shadow-sm shadow-black absolute top-0 left-0 right-0 flex w-full items-center justify-center gap-3 sm:flex-row flex-col ${
-          step2 ? "visible opacity-[1] " : "invisible  opacity-[0] "
-        } duration-200`}
-      >
-        {/* Email */}
-        <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
-          <label htmlFor="email" className="font-Poppins text-[15px]">
-            Email
-          </label>
-          <input
-            type={"email"}
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-            required
-          />
-        </div>
-        {/* Password */}
-        <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
-          <label htmlFor="confirmpassword" className=" text-[15px]">
-            Password
-          </label>
-          <input
-            type={ShowPassword ? "text" : "password"}
-            id="confirmpassword"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-            required
-          />
-          <div
-            className="absolute  top-[29px] lg:top-[33px]  right-[14px] w-[15px] h-[15px] text-[var(--dark-secondary-text)] "
-            onClick={() => setShowPassword(!ShowPassword)}
-          >
-            {ShowPassword ? <Eye /> : <EyeOff />}
-          </div>
-        </div>
 
-        <div className="w-full flex justify-end items-center ">
-          {" "}
-          <button className=" w-[200px] h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-            {deletingAccount ? (
-              <div className="flex text-sm items-center justify-center gap-6">
-                Deleting <HashLoader color="white" size={"15px"} />
-              </div>
-            ) : (
-              "Delete Account"
-            )}
-          </button>
-        </div>
-      </form>
       <Toaster />
+      <div
+        className={` flex w-full h-full bottom-0 right-0 top-[50px] overflow-hidden  duration-300 z-[5]  items-center justify-center bg-[#00000041]  fixed ${
+          step2 ? "visible opacity-[1] " : "invisible opacity-0"
+        }`}
+      >
+        <ReAuth
+          reAuthUsers={() =>
+            confirmToDelete(event as unknown as FormEvent<HTMLFormElement>)
+          }
+        />
+      </div>
     </div>
   );
 };

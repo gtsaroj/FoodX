@@ -20,7 +20,7 @@ export const UpdateProfile: React.FC = () => {
         <div>
           <EditProfile />
         </div>
-        <div className="flex flex-col items-baseline gap-3">
+        <div className="flex py-16 flex-col items-baseline gap-3">
           <h1 className="pl-4 sm:pl-2 text-xl">Change Password</h1>
           <div>
             <PasswordChange />

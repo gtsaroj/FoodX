@@ -11,11 +11,12 @@ import { AppDispatch } from "../../Reducer/Store";
 import { authLogout } from "../../Reducer/authReducer";
 import HashLoader from "react-spinners/HashLoader";
 import toast from "react-hot-toast";
+import ReAuth from "./ReAuth";
+import { auth } from "../../firebase";
 
 const PasswordChange = () => {
-  const [oldPassword, setOldPassword] = useState<string>("");
+  const [close, setClose] = useState<boolean>(false)
   const [newPassword, SetNewPassword] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [ShowPassword, setShowPassword] = useState<boolean>(false);
   let [ValidateError, setValidateError] = useState<Record<string, string>>({});
@@ -25,7 +26,6 @@ const PasswordChange = () => {
 
   function Validation(error: Record<string, string>) {
     const collectionOfPassword: ChangePasswordType = {
-      oldPassword,
       newPassword,
       confirmNewPassword,
     };
@@ -43,22 +43,23 @@ const PasswordChange = () => {
 
   const HandlePasswordChange = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(`Step--------------1`);
     const error: Record<string, string> = {};
     Validation(error);
     setValidateError(error);
 
     try {
       if (Validation(error) === null) {
-        console.log(email, oldPassword, newPassword);
         setPasswordChanging(true);
-        await reAuthUser(email, oldPassword).catch((error) => {
-          setPasswordChanging(false);
-          return toast.error("Invalid Email or Password");
-        });
+        if (!auth.currentUser) {
+          return toast.error("Invalid Authenticated");
+        }
 
         await updateUserPassword(newPassword).then((res: any) => {
           toast.success("Your password Changed SuccessFully");
-          dispatch(authLogout());
+          setTimeout(() => {
+            dispatch(authLogout());
+          }, 2000);
         });
         setPasswordChanging(false);
       }
@@ -69,77 +70,22 @@ const PasswordChange = () => {
     setPasswordChanging(false);
   };
 
+  const HandlePasswordChangeStep1 = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (newPassword !== "") {
+      setPasswordChanging(true);
+    }
+  };
   return (
-    <div className="flex items-center w-full rounded-md  px-5     py-5 justify-center">
+    <div className="relative  overscroll- flex items-center w-full rounded-md  px-5     py-5 justify-center">
       <form
         action="
  "
-        onSubmit={HandlePasswordChange}
-        className="flex flex-col gap-3  w-full items-end "
+        onSubmit={HandlePasswordChangeStep1}
+        className={`  flex flex-col gap-3  w-full items-end ${
+          passwordChanging ? " blur-sm " : "visible"
+        }`}
       >
-        <div className="w-full flex items-center justify-center gap-3">
-          <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
-            <label htmlFor="email" className="font-Poppins text-[15px]">
-              Email
-            </label>
-            {changePassword ? (
-              <input
-                type={"email"}
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-              />
-            ) : (
-              <input
-                type={ShowPassword ? "text" : "password"}
-                id="password"
-                value={newPassword}
-                onChange={(e) => SetNewPassword(e.target.value)}
-                className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-                readOnly
-              />
-            )}
-
-            <div
-              className="absolute top-[29px] lg:top-[33px] text-[var(--dark-secondary-text)]  right-[14px] w-[15px] h-[15px]"
-              onClick={() => setShowPassword(!ShowPassword)}
-            >
-              {ShowPassword ? <Eye /> : <EyeOff />}
-            </div>
-          </div>
-          <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
-            <label htmlFor="confirmpassword" className=" text-[15px]">
-              Old Password
-            </label>
-            {changePassword ? (
-              <input
-                type={ShowPassword ? "text" : "password"}
-                id="confirmpassword"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-              />
-            ) : (
-              <input
-                type={ShowPassword ? "text" : "password"}
-                id="confirmpassword"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full "
-                readOnly
-              />
-            )}
-
-            <div
-              className="absolute  top-[29px] lg:top-[33px]  right-[14px] w-[15px] h-[15px] text-[var(--dark-secondary-text)] "
-              onClick={() => setShowPassword(!ShowPassword)}
-            >
-              {ShowPassword ? <Eye /> : <EyeOff />}
-            </div>
-          </div>
-        </div>
-
         <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-[10px]">
           <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
             <label htmlFor="password" className="font-Poppins text-[15px]">
@@ -225,6 +171,20 @@ const PasswordChange = () => {
           </p>
         )}
       </form>
+      <div
+        className={` flex w-full h-full bottom-0 right-0 top-[50px] overflow-hidden  duration-300 z-[5]  items-center justify-center bg-[#00000041]  fixed  ${
+          passwordChanging
+            ? "  overscroll-y-none rounded-md visible opacity-[1] "
+            : "invisible opacity-0 "
+        }`}
+      >
+      
+        <ReAuth
+          reAuthUsers={() =>
+            HandlePasswordChange(event as unknown as FormEvent<HTMLFormElement>)
+          }
+        />
+      </div>
     </div>
   );
 };

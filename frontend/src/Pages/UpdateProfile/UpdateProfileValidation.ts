@@ -1,7 +1,6 @@
 import { UpdateProfileType } from "../UpdateProfile/UpdateProfile";
 
 export interface ChangePasswordType {
-  oldPassword: string;
   newPassword: string;
   confirmNewPassword: string;
 }
@@ -40,7 +39,7 @@ export const checkPassword = (
   error: Record<string, string>
 ) => {
   if (
-    !password.oldPassword &&
+
     !password.newPassword &&
     !password.confirmNewPassword
   ) {
@@ -51,7 +50,6 @@ export const checkPassword = (
   }
   
   const passkey = (
-    password.oldPassword?.trim() &&
     password.newPassword?.trim() &&
     password.confirmNewPassword.trim()
   )
@@ -89,7 +87,6 @@ export const checkPassword = (
     return;
   }
   if (
-    password.oldPassword.length < 8 &&
     password.newPassword.length < 8 &&
     password.confirmNewPassword.length < 8
   ) {
