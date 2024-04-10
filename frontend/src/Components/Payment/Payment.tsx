@@ -19,7 +19,7 @@ interface CartProp {
 
 export const Payment: React.FC = () => {
   const selectedProduct = useSelector(
-    (state: RootState) => state.root.cart.products
+    (state: RootState) => state.root.Products.cart.products
   );
 
   const navigate = useNavigate();
@@ -135,7 +135,7 @@ export const Payment: React.FC = () => {
 
 export const MobileCart: React.FC = () => {
   const selectedProducts = useSelector(
-    (state: RootState) => state.root.cart.products
+    (state: RootState) => state.root.Products.cart.products
   );
   const navigate = useNavigate();
 
