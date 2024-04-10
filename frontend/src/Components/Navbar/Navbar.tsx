@@ -35,7 +35,7 @@ const navbarItems = [
 export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
   const [search, setSearch] = useState<boolean>(false);
-  const [mobileMenu, setMobileMenu] = useState<boolean>(false);
+  // const [mobileMenu, setMobileMenu] = useState<boolean>(false);
   const [filteredData, setFilteredData] = useState<string>("");
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
   const [closeFilter, setCloseFilter] = useState(false);
@@ -86,7 +86,7 @@ export const Navbar: React.FC = () => {
       className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
       {/* Logo */}
-      <div className="flex cursor-pointer items-center shrink-0 " onClick={()=>navigate("/")}>
+      <div className="flex items-center cursor-pointer shrink-0 " onClick={()=>navigate("/")}>
         <img
           src={CollegeLogo}
           alt="college logo"
@@ -136,7 +136,7 @@ export const Navbar: React.FC = () => {
               className=" hover:bg-[#8080807c] p-1 rounded-full cursor-pointer group/user"
             >
               <img
-                className=" sm:size-9 size-8 rounded-full"
+                className="rounded-full sm:size-9 size-8"
                 src={userImage.avatar}
                 alt=""
               />
@@ -150,7 +150,7 @@ export const Navbar: React.FC = () => {
             </div>
           )}
         </div>
-        <div>
+        {/* <div>
           {!mobileMenu ? (
             <MenuIcon
               onClick={() => setMobileMenu((mobileMenu) => !mobileMenu)}
@@ -168,7 +168,7 @@ export const Navbar: React.FC = () => {
               }
             />
           )}
-        </div>
+        </div> */}
       </div>
       {search && (
         <form className="absolute flex  w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
@@ -197,12 +197,12 @@ export const Navbar: React.FC = () => {
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
           {filteredData.length <= 0 ? (
-            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">
+            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Find Your Products
               <Smile className="size-16 text-[var(--primary-color)]" />
             </div>
           ) : storeFilteredData?.length <= 0 ? (
-            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">
+            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Your Product Not Found
               <Frown className="size-16 text-[var(--primary-color)]" />
             </div>
@@ -213,7 +213,7 @@ export const Navbar: React.FC = () => {
           )}
         </div>
       </div>
-      {mobileMenu && <MobileMenu />}
+      {/* {mobileMenu && <MobileMenu />} */}
       <div
         ref={profileRef}
         className={`absolute right-5 top-20 flex w-full justify-end items-center ${
@@ -261,29 +261,29 @@ export const Header: React.FC = () => {
   );
 };
 
-export const MobileMenu: React.FC = () => {
-  const navigate = useNavigate();
-  return (
-    <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-baseline justify-center">
-      {navbarItems &&
-        navbarItems.map((item, index) => (
-          <div
-            key={index}
-            className=" cursor-pointer border-b border-b-[var(--light-border)] w-full px-5 py-4 hover:bg-[var(--light-border)]"
-            onClick={() => navigate(item.url)}
-          >
-            <p>{item.name}</p>
-          </div>
-        ))}
-      <button
-        onClick={()=>navigate("/profile")}
-        className=" w-full text-start px-5 py-4 hover:bg-[var(--light-border)]"
-      >
-        Profile
-      </button>
-    </div>
-  );
-};
+// export const MobileMenu: React.FC = () => {
+//   const navigate = useNavigate();
+//   return (
+//     <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-baseline justify-center">
+//       {navbarItems &&
+//         navbarItems.map((item, index) => (
+//           <div
+//             key={index}
+//             className=" cursor-pointer border-b border-b-[var(--light-border)] w-full px-5 py-4 hover:bg-[var(--light-border)]"
+//             onClick={() => navigate(item.url)}
+//           >
+//             <p>{item.name}</p>
+//           </div>
+//         ))}
+//       <button
+//         onClick={()=>navigate("/profile")}
+//         className=" w-full text-start px-5 py-4 hover:bg-[var(--light-border)]"
+//       >
+//         Profile
+//       </button>
+//     </div>
+//   );
+// };
 
 export const DesktopSearch = () => {
   const [search, setSearch] = useState<boolean>();
@@ -360,12 +360,12 @@ export const DesktopSearch = () => {
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
           {filteredData.length <= 0 ? (
-            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">
+            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Find Your Products
               <Smile className="size-16 text-[var(--primary-color)]" />
             </div>
           ) : storeFilteredData?.length <= 0 ? (
-            <div className="flex gap-3 w-full py-20 flex-col-reverse justify-center items-center">
+            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Your Product Not Found
               <Frown className="size-16 text-[var(--primary-color)]" />
             </div>

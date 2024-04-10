@@ -48,7 +48,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   return (
     <div
       className={
-        " h-full w-[250px] rounded-xl bg-[var(--light-text)] pb-3 overflow-hidden  relative snap-start"
+        " h-full w-[250px] rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
       }
       key={prop.id}
     >
@@ -75,7 +75,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         }   bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  `}
       >
         {activeCart ? (
-          <div className=" flex items-center gap-2 px-1 text-xs select-none">
+          <div className="flex items-center gap-2 px-1 text-xs select-none ">
             <button
               onClick={() => handleClick()}
               disabled={cartQuantity <= 1 ? true : false}

@@ -127,13 +127,13 @@ const EditProfile = () => {
     setUpdateUser(false);
   };
   return (
-    <div className="lg:flex  w-full  flex-col rounded-md items-center sm:items-baseline">
-      <div className="flex  flex-col items-baseline px-3 py-7 w-full">
+    <div className="flex-col items-center w-full rounded-md lg:flex sm:items-baseline">
+      <div className="flex flex-col items-baseline w-full px-3 py-7">
         <div className="flex flex-col  py-5 items-baseline w-full  rounded-md md:px-[50px]   px-[10px]">
           <form
             action=""
             onSubmit={handleFormSubmit}
-            className="flex flex-col items-end gap-10  sm:items-center w-full"
+            className="flex flex-col items-end w-full gap-10 sm:items-center"
           >
             <div
               className={`  flex py-7 pl-3 pr-10 w-full rounded-md bg-[#8080807c] items-center justify-center gap-5 ${
@@ -292,7 +292,7 @@ const EditProfile = () => {
                 )}
               </div>
             </div>
-            <div className="flex w-full justify-end ">
+            <div className="flex justify-end w-full ">
               {editProfile ? (
                 <button
                   disabled ={valueChanged}

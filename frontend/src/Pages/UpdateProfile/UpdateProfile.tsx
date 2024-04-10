@@ -12,22 +12,26 @@ export interface UpdateProfileType {
 
 export const UpdateProfile: React.FC = () => {
   return (
-    <div className="bg-[var(--light-foreground)] flex flex-col items-center  w-full py-6 px-4">
-      <div className="flex flex-col sm:items-baseline items-center justify-center gap-3">
-        <h1 className=" pl-4 sm:pl-2 w-full text-start text-xl">
+    <div className="bg-[var(--light-foreground)] flex flex-col items-center  w-full py-8 px-4 text-[var(--dark-text)]">
+      <div className="flex flex-col items-center justify-center gap-3 sm:items-baseline">
+        <h1 className="w-full pl-4 text-2xl font-bold tracking-wider sm:pl-2 text-start text-[var(--dark-text)]">
           Edit Profile
         </h1>
         <div>
           <EditProfile />
         </div>
-        <div className="flex py-16 flex-col items-baseline gap-3">
-          <h1 className="pl-4 sm:pl-2 text-xl">Change Password</h1>
-          <div>
+        <div className="flex flex-col items-start gap-3 py-8">
+          <h1 className="pl-4 text-2xl font-bold tracking-wider sm:pl-2 text-[var(--dark-text)]">
+            Change Password
+          </h1>
+          <div className="">
             <PasswordChange />
           </div>
         </div>
         <div className="flex flex-col items-baseline gap-3">
-          <h1 className="pl-4 sm:pl-2 text-xl">Delete Account</h1>
+          <h1 className="pl-4 text-2xl font-bold sm:pl-2 text-[var(text-[var(--dark-text)])] tracking-wider">
+            Delete Account
+          </h1>
           <div>
             <DeleteAccount />
           </div>
@@ -39,7 +43,7 @@ export const UpdateProfile: React.FC = () => {
 
 export const Register = () => {
   return (
-    <div className="w-full h-full justify-center items-center">
+    <div className="items-center justify-center w-full h-full">
       <UpdateProfile />
 
       <Toaster />
