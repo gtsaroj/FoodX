@@ -60,7 +60,6 @@ export const Navbar: React.FC = () => {
         setCloseFilter(true);
       }
     };
-    
 
     const closeProfile = (event: MouseEvent) => {
       if (!profileRef?.current?.contains(event.target as Node)) {
@@ -78,7 +77,7 @@ export const Navbar: React.FC = () => {
       }
     };
   }, [filteredData, closeFilter, openProfile]);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <nav
@@ -86,7 +85,10 @@ export const Navbar: React.FC = () => {
       className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
       {/* Logo */}
-      <div className="flex items-center cursor-pointer shrink-0 " onClick={()=>navigate("/")}>
+      <div
+        className="flex items-center cursor-pointer shrink-0 "
+        onClick={() => navigate("/")}
+      >
         <img
           src={CollegeLogo}
           alt="college logo"
@@ -124,8 +126,11 @@ export const Navbar: React.FC = () => {
               className=" cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out lg:hidden "
             />
           </div>
-          <div onClick={()=> navigate("/cart")} className="flex items-center justify-center md:hidden">
-            <ShoppingBag/>
+          <div
+            onClick={() => navigate("/cart")}
+            className="flex items-center justify-center md:hidden"
+          >
+            <ShoppingBag />
           </div>
           <div className="hidden lg:flex" ref={FilterRef}>
             <DesktopSearch />
@@ -181,11 +186,11 @@ export const Navbar: React.FC = () => {
             placeholder="Search..."
             autoCorrect="off"
           />
-           <X
-          size={20}
-          className=" top-4 right-10 absolute cursor-pointer text-[var(--secondary-color)] "
-          onClick={() => setSearch((search) => !search)}
-        />
+          <X
+            size={20}
+            className=" top-4 right-10 absolute cursor-pointer text-[var(--secondary-color)] "
+            onClick={() => setSearch((search) => !search)}
+          />
         </form>
       )}
       <div

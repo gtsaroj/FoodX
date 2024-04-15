@@ -6,8 +6,9 @@ import DeleteAccount from "./DeleteAccount";
 
 export interface UpdateProfileType {
   avatar?: any;
-  fullName: string;
-  phoneNumber: string;
+  fullName?: string;
+  phoneNumber?: string;
+  email? : string;
 }
 
 export const UpdateProfile: React.FC = () => {
