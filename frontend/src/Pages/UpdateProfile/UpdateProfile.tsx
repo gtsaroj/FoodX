@@ -12,13 +12,15 @@ export interface UpdateProfileType {
 
 export const UpdateProfile: React.FC = () => {
   return (
-    <div className="bg-[var(--light-foreground)] flex flex-col items-center  w-full py-8 px-4 text-[var(--dark-text)]">
+    <div className="bg-green-100 flex flex-col items-center  w-full py-8 px-4 text-[var(--dark-text)]">
       <div className="flex flex-col items-center justify-center gap-3 sm:items-baseline">
-        <h1 className="w-full pl-4 text-2xl font-bold tracking-wider sm:pl-2 text-start text-[var(--dark-text)]">
-          Edit Profile
-        </h1>
-        <div>
-          <EditProfile />
+        <div className="px-5 bg-blue-100 py-7">
+          <h1 className="w-full pl-4 text-2xl font-bold tracking-wider sm:pl-2 text-start text-[var(--dark-text)]">
+            My Profile
+          </h1>
+          <div className="bg-red-100">
+            <EditProfile />
+          </div>
         </div>
         <div className="flex flex-col items-start gap-3 py-8">
           <h1 className="pl-4 text-2xl font-bold tracking-wider sm:pl-2 text-[var(--dark-text)]">

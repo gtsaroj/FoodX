@@ -16,6 +16,7 @@ import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
 import Cart from "./Pages/Cart/Cart.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
+import { UserProfile } from "./Pages/UpdateProfile/test.tsx";
 
 const HomePage = () => {
   return (
@@ -67,7 +68,7 @@ export const App: React.FC = () => {
             <Route path="/cart" element={<MobileCart />}></Route>
             <Route path="/profile" element={<UpdateProfile />} />
             <Route path="/orders" element={<OrderComponent />} />
-
+            <Route path="man" element={<UserProfile />} />
             <Route path="/cart/checkout" element={<Payment />} />
           </Route>
         </Route>

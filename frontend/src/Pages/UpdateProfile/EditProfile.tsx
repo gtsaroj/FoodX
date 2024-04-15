@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
-import { Pencil } from "lucide-react";
+import { EditIcon, Pencil } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { storeImageInFirebase } from "../../firebase/storage";
@@ -128,34 +128,36 @@ const EditProfile = () => {
   };
   return (
     <div className="flex-col items-center w-full rounded-md lg:flex sm:items-baseline">
-      <div className="flex flex-col items-baseline w-full px-3 py-7">
-        <div className="flex flex-col  py-5 items-baseline w-full  rounded-md md:px-[50px]   px-[10px]">
+      <div className="flex flex-col items-baseline w-full py-7">
+        <div className="flex flex-col items-baseline w-full py-5 rounded-md">
           <form
             action=""
             onSubmit={handleFormSubmit}
-            className="flex flex-col items-end w-full gap-10 sm:items-center"
+            className="flex flex-col items-end w-full gap-10 sm:items-center "
           >
             <div
-              className={`  flex py-7 pl-3 pr-10 w-full rounded-md bg-[#8080807c] items-center justify-center gap-5 ${
-                updateUser ? "bg-[#8080807c] animate-pulse" : ""
+              className={`bg-[var(--light-foreground)] border border-[var(--light-border)] flex py-7 pl-5 pr-10 w-full rounded-md  items-center justify-center gap-5 ${
+                updateUser ? " animate-pulse" : ""
               }`}
             >
               <div
-                className={`relative ${editProfile ? "group/image" : ""} 
+                className={`relative !w-[100px] h-[80px] overflow-hidden ${
+                  editProfile ? "group/image" : ""
+                } 
                 ${updateUser ? "invisible" : ""}
-                  duration-150   flex flex-col items-center justify-center gap-1`}
+                  duration-150  flex flex-col items-center justify-center gap-1`}
               >
                 {SelectedImage ? (
                   <img
                     src={URL.createObjectURL(SelectedImage)}
                     alt=""
-                    className="rounded-full w-24 h-20 border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[var(--light-background)] outline-none"
+                    className="rounded-full  object-cover w-[80px] h-[80px]   border-[2px] border-[var(--primary-color)] bg-[var(--light-background)] outline-none"
                   />
                 ) : (
                   <img
                     src={RegisterValue.avatar}
                     alt=""
-                    className="rounded-full w-24 h-20 border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
+                    className="rounded-full  object-cover w-[80px] h-[80px] border-[1px] bg-[var(--light-background)] outline-none"
                   />
                 )}
                 {ValidateError["avatar"] && (
@@ -191,8 +193,16 @@ const EditProfile = () => {
                   {authUser?.fullName}
                 </p>
 
-                <p className="text-sm ">Personal</p>
-                <p className="text-sm">{authUser?.email}</p>
+                <p className="text-sm text-[var(--dark-secondary-text)] ">
+                  Customer
+                </p>
+                <p className="text-sm text-[var(--dark-secondary-text)]">
+                  {authUser?.email}
+                </p>
+              </div>
+              <div className="bg-[var(--light-foreground)] p-2 rounded-full flex justify-center items-center gap-2 cursor-pointer text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] transition-all ease-in-out duration-250 border border-[var(--light-border)] ">
+                <p className="text-xs">Edit</p>
+                <EditIcon size={15} />
               </div>
             </div>
             <div
@@ -295,7 +305,7 @@ const EditProfile = () => {
             <div className="flex justify-end w-full ">
               {editProfile ? (
                 <button
-                  disabled ={valueChanged}
+                  disabled={valueChanged}
                   type="submit"
                   className=" w-[200px] h-[40px] text-sm  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)]  font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
                 >
