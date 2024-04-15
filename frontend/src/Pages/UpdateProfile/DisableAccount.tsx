@@ -1,13 +1,13 @@
 import React, { FormEvent, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { makeRequest } from "../../makeRequest";
 import { deleteAccount } from "../../firebase/utils";
-import { useDispatch } from "react-redux";
 import { authLogout } from "../../Reducer/authReducer";
-import Cookies from "js-cookie";
 import ReAuth from "./ReAuth";
+import Cookies from "js-cookie";
 
-const DeleteAccount: React.FC = () => {
+const DisableAccount = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
   const [deletingAccount, setDeletingAccount] = useState<boolean>(false);
   const [step2, setStep2] = useState<boolean>(false);
@@ -16,7 +16,7 @@ const DeleteAccount: React.FC = () => {
 
   const HandleDeleteAccount = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (confirmDelete !== "Delete My Account") {
+    if (confirmDelete !== "Disable My Account") {
       return toast.error("Please Confirm To Delete ");
     }
     setStep2(true);
@@ -52,11 +52,11 @@ const DeleteAccount: React.FC = () => {
     >
       <div className="flex flex-col items-start justify-center gap-16">
         <div className="flex flex-col items-baseline justify-center gap-2">
-          <p className="font-semibold">Would you like to delete account ?</p>
+          <p className="font-semibold">Would you like to disable account ?</p>
           <h2 className="text-sm w-full lg:pr-36  sm:pr-20 pr-12 text-[var(--dark-secondary-text)] ">
-            This action is irreversible and all your data will be lost. If you
+            This action is irreversible, and all your data will be lost. If you
             need assistance or have concerns, contact us at foodx@gmail.com. To
-            proceed with account deletion, click below.
+            proceed with account disablement, click below.
           </h2>
         </div>
       </div>
@@ -69,7 +69,7 @@ const DeleteAccount: React.FC = () => {
         onSubmit={HandleDeleteAccount}
       >
         <div className="flex flex-col items-start gap-1">
-          <label htmlFor="">Type "Delete My Account" Below</label>
+          <label htmlFor="">Type "Disable My Account" Below</label>
           <input
             type="text"
             onChange={(e) => setConfirmDelete(e.target.value)}
@@ -79,7 +79,7 @@ const DeleteAccount: React.FC = () => {
         </div>
         <div className="flex  w-full">
           <button className=" w-[200px] h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-            Delete Account
+            Disable Account
           </button>
         </div>
       </form>
@@ -100,4 +100,4 @@ const DeleteAccount: React.FC = () => {
   );
 };
 
-export default DeleteAccount;
+export default DisableAccount;

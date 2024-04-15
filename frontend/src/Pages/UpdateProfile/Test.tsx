@@ -1,4 +1,4 @@
-import { EditIcon, Eye, EyeOff, X } from "lucide-react";
+import { Delete, EditIcon, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState, Store } from "../../Reducer/Store";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
@@ -15,6 +15,8 @@ import { authLogout } from "../../Reducer/authReducer";
 import { deleteAccount, updateUserPassword } from "../../firebase/utils";
 import Cookies from "js-cookie";
 import { makeRequest } from "../../makeRequest";
+import DeleteAccount from "./DeleteAccount";
+import DisableAccount from "./DisableAccount";
 
 export const UserProfileComponent = () => {
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
@@ -408,7 +410,7 @@ const ChangePasswordComponent = () => {
 
   const [submitNewPassword, setSubmitNewPassword] = useState<boolean>(false);
 
-  const [dataSend, setDataSend] = useState<boolean>(true);
+  const [confirmToDisable, setConfirmToDisable] = useState<boolean>(false);
 
   const showPassword = () => {
     setShow((show) => !show);
@@ -437,22 +439,6 @@ const ChangePasswordComponent = () => {
       throw new Error("Password Change Failed =>" + error);
     }
   };
-  const confirmToDelete = async () => {
-    try {
-      await makeRequest.post("/users/delete-user");
-      await deleteAccount().then(() =>
-        setTimeout(() => {
-          toast.success("Account Deleted Successfully");
-        }, 2000)
-      );
-
-      Store.dispatch(authLogout());
-      Cookies.remove("refreshToken");
-      Cookies.remove("accessToken");
-    } catch (error) {
-      throw new Error("Failed To Delete Account" + error);
-    }
-  };
   return (
     <div className=" relative max-w-[1200px] w-full grow flex-col gap-8 flex items-center justify-center px-5 py-7 text-[var(--dark-text)]">
       <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]">
@@ -469,7 +455,10 @@ const ChangePasswordComponent = () => {
           <p className="w-full text-center">Change Password</p>
         </div>
       </div>
-      <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]">
+      <div
+        onClick={() => setConfirmToDisable(!confirmToDisable)}
+        className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]"
+      >
         <p className="flex flex-col gap-1 font-semibold tracking-wide">
           Disable your account
           <span className="text-sm font-normal text-[var(--dark-secondary-text)]">
@@ -495,20 +484,29 @@ const ChangePasswordComponent = () => {
           <p className="w-full text-center">Delete Account</p>
         </div>
       </div>
+      {confirmToDisable && (
+        <div
+          className={`fixed ${
+            confirmToDisable ? "visible" : "invisible"
+          } flex items-center px-4 justify-center top-16 w-full z-50  bg-[#5f5b6667] bottom-0 left-0 right-0`}
+        >
+          <DisableAccount />
+        </div>
+      )}{" "}
       {confirmDeleteAccount && (
         <div
           className={`fixed ${
             confirmDeleteAccount ? "visible" : "invisible"
-          } flex items-center justify-center top-16 w-full  bg-[#5f5b6667] bottom-0 left-0 right-0`}
+          } flex items-center px-4 z-50 justify-center top-16 w-full  bg-[#5f5b6667] bottom-0 left-0 right-0`}
         >
-          <ReAuth reAuthUsers={confirmToDelete} />
+          <DeleteAccount />
         </div>
       )}
       {openChangePassword && (
         <div
           className={`fixed ${
             openChangePassword ? "visible" : "invisible"
-          } flex items-center justify-center top-16 w-full  bg-[#5f5b6667] bottom-0 left-0 right-0`}
+          } flex items-center justify-center top-16 w-full z-50  bg-[#5f5b6667] bottom-0 left-0 right-0`}
         >
           {submitNewPassword ? (
             <ReAuth reAuthUsers={HandlePasswordChange} />
@@ -579,9 +577,6 @@ const ChangePasswordComponent = () => {
                         )}
                       </div>
 
-                      <p className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline select-none">
-                        Forgot Password?
-                      </p>
                       <button
                         className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
                         type="submit"

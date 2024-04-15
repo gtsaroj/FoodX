@@ -1,7 +1,6 @@
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { EditIcon, Pencil } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { allFieldsRequired, checkValidNumber } from "./UpdateProfileValidation";

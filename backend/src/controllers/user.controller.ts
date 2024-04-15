@@ -184,6 +184,7 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
 const updateUser = asyncHandler(async (req: any, res: any) => {
   try {
     const { fullName, phoneNumber, avatar } = req.body;
+    console.log(fullName, phoneNumber, avatar)
     const accessToken =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");

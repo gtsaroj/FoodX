@@ -5,7 +5,9 @@ import ClipLoader from "react-spinners/HashLoader";
 import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
 
-const ReAuth = () => {
+
+const ReAuth = ({ reAuthUsers }: any) => {
+
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -13,6 +15,7 @@ const ReAuth = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
+
   const [dataSend, setDataSend] = useState<boolean>(true);
 
   const showPassword = () => {
@@ -44,7 +47,10 @@ const ReAuth = () => {
   };
   return (
     <div
-      className={`w-[100vw] h-full flex justify-center items-center px-5 z-30`}
+
+      className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
+
+
     >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
