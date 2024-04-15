@@ -5,7 +5,7 @@ import ClipLoader from "react-spinners/HashLoader";
 import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
 
-const ReAuth = ({ reAuthUsers }) => {
+const ReAuth = ({ reAuthUsers }: any) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -13,7 +13,7 @@ const ReAuth = ({ reAuthUsers }) => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [close, setClose] = useState<boolean>(false)
+
   const [dataSend, setDataSend] = useState<boolean>(true);
 
   const showPassword = () => {
@@ -43,7 +43,9 @@ const ReAuth = ({ reAuthUsers }) => {
     } catch (error) {}
   };
   return (
-    <div className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30 ${ close ? "hidden": ""}`}>
+    <div
+      className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
+    >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
           <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
@@ -51,7 +53,12 @@ const ReAuth = ({ reAuthUsers }) => {
             <h1 className="hidden md:block">ReAuthenticate</h1>
           </div>
           <div className="px-3 py-4">
-            <form className="flex flex-col gap-4 p-2" onSubmit={()=> HandleSubmit(event as  unknown as FormEvent<HTMLFormElement>)}>
+            <form
+              className="flex flex-col gap-4 p-2"
+              onSubmit={() =>
+                HandleSubmit(event as unknown as FormEvent<HTMLFormElement>)
+              }
+            >
               <div className="relative flex flex-col gap-2">
                 <label htmlFor="logEmail" className="text-[15px]">
                   Email
