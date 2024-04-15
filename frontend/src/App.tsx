@@ -7,16 +7,13 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState, persistor } from "./Reducer/Store";
+import { RootState } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
-import VerificationPage from "./Components/VericationPage/VerificationPage";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
-import { UpdateProfile } from "./Pages/UpdateProfile/UpdateProfile.tsx";
-import Cart from "./Pages/Cart/Cart.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
-import { UserProfile } from "./Pages/UpdateProfile/test.tsx";
+import { UserProfileComponent } from "./Pages/UpdateProfile/Test.tsx";
 
 const HomePage = () => {
   return (
@@ -66,9 +63,8 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />}>
             <Route path="/" element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>
-            <Route path="/profile" element={<UpdateProfile />} />
+            <Route path="/profile" element={<UserProfileComponent />} />
             <Route path="/orders" element={<OrderComponent />} />
-            <Route path="man" element={<UserProfile />} />
             <Route path="/cart/checkout" element={<Payment />} />
           </Route>
         </Route>
