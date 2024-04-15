@@ -5,7 +5,7 @@ import ClipLoader from "react-spinners/HashLoader";
 import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
 
-const ReAuth = ({ reAuthUsers }) => {
+const ReAuth = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -13,7 +13,6 @@ const ReAuth = ({ reAuthUsers }) => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [close, setClose] = useState<boolean>(false)
   const [dataSend, setDataSend] = useState<boolean>(true);
 
   const showPassword = () => {
@@ -33,17 +32,20 @@ const ReAuth = ({ reAuthUsers }) => {
   const HandleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await reAuthUser(email, password)
-        .then(() => {
-          reAuthUsers();
-        })
-        .catch(() => {
-          return toast.error("Invalid Email or Password");
-        });
-    } catch (error) {}
+      console.log("Reaacheddd here....");
+      console.log(email + password);
+
+      await reAuthUser(email, password);
+      console.log("Done");
+    } catch (error) {
+      toast.error("Invalid Email or Password");
+      throw new Error("Invalid email or Password.");
+    }
   };
   return (
-    <div className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30 ${ close ? "hidden": ""}`}>
+    <div
+      className={`w-[100vw] h-full flex justify-center items-center px-5 z-30`}
+    >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
           <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
@@ -51,7 +53,12 @@ const ReAuth = ({ reAuthUsers }) => {
             <h1 className="hidden md:block">ReAuthenticate</h1>
           </div>
           <div className="px-3 py-4">
-            <form className="flex flex-col gap-4 p-2" onSubmit={()=> HandleSubmit(event as  unknown as FormEvent<HTMLFormElement>)}>
+            <form
+              className="flex flex-col gap-4 p-2"
+              onSubmit={() =>
+                HandleSubmit(event as unknown as FormEvent<HTMLFormElement>)
+              }
+            >
               <div className="relative flex flex-col gap-2">
                 <label htmlFor="logEmail" className="text-[15px]">
                   Email
@@ -119,9 +126,6 @@ const ReAuth = ({ reAuthUsers }) => {
               </button>
             </form>
           </div>
-          {/* <div onClick={()=> setClose(!close) } className="absolute top-0 right-0 p-3  rounded-tr-md text-[var(--secondary-color)] cursor-pointer hover:bg-[var(--secondary-light)] hover:text-[var(--light-text)] transition-all ease-in-out duration-150 ">
-            <X />
-          </div> */}
         </div>
       </div>
     </div>
