@@ -5,7 +5,9 @@ import ClipLoader from "react-spinners/HashLoader";
 import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
 
+
 const ReAuth = ({ reAuthUsers }: any) => {
+
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -33,18 +35,22 @@ const ReAuth = ({ reAuthUsers }: any) => {
   const HandleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await reAuthUser(email, password)
-        .then(() => {
-          reAuthUsers();
-        })
-        .catch(() => {
-          return toast.error("Invalid Email or Password");
-        });
-    } catch (error) {}
+      console.log("Reaacheddd here....");
+      console.log(email + password);
+
+      await reAuthUser(email, password);
+      console.log("Done");
+    } catch (error) {
+      toast.error("Invalid Email or Password");
+      throw new Error("Invalid email or Password.");
+    }
   };
   return (
     <div
+
       className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
+
+
     >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
@@ -126,9 +132,6 @@ const ReAuth = ({ reAuthUsers }: any) => {
               </button>
             </form>
           </div>
-          {/* <div onClick={()=> setClose(!close) } className="absolute top-0 right-0 p-3  rounded-tr-md text-[var(--secondary-color)] cursor-pointer hover:bg-[var(--secondary-light)] hover:text-[var(--light-text)] transition-all ease-in-out duration-150 ">
-            <X />
-          </div> */}
         </div>
       </div>
     </div>

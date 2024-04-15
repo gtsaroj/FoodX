@@ -126,7 +126,7 @@ const EditProfile = () => {
     setUpdateUser(false);
   };
   return (
-    <div className="flex-col items-center w-full rounded-md lg:flex sm:items-baseline">
+    <div className="flex-col items-center w-full bg-red-500 rounded-md lg:flex sm:items-baseline">
       <div className="flex flex-col items-baseline w-full py-7">
         <div className="flex flex-col items-baseline w-full py-5 rounded-md">
           <form
