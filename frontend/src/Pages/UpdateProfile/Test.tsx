@@ -1,4 +1,4 @@
-import { Delete, EditIcon, Eye, EyeOff, X } from "lucide-react";
+import { EditIcon, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState, Store } from "../../Reducer/Store";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
@@ -7,14 +7,10 @@ import { DbUser } from "../../models/UserModels";
 import avatar from "../../logo/avatar.png";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
-import PasswordChange from "./PasswordChange";
 import ReAuth from "./ReAuth";
-import ClipLoader from "react-spinners/HashLoader";
 import toast from "react-hot-toast";
 import { authLogout } from "../../Reducer/authReducer";
-import { deleteAccount, updateUserPassword } from "../../firebase/utils";
-import Cookies from "js-cookie";
-import { makeRequest } from "../../makeRequest";
+import { updateUserPassword } from "../../firebase/utils";
 import DeleteAccount from "./DeleteAccount";
 import DisableAccount from "./DisableAccount";
 
@@ -30,7 +26,9 @@ export const UserProfileComponent = () => {
       return data;
     };
     fetchData();
-  }, [authUser]);
+  }, []);
+
+  useEffect(() => {}, [userData]);
 
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-5 ">
@@ -328,23 +326,9 @@ const PersonlInformation = (props: any) => {
             <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
               Email
             </p>
-            {edit ? (
-              <input
-                type="text"
-                value={updateProfilInfo?.email}
-                onChange={(e) =>
-                  setUpdateProfileInfo((prev) => ({
-                    ...prev,
-                    email: e.target.value as string,
-                  }))
-                }
-                className="py-1 rounded-sm px-2 outline-none"
-              />
-            ) : (
-              <p className="text-[var(--dark-text)] font-medium ">
+            <p className="text-[var(--dark-text)] font-medium ">
                 {props.email}
               </p>
-            )}
           </div>
           <div
             className={`flex flex-col w-full gap-1 ${

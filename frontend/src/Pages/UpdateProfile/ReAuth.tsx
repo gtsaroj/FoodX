@@ -5,9 +5,7 @@ import ClipLoader from "react-spinners/HashLoader";
 import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
 
-
 const ReAuth = ({ reAuthUsers }: any) => {
-
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -35,22 +33,16 @@ const ReAuth = ({ reAuthUsers }: any) => {
   const HandleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      console.log("Reaacheddd here....");
-      console.log(email + password);
-
       await reAuthUser(email, password);
-      console.log("Done");
+      reAuthUsers();
     } catch (error) {
-      toast.error("Invalid Email or Password");
-      throw new Error("Invalid email or Password.");
+      setDataSend(true);
+      return toast.error("Invalid Email or Password");
     }
   };
   return (
     <div
-
       className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
-
-
     >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
