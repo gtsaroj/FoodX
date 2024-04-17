@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { addOrderToDatabase, getOrderByUser } from "../../firebase/oder";
+import { getOrderByUser } from "../../firebase/oder";
 import { Order, Product } from "../../models/order.model";
 import { nanoid } from "@reduxjs/toolkit";
 import { ChevronsLeft, ChevronRight, ChevronsRight } from "lucide-react";
-import { auth } from "../../firebase";
 import { RootState, Store } from "../../Reducer/Store";
-import authReducer from "../../Reducer/authReducer";
-import { addToCart } from "../../Reducer/Reducer";
-import { addToList } from "../../Reducer/OrderReducer";
+import {
+  addToList,
+  onNavigateNextPage,
+  onNavigatePrevPage,
+} from "../../Reducer/OrderReducer";
 import { useSelector } from "react-redux";
 
 const product: Product = {
@@ -33,11 +34,10 @@ const order1: Order = {
   },
 };
 
-
 export const OrderComponent = () => {
-
-
-  const orderList = useSelector((state : RootState)=> state.root.Products.order.order)
+  const { order, currentpage, orderPerPage } = useSelector(
+    (state: RootState) => state.root.Products.order
+  );
   const [orders, setOrders] = useState<Order[]>([]);
   const [lastVisibleOrder, setLastVisibleOrder] = useState<any>();
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -47,6 +47,7 @@ export const OrderComponent = () => {
     try {
       if (!user) throw new Error("Please Login first.");
       const data = await getOrderByUser(user?.uid, lastVisibleOrder, next);
+      console.log(data);
       const serializeData = data?.map((order: Order) => ({
         ...order,
         orderRequest: {
@@ -69,10 +70,11 @@ export const OrderComponent = () => {
       if (next) {
         setOrders((prev) => [...prev, ...data]);
       } else {
+        5;
         setOrders(data);
       }
 
-      if (data.length > 0) {
+      if (order.length > 0) {
         setLastVisibleOrder(data[data.length - 1].orderRequest);
       }
       setOrders(data);
@@ -82,16 +84,22 @@ export const OrderComponent = () => {
     } finally {
     }
   };
-
   const handleNextPage = () => {
     setCurrentPage((prev) => prev + 1);
+    Store.dispatch(onNavigateNextPage());
     fetchData(true);
   };
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
+    Store.dispatch(onNavigatePrevPage());
     fetchData(false);
   };
+
+
+  const totalOrder = order.length - 1;
+  
+  const totalOrderPerPage = currentPage * totalOrder
 
   // useEffect(() => {
   //   fetchData();
@@ -109,7 +117,7 @@ export const OrderComponent = () => {
         </div>
         <div className="flex flex-col gap-2 max-h-[400px] overflow-y-scroll">
           <div className="flex flex-col flex-grow-0 gap-2 py-2">
-            {orderList.map((item: Order) => (
+            {orders.map((item: Order) => (
               <OrderCard key={item.orderId} item={item} />
             ))}
           </div>

@@ -63,7 +63,7 @@ const EditProfile = () => {
   };
   function Validation(error: Record<string, string>) {
     allFieldsRequired(RegisterValue, error);
-    // validateEmail(RegisterValue, error);
+  
     checkValidNumber(RegisterValue, error);
 
     if (Object.keys(error).length === 0) {

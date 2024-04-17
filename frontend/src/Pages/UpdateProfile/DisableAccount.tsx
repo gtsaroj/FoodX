@@ -9,7 +9,6 @@ import Cookies from "js-cookie";
 
 const DisableAccount = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
-  const [deletingAccount, setDeletingAccount] = useState<boolean>(false);
   const [step2, setStep2] = useState<boolean>(false);
 
   const dispatch = useDispatch();
@@ -25,7 +24,6 @@ const DisableAccount = () => {
   const confirmToDelete = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      setDeletingAccount(true);
       await makeRequest.post("/users/delete-user");
       await deleteAccount().then(() =>
         setTimeout(() => {
@@ -36,12 +34,9 @@ const DisableAccount = () => {
       dispatch(authLogout());
       Cookies.remove("refreshToken");
       Cookies.remove("accessToken");
-      setDeletingAccount(false);
     } catch (error) {
-      setDeletingAccount(true);
       throw new Error("Failed To Delete Account" + error);
     }
-    setDeletingAccount(false);
   };
 
   return (
