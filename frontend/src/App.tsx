@@ -13,7 +13,7 @@ import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
-import { UserProfileComponent } from "./Pages/UpdateProfile/Test.tsx";
+import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
 
 const HomePage = () => {
   return (
@@ -33,7 +33,6 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
-  // persistor.purge()
   const [ShowContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
 

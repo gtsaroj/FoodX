@@ -1,11 +1,10 @@
 import { Eye, EyeOff } from "lucide-react";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   ChangePasswordType,
-  allFieldsRequired,
   checkPassword,
 } from "./UpdateProfileValidation";
-import { reAuthUser, updateUserPassword } from "../../firebase/utils";
+import { updateUserPassword } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { authLogout } from "../../Reducer/authReducer";
@@ -15,7 +14,6 @@ import ReAuth from "./ReAuth";
 import { auth } from "../../firebase";
 
 const PasswordChange = () => {
-  const [close, setClose] = useState<boolean>(false)
   const [newPassword, SetNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [ShowPassword, setShowPassword] = useState<boolean>(false);

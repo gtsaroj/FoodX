@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { makeRequest } from "../makeRequest";
 import { UpdateProfileType } from "../Pages/UpdateProfile/UpdateProfile";
 import toast from "react-hot-toast";
-import { UpdateProfileInfo } from "../Pages/UpdateProfile/Test";
+import { UpdateProfileInfo } from "../Pages/UpdateProfile/ProfileSection";
 
 export const UpdateProfileUser = createAsyncThunk(
   "/auth/update" as any,
