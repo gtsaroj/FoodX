@@ -72,7 +72,7 @@ const DisableAccount = () => {
             className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
           />
         </div>
-        <div className="flex  w-full">
+        <div className="flex w-full">
           <button className=" w-[200px] h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
             Disable Account
           </button>

@@ -280,7 +280,7 @@ const PersonlInformation = (props: any) => {
                     firstName: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">
@@ -306,7 +306,7 @@ const PersonlInformation = (props: any) => {
                     lastName: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">{lastName}</p>
@@ -348,7 +348,7 @@ const PersonlInformation = (props: any) => {
                     phoneNumber: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">
