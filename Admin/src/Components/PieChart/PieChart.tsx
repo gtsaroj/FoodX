@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
@@ -20,6 +20,8 @@ export const PieChartData = [
   },
 ];
 ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.defaults.font.size = 14;
+
 export const Data = {
   labels: PieChartData?.map((data) => [data.item]),
   data: PieChartData?.map((data) => [data.totalSellInPer]),
@@ -49,8 +51,25 @@ export const Data = {
 };
 const PieChart: React.FC = () => {
   return (
-    <div className=" w-[400px] h-[300px]">
-      <Doughnut data={Data} />
+    <div className=" w-[280px] bg-[#8a849577] py-2 px-7 rounded-lg ">
+      <Doughnut
+        data={Data}
+        className="container h-full"
+        options={{
+          font: {
+            size : 10,
+          },
+          plugins: {
+            legend: { 
+              display: true,
+              align : "start",
+              position: "bottom",
+
+
+            },
+          },
+        }}
+      />
     </div>
   );
 };
