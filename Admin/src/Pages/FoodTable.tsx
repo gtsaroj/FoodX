@@ -4,7 +4,7 @@ const FoodTable: React.FC = () => {
   return (
     <table
       border={1}
-      className="container flex flex-col items-center justify-center"
+      className="container flex bg-[#8a849559] flex-col items-center justify-center"
     >
       <thead className="w-full">
         <tr className=" w-full py-3 flex items-center justify-between px-6 gap-16 ">
@@ -14,7 +14,7 @@ const FoodTable: React.FC = () => {
           <th>title</th>
           <th>Img</th>
           <th>Categories</th>
-          <th>State</th>
+          <th></th>
         </tr>
       </thead>
       <tbody className="w-full border-t-[1px] ">
