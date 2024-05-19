@@ -1,20 +1,20 @@
 import React from "react";
-import Slider from "../Components/Slider/Slider";
 import Revenue from "../Components/Revenue/Revenue";
 import PieChart from "../Components/PieChart/PieChart";
-import LineChart from "../Components/LineChart/LineChart";
+import {
+  LineChartOfOrder,
+  LineChartOfRevenue,
+} from "../Components/LineChart/LineChart";
 
-const Dasboard  : React.FC = () => {
+const Dasboard: React.FC = () => {
   return (
-    <div className="w-full items-center justify-center flex gap-5">
-      <Slider />
-      <div className="w-full bg-[var(--light-foreground)] ">
-              <Revenue />
-        <div className="w-full flex ic justify-center gap-10 ">
-          <PieChart />
-          <LineChart/>
-  </div>
+    <div className="container pb-5  flex flex-col items-center justify-center  gap-16 ">
+      <Revenue />
+      <div className="container flex items-center justify-center  gap-36 ">
+        <PieChart />
+        <LineChartOfOrder />
       </div>
+      <LineChartOfRevenue />
     </div>
   );
 };
