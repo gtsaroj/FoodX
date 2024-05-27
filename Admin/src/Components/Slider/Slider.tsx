@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import collegeLogo from "../../assets/logo/texas.png";
 import {
   LayoutDashboard,
@@ -16,14 +16,23 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Reducer/Store";
 
 const Slider: React.FC = () => {
   const navigate = useNavigate();
 
   const [openContact, setOpenContact] = useState<boolean>(false);
   const [openCollection, setOpenCollection] = useState<boolean>(false);
+
+  const auth = {
+    role: "Admin",
+  };
+
+  // useEffect(() => {}, [auth]);
+
   return (
-    <div className=" w-[300px] lg:h-[100vh] overflow-auto py-8  bg-[var(--light-foreground)] flex gap-10 flex-col items-center justify-center rounded-md px-3 py-4 ">
+    <div className=" w-[300px] lg:h-[100vh] overflow-auto py-8  bg-[var(--light-foreground)] flex gap-10 flex-col items-center rounded-md px-3  ">
       <div className="w-[200px]">
         <img className="container h-full " src={collegeLogo} alt="" />
       </div>
@@ -49,19 +58,23 @@ const Slider: React.FC = () => {
 
       <ul className=" w-full flex flex-col items-start justify-center gap-8">
         <li
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/admin")}
           className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-1 px-2 rounded-md duration-150  "
         >
           <LayoutDashboard />
           <span>Dashboard</span>
         </li>
-        <li
-          onClick={() => navigate("/analytics")}
-          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150 "
-        >
-          <LineChart />
-          <span>Analytics</span>
-        </li>
+        {auth.role !== "Admin" ? (
+          ""
+        ) : (
+          <li
+            onClick={() => navigate("analytics")}
+            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150 "
+          >
+            <LineChart />
+            <span>Analytics</span>
+          </li>
+        )}
         <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
           <button
             onClick={() => setOpenCollection(!openCollection)}
@@ -83,14 +96,14 @@ const Slider: React.FC = () => {
             } items-start   gap-3 justify-center`}
           >
             <li
-              onClick={() => navigate("/collection/foodlist")}
+              onClick={() => navigate("collection/foodlist")}
               className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
             >
-              <Utensils  className="size-5"/>
+              <Utensils className="size-5" />
               Food list
             </li>
             <li
-              onClick={() => navigate("/collection/banner")}
+              onClick={() => navigate("collection/banner")}
               className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
             >
               <Fullscreen className="size-5" />
@@ -103,19 +116,23 @@ const Slider: React.FC = () => {
           <span>Category</span>
         </li>
         <li
-          onClick={() => navigate("/order-list")}
+          onClick={() => navigate("order-list")}
           className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-1 px-2 rounded-md duration-150   "
         >
           <ListOrdered />
           <span>Order</span>
         </li>
-        <li
-          onClick={() => navigate("/customer-list")}
-          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150  "
-        >
-          <BookUser />
-          <span>Customers</span>
-        </li>
+        {auth.role !== "Admin" ? (
+          ""
+        ) : (
+          <li
+            onClick={() => navigate("customer-list")}
+            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150  "
+          >
+            <BookUser />
+            <span>Customers</span>
+          </li>
+        )}
         <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
           <button
             onClick={() => setOpenContact(!openContact)}
@@ -136,20 +153,39 @@ const Slider: React.FC = () => {
                 : "hidden opacity-0 bottom-[0px] z-[-1]"
             } items-start   gap-3 justify-center`}
           >
-            <li
-              onClick={() => navigate("/contact/admin")}
-              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
-            >
-              <CircleUser />
-              Admin Details
-            </li>
-            <Link
-              to={"/contact/tickets"}
-              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
-            >
-              <Ticket />
-              My Requests
-            </Link>
+            {auth.role !== "Admin" ? (
+              ""
+            ) : (
+              <li
+                onClick={() => navigate("contact/admin")}
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+              >
+                <CircleUser />
+                Admin Details
+              </li>
+            )}
+            {auth.role !== "Chef" ? (
+              ""
+            ) : (
+              <li
+                onClick={() => navigate("contact/admin")}
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+              >
+                <CircleUser />
+                Chef Details
+              </li>
+            )}
+            {auth.role !== "Admin" ? (
+              ""
+            ) : (
+              <li
+                onClick={() => navigate("contact/tickets")}
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+              >
+                <Ticket />
+                My Requests
+              </li>
+            )}
           </ul>
         </li>
       </ul>
