@@ -32,7 +32,6 @@ export default Specials;
 
 const SpecialCardsContainer: React.FC = () => {
   const { data } = UseFetch("/products/specials");
-  console.log(data);
   const firstGroup = data?.slice(0, 4);
 
   return (

@@ -5,7 +5,12 @@ import { RootState, Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/authReducer";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { Navigate } from "react-router-dom";
+
+const DelayRequestTime = <T>(fn: () => Promise<T>, time: number) => {
+  return function executated() {
+    setTimeout(async () => await fn(), time);
+  };
+};
 
 export const UseFetch = (url: string) => {
   const [error, setError] = useState<boolean>(false);
@@ -17,13 +22,12 @@ export const UseFetch = (url: string) => {
     const fetchApiData = async () => {
       try {
         setLoading(true);
-        console.log(authUser.success);
         if (!authUser.success) {
           return setLoading(true);
         }
         const refresToken = Cookies.get("refreshToken");
         if (!refresToken) {
-          Store.dispatch(authLogout())
+          Store.dispatch(authLogout());
         }
         const accessToken = Cookies.get("accessToken");
         if (!accessToken) {
@@ -41,9 +45,10 @@ export const UseFetch = (url: string) => {
         }
       }
     };
-
-    fetchApiData();
-  }, [url]);
+    // fetchApiData()
+    const delay = DelayRequestTime(fetchApiData, 200);
+    delay();
+  }, [url, authUser.success]);
 
   return { error, data, loading };
 };
