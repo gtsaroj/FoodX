@@ -34,7 +34,7 @@ export const RevenueData = [
 const Revenue: React.FC = () => {
   return (
     <React.Fragment>
-      <div className="flex items-center container justify-center pt-5  gap-10">
+      <div className="flex items-center container justify-between gap-10">
         {RevenueData?.map((item, index) => {
           return (
             <div

@@ -3,12 +3,12 @@ import { authState } from "../models/UserModels";
 import { registerNewUser } from "./authActions";
 import { LoginUser } from "./authLogin";
 import { UpdateProfileUser } from "./AuthUpdateUser";
-import { User } from "lucide-react";
+import { singInAction, singUpAction, updateUserAction } from "./Action";
 
 // const userToken = localStorage.getItem("userToken");
 const initialState: authState = {
-  error: null || [],
-  loading: true || false,
+  error: null,
+  loading: true,
   success: false,
   userInfo: [],
 };
@@ -25,37 +25,39 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(registerNewUser.pending, (state) => {
+    // Sign up new user
+    builder.addCase(singUpAction?.pending, (state) => {
       state.loading = true;
-      state.error = null;
     }),
-      builder.addCase(registerNewUser.fulfilled, (state, action) => {
+      builder.addCase(singUpAction?.fulfilled, (state, action) => {
         (state.loading = false),
           (state.success = true),
-          (state.error = null),
           (state.userInfo = action.payload);
       }),
-      builder.addCase(registerNewUser.rejected, (state, action) => {
+      builder.addCase(singUpAction?.rejected, (state, action) => {
         (state.loading = false),
           (state.success = false),
           (state.error = action.payload);
       }),
-      builder.addCase(LoginUser?.pending, (state) => {
+      // sign in existed user
+      builder.addCase(singInAction?.pending, (state) => {
         state.loading = true;
         state.error = null;
       }),
-      builder.addCase(LoginUser.fulfilled, (state, action) => {
+      builder.addCase(singInAction.fulfilled, (state, action) => {
         (state.loading = false),
           (state.success = true),
           (state.error = null),
           (state.userInfo = action.payload);
       }),
-      builder.addCase(LoginUser.rejected, (state, action) => {
+      builder.addCase(singInAction.rejected, (state, action) => {
         (state.loading = false),
           (state.success = false),
           (state.error = action.payload);
       });
-    builder.addCase(UpdateProfileUser.fulfilled, (state, action) => {
+
+    // update existed user
+    builder.addCase(updateUserAction.fulfilled, (state, action) => {
       if (state.userInfo) {
         if (action.payload.avatar)
           state.userInfo.avatar = action?.payload?.avatar;

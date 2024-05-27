@@ -10,7 +10,6 @@ export const getAccessAndRefreshToken = async (email: string) => {
 
   Cookies.set("accessToken", data.accessToken);
   Cookies.set("refreshToken", data.refreshToken);
-
   return data;
 };
 

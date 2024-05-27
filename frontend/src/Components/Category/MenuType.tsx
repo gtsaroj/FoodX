@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { MenuTypes } from "./Data";
+import React, { useEffect, useRef, useState } from "react";
 import { SpecialCards } from "../Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
@@ -11,21 +10,26 @@ interface categoriesTagOption {
 }
 
 export const MenuType: React.FC = () => {
-  const { data, loading, error } = UseFetch("/products/all");
-  console.log(error);
+  const [initialData, setInitialData] = useState<ProductType[]>();
+  const { data } = UseFetch("/products/all");
+
+  useEffect(() => {
+    setInitialData(data);
+  }, [data]);
+
   const [categoriesTag, setCategoriesTag] = useState<categoriesTagOption[]>();
 
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
 
   const handleEvent = (tag: string) => {
-    const filteredData = data?.filter(
+    const filteredData = initialData?.filter(
       (singleProduct) => singleProduct.tag === tag
     );
     setCategorizedData(filteredData);
   };
 
   const collectionOfTags = new Set();
-  data?.forEach((singleProduct) => {
+  initialData?.forEach((singleProduct) => {
     collectionOfTags.add(singleProduct.tag);
   });
 
@@ -57,13 +61,13 @@ export const MenuType: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (data) {
-      const defaultData = data?.filter(
+    if (initialData) {
+      const defaultData = initialData?.filter(
         (singleProduct) => singleProduct.tag === "momo"
       );
       setCategorizedData(defaultData);
     }
-  }, [data]);
+  }, [initialData]);
 
   return (
     <div className="flex flex-col flex-wrap gap-8 py-8 ">

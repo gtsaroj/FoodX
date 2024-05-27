@@ -7,13 +7,14 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
 import PrivateRoute from "./PrivateRoute";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
 import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
+import { app } from "./firebase/index.ts";
 
 const HomePage = () => {
   return (
@@ -33,6 +34,7 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
+  // persistor.purge()
   const [ShowContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
 

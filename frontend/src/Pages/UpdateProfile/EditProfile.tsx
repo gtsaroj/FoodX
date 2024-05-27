@@ -9,6 +9,7 @@ import { UpdateProfileType } from "./UpdateProfile";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import { updateUserProfile } from "../../firebase/utils";
 import HashLoader from "react-spinners/HashLoader";
+import { updateUserAction } from "../../Reducer/Action";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -103,13 +104,7 @@ const EditProfile = () => {
           avatar: imageUrl,
         };
 
-        const dispatchingData = await dispatch(
-          UpdateProfileUser(ConvertedForm)
-        );
-
-        if (!dispatchingData) {
-          throw new Error(`Error while sending form : ${error}`);
-        }
+        await dispatch(updateUserAction(ConvertedForm))
         toast.success("Update Successfully");
         RegisterValue.fullName = "";
         RegisterValue.avatar = "";

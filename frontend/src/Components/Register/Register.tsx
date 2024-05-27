@@ -13,7 +13,10 @@ import { AuthFooter } from "../Footer/AuthFooter";
 import avatar from "../../logo/avatar.png";
 import logo from "../../logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
-import ClipLoader from "react-spinners/HashLoader"
+import ClipLoader from "react-spinners/HashLoader";
+import { signUp } from "../../Services";
+import { Role } from "./Validation";
+import { singUpAction } from "../../Reducer/Action";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -78,8 +81,15 @@ export const RegisterContainer: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const { avatar, password, email, lastName, firstName, phoneNumber } =
-          RegisterValue;
+        const {
+          avatar,
+          password,
+          email,
+          lastName,
+          firstName,
+          phoneNumber,
+          role,
+        } = RegisterValue;
         SetDataSend(false);
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",
@@ -92,16 +102,10 @@ export const RegisterContainer: React.FC = () => {
           email,
           password,
           avatar: imageUrl,
+          role: "customers",
         };
 
-        await signUpNewUser(firstName, lastName, email, password, imageUrl);
-        const dispatchingData = await dispatch(
-          registerNewUser(ConvertedForm as ValidationType)
-        );
-
-        if (!dispatchingData) {
-          throw new Error(`Error while sending form : ${error}`);
-        }
+        await dispatch(singUpAction(ConvertedForm as ValidationType));
         RegisterValue.avatar = "";
         RegisterValue.firstName = "";
         RegisterValue.lastName = "";
@@ -114,13 +118,14 @@ export const RegisterContainer: React.FC = () => {
         toast.success("Congratulations!, You logged in");
       }
     } catch (error) {
-      RegisterValue.avatar = "";
-      RegisterValue.firstName = "";
-      RegisterValue.lastName = "";
-      RegisterValue.password = "";
-      RegisterValue.confirmpassword = "";
-      RegisterValue.email = "";
-      RegisterValue.phoneNumber = "";
+      console.log(error);
+      // RegisterValue.avatar = "";
+      // RegisterValue.firstName = "";
+      // RegisterValue.lastName = "";
+      // RegisterValue.password = "";
+      // RegisterValue.confirmpassword = "";
+      // RegisterValue.email = "";
+      // RegisterValue.phoneNumber = "";
       toast.error(`User already logged in`);
       SetDataSend(true);
     }
@@ -286,10 +291,7 @@ export const RegisterContainer: React.FC = () => {
                 )}
               </div>
               <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start relative  cursor-pointer">
-                <label
-                  htmlFor="confirmpassword"
-                  className=" text-[15px]"
-                >
+                <label htmlFor="confirmpassword" className=" text-[15px]">
                   Confirm Password
                 </label>
                 <input
@@ -323,14 +325,20 @@ export const RegisterContainer: React.FC = () => {
               type="submit"
               className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
             >
-              {DataSend ? "Submit" : <div className="flex items-center justify-center gap-2">Sending <ClipLoader  color="white" size={"20px"}/></div>}
+              {DataSend ? (
+                "Submit"
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  Sending <ClipLoader color="white" size={"20px"} />
+                </div>
+              )}
             </button>
           </form>
           <p
             className=" my-5  text-sm text-[var(--dark-secondary-text)]  font-Poppins hover:underline cursor-pointer"
             onClick={() => navigate("/login")}
           >
-            Already have an account? {" "}
+            Already have an account?{" "}
             <a className="hover:text-[var(--primary-color)]">SignIn</a>
           </p>
         </div>
