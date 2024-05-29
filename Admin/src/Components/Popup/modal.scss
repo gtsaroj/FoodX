@@ -1,0 +1,96 @@
+
+.modelbox-container {
+  width: 100%;
+  height: 100%;
+  min-width: 100vw;
+  min-height: 100vh;
+  background-color: rgba(0, 0, 0, 0.353);
+  padding: 0 30px;
+  z-index: 20;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  // z-index: -3;
+  backdrop-filter: blur(9.5px);
+  -webkit-backdrop-filter: blur(9.5px);
+  flex-grow: 1;
+  transition: all 0.1s ease-in-out;
+  // pointer-events: none;
+
+  // &.active {
+  //   opacity: 1 !important;
+  //   display: flex !important;
+  //   transform: scale(1);
+  //   transition: all 0.8s ease-in-out;
+  // }
+
+  &.active .model-container {
+    transform: scale(1.1);
+  }
+  .model-container {
+    background-color: whitesmoke;
+    color: red;
+    padding: 30px 0;
+    position: relative;
+    border-radius: 6px;
+    width: 50%;
+    height: 100%;
+    max-height: 600px;
+    height: 600px;
+    box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.2);
+    overflow-y: scroll;
+    z-index: 60;
+    @media screen and (max-width : 1200px) {
+      width: 100%;
+    }
+
+    .model-content {
+      // @include base.flex-div($direction: column, $justify: start);
+      // gap: 8px;
+
+      h4 {
+        font-size: 24px;
+        letter-spacing: 0.8px;
+      }
+
+      .action-btns {
+        width: 100%;
+        // @include base.flex-div($direction: row, $justify: center);
+        gap: 20px;
+
+        %btn {
+          padding: 12px 15px;
+          border: none;
+          border-radius: 6px;
+          font-size: 16px;
+          // color: base.$text-color;
+
+          &:hover {
+            cursor: pointer;
+            transition: all 2s ease-in-out;
+          }
+        }
+      }
+    }
+  }
+
+  .model-close {
+    // color: base.$secondary-color;
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    // @include base.flex-div($direction: row, $justify: center);
+    border-radius: 100%;
+    padding: 3px;
+
+    &:hover {
+      // color: base.$light-text;
+      cursor: pointer;
+      // background-color: base.$secondary-color;
+      transition: all 0.1s ease-in-out;
+    }
+  }
+}

@@ -10,7 +10,6 @@ export const orderData = [
   {
     orderID: "#4321",
     customer: "Saroj GT",
-    Payment: "Paid",
     product: "Samosa, Momo",
     date: "2081/01/20",
     status: "Received",
@@ -18,7 +17,6 @@ export const orderData = [
   {
     orderID: "#4321",
     customer: "Saroj GT",
-    Payment: "Unpaid",
     product: "Samosa, Momo",
     date: "2081/01/20",
     status: "Preparing",
@@ -26,7 +24,6 @@ export const orderData = [
   {
     orderID: "#4321",
     customer: "Rajan Chaudhary",
-    Payment: "Paid",
     product: "Samosa, Momo",
     date: "2081/01/20",
     status: "Completed",
@@ -34,7 +31,6 @@ export const orderData = [
   {
     orderID: "#4321",
     customer: "Sandesh Paudel",
-    Payment: "Paid",
     product: "Samosa, Momo",
     date: "2081/01/20",
     status: "Canceled",
@@ -45,7 +41,7 @@ const OrderList = () => {
   const [changeStatus, setChangeStatus] = useState<boolean>(false);
   const [currentIndex, setIndex] = useState<number>();
   return (
-    <div className=" container px-5  py-2 flex flex-col items-start justify-center gap-8">
+    <div className=" container sm:px-5  py-2 flex flex-col items-start justify-center gap-8">
       <h1 className="text-[17px] font-semibold">Order</h1>
       <div className="w-full py-6 flex rounded-sm  flex-col gap-5 items-start justify-center px-4">
         <div className="border-b-[4px] w-full flex items-center justify-between  py-4 border-[#8a8495be]">
@@ -75,12 +71,12 @@ const OrderList = () => {
             Showing 8-10 of 84 results
           </h2>
         </div>
-        <div className="flex items-center justify-between  w-full">
+        <div className="flex sm:flex-row flex-col items-start gap-3 sm:gap-2 sm:items-center justify-between  w-full">
           <form action="" className="relative">
             <Search className="absolute top-4 size-5 left-2" />
             <input
               type="search"
-              className=" pl-9 placeholder:text-sm outline-none w-[350px] rounded-md py-4 px-8 border-[var(--dark-border)] "
+              className=" pl-9 placeholder:text-sm outline-none w-full sm:w-[350px] rounded-md py-4 px-8 border-[var(--dark-border)] "
               placeholder="Search for orderID, customer, orderstatus or something"
             />
           </form>
@@ -95,24 +91,22 @@ const OrderList = () => {
             </button>
           </div>
         </div>
-        <table className="w-full flex flex-col items-start justify-center">
-          <tr className=" w-full grid grid-cols-6  bg-[var(--light-background)] py-3 rounded-t-md justify-between">
-            <th className="flex text-[15px] gap-1 items-center justify-center ">
+        <div className="w-full overflow-auto">
+        <table className="sm:w-full w-[800px] flex flex-col items-start justify-center">
+          <tr className="w-full grid grid-cols-10 gap-2  bg-[var(--light-background)] py-3 rounded-t-md justify-between">
+            <th className=" col-span-2 flex text-[12px] sm:text-[15px] gap-1 items-center justify-center ">
               ORDERID <ChevronDown className="size-4" />
             </th>
-            <th className="flex text-[15px]  gap-1 items-center justify-center">
+            <th className=" col-span-2 flex text-[12px] sm:text-[15px]  gap-1 items-center justify-center">
               CUSTOMER <ChevronDown className="size-4" />
             </th>
-            <th className="flex text-[15px] gap-1 items-center justify-center ">
-              PAYMENT <ChevronDown className="size-4" />
-            </th>
-            <th className="flex text-[15px] gap-1 items-center justify-center ">
+            <th className=" col-span-2 flex text-[12px] sm:text-[15px] gap-1 items-center justify-center ">
               PRODUCT <ChevronDown className="size-4" />
             </th>
-            <th className="flex text-[15px] gap-1 items-center justify-center ">
+            <th className=" col-span-2 flex text-[12px] sm:text-[15px] gap-1 items-center justify-center ">
               DATE <ChevronDown className="size-4" />
             </th>
-            <th className="flex items-center justify-center gap-1 text-[15px] ">
+            <th className=" col-span-2 flex text-[12px] sm:items-center justify-center gap-1 sm:text-[15px] ">
               STATUS <ChevronDown className="size-4" />
             </th>
           </tr>
@@ -120,19 +114,10 @@ const OrderList = () => {
             {orderData.map((data, index) => (
               <tr
                 key={index}
-                className="w-full border-[#3e3b4554] items-center justify-center border-b-[1px] py-4 text-[14px] grid grid-cols-6 gap-10 "
+                className="w-full border-[#3e3b4554] items-center justify-center border-b-[1px] py-4 text-[14px] grid grid-cols-5 gap-10 "
               >
                 <td className="text-center">{data.orderID}</td>
                 <td className=" text-center">{data.customer}</td>
-                <td
-                  className={` text-center font-semibold ${
-                    data.Payment.includes("Unpaid")
-                      ? "text-red-700"
-                      : "text-green-700"
-                  }`}
-                >
-                  {data.Payment}
-                </td>
                 <td className=" text-center">{data.product}</td>
                 <td className=" text-center">{data.date}</td>
                 <td
@@ -182,6 +167,7 @@ const OrderList = () => {
             ))}
           </tbody>
         </table>
+      </div>
       </div>
     </div>
   );

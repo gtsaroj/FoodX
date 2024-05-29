@@ -7,26 +7,26 @@ import RevenueImg from "../../assets/revenue.png";
 export const RevenueData = [
   {
     img: order,
-    title: "Total Order",
-    total: 450,
+    title: "Order",
+    total: 1245,
     revenueInOneDay: "50% in 1 day",
   },
   {
     img: orderCancel,
-    title: "Total Cancelled",
-    total: 450,
+    title: "Cancelled",
+    total: 80,
     revenueInOneDay: "3% in 1 day",
   },
   {
     img: orderRecieved,
-    title: "Total Delivered",
-    total: 450,
+    title: "Delivered",
+    total: 1165,
     revenueInOneDay: "47% in 1 day",
   },
   {
     img: RevenueImg,
-    title: "Total Revenue",
-    total: 450,
+    title: "Revenue",
+    total: 58000,
     revenueInOneDay: "Rs. 80,000 in 1 day",
   },
 ];
@@ -34,33 +34,22 @@ export const RevenueData = [
 const Revenue: React.FC = () => {
   return (
     <React.Fragment>
-      <div className="flex items-center container justify-between gap-10">
+      <div className="flex w-full items-center flex-wrap  justify-center sm:justify-start gap-3 sm:gap-10">
         {RevenueData?.map((item, index) => {
           return (
             <div
               key={index}
-              className=" flex items-center justify-center gap-4 bg-[#8a849577] px-5 py-2 rounded-md shadow-sm "
+              className=" flex flex-col sm:w-[200px] w-full sm:h-full h-[150px] items-start justify-center gap-2 bg-[var(--light-background)] px-5 py-2 rounded-md shadow-sm "
             >
-              <div className="w-[50px] overflow-hidden object-cover h-[50px] ">
-                <img
-                  className="w-full h-full scale-[1.9] rounded-full"
-                  src={item.img}
-                  alt=""
-                />
-              </div>
-              <div>
-                <div className=" flex flex-col">
-                  <p className="text-[15px] text-[var(--dark-foreground)] ">
-                    {item.title}{" "}
-                  </p>
-                  <p className="text-[17px] text-[var(--dark-foreground)]  font-semibold ">
-                    {item.total}{" "}
-                  </p>
-                  <p className="text-[12px] font-semibold text-[var(--dark-foreground)] ">
-                    {item.revenueInOneDay}{" "}
-                  </p>
-                </div>
-              </div>
+              <p className="text-[15px] text-[var(--dark-text)] ">
+                {item.title}{" "}
+              </p>
+              <p className="text-[25px] text-[var(--dark-foreground)]  font-semibold ">
+                {item.total}{" "}
+              </p>
+              <p className="text-[11px] text-[var(--dark-secondary-text)] ">
+                {item.revenueInOneDay}{" "}
+              </p>
             </div>
           );
         })}

@@ -61,11 +61,12 @@ const PieChart: React.FC = () => {
   };
 
   return (
-    <div className=" w-[300px] bg-[var(--light-background)] py-2 px-7 rounded-lg ">
+    <div className="lg:w-[390px] w-full sm:h-[335px] h-[300px]  bg-[var(--light-background)] py-2 px-7 rounded-lg ">
       <Doughnut
         data={Data}
-        className="container h-full"
+        className="w-full h-full"
         options={{
+          maintainAspectRatio : false,
           onHover: (event, chartElement) => {
             if (chartElement.length === 1) {
               event.native?.target

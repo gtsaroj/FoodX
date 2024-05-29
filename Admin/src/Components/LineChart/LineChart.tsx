@@ -13,7 +13,7 @@ import {
   ChartTypeRegistry,
   elements,
 } from "chart.js";
-import { faker } from "@faker-js/faker";
+import { fa, faker } from "@faker-js/faker";
 
 ChartJS.register(
   CategoryScale,
@@ -23,7 +23,7 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler // 1. Register Filler plugin
+  Filler
 );
 
 export const LineChartOfOrder = () => {
@@ -50,12 +50,13 @@ export const LineChartOfOrder = () => {
           ? "rgba(0, 255, 0, 0.5)"
           : "rgba(255, 0, 0, 0.5)";
       }
+      return "rgba(255, 0, 0, 0.5)";
     });
 
     const createGradientColor = (startColor: string, endColor: string) => {
       const gradientColor = ctx.createLinearGradient(0, 44, 0, 400);
-      gradientColor?.addColorStop(0, startColor);
-      gradientColor?.addColorStop(1, endColor);
+      gradientColor.addColorStop(0, startColor);
+      gradientColor.addColorStop(1, endColor);
       return gradientColor;
     };
 
@@ -65,7 +66,7 @@ export const LineChartOfOrder = () => {
     backgroundColors.map((color) => console.log(color));
     chart.data.datasets[0].backgroundColor = backgroundColors;
     chart.update();
-  });
+  }, [SellRef]);
 
   const labels = [
     "Sunday",
@@ -95,11 +96,12 @@ export const LineChartOfOrder = () => {
   };
   return (
     <React.Fragment>
-      <div className="w-[550px] bg-[var(--light-background)] py-2 px-7 rounded-lg ">
+      <div className="lg:w-[720px] w-full sm:h-full h-[300px]  bg-[var(--light-background)] py-2 px-1 rounded-lg ">
         <Line
           ref={SellRef}
           data={data}
           options={{
+            maintainAspectRatio: false,
             onHover: (event, chartElement) => {
               if (chartElement.length === 1) {
                 event.native?.target
@@ -137,7 +139,7 @@ export const LineChartOfOrder = () => {
               },
             },
           }}
-          className="container h-full"
+          className="w-full h-full"
         />
       </div>
     </React.Fragment>
@@ -158,8 +160,8 @@ export const LineChartOfRevenue = () => {
     if (chart) {
       const ctx = chart.ctx;
       const gradient2 = ctx.createLinearGradient(4, 5, 6, 400);
-      gradient2.addColorStop(0, "#2c398d"),
-        gradient2.addColorStop(1, "#00a3d9");
+      gradient2?.addColorStop(0, "#2c398d"),
+        gradient2?.addColorStop(1, "#00a3d9");
       ChartJS.defaults.borderColor = gradient2;
     }
   }, []);
@@ -194,12 +196,13 @@ export const LineChartOfRevenue = () => {
 
   return (
     <React.Fragment>
-      <div className="  w-[930px] bg-[var(--light-background)] py-2 px-7 rounded-lg ">
+      <div className=" px-2 lg:w-[900px] w-full sm:h-full h-[300px] bg-[var(--light-background)] py-2 rounded-lg ">
         <Line
           ref={RevenueRef as any}
           id="myChart"
           data={data}
           options={{
+            maintainAspectRatio: false,
             onHover: (event, chartElement) => {
               if (chartElement.length === 1) {
                 if (event.native?.target) {
@@ -273,47 +276,54 @@ export const LineChartRevenueOfAnalytics = () => {
     const datasetOfCurrentWeek = chart.data.datasets[0].data;
     const datasetOfPrevWeek = chart.data.datasets[1].data;
 
-    const colorGenerateOfCurrentWeek = datasetOfCurrentWeek.map(
-      (item, index, array) => {
-        if (index === 0) return "#138a2d";
+    // const colorGenerateOfCurrentWeek = datasetOfCurrentWeek.map(
+    //   (item, index, array) => {
+    //     if (index === 0) return "#138a2d";
 
-        const prevValue = array[index - 1];
-        if (item && prevValue) {
-          return prevValue < item ? "#138a2d" : "#992d1a";
-        }
-      }
-    );
-    const colorGenerateOfPrevWeek = datasetOfPrevWeek.map(
-      (item, index, array) => {
-        if (index === 0) return "#138a2d";
+    //     const prevValue = array[index - 1];
+    //     if (item && prevValue) {
+    //       return prevValue < item ? "#138a2d" : "#992d1a";
+    //     }
+    //   }
+    // );
+    // const colorGenerateOfPrevWeek = datasetOfPrevWeek.map(
+    //   (item, index, array) => {
+    //     if (index === 0) return "#138a2d";
 
-        const prevValue = array[index - 1];
-        if (item && prevValue) {
-          return prevValue < item ? "#138a2d" : "#992d1a";
-        }
-      }
-    );
-    const generateGradientColor = (startColor: string, endColor: string) => {
+    //     const prevValue = array[index - 1];
+    //     if (item && prevValue) {
+    //       return prevValue < item ? "#138a2d" : "#992d1a";
+    //     }
+    //   }
+    // );
+    const generateGradientColor = () => {
       const ctx = chart.ctx;
       if (!ctx) throw new Error("Chat not found");
       const gradient = ctx.createLinearGradient(3, 30, 0, 400);
-      gradient.addColorStop(0, startColor);
-      gradient.addColorStop(1, endColor);
+      gradient.addColorStop(0.3, "#388b297c");
+      gradient.addColorStop(1, "#fcfffc7c");
       return gradient;
     };
 
-    const backgroundColorOfCurrentWeek = colorGenerateOfCurrentWeek.map((item) => {
-      return   generateGradientColor(item as string, item as string);
-    })
-    const backgroundColorOfPreviousWeek = colorGenerateOfPrevWeek.map((item) => {
-      return  generateGradientColor(item as string, item as string)
-    })
-  
-    
-    chart.data.datasets[0].backgroundColor = backgroundColorOfCurrentWeek;
-    chart.data.datasets[1].backgroundColor = backgroundColorOfPreviousWeek;
-    chart.update()
+    const generateGradientColorPrevWeek = () => {
+      const ctx = chart.ctx;
+      if (!ctx) throw new Error("Chat not found");
+      const gradient = ctx.createLinearGradient(3, 30, 0, 400);
+      gradient.addColorStop(0.3, "#eef122d2");
+      gradient.addColorStop(1, "#fcfffc7c");
+      return gradient;
+    };
 
+    // const backgroundColorOfCurrentWeek = colorGenerateOfCurrentWeek.map((item) => {
+    //   return   generateGradientColor(item as string, item as string);
+    // })
+    // const backgroundColorOfPreviousWeek = colorGenerateOfPrevWeek.map((item) => {
+    //   return  generateGradientColor(item as string, item as string)
+    // })
+
+    chart.data.datasets[0].backgroundColor = generateGradientColor;
+    chart.data.datasets[1].backgroundColor = generateGradientColorPrevWeek;
+    chart.update();
   }, []);
 
   const data = {
@@ -321,41 +331,38 @@ export const LineChartRevenueOfAnalytics = () => {
     datasets: [
       {
         label: "Current Week Revenue",
-        data: labelOfWeekly.map(() =>
-          faker.datatype.number({ min: 0, max: 50 })
-        ),
+        data: [5000, 60000, 20000, 10000, 2000, 13500, 12495, 2000],
         borderColor: "rgba(6,20,345)",
         backgroundColor: "#32a852",
         borderRadius: "10px",
-        pointBackgroundColor: "rgb(255, 99, 132)",
+        pointBackgroundColor: "#eef122d2",
         pointRadius: 6,
         pointHoverRadius: 7,
         tension: 0.4,
-        fill : true,
+        fill: true,
       },
       {
         label: "Previous Week Revenue",
-        data: labelOfWeekly.map(() =>
-          faker.datatype.number({ min: 0, max: 50 })
-        ),
-        pointBackgroundColor: "rgba(0,0,0)",
+        data: [5000, 10000, 20000, 60000, 20000, 45500, 32495, 2000],
+        pointBackgroundColor: "#3b972fd2",
         borderColor: "rgba(0,0,0)",
         borderRadius: "10px",
         pointRadius: 6,
         pointHoverRadius: 7,
         tension: 0.4,
-        fill : true,
+        fill: true,
       },
     ],
   };
   return (
     <React.Fragment>
-      <div className="w-[900px] rounded-md bg-[var(--light-background)] py-2 px-5">
+      <div className="lg:w-[900px] w-full sm:h-full h-[300px] rounded-md bg-[var(--light-background)] py-2 px-5">
         <Line
           ref={reveneuChart}
           className="w-full"
           data={data}
           options={{
+            maintainAspectRatio: false,
             onHover: (event, chartElement) => {
               if (chartElement.length === 1) {
                 event.native?.target
@@ -370,6 +377,11 @@ export const LineChartRevenueOfAnalytics = () => {
             },
             scales: {
               x: {
+                grid: {
+                  display: false,
+                },
+              },
+              y: {
                 grid: {
                   display: false,
                 },
@@ -417,7 +429,7 @@ export const LineChartOfSellsOfAnalytics = () => {
     datasets: [
       {
         label: "Current Week Sells",
-        data: xlabel.map(() => faker.datatype.number({ min: 0, max: 50 })),
+        data: [5000, 60000, 20000, 10000, 2000, 13500, 12495, 2000],
         borderColor: "rgba(6,20,345)",
         backgroundColor: "#32a852",
         borderRadius: "10px",
@@ -433,7 +445,7 @@ export const LineChartOfSellsOfAnalytics = () => {
       },
       {
         label: "Previous Week Sells",
-        data: xlabel.map(() => faker.datatype.number({ min: 0, max: 50 })),
+        data: [5000, 10000, 20000, 60000, 20000, 45500, 32495, 2000],
         pointBackgroundColor: "rgba(0,0,0)",
         borderColor: "rgba(0,0,0)",
         borderRadius: "10px",
@@ -450,11 +462,12 @@ export const LineChartOfSellsOfAnalytics = () => {
   };
   return (
     <React.Fragment>
-      <div className="w-[900px] rounded-md bg-[var(--light-background)] py-2 px-5">
+      <div className="lg:w-[900px] sm:h-full  w-full h-[300px] rounded-md bg-[var(--light-background)] py-2">
         <Line
-          className="w-full"
+          className="w-full h-full"
           data={data}
           options={{
+            maintainAspectRatio: false,
             plugins: {
               title: {
                 display: true,
