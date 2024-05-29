@@ -8,10 +8,10 @@ import {
 
 const Dasboard: React.FC = () => {
   return (
-    <div className="container pb-5 px-8 py-5  flex flex-col items-center justify-center  gap-16 ">
+    <div className="2xl:container w-full pb-5 lg:px-8 py-5  flex flex-col items-center justify-center  gap-16 ">
       <Revenue />
-      <div className="container flex items-center justify-between  ">
-        <PieChart />
+      <div className="w-full gap-2 flex lg:flex-row flex-col items-center justify-center  ">
+        <PieChart  />
         <LineChartOfOrder />
       </div>
       <LineChartOfRevenue />

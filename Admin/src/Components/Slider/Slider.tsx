@@ -13,11 +13,14 @@ import {
   ChevronRight,
   Combine,
   Fullscreen,
+  X,
+  Menu,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
+import MobileSlider from "./MobileSlider";
 
 const Slider: React.FC = () => {
   const navigate = useNavigate();
@@ -195,3 +198,37 @@ const Slider: React.FC = () => {
 };
 
 export default Slider;
+
+export const NavbarSend = () => {
+  const [isClose, setIsClose] = useState<boolean>(true);
+  return (
+    <div className="relative bg-[var(--light-foreground)] py-3 w-full flex items-center justify-between px-5">
+      <div className="flex items-center justify-center gap-3">
+        <button onClick={() => setIsClose(!isClose)}>
+          {isClose ? <Menu className="size-6" /> : <X className="size-6" />}
+        </button>
+        <div className="w-[150px]">
+          <img className="container h-full " src={collegeLogo} alt="" />
+        </div>
+      </div>
+      <div className="  w-[40px] h-[40px]">
+        <img
+          className="container bg-green-700 rounded-full h-full"
+          src=""
+          alt=""
+        />
+      </div>
+      <div
+        className={`fixed z-40 py-3 duration-200 px-2 bottom-0 left-0 top-0 ${
+          isClose ? "left-[-2000px]" : "left-0"
+        }`}
+      >
+        <MobileSlider
+          children={<Slider />}
+          close={isClose}
+          closeNavbar={() => setIsClose(!isClose)}
+        />
+      </div>
+    </div>
+  );
+};
