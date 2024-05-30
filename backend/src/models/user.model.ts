@@ -16,16 +16,19 @@ export interface User {
   phoneNumber: string;
   avatar: string;
   refreshToken: string;
-  role: "customers" | "admins";
+  role: RoleType;
 }
 
 export interface AccessType {
-  privilage: "admins" | "customers";
+  privilage: RoleType;
 }
 
 export interface DecodeToken {
   uid: string;
   email: string;
+  role: RoleType;
   iat: number;
   exp: number;
 }
+
+export type RoleType = "customer" | "chef" | "superadmin";

@@ -30,10 +30,12 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   try {
     const user = await getUserDataByEmail(email);
     const userDataFromDatabase = await getUserFromDatabase(user.uid);
+    const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      user?.uid
+      user?.uid,
+      role
     );
     user.refreshToken = refreshToken;
 
@@ -127,6 +129,7 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
     console.log(`Decoded Token: \n ${decodedToken.uid}`);
 
     const user = await getUserFromDatabase(decodedToken.uid.trim());
+    const { role } = user;
     if (!user) throw new ApiError(404, "User not found.");
     console.log(`User refresh token from database: \n${user.refreshToken}`);
 
@@ -134,7 +137,7 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
       throw new ApiError(403, "Refresh token is expired or used");
 
     const { accessToken, refreshToken: newRefreshToken } =
-      await generateAccessAndRefreshToken(user.uid);
+      await generateAccessAndRefreshToken(user.uid, role);
 
     await updateUserDataInFirestore(
       user.uid,
@@ -184,7 +187,7 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
 const updateUser = asyncHandler(async (req: any, res: any) => {
   try {
     const { fullName, phoneNumber, avatar } = req.body;
-    console.log(fullName, phoneNumber, avatar)
+    console.log(fullName, phoneNumber, avatar);
     const accessToken =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
@@ -195,7 +198,6 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
     ) as DecodeToken;
 
     const user = await getUserFromDatabase(decodedToken.uid);
-  
 
     if (!fullName && !phoneNumber && !avatar)
       throw new ApiError(400, "No data provided to update.");

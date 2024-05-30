@@ -82,7 +82,7 @@ const user: User = {
   fullName: "aayush",
   phoneNumber: "988312421",
   refreshToken: "",
-  role: "customers",
+  role: "customer",
   uid: "aaaa",
 };
 // addUserToFirestore(user, user.role);
