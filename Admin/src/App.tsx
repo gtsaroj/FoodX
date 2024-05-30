@@ -25,7 +25,7 @@ const MainPage = () => {
         <div className="xl:flex hidden ">
           <Slider />
         </div>
-        <div className="xl:hidden w-full sticky top-0 overflow-y-auto flex">
+        <div className="xl:hidden w-full sticky top-0 z-50 overflow-y-auto flex">
           <NavbarSend />
         </div>
         <div className="2xl:container px-2 w-full lg:h-[100vh]  overflow-y-scroll  rounded-md flex  items-start justify-center bg-[var(--light-foreground)]  ">

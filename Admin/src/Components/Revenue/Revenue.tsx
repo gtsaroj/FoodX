@@ -39,12 +39,12 @@ const Revenue: React.FC = () => {
           return (
             <div
               key={index}
-              className=" flex flex-col sm:w-[200px] w-full sm:h-full h-[150px] items-start justify-center gap-2 bg-[var(--light-background)] px-5 py-2 rounded-md shadow-sm "
+              className=" flex flex-col sm:w-[200px] w-full sm:h-full h-[130px] items-start justify-center gap-3 bg-[var(--light-background)] px-5  rounded-md shadow-sm "
             >
               <p className="text-[15px] text-[var(--dark-text)] ">
                 {item.title}{" "}
               </p>
-              <p className="text-[25px] text-[var(--dark-foreground)]  font-semibold ">
+              <p className="text-[25px] text-[var(--dark-foreground)]  font-bold ">
                 {item.total}{" "}
               </p>
               <p className="text-[11px] text-[var(--dark-secondary-text)] ">
