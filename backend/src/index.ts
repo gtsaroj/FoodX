@@ -18,6 +18,7 @@ import {
 import { Order } from "./models/order.model.js";
 import {
   addNewOrderToDatabase,
+  getAllOrders,
   getOrdersByUserId,
 } from "./firebase/db/order.firestore.js";
 import { User } from "./models/user.model.js";
@@ -69,6 +70,7 @@ const order: Order = {
   orderId: "",
   orderRequest: "today",
   products: [product, product, product],
+  status: "fullfilled",
 };
 
 // addNewOrderToDatabase(order);
@@ -90,3 +92,5 @@ const user: User = {
 // console.log(userData);
 
 // console.log(await getUserDataById("NPmkJaz0ySekcCVrt2mpEr8CpSf2"));
+
+// getAllOrders();
