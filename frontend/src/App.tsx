@@ -1,20 +1,24 @@
-import { useEffect, useState } from "react";
 import Footer from "./Components/Footer/Footer";
 import Login from "./Components/Login/Login";
 import { Header } from "./Components/Navbar/Navbar";
 import { Register } from "./Components/Register/Register";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Home from "./Pages/Home/Home";
-import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState, persistor } from "./Reducer/Store";
+import {
+  Routes,
+  Route,
+  BrowserRouter,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
 import PrivateRoute from "./PrivateRoute";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
-
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
 import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
-import { app } from "./firebase/index.ts";
+import { useEffect, useState } from "react";
+import { RootState } from "./Reducer/Store.ts";
+import { useSelector } from "react-redux";
 
 const HomePage = () => {
   return (
@@ -24,7 +28,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <PrivateRoute />
+          <PrivateRoute userRole={["customers"]} />
         </div>
         <div>
           <Footer />
@@ -34,35 +38,30 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
-  // persistor.purge()
-  const [ShowContent, SetShowContent] = useState<boolean>(true);
+  // console.log(PrivateRoute({userRole : ["customers"]}))
+  const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
 
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);
   }, [auth]);
+
   return (
     <BrowserRouter>
       <Routes>
         <Route
           path="/login"
-          element={ShowContent ? <Navigate to={"/"} /> : <Login />}
+          element={showContent ? <Navigate to={"/"} replace /> : <Login />}
         />
         <Route
           path="/register"
-          element={ShowContent ? <Navigate to={"/"} /> : <Register />}
+          element={showContent ? <Navigate to={"/"} replace /> : <Register />}
         />
-        <Route
-          path="forgot-password"
-          element={ShowContent ? <Navigate to={"/"} /> : <ForgotPassword />}
-        />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
-        <Route
-          path="/"
-          element={ShowContent ? <PrivateRoute /> : <Navigate to={"/login"} />}
-        >
+        <Route element={<PrivateRoute userRole={["customers"]} />}>
           <Route path="/" element={<HomePage />}>
-            <Route path="/" element={<Home />} />
+            <Route index element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>
             <Route path="/profile" element={<UserProfileComponent />} />
             <Route path="/orders" element={<OrderComponent />} />

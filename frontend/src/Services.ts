@@ -1,18 +1,19 @@
-import { da } from "@faker-js/faker";
 import toast from "react-hot-toast";
 import { globalRequest } from "./GlobalRequest";
 import { UpdateProfileInfo } from "./Pages/UpdateProfile/ProfileSection";
-import {
-  signInUser,
-  signOutUser,
-  signUpNewUser,
-} from "./firebase/Authentication";
+import { signInUser, signUpNewUser } from "./firebase/Authentication";
 import { ValidationType } from "./models/Register.model";
 import Cookies from "js-cookie";
-import { makeRequest } from "./makeRequest";
-import { AppDispatch, Store } from "./Reducer/Store";
-import { authLogout } from "./Reducer/authReducer";
-import { useDispatch } from "react-redux";
+import { getRoleFromAccessToken } from "./Utility/JWTUtility";
+
+interface userInfo {
+  uid: string;
+  email: string;
+  fullName: string;
+  avatar: string;
+  refreshToken: string;
+  role: string;
+}
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -25,7 +26,10 @@ export const signIn = async (email: string, password?: string) => {
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
-    return responseData.user;
+    const role = await getRoleFromAccessToken();
+    responseData.user.role = role;
+    console.log(responseData.user);
+    return responseData.user as userInfo;
   } catch (error) {
     toast.error("Invalid username or password");
     throw new Error("Invalid username or password");
@@ -71,7 +75,7 @@ export const updateUser = async (data: UpdateProfileInfo) => {
 };
 
 // export const signOut = async () => {
- 
+
 //   try {
 //     const response = await makeRequest({
 //       url: "users/logout",
@@ -81,7 +85,7 @@ export const updateUser = async (data: UpdateProfileInfo) => {
 //     if (response.status === 200) {
 //       Store.dispatch(authLogout())
 //     }
-    
+
 //     Cookies.remove("accessToken");
 //     Cookies.remove("refreshToken");
 //   } catch (error) {
