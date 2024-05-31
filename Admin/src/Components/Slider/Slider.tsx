@@ -21,6 +21,7 @@ import Logout from "../Logout/Logout";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import MobileSlider from "./MobileSlider";
+import ReactPortal from "../Common/ReactPortal";
 
 const Slider: React.FC = () => {
   const navigate = useNavigate();
@@ -59,10 +60,10 @@ const Slider: React.FC = () => {
         </button>
       </div> */}
 
-      <ul className=" w-full flex flex-col items-start justify-center gap-8">
+      <ul className=" w-full flex flex-col items-start justify-center gap-5  overflow-y-scroll">
         <li
           onClick={() => navigate("/admin")}
-          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-1 px-2 rounded-md duration-150  "
+          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-3 px-2 rounded-md duration-150  "
         >
           <LayoutDashboard />
           <span>Dashboard</span>
@@ -72,7 +73,7 @@ const Slider: React.FC = () => {
         ) : (
           <li
             onClick={() => navigate("analytics")}
-            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150 "
+            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150 "
           >
             <LineChart />
             <span>Analytics</span>
@@ -81,7 +82,7 @@ const Slider: React.FC = () => {
         <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
           <button
             onClick={() => setOpenCollection(!openCollection)}
-            className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-500"
+            className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-500"
           >
             <Combine />
             <span>Collections</span>
@@ -100,27 +101,27 @@ const Slider: React.FC = () => {
           >
             <li
               onClick={() => navigate("collection/foodlist")}
-              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
             >
               <Utensils className="size-5" />
               Food list
             </li>
             <li
               onClick={() => navigate("collection/banner")}
-              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+              className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
             >
               <Fullscreen className="size-5" />
               Banner
             </li>
           </ul>
         </li>
-        <li className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150 ">
+        <li className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150 ">
           <Shapes />
           <span>Category</span>
         </li>
         <li
           onClick={() => navigate("order-list")}
-          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-1 px-2 rounded-md duration-150   "
+          className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full p-3 rounded-md duration-150   "
         >
           <ListOrdered />
           <span>Order</span>
@@ -130,7 +131,7 @@ const Slider: React.FC = () => {
         ) : (
           <li
             onClick={() => navigate("customer-list")}
-            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150  "
+            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150  "
           >
             <BookUser />
             <span>Customers</span>
@@ -139,7 +140,7 @@ const Slider: React.FC = () => {
         <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
           <button
             onClick={() => setOpenContact(!openContact)}
-            className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-500"
+            className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-500"
           >
             <Mail />
             <span>Contact</span>
@@ -161,7 +162,7 @@ const Slider: React.FC = () => {
             ) : (
               <li
                 onClick={() => navigate("contact/admin")}
-                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
               >
                 <CircleUser />
                 Admin Details
@@ -172,7 +173,7 @@ const Slider: React.FC = () => {
             ) : (
               <li
                 onClick={() => navigate("contact/admin")}
-                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
               >
                 <CircleUser />
                 Chef Details
@@ -183,7 +184,7 @@ const Slider: React.FC = () => {
             ) : (
               <li
                 onClick={() => navigate("contact/tickets")}
-                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full py-1 px-2 rounded-md duration-150"
+                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
               >
                 <Ticket />
                 My Requests
@@ -218,17 +219,20 @@ export const NavbarSend = () => {
           alt=""
         />
       </div>
+      <ReactPortal>
       <div
-        className={`fixed z-40 py-3 duration-200 px-2 bottom-0 left-0 top-0 ${
+        className={`fixed z-[3000] py-3 duration-200 px-2 bottom-0 left-0 top-0 ${
           isClose ? "left-[-2000px]" : "left-0"
         }`}
       >
+
         <MobileSlider
           children={<Slider />}
           close={isClose}
           closeNavbar={() => setIsClose(!isClose)}
         />
       </div>
+        </ReactPortal>
     </div>
   );
 };

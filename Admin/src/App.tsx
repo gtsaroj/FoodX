@@ -19,6 +19,7 @@ import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 
 const MainPage = () => {
+
   return (
     <div className="w-full overflow-hidden flex justify-center items-center ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-2 py-3 items-start justify-center  px-3 xl:px-5">

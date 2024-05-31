@@ -24,7 +24,7 @@ const FoodPage: React.FC = () => {
         </div>
         <button
           onClick={() => setIsModelOpen(!isModalOpen)}
-          className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-2 border-[1px] border-[var(--primary-color)] px-5 rounded-sm "
+          className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-2 border-[1px] border-[var(--primary-color)] px-5 rounded"
         >
           <Plus className="size-5" />
           <h1 className="text-[15px]">Add an item</h1>
@@ -39,7 +39,7 @@ const FoodPage: React.FC = () => {
             placeholder="Search for orderID, customer, orderstatus or something"
           />
         </form>
-        <button className="flex gap-1 text-[var(--light-text)] bg-[var(--dark-text)] px-5 py-5 rounded-md items-center justify-center">
+        <button className="flex gap-1 text-[var(--light-text)] bg-[var(--dark-text)] px-3 py-2  rounded items-center justify-center">
           <ArrowDownWideNarrow className="size-4" />
           <span className="text-[14px] ">Filter</span>
         </button>

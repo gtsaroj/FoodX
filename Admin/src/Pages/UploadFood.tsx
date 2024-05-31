@@ -106,7 +106,7 @@ const UploadFood: React.FC = () => {
               </span>
             </div>
           </div>
-          <button className="w-full text-[var(--light-text)] transition-all rounded-sm py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             Save
           </button>
         </form>
