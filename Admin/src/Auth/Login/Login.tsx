@@ -5,11 +5,10 @@ import { AuthNavbar } from "../../Navbar/AuthNavbar";
 import { AuthFooter } from "../../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
-import { signInUser } from "../../firebase/Authentication";
-import { LoginUser } from "../../Reducer/authLogin";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-import ClipLoader from "react-spinners/HashLoader"
+import { Toaster } from "react-hot-toast";
+import ClipLoader from "react-spinners/HashLoader";
+import { singInAction } from "../../Reducer/Action";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -31,26 +30,9 @@ const LoginContainer: React.FC = () => {
 
   const LoginFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
     try {
       setDataSend(false);
-      await signInUser(email, password)
-        .then(async () => {
-          const dispatchingloginData = await dispatch(
-            LoginUser(email as string)
-          );
-          if (!dispatchingloginData) {
-            throw new Error("your password or email is invalid");
-          }
-          setDataSend(true);
-        })
-        .catch((err) => {
-          toast.error("Invalid email or password");
-          console.log(err)
-          setDataSend(true);
-          setEmail("");
-          setPassword("");
-        });
+      await dispatch(singInAction({ email, password }));
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);
@@ -119,7 +101,13 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              {dataSend ? "Submit" : <div className="flex items-center justify-center gap-2">Sending <ClipLoader  color="white" size={"20px"}/></div>}
+              {dataSend ? (
+                "Submit"
+              ) : (
+                <div className="flex items-center justify-center gap-2">
+                  Sending <ClipLoader color="white" size={"20px"} />
+                </div>
+              )}
             </button>
             <p
               className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"

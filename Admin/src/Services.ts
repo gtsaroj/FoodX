@@ -1,28 +1,71 @@
+import { UserInfo } from "firebase/auth";
 import { globalRequest } from "./GlobalRequest";
+import { signInUser, signUpNewUser } from "./firebase/Authentication";
+import Cookies from "js-cookie";
+import { getRoleFromAccessToken } from "./Utility/JWTUtility";
+import toast from "react-hot-toast";
+import { ValidationType } from "./models/Register.model";
+import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 
-export const LoginService = async () => {
+export const signIn = async (email: string, password?: string) => {
   try {
+    await signInUser(email, password as string);
     const response = await globalRequest({
       method: "post",
       url: "users/login",
+      data: { email },
     });
-
-    return response.data;
+    const responseData = response.data.data;
+    Cookies.set("accessToken", responseData.accessToken);
+    Cookies.set("refreshToken", responseData.refreshToken);
+    const role = await getRoleFromAccessToken();
+    console.log(role)
+    responseData.user.role = await role;
+     console.log(responseData.user)
+    return responseData.user as UserInfo;
   } catch (error) {
-    console.log(`Error while Loging : ${error}`);
+    toast.error("Invalid username or password");
+    throw new Error("Invalid username or password");
   }
 };
-export const SignUpService = async () => {
+export const signUp = async (data: ValidationType) => {
+  try {
+    await signUpNewUser(
+      data.firstName,
+      data.lastName,
+      data.email,
+      data.password,
+      data.avatar
+    );
+    const response = await globalRequest({
+      method: "post",
+      url: "users/signIn",
+      data: { ...data },
+    });
+    await signIn(data.email, data.password);
+    return response.data.data.userInfo;
+    // return response.data.data.userInfo;
+  } catch (error) {
+    console.log(error);
+    // toast.error("Unable to create new user");
+    throw new Error("Unable to create new user");
+  }
+};
+
+export const updateUser = async (data: UpdateProfileInfo) => {
   try {
     const response = await globalRequest({
       method: "post",
-      url: "users/register",
+      url: "/users/update-user",
+      data: { ...data },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
-    console.log(`Error while SignUp : ${error}`);
+    toast.error("Unable to update user");
+    throw new Error("Unable to update user");
   }
 };
+
 export const getOrders = async () => {
   try {
     const response = await globalRequest({

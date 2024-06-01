@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import { ProductReducer } from "../Reducer/Action";
+import { ProductReducer, AuthReducer } from "../Reducer/Action";
 import {
   persistStore,
   persistReducer,
@@ -11,7 +11,6 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "./authReducer";
 
 // const loginRoot = combineReducers({
 //   authRegister: registerSlice,
@@ -19,7 +18,7 @@ import authReducer from "./authReducer";
 // });
 
 const rootReducer = combineReducers({
-  auth: authReducer,
+  auth: AuthReducer,
   Products: ProductReducer,
 });
 

@@ -1,10 +1,11 @@
 import React from "react";
 import Revenue from "../Components/Revenue/Revenue";
 import PieChart from "../Components/PieChart/PieChart";
-import {
-  LineChartOfOrder,
-  LineChartOfRevenue,
-} from "../Components/LineChart/LineChart";
+import { WeekOrderChart } from "../Components/LineChart/LineChart";
+// import {
+//   LineChartOfOrder,
+//   LineChartOfRevenue,
+// } from "../Components/LineChart/LineChart";
 
 const Dasboard: React.FC = () => {
   return (
@@ -12,9 +13,9 @@ const Dasboard: React.FC = () => {
       <Revenue />
       <div className="w-full gap-2 flex lg:flex-row flex-col items-center justify-center  ">
         <PieChart  />
-        <LineChartOfOrder />
+        <WeekOrderChart />
       </div>
-      <LineChartOfRevenue />
+      {/* <LineChartOfRevenue /> */}
     </div>
   );
 };

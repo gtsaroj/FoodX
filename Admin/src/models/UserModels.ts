@@ -1,7 +1,7 @@
 export interface authState {
   loading: boolean;
-  userInfo: any;
-  error: any;
+  userInfo: any[]  | null;
+  error: boolean;
   success: boolean;
 }
 

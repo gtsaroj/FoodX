@@ -9,18 +9,18 @@ interface PrivateRouteProp {
 
 export const PrivateRoute: React.FC<PrivateRouteProp> = ({ UserRole }) => {
   const auth = useSelector((state: RootState) => state.root.auth);
-  const [showContent, setShowContent] = useState<boolean>(true);
+  const [showContent, setShowContent] = useState<boolean>(false);
 
   const location = useLocation();
-  console.log(location);
+  
 
-  // useEffect(() => {
-  //   auth.success ? setShowContent(true) : setShowContent(false);
-  // }, [auth.success, auth.userInfo]);
-
+  useEffect(() => {
+    auth.success ? setShowContent(true) : setShowContent(false);
+  }, [auth.success, auth.userInfo]);
+  
 
   return showContent ? (
-    UserRole.includes("Admin") ? (
+    UserRole.includes(auth.userInfo?.role) ? (
       <Outlet />
     ) : (
       <div>Unauthorized Access</div>

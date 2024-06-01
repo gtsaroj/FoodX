@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as ProductService from "../Services";
 import { Product } from "../models/order.model";
+import { ValidationType } from "../models/Register.model";
+import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
+import { authState } from "../models/UserModels";
+import { Satellite } from "lucide-react";
 
 interface ProductState {
   products: Product[] | null;
@@ -15,6 +19,62 @@ const initialState: ProductState = {
   success: false,
   error: false,
 };
+
+const authState: authState = {
+  success: false,
+  error: false,
+  loading: true,
+  userInfo: [],
+};
+
+interface SigninTypes {
+  email: string;
+  password: string;
+}
+
+export const singInAction = createAsyncThunk(
+  "auth/signin",
+  async (data: SigninTypes, { rejectWithValue }) => {
+    try {
+      const response = await ProductService.signIn(data.email, data.password);
+      return response;
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error);
+      }
+    }
+  }
+);
+export const singUpAction = createAsyncThunk(
+  "auth/singup",
+  async (data: ValidationType, thunkApi) => {
+    try {
+      const response = await ProductService.signUp({ ...data });
+      console.log(response);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(
+        `Error while action to sign up new user -> ${error}`
+      );
+    }
+  }
+);
+export const updateUserAction = createAsyncThunk(
+  "auth/update-user",
+  async (data: UpdateProfileInfo, thunkApi) => {
+    try {
+      const response = await ProductService.updateUser({ ...data });
+      console.log(response);
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(
+        `Error while action to update user -> ${error}`
+      );
+    }
+  }
+);
 
 export const getOrderAction = createAsyncThunk(
   "orders/all",
@@ -127,4 +187,42 @@ const ProductSlice = createSlice({
   },
 });
 
+const authSlice = createSlice({
+  initialState: authState,
+  name: "auth",
+  reducers: {},
+  extraReducers: (builder) => {
+    // action to add new user
+    builder.addCase(singUpAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(singUpAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.userInfo = action.payload;
+    });
+    builder.addCase(singUpAction.rejected, (state) => {
+      state.loading = false;
+      (state.success = false), (state.userInfo = null);
+      state.error = false;
+    });
+    // action to login existing user
+    builder.addCase(singInAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(singInAction.fulfilled, (state, action) => {
+      state.loading = false;
+      state.success = true;
+      state.userInfo = action.payload;
+    });
+    builder.addCase(singInAction.rejected, (state) => {
+      state.error = true;
+      state.loading = false;
+      state.userInfo = null;
+    });
+    // action to update user
+  },
+});
+
 export const ProductReducer = ProductSlice.reducer;
+export const AuthReducer = authSlice.reducer;

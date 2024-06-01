@@ -10,6 +10,8 @@
 //   nanoseconds : string | number
 // }
 
+import { ProductType } from "./productMode";
+
 export interface Product {
   name: string;
   quantity: number;
@@ -25,7 +27,7 @@ export interface Banner {
 export interface Order {
   orderId: string;
   customer: string;
-  products: any[];
+  products: ProductType[];
   orderRequest: string;
   orderFullFilled: string;
   status: OrderStatus["types"];
