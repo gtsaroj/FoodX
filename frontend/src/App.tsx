@@ -17,7 +17,7 @@ import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
 import { OrderComponent } from "./Pages/Orders/Order.tsx";
 import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
 import { useEffect, useState } from "react";
-import { RootState } from "./Reducer/Store.ts";
+import { RootState, persistor } from "./Reducer/Store.ts";
 import { useSelector } from "react-redux";
 
 const HomePage = () => {
@@ -38,6 +38,7 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
+  // persistor.purge()
   // console.log(PrivateRoute({userRole : ["customers"]}))
   const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);

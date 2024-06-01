@@ -1,98 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
-import { da } from "@faker-js/faker";
+import { PieChart } from "@mui/x-charts/PieChart";
 
-export const PieChartData = [
-  {
-    item: "Pizza",
-    totalSell: 450,
-  },
-  {
-    item: "Burger",
-    totalSell: 1000,
-  },
-  {
-    item: "Cold Drinks",
-    totalSell: 800,
-  },
-];
+import React from "react";
+import { orders } from "../DummyData";
+import { quantityOfEachCategory, totalQuantityOfOrder } from "./PieData";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
-ChartJS.defaults.font.size = 14;
+const PieChartComponent: React.FC = () => {
+  const date = new Date();
+  const today = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-const PieChart: React.FC = () => {
-  const [dataInPercentage, setDataInPercentage] = useState<
-    string[] | number[]
-  >();
+  const todaysOrder = orders.filter(
+    (order) => order.orderFullFilled === today.toString()
+  );
 
-  useEffect(() => {
-    const totalData = PieChartData.reduce(
-      (acc, item) => (acc += item.totalSell),
-      0
-    );
+  const eachCategory = quantityOfEachCategory(todaysOrder);
+  console.log(totalQuantityOfOrder(todaysOrder));
 
-    const data = PieChartData.map(
-      (item) => Math.round((item.totalSell / totalData) * 100) + "%"
-    );
-    setDataInPercentage(data);
-  }, []);
-
-  const Data = {
-    labels: PieChartData.map(
-      (item, index) =>
-        `${item.item} : ${dataInPercentage ? dataInPercentage[index] : ""}`
-    ),
-    datasets: [
-      {
-        label: "Total Sell",
-        data: PieChartData?.map((item) => item.totalSell),
-        backgroundColor: [
-          "#00a3d9",
-          "rgba(54, 162, 235, 0.2)",
-          "#ec008e",
-          "rgba(75, 192, 192, 0.2)",
-          "rgba(153, 102, 255, 0.2)",
-          "rgba(255, 159, 64, 0.2)",
-        ],
-        borderWidth: 0,
-      },
-    ],
-  };
+  const data = Object.keys(eachCategory).map((item, index) => {
+    return {
+      id: index,
+      value: eachCategory[item],
+      label: item,
+    };
+  });
 
   return (
-    <div className="lg:w-[390px] w-full sm:h-[335px] h-[300px]  bg-[var(--light-background)] py-2 px-7 rounded-lg ">
-      <Doughnut
-        data={Data}
-        className="w-full h-full"
-        options={{
-          maintainAspectRatio : false,
-          onHover: (event, chartElement) => {
-            if (chartElement.length === 1) {
-              event.native?.target
-                ? (event.native.target.style.cursor = "pointer")
-                : "";
-            }
-            if (chartElement.length === 0) {
-              event.native?.target
-                ? (event.native.target.style.cursor = "default")
-                : "";
-            }
-          },
-          font: {
-            size: 10,
-          },
-          plugins: {
-            legend: {
-              display: true,
-              align: "start",
-              position: "bottom",
+    <React.Fragment>
+      <div className="w-[350px] bg-[var(--light-background)] h-full">
+        <PieChart
+          series={[
+            {
+              data,
             },
-          },
-        }}
-      />
-    </div>
+          ]}
+          width={500}
+          height={200}
+        />
+      </div>
+    </React.Fragment>
   );
 };
 
-export default PieChart;
+export default PieChartComponent;

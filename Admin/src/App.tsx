@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Dasboard from "./Pages/Dasboard";
 import {
-  Outlet,
   BrowserRouter as Router,
   Route,
   Routes,
+  Navigate,
+  useLocation,
+  Outlet,
 } from "react-router-dom";
 import Slider, { NavbarSend } from "./Components/Slider/Slider";
 import Analytics from "./Pages/Analytics";
@@ -17,9 +19,10 @@ import FoodPage from "./Pages/FoodPage";
 import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
+import { useSelector } from "react-redux";
+import { RootState, persistor } from "./Reducer/Store";
 
 const MainPage = () => {
-
   return (
     <div className="w-full overflow-hidden flex justify-center items-center ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-2 py-3 items-start justify-center  px-3 xl:px-5">
@@ -38,11 +41,23 @@ const MainPage = () => {
 };
 
 const App: React.FC = () => {
+  persistor.purge()
+  const auth = useSelector((state: RootState) => state.root.auth);
+  const [showContent, setShowContent] = useState<boolean>(false);
+
+  useEffect(() => {
+    auth.success ? setShowContent(true) : setShowContent(false);
+  }, [auth.success]);
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="login/"
+          element={
+            showContent ? <Navigate to={"/admin"} replace /> : <Login />
+          }
+        />
+        <Route path="register/" element={<Register />} />
         <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
           <Route path="admin/" element={<MainPage />}>
             <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
