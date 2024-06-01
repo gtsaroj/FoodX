@@ -41,7 +41,7 @@ const MainPage = () => {
 };
 
 const App: React.FC = () => {
-  persistor.purge()
+  // persistor.purge()
   const auth = useSelector((state: RootState) => state.root.auth);
   const [showContent, setShowContent] = useState<boolean>(false);
 
@@ -53,36 +53,34 @@ const App: React.FC = () => {
       <Routes>
         <Route
           path="login/"
-          element={
-            showContent ? <Navigate to={"/admin"} replace /> : <Login />
-          }
+          element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}
         />
         <Route path="register/" element={<Register />} />
-        <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+        <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
           <Route path="admin/" element={<MainPage />}>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route index element={<Dasboard />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="analytics" element={<Analytics />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="order-list" element={<OrderList />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="customer-list" element={<CustomerList />} />
             </Route>
 
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="contact/tickets" element={<TicketPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="contact/admin" element={<AdminProfile />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["amdins", "Chef"]} />}>
               <Route path="collection/banner" element={<BannerPage />} />
             </Route>
           </Route>

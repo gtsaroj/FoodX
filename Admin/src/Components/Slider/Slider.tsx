@@ -20,6 +20,7 @@ import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import MobileSlider from "./MobileSlider";
 import ReactPortal from "../Common/ReactPortal";
+import { signOut } from "../../Services";
 
 const Slider: React.FC = () => {
   const navigate = useNavigate();
@@ -173,7 +174,7 @@ const Slider: React.FC = () => {
           </li>
         </ul>
       </div>
-      <Logout />
+      <Logout logout={() => signOut()} />
     </div>
   );
 };
