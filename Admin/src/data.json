@@ -1,0 +1,170 @@
+{
+  "headers": ["SN", "Product", "Image", "Categories", "Status"],
+  "orderHeaders": ["orderid", "CUSTOMER", "PRODUCT", "DATE", "STATUS"],
+  "orders": [
+    {
+      "orderid": "#c431b8",
+      "customer": "Saroj GT",
+      "product": "Samosa, Momo",
+      "date": "2081/01/20",
+      "status": "Received"
+    },
+    {
+      "orderid": "#f2a9d4",
+      "customer": "Saroj GT",
+      "product": "Samosa, Momo",
+      "date": "2081/01/20",
+      "status": "Preparing"
+    },
+    {
+      "orderid": "#e813b5",
+      "customer": "Rajan Chaudhary",
+      "product": "Samosa, Momo",
+      "date": "2081/01/20",
+      "status": "Completed"
+    },
+    {
+      "orderid": "#a731c6",
+      "customer": "Sandesh Paudel",
+      "product": "Samosa, Momo",
+      "date": "2081/01/20",
+      "status": "Canceled"
+    }
+  ],
+  "foodData": [
+    {
+      "product": "Fry Momo",
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "categories": "Momo",
+      "status": "Published"
+    },
+    {
+      "product": "Fry Momo",
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "categories": "Momo",
+      "status": "Published"
+    },
+    {
+      "product": "Fry Momo",
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "categories": "Momo",
+      "status": "Published"
+    },
+    {
+      "product": "Fry Momo",
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "categories": "Momo",
+      "status": "Published"
+    },
+    {
+      "product": "Fry Momo",
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "categories": "Momo",
+      "status": "Published"
+    }
+  ],
+  "customers": [
+    "Customer",
+    "Email",
+    "Location",
+    "Orders",
+    "Amount Spent",
+    "Role"
+  ],
+
+  "customerDetails": [
+    {
+      "customer": "Rajan Chaudhary",
+      "email": "rajanchaudhary1@gmail.com",
+      "location": "Laxmana, Bardiya",
+      "orders": "45",
+      "amountspent": "$200",
+      "role": "customer"
+    },
+    {
+      "customer": "Sita Sharma",
+      "email": "sitasharma@gmail.com",
+      "location": "Kathmandu, Nepal",
+      "orders": "30",
+      "amountspent": "$150",
+      "role": "customer"
+    },
+    {
+      "customer": "Kiran Thapa",
+      "email": "kiranthapa@gmail.com",
+      "location": "Pokhara, Kaski",
+      "orders": "50",
+      "amountspent": "$300",
+      "role": "customer"
+    },
+    {
+      "customer": "Anita Gurung",
+      "email": "anitagurung@gmail.com",
+      "location": "Butwal, Rupandehi",
+      "orders": "40",
+      "amountspent": "$250",
+      "role": "customer"
+    },
+    {
+      "customer": "Bikash Shrestha",
+      "email": "bikashshrestha@gmail.com",
+      "location": "Bhaktapur, Nepal",
+      "orders": "35",
+      "amountspent": "$180",
+      "role": "customer"
+    }
+  ],
+  "monthlyAnalyticsData": [
+    {
+      "title": "Order",
+      "total": 2000,
+      "percentage": 80,
+      "revenueInOneDay": "80% in 1 day"
+    },
+    {
+      "title": "Cancelled",
+      "total": 120,
+      "percentage": 20,
+      "revenueInOneDay": "5% in 1 day"
+    },
+    {
+      "title": "Delivered",
+      "total": 1880,
+      "percentage": 50,
+      "revenueInOneDay": "75% in 1 day"
+    },
+    {
+      "title": "Revenue",
+      "total": 95000,
+      "percentage": 620,
+      "revenueInOneDay": "Rs. 100,000 in 1 day"
+    }
+  ],
+  "dailyAnalyticsData" :[
+      {
+        "title": "Order",
+        "total": 1245,
+        "percentage": 100,
+        "revenueInOneDay": "50% in 1 day"
+      },
+      {
+        "title": "Cancelled",
+        "total": 80,
+        "percentage": 40,
+        "revenueInOneDay": "3% in 1 day"
+      },
+      {
+        "title": "Delivered",
+        "total": 1165,
+        "percentage": 30,
+        "revenueInOneDay": "47% in 1 day"
+      },
+      {
+        "title": "Revenue",
+        "total": 58000,
+        "percentage": 390,
+        "revenueInOneDay": "Rs. 80,000 in 1 day"
+      }
+    
+  ]
+}

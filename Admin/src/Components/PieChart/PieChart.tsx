@@ -1,56 +1,86 @@
-import { PieChart, PiePlot } from "@mui/x-charts/PieChart";
-import { ResponsiveChartContainer } from "@mui/x-charts";
-import React from "react";
-import { orders } from "../DummyData";
-import { quantityOfEachCategory, totalQuantityOfOrder } from "./PieData";
+import { PieChart } from "@mui/x-charts";
+import Select from "react-select";
+import { selectOptions } from "../LineChart/data";
 
-export const PieChartComponent: React.FC = () => {
-  const date = new Date();
-  const today = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-
-  const todaysOrder = orders.filter(
-    (order) => order.orderFullFilled === today.toString()
-  );
-
-  const eachCategory = quantityOfEachCategory(todaysOrder);
-  console.log(totalQuantityOfOrder(todaysOrder));
-
-  const data = Object.keys(eachCategory).map((item, index) => {
-    return {
-      id: index,
-      value: eachCategory[item],
-      label: item,
-    };
-  });
-
+export default function ResponsiveChartExample() {
   return (
-    <React.Fragment>
-      <div className="xl:w-[400px] w-full flex items-center justify-center rounded-lg bg-gray-500 px-4 py-4 overflow-hidden h-full">
-        <ResponsiveChartContainer
-          series={[
-            {
-              data: [
-                { id: 1, value: 200, label: "pizza" },
-                { id: 2, value: 300, label: "Momo" },
-                { id: 3, value: 600, label: "Momo" },
-              ],
-              type: "pie",
-            },
-          ]}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            zIndex: 1,
-            left: 0,
-            right: 0,
-          }}
-          height={300}
-        >
-          <PiePlot />
-        </ResponsiveChartContainer>
-      </div>
-    </React.Fragment>
+    <div className="lg:w-[400px] flex flex-col py-2  items-start px-2 justify-center w-full h-[300px] sm:h-[400px] rounded bg-[var(--light-background)]  ">
+      <h2 className="text-xl text-[var(--primary-color)] ">
+        Daily Orders
+      </h2>
+      {/* Using a plain div with inline styles */}
+      <PieChart
+        sx={{ cursor: "pointer" }}
+        series={[
+          {
+            data: [
+              { value: 450, label: "Momo", id: 1 },
+              { value: 400, label: "Pizza", id: 2 },
+              { value: 350, label: "Cold Drinks", id: 3 },
+              { value: 250, label: "Hot Drinks", id: 4 },
+              { value: 150, label: "Burger", id: 5 },
+              { value: 450, label: "others", id: 6 },
+            ],
+            innerRadius: 30,
+            outerRadius: 100,
+            paddingAngle: 3,
+            cornerRadius: 5,
+          },
+        ]}
+        slotProps={{
+          legend: {
+            labelStyle: { fontSize: "12px" },
+            itemMarkHeight: 10,
+            itemMarkWidth: 10,
+            direction: "row",
+            position: { vertical: "bottom", horizontal: "middle" },
+          },
+        }}
+        skipAnimation
+      ></PieChart>
+    </div>
+  );
+}
+
+export const PieChartAnalytics = () => {
+  return (
+    <div className=" p-2 w-full px-2 py-2 sm:h-[400px] h-[500px] bg-[var(--light-background)] flex flex-col gap-7 items-end justify-center ">
+            <h2 className="w-full text-left pb-4 text-xl text-[var(--primary-color)] ">
+        Monthly & Weekly  Order
+      </h2>
+
+      <button className="sm:w-[200px] pb-5 w-full cursor-pointer">
+        <Select className="" options={selectOptions}></Select>
+      </button>
+      <PieChart
+        sx={{ cursor: "pointer" }}
+        series={[
+          {
+            data: [
+              { value: 450, label: "Momo", id: 1 },
+              { value: 400, label: "Pizza", id: 2 },
+              { value: 350, label: "Cold Drinks", id: 3 },
+              { value: 250, label: "Hot Drinks", id: 4 },
+              { value: 150, label: "Burger", id: 5 },
+              { value: 450, label: "others", id: 6 },
+            ],
+            innerRadius: 30,
+            outerRadius: 100,
+            paddingAngle: 3,
+            cornerRadius: 5,
+          },
+        ]}
+        slotProps={{
+          legend: {
+            labelStyle: { fontSize: "12px" },
+            itemMarkHeight: 10,
+            itemMarkWidth: 10,
+            direction: "row",
+            position: { vertical: "bottom", horizontal: "right" },
+          },
+        }}
+        skipAnimation
+      ></PieChart>
+    </div>
   );
 };

@@ -1,5 +1,4 @@
 import { X } from "lucide-react";
-import "./modal.scss";
 import { ReactNode, useEffect, useRef } from "react";
 
 interface ModelProp {
@@ -16,11 +15,8 @@ const Modal: React.FC<ModelProp> = ({
 }: ModelProp) => {
   const modalRef = useRef(null);
 
-
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
-  
-
       if (modalRef.current && !modalRef.current?.contains(event.target)) {
         closeModal();
       }
@@ -34,22 +30,26 @@ const Modal: React.FC<ModelProp> = ({
       document.body.style.overflowY = "unset";
     };
   }, [close, closeModal]);
-  
-  console.log(close)
+
+  console.log(close);
 
   return (
     <div
-      className={`modelbox-container `}
+      className={`md:w-[600px] w-full py-9 overflow-auto   min-w-[100vw] px-7 sm:min-h-[100vh] h-full  z-[20] justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}
       style={{
         opacity: !close ? 1 : 0,
         zIndex: !close ? 50 : -3,
       }}
     >
-      <div className="model-container " ref={modalRef}>
-        <div className="model-content">
-          {children}
-        </div>
-        <button className="model-close" onClick={closeModal}>
+      <div
+        className=" overflow-auto rounded py-4 bg-[var(--light-background)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150  relative md:w-[800px] w-full shadow-[var(--dark-text)] md:mt-4 mt-28  z-[60] 2xl:w-full "
+        ref={modalRef}
+      >
+        <div className="w-full overflow-auto">{children}</div>
+        <button
+          className="absolute top-[0px]  rounded right-[30px] p-3 hover:cursor-pointer duration-150 ease-in-out "
+          onClick={closeModal}
+        >
           <X />
         </button>
       </div>

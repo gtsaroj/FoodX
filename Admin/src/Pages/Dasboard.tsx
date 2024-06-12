@@ -1,7 +1,8 @@
 import React from "react";
-import Revenue from "../Components/Revenue/Revenue";
-import {PieChartComponent} from "../Components/PieChart/PieChart";
-import { WeekOrderChart, WeekReveneuChart } from "../Components/LineChart/LineChart";
+import Revenue from "../Components/Analytics/DailyAnalytics";
+import PieChartComponent from "../Components/PieChart/PieChart";
+import {  WeekReveneuChart } from "../Components/LineChart/LineChart";
+import { BarChartOfWeeklyOrder } from "../Components/BarChart/BarChart";
 // import {
 //   LineChartOfOrder,
 //   LineChartOfRevenue,
@@ -13,7 +14,7 @@ const Dasboard: React.FC = () => {
       <Revenue />
       <div className="w-full gap-2 flex lg:flex-row flex-col items-center justify-center  ">
         <PieChartComponent  />
-        <WeekOrderChart />
+        <BarChartOfWeeklyOrder />
       </div>
       <WeekReveneuChart/>
     </div>

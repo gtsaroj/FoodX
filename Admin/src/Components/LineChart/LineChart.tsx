@@ -1,103 +1,71 @@
-import React, { useEffect, useRef } from "react";
-import {
-  LineChart,
-  BarChart,
-  LinePlot,
-  ResponsiveChartContainer,
-  ChartsYAxis,
-  ChartsXAxis,
-  HighlightedContext,
-} from "@mui/x-charts";
-import Box from "@mui/material/Box";
-import { weekDateRoundUp } from "./LineChartData";
-
-export const WeekOrderChart: React.FC = () => {
-  return (
-    <div className="xl:w-[500px] w-full bg-slate-500 py-4 flex items-center justify-center h-full">
-      <ResponsiveChartContainer
-
-        
-      >
-       <LinePlot
-            
-          />
-      </ResponsiveChartContainer>
-    </div>
-  );
-};
+import React from "react";
+import { LineChart } from "@mui/x-charts";
+import Select from "react-select";
+import { selectOptions } from "./data";
+import { ArrowUp } from "lucide-react";
+import "./LineChart.css";
 
 export const WeekReveneuChart: React.FC = () => {
+  // const svgHeight = useDrawingArea();
+  // const yScale = useYScale();
   return (
-    <Box sx={{ width: "100%" }}>
-      <div className="w-full flex items-center bg-gray-600 justify-center h-full">
-        <ResponsiveChartContainer
-          xAxis={[{ data: [1, 2, 3, 4, 5, 7], scaleType: "band" }]}
-          series={[
-            {
-              data: [100, 300, 400, 200, 150, 290],
-              area: true,
-              color: "blue",
-              
-              type: "line",
-            },
-          ]}
-          sx={{
-            cursor: "pointer",
-            background: "linear-gradient(red, yellow)",
-          }}
-          height={400}
-          width={800}
-          disableAxisListener={false}
-        >
-          <LinePlot type="monotone" />
-          <ChartsYAxis />
-          <ChartsXAxis />
-        </ResponsiveChartContainer>
+    <div className="w-full bg-[var(--light-background)] h-[250px] sm:h-[400px] pt-2 pb-16 sm:px-5 rounded">
+      <h2 className="w-full text-left text-xl pb-4 text-[var(--primary-color)] ">
+        Weekly Revenue
+      </h2>
+      <div className="w-full flex items-center justify-between px-3">
+        <button className="w-[200px] cursor-pointer">
+          <Select className="" options={selectOptions}></Select>
+        </button>
+        <h1 className="  font-bold text-[#429180] text-[16px] flex items-start gap-1 justify-center ">
+          <span>12.5%</span>
+          <ArrowUp className="size-5" />
+        </h1>
       </div>
-    </Box>
-  );
-};
-
-export const MonthlyOrderChart: React.FC = () => {
-  return (
-    <div>
-      <BarChart
+      <LineChart
+        slotProps={{
+          legend: {
+            direction: "row",
+            labelStyle: { fontSize: "14px" },
+            position: { vertical: "bottom", horizontal: "middle" },
+          },
+        }}
         xAxis={[
           {
-            data: [1, 2, 3, 4, 5, 6, 7],
-            scaleType: "band",
+            data: [0, 1, 2, 3, 4, 5],
+            scaleType: "point",
           },
         ]}
         series={[
           {
-            data: [1000, 1500, 1350, 1600, 1700, 1512, 1500],
-            type: "bar",
+            data: [0, 300, 400, 200, 150, 290],
+            type: "line",
+            color: "#478612a1",
           },
         ]}
-        height={300}
-        width={700}
-      />
+      ></LineChart>
     </div>
   );
 };
+
 export const MonthlyRevenueChart: React.FC = () => {
   return (
-    <div className="w-ful h-full">
+    <div className="w-full px-2 py-5 h-[250px] sm:h-[400px] bg-[var(--light-background)] ">
+      <h2 className="w-full text-left pb-4  text-xl text-[var(--primary-color)] ">Monthly Revenue</h2>
       <LineChart
         xAxis={[
           {
             data: [1, 2, 3, 4, 5, 6, 7],
-            scaleType: "band",
+            scaleType: "point",
           },
         ]}
         series={[
           {
             data: [1000, 1500, 1350, 1600, 1700, 1512, 1500],
-            type: "line",
+
+            area: true,
           },
         ]}
-        height={300}
-        width={700}
       />
     </div>
   );

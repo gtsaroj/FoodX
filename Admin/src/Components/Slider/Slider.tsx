@@ -35,7 +35,7 @@ const Slider: React.FC = () => {
   // useEffect(() => {}, [auth]);
 
   return (
-    <div className=" w-[300px] 2xl:px-9 lg:h-[100vh] overflow-auto py-8  bg-[var(--light-foreground)] flex gap-10 flex-col items-center justify-between rounded-md px-3  ">
+    <div className=" w-[300px] 2xl:px-9 lg:h-[100vh] overflow-auto py-8  bg-[var(--light-foreground)] flex gap-10 flex-col items-center justify-between rounded px-3  ">
       <div className="flex flex-col gap-4 w-full">
         <div className="w-[200px]">
           <img className="container h-full " src={collegeLogo} alt="" />
