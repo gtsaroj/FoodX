@@ -22,7 +22,7 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
 
   const handleLogout = async () => {
     const response = await makeRequest.post("/users/logout");
-    console.log(response.data);
+  
     await signOutUser();
     dispatch(authLogout());
     Cookies.remove("accessToken");

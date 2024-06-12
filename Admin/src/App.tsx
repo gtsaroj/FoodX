@@ -21,6 +21,7 @@ import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
 import { RootState, persistor } from "./Reducer/Store";
+import NotFoundPage from "./Pages/404Page/NotFoundPage";
 
 const MainPage = () => {
   return (
@@ -29,10 +30,10 @@ const MainPage = () => {
         <div className="xl:flex hidden ">
           <Slider />
         </div>
-        <div className="xl:hidden w-full sticky top-0 overflow-y-auto flex">
+        <div className="xl:hidden w-full overflow-y-auto flex">
           <NavbarSend />
         </div>
-        <div className="2xl:container px-2 w-full lg:h-[100vh]  overflow-y-scroll  rounded-md flex  items-start justify-center bg-[var(--light-foreground)]  ">
+        <div className="2xl:container px-2 w-full lg:h-[100vh]  overflow-y-scroll rounded flex  items-start justify-center bg-[var(--light-foreground)]  ">
           <Outlet />
         </div>
       </div>
@@ -41,9 +42,9 @@ const MainPage = () => {
 };
 
 const App: React.FC = () => {
-  persistor.purge()
+  // persistor.purge()
   const auth = useSelector((state: RootState) => state.root.auth);
-  const [showContent, setShowContent] = useState<boolean>(false);
+  const [showContent, setShowContent] = useState<boolean>(true);
 
   useEffect(() => {
     auth.success ? setShowContent(true) : setShowContent(false);
@@ -53,39 +54,38 @@ const App: React.FC = () => {
       <Routes>
         <Route
           path="login/"
-          element={
-            showContent ? <Navigate to={"/admin"} replace /> : <Login />
-          }
+          element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}
         />
         <Route path="register/" element={<Register />} />
-        <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+        <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
           <Route path="admin/" element={<MainPage />}>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route index element={<Dasboard />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="analytics" element={<Analytics />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="order-list" element={<OrderList />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="customer-list" element={<CustomerList />} />
             </Route>
 
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="contact/tickets" element={<TicketPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins"]} />}>
               <Route path="contact/admin" element={<AdminProfile />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["Admin", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["amdins", "Chef"]} />}>
               <Route path="collection/banner" element={<BannerPage />} />
             </Route>
           </Route>
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </Router>

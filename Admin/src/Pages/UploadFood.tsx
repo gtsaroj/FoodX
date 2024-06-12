@@ -106,6 +106,10 @@ const UploadFood: React.FC = () => {
               </span>
             </div>
           </div>
+          <div className="  pl-2 flex items-center justify-center gap-4">
+            <input type="checkbox" className="w-[15px] cursor-pointer scale-[1.1] h-[15px] " />
+             <p className="text-[16px] text-[var(--dark-text)] "> Would you like to mark this as a special product ?</p>
+          </div>
           <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             Save
           </button>

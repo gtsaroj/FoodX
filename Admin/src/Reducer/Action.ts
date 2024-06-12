@@ -190,7 +190,13 @@ const ProductSlice = createSlice({
 const authSlice = createSlice({
   initialState: authState,
   name: "auth",
-  reducers: {},
+  reducers: {
+    authLogout: (state) => {
+      state.userInfo = null;
+      state.success = false;
+      state.loading = true;
+    },
+  },
   extraReducers: (builder) => {
     // action to add new user
     builder.addCase(singUpAction.pending, (state) => {
@@ -226,3 +232,5 @@ const authSlice = createSlice({
 
 export const ProductReducer = ProductSlice.reducer;
 export const AuthReducer = authSlice.reducer;
+
+export const { authLogout } = authSlice.actions;

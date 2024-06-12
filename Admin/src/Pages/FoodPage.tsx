@@ -2,7 +2,7 @@ import { ArrowDownWideNarrow, ChevronLeft, Plus, Search } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import FoodTable from "./FoodTable";
 import UploadFood from "./UploadFood";
-import Modal from "../Components/Popup/Popup";
+import Modal from "../Components/Common/Popup/Popup";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);

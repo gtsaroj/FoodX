@@ -1,11 +1,18 @@
 import { UserInfo } from "firebase/auth";
 import { globalRequest } from "./GlobalRequest";
-import { signInUser, signUpNewUser } from "./firebase/Authentication";
+import {
+  signInUser,
+  signOutUser,
+  signUpNewUser,
+} from "./firebase/Authentication";
 import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import toast from "react-hot-toast";
 import { ValidationType } from "./models/Register.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
+import { Store } from "./Reducer/Store";
+import { authLogout } from "./Reducer/Action";
+import { makeRequest } from "./makeRequest";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -19,9 +26,9 @@ export const signIn = async (email: string, password?: string) => {
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
     const role = await getRoleFromAccessToken();
-    console.log(role)
+    console.log(role);
     responseData.user.role = await role;
-     console.log(responseData.user)
+    console.log(responseData.user);
     return responseData.user as UserInfo;
   } catch (error) {
     toast.error("Invalid username or password");
@@ -63,6 +70,22 @@ export const updateUser = async (data: UpdateProfileInfo) => {
   } catch (error) {
     toast.error("Unable to update user");
     throw new Error("Unable to update user");
+  }
+};
+
+export const signOut = async () => {
+  try {
+    await makeRequest({
+      method: "post",
+      url: "users/logout",
+    });
+    await signOutUser();
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    Store.dispatch(authLogout());
+    toast.success("User successfully logout");
+  } catch (error) {
+    throw new Error("Error while logging out user ->" + error);
   }
 };
 
