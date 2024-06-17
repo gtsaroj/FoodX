@@ -1,5 +1,5 @@
 import React from "react";
-import { CircleEllipsis } from "lucide-react";
+import { CircleEllipsis, EllipsisVertical } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./Table.css";
 import Pagination from "../Pagination/Pagination";
@@ -42,7 +42,7 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                   <button className=" hover:text-red-600 duration-200">
-                    <CircleEllipsis strokeWidth={2} className="size-7 " />
+                    <EllipsisVertical strokeWidth={2} className="size-5 " />
                   </button>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Portal>
@@ -81,10 +81,7 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
               </DropdownMenu.Content>
             </DropdownMenu.Portal>
           </DropdownMenu.Root> :  (
-              row[hdr.toLowerCase().replace(" ", "")].replace(
-                "gmail.com",
-                "..."
-              )
+              row[hdr.toLowerCase()?.replace(" ", "")]
             )
             }
           </td>

@@ -5,16 +5,17 @@ import ResolveTicket from "../Components/Tickets/ResolveTicket";
 import CancelTicket from "../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../Components/Common/Popup/Popup";
-import CreateTicket from "../Components/Tickets/CreateTicket";
+import CreateTicket from "../Components/Upload/CreateTicket";
 
 const TicketPage: React.FC = () => {
   const [closeModal, setCloseModal] = useState<boolean>(true);
   console.log(closeModal)
   return (
-    <div className="flex flex-col items-start justify-center gap-10  px-1sm:px-3 py-2">
+    <div className="flex flex-col items-start justify-center gap-10  px-1sm:px-3 py-5">
+   
+      <div className="flex items-center justify-between w-full ">
       <h1 className="text-[20px] text-[var(--dark-text)] ">Tickets</h1>
-      <div className="flex items-center justify-end w-full ">
-        <button onClick={()=>setCloseModal(!closeModal)} className=" flex items-center justify-center gap-1 py-2 rounded-sm px-3  text-sm  text-white bg-[#247f8b]">
+        <button onClick={()=>setCloseModal(!closeModal)} className=" flex items-center justify-center gap-1 py-3 rounded px-3  text-sm  text-white bg-[#247f8b]">
           <CirclePlus className="size-5" />
           New Ticket
         </button>

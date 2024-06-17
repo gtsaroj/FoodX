@@ -4,7 +4,7 @@ import CollegeLogo from "../../src/assets/logo/texas.png";
 const Footer: React.FC = () => {
   return (
     <>
-      <footer className="w-full rounded-t  bg-[var(--primary-color)] text-[var(--light-text)] place-items-center grid px-5 py-4">
+      <footer className="w-full mt-16 py-4 rounded-t  bg-[var(--primary-color)] text-[var(--light-text)] place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />

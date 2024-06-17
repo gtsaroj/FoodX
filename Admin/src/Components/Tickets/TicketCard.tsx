@@ -2,7 +2,7 @@ import React from "react";
 
 const TicketCard: React.FC = () => {
   return (
-    <div className="container flex  gap-2 flex-col items-start justify-center bg-[var(--light-foreground)] rounded-md px-3 py-2 border-[#8a849570] ">
+    <div className="container flex  gap-2 flex-col items-start justify-center bg-[var(--light-foreground)] rounded px-3 py-2 border-[#8a849570] ">
       <div className=" w-full flex items-center justify-between">
         {" "}
         <h1 className="text-[10px] py-0.5 px-1 rounded-sm border-[1px] text-[#247f8b] border-[#247f8b] ">

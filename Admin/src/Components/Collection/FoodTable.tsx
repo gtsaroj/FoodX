@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Table } from "../Components/Common/Table/Table";
-import data from ".././data.json";
+import { Table } from "../Common/Table/Table";
+import data from "../../data.json";
 
 const FoodTable: React.FC = () => {
   const { headers, foodData } = data;

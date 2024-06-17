@@ -22,6 +22,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
+import { CategoryPage } from "./Pages/CategoryPage";
 
 const MainPage = () => {
   return (
@@ -33,7 +34,7 @@ const MainPage = () => {
         <div className="flex  xl:hidden w-full">
           <MobileSlider/>
          </div>
-        <div className="2xl:container px-2 w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
+        <div className="2xl:container px-7 w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
           <Outlet />
           <Footer/>
         </div>
@@ -84,8 +85,11 @@ const App: React.FC = () => {
             <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["amdins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/banner" element={<BannerPage />} />
+            </Route>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+              <Route path="category" element={<CategoryPage />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />

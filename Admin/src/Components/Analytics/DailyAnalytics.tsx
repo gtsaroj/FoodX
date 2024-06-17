@@ -9,7 +9,7 @@ const Revenue: React.FC = () => {
   return (
     <React.Fragment>
       <div className="flex w-full items-center flex-wrap  justify-center md:justify-between sm:justify-start gap-3 sm:gap-5">
-      <h2 className="w-full text-left px-3 py-2 text-xl text-[var(--primary-color)] ">
+      <h2 className="w-full  py-2 text-xl text-[var(--primary-color)] ">
         Order Details
       </h2>
         {dailyAnalyticsData?.map((item, index) => {

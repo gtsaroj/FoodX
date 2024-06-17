@@ -4,10 +4,10 @@ import FoodTable from "../Components/Collection/FoodTable";
 import UploadFood from "../Components/Upload/UploadFood";
 import Modal from "../Components/Common/Popup/Popup";
 import { FilterButton } from "../Components/Common/Filter/Filter";
-import { BannerTable } from "../Components/Collection/BannerTable";
-import UploadBanner from "../Components/Upload/UploadBanner";
+import { CategoryTable } from "../Components/Collection/CategoryTable";
+import { UploadCategory } from "../Components/Upload/UploadCategory";
 
-const FoodPage: React.FC = () => {
+export const CategoryPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
 
   const closeModal = () => setIsModelOpen(true);
@@ -16,7 +16,7 @@ const FoodPage: React.FC = () => {
     <div className="w-full relative py-4 flex flex-col gap-10 sm:px-4  items-start justify-center ">
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col items-start justify-center gap-1">
-          <h1 className="text-xl">Banners</h1>
+          <h1 className="text-xl">Categories</h1>
           <h2 className="text-[14px] text-[var(--dark-secondary-text)] ">
             6 entries found
           </h2>
@@ -42,14 +42,13 @@ const FoodPage: React.FC = () => {
        <FilterButton/>
  </div>
       </div>
-      <BannerTable />
+      <CategoryTable />
       <div className="absolute ">
         <Modal close={isModalOpen} closeModal={closeModal}>
-          <UploadBanner />
+          <UploadCategory />
         </Modal>
       </div>
     </div>
   );
 };
 
-export default FoodPage;

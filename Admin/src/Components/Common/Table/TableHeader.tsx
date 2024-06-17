@@ -18,6 +18,8 @@ export const TableHeader: React.FC<TableHeaderProp> = ({ header, colSpan }) => {
           {header.map((hd, index) =>
             hd.toLowerCase() === "checkbox" ? (
               <input className="w-4 cursor-pointer h-4" type="checkbox" />
+            ) : hd.toLowerCase() === "button" ? (
+              ""
             ) : (
               <td key={index} className="col-span-1">
                 {hd}

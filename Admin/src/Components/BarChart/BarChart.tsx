@@ -6,7 +6,7 @@ export const BarChartOfWeeklyOrder: React.FC = () => {
   const valueFormatter = (value: number | null) => value;
   return (
     <div className="bg-[var(--light-background)] rounded py-2 w-full lg:w-[600px] h-[300px] sm:h-[400px] flex  flex-col items-start px-2 justify-center">
-      <h2 className="text-xl text-[var(--primary-color)] ">Weekly Orders</h2>
+      <h2 className="text-xl p-2 text-[var(--primary-color)] ">Weekly Orders</h2>
       <BarChart
         slotProps={{
           legend: { hidden: true },
@@ -48,7 +48,7 @@ export const BarChartOfWeeklyOrder: React.FC = () => {
 export const MonthlyOrderChart: React.FC = () => {
   const valueFormatter = (value: number | null) => value;
   return (
-    <div className="w-full h-[300px] bg-[var(--light-background)] px-2 sm:h-[400px] py-5">
+    <div className="w-full h-[300px] bg-[var(--light-background)] px-5 sm:h-[400px] py-5">
       <h2 className="w-full text-left text-xl pb-4 text-[var(--primary-color)] ">
         Monthly Revenue
       </h2>

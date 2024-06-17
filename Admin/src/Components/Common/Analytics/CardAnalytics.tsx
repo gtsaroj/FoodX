@@ -7,7 +7,7 @@ interface CardAnalyticsProp {
 export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
   console.log(item)
   return (
-    <div className=" flex sm:w-[200px]  w-full h-[130px] items-center justify-between gap-10 bg-[var(--light-background)] sm:px-3 px-8 py-4  rounded shadow-inner ">
+    <div className=" flex px-8  h-[160px]  w-[300px] items-center justify-between gap-10 bg-[var(--light-background)]   rounded shadow-inner ">
       <div className="flex flex-col items-start justify-center gap-2">
         <p className="text-[18px] font-semibold  text-[var(--primary-color)] ">{item.title} </p>
         <p className="text-[25px] text-[var(--dark-foreground)]  font-bold ">
@@ -17,8 +17,9 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
           {item.revenueInOneDay}
         </p>
       </div>
+      <div className="w-[100px]">
       <CircularProgressbar
-        className="w-[80px] h-[80px]"
+        className="w-full h-full"
         strokeWidth={15}
         circleRatio={0.9}
         minValue={0}
@@ -35,6 +36,7 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
           
         })}
       />
+  </div>
     </div>
   );
 };

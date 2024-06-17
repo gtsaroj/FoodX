@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TableHeader } from "./TableHeader";
 import { TableRowComponent } from "./TableRow";
-import { HeaderProp } from "../../../Pages/FoodTable";
+import { HeaderProp } from "../../Collection/FoodTable";
 import Pagination from "../Pagination/Pagination";
 
 interface TableProp {
@@ -58,7 +58,7 @@ export const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      <div className="">
+      <div className="w-full justify-center items-center">
         <Pagination
           onChange={onChangePage}
           currentPage={currentPage}
