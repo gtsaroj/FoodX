@@ -11,13 +11,9 @@ const FoodPage: React.FC = () => {
 
   return (
     <div className="w-full relative py-4 flex flex-col gap-10 sm:px-4  items-start justify-center ">
-      <button className="flex items-center justify-start hover:gap-2 duration-200 gap-1">
-        <ChevronLeft size={18} />
-        <h1 className=" text-[18px]">Back</h1>
-      </button>
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col items-start justify-center gap-1">
-          <h1 className="text-lg">Foods</h1>
+          <h1 className="text-xl">Foods</h1>
           <h2 className="text-[14px] text-[var(--dark-secondary-text)] ">
             6 entries found
           </h2>

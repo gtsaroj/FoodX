@@ -1,10 +1,10 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import CollegeLogo from "../../logo/texas.png";
+import CollegeLogo from "../../src/assets/logo/texas.png";
 
 const Footer: React.FC = () => {
   return (
     <>
-      <footer className="w-full h-full bg-[var(--primary-color)] text-[var(--light-text)] min-w-[100vw] place-items-center grid px-5 py-4">
+      <footer className="w-full rounded-t  bg-[var(--primary-color)] text-[var(--light-text)] place-items-center grid px-5 py-4">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />
@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </footer>
-      <div className="w-full h-full min-w-[100vw] flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
+      <div className="w-full h-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
         <p>Copyright © 2024 All Rights Reserved.</p>
         <p className="cursor-pointer">
           Developed By:{" "}

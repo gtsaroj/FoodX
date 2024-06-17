@@ -1,5 +1,5 @@
 import { UploadIcon } from "lucide-react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const options = [
   {
@@ -21,17 +21,36 @@ const options = [
 ];
 
 const UploadFood: React.FC = () => {
+  const reference = useRef<HTMLDivElement>();
+
+  const [Scroll, setScroll] = useState<boolean>(false);
+
+  const scroller = () => {
+    if (reference.current && reference.current?.scrollTop > 0) {
+      console.log("detected");
+    }
+  };
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const currentRef = reference.current;
+    if (currentRef) currentRef.addEventListener("scroll", scroller);
+    return () => currentRef?.removeEventListener("scroll", scroller);
+  },);
+
   return (
     <React.Fragment>
-      <div className="w-full flex-col gap-5 items-center justify-center flex">
-        <h3 className="pb-4  text-center  w-full border-b-[1px] text-black text-[20px]">
+      <div
+        ref={reference as any}
+        className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
+      >
+        <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
           Add an item
         </h3>
 
         <form
           action=""
-          className="sm:w-[600px] overflow-y-auto w-full px-5 min-w-full gap-10 flex flex-col items-start justify-center"
+          className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-3 flex flex-col items-start justify-center"
         >
           {/* First Row */}
           <div
@@ -107,8 +126,14 @@ const UploadFood: React.FC = () => {
             </div>
           </div>
           <div className="  pl-2 flex items-center justify-center gap-4">
-            <input type="checkbox" className="w-[15px] cursor-pointer scale-[1.1] h-[15px] " />
-             <p className="text-[16px] text-[var(--dark-text)] "> Would you like to mark this as a special product ?</p>
+            <input
+              type="checkbox"
+              className="w-[15px] cursor-pointer scale-[1.1] h-[15px] "
+            />
+            <p className="text-[16px] text-[var(--dark-text)] ">
+              {" "}
+              Would you like to mark this as a special product ?
+            </p>
           </div>
           <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             Save

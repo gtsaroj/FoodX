@@ -15,6 +15,7 @@ const FoodTable: React.FC = () => {
 
   return (
     <Table
+      pagination={{currentPage : 1 , perPage:5}}
       width="500px"
       colSpan={"6"}
       headers={headers}
