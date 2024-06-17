@@ -1,3 +1,6 @@
+.grid-cols-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
 .grid-cols-6 {
   grid-template-columns: repeat(6, 1fr);
 }
@@ -11,17 +14,17 @@
 .w-full {
   width: 100%;
 }
-.w-800px{
+.w-800px {
   width: 100%;
 }
-@media screen and (max-width : 850px ) {
+@media screen and (max-width: 850px) {
   .w-500px {
     width: 500px;
   }
   .w-full {
     width: 100%;
   }
-  .w-800px{
+  .w-800px {
     width: 800px;
   }
 }

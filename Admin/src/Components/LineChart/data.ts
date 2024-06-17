@@ -23,6 +23,28 @@ export const selectOptions: readonly ColourOption[] = [
     color: "Red",
   },
 ];
+export const requestSelectOption: readonly ColourOption[] = [
+  {
+    label: "General Enquiry",
+    value: "general enquiry",
+    color: "Red",
+  },
+  {
+    label: "Canteen issues",
+    value: "canteen issues",
+    color: "Red",
+  },
+  {
+    label: "Lack of raw materials ",
+    value: "raw materials",
+    color: "Red",
+  },
+  {
+    label: "Leave",
+    value: "leave",
+    color: "Red",
+  },
+];
 
 export const orderCharts = [
   {

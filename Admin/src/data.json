@@ -1,6 +1,13 @@
 {
-  "headers": ["SN", "Product", "Image", "Categories", "Status"],
-  "orderHeaders": ["orderid", "CUSTOMER", "PRODUCT", "DATE", "STATUS"],
+  "headers": ["SN", "Product", "Image", "Categories", "Status", "Button"],
+  "orderHeaders": [
+    "orderid",
+    "CUSTOMER",
+    "PRODUCT",
+    "DATE",
+    "STATUS",
+    "Button"
+  ],
   "orders": [
     {
       "orderid": "#c431b8",
@@ -64,6 +71,7 @@
     }
   ],
   "customers": [
+    "Checkbox",
     "Customer",
     "Email",
     "Location",
@@ -140,31 +148,74 @@
       "revenueInOneDay": "Rs. 100,000 in 1 day"
     }
   ],
-  "dailyAnalyticsData" :[
-      {
-        "title": "Order",
-        "total": 1245,
-        "percentage": 100,
-        "revenueInOneDay": "50% in 1 day"
-      },
-      {
-        "title": "Cancelled",
-        "total": 80,
-        "percentage": 40,
-        "revenueInOneDay": "3% in 1 day"
-      },
-      {
-        "title": "Delivered",
-        "total": 1165,
-        "percentage": 30,
-        "revenueInOneDay": "47% in 1 day"
-      },
-      {
-        "title": "Revenue",
-        "total": 58000,
-        "percentage": 390,
-        "revenueInOneDay": "Rs. 80,000 in 1 day"
-      }
-    
+  "dailyAnalyticsData": [
+    {
+      "title": "Order",
+      "total": 1245,
+      "percentage": 100,
+      "revenueInOneDay": "50% in 1 day"
+    },
+    {
+      "title": "Cancelled",
+      "total": 80,
+      "percentage": 40,
+      "revenueInOneDay": "3% in 1 day"
+    },
+    {
+      "title": "Delivered",
+      "total": 1165,
+      "percentage": 30,
+      "revenueInOneDay": "47% in 1 day"
+    },
+    {
+      "title": "Revenue",
+      "total": 58000,
+      "percentage": 390,
+      "revenueInOneDay": "Rs. 80,000 in 1 day"
+    }
+  ],
+  "Banners": ["Sn", "Title", "Image", "Date", "Status", "Button"],
+  "BannerData": [
+    {
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "status": "Active",
+      "title": "Pizza",
+      "date": "2081/01/20"
+    },
+    {
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "status": "Active",
+      "title": "MoMo",
+      "date": "2081/01/20"
+    },
+    {
+      "image": "https://t3.ftcdn.net/jpg/06/16/85/60/360_F_616856040_zCvPMQkPFOWsVb3Hxo7mQUYzlzciFCZs.jpg",
+      "status": "Active",
+      "title": "Burger",
+      "date": "2081/01/20"
+    }
+  ],
+  "category": ["Sn", "Category Name", "Date", "Products", "Button"],
+  "categoryData": [
+    {
+      "categoryname": "Pizza",
+      "date": "2081/01/20",
+      "products": 5
+    },
+    {
+      "categoryname": "Burger",
+      "date": "2081/01/20",
+      "products": 5
+    },
+    {
+      "categoryname": "Hot Drinks",
+      "date": "2081/01/20",
+      "products": 5
+    },
+    {
+      "categoryname": "Cold Drinks",
+      "date": "2081/01/20",
+      "products": 5
+    }
   ]
 }

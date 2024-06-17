@@ -2,6 +2,7 @@ import { ChevronDown, Ellipsis, Search } from "lucide-react";
 import React, { useRef } from "react";
 import { Table } from "../Components/Common/Table/Table";
 import data from "../data.json";
+import { FilterButton } from "../Components/Common/Filter/Filter";
 
 const CustomerList: React.FC = () => {
   const { customers, customerDetails } = data;
@@ -15,25 +16,23 @@ const CustomerList: React.FC = () => {
 
   const searchFormRef = useRef<HTMLButtonElement>(null);
   return (
-    <div className="2xl:container w-full py-2  flex flex-col gap-10 items-start justify-center">
-      <h1 className="text-[20px]">Customer</h1>
-      <div className="w-full flex sm:flex-row flex-col-reverse items-start sm:items-center justify-between">
+    <div className="2xl:container w-full py-2  flex flex-col gap-7 items-start justify-center">
+      <h1 className="text-[20px] pt-3 ">Customer</h1>
+      <div className="w-full flex sm:flex-row flex-col-reverse gap-2 items-start sm:items-center justify-between">
         <form action="" className="relative w-full">
-          <Search className="absolute top-4 size-5 left-2" />
+          <Search className="absolute text-[var(--dark-secondary-text)]    top-3 size-5 left-2" />
           <input
             type="search"
-            className=" pl-9 placeholder:text-sm outline-none w-full sm:w-[250px] rounded-md py-4 px-8 border-[var(--dark-border)] "
+            className=" pl-9 border-[1px] placeholder:text-sm outline-none w-full sm:w-[250px] rounded py-2 px-8 border-[var(--dark-secondary-text)] "
             placeholder="Search for customer"
           />
         </form>
-        <button className="flex  w-[200px]  gap-1 text-[var(--light-text)] bg-[var(--dark-text)] px-5 py-3 rounded items-center justify-start sm:justify-start">
-          <ChevronDown className="size-4" />
-          <span className="text-[14px] ">Add filter</span>
-        </button>
+        <FilterButton />
       </div>
-      <div className="w-full shadow-green-500 rounded-t-md shadow-inner overflow-auto">
+      <div className="w-full">
         <Table
-         width="800px"
+          pagination={{ perPage: 2, currentPage: 1 }}
+          width="800px"
           data={customerDetails}
           colSpan="7"
           headers={customers}

@@ -8,14 +8,14 @@ export const MonthlyAnalytics: React.FC = () => {
   const { monthlyAnalyticsData } = data;
 
   return (
-    <div className=" w-full flex  gap-3 flex-col items-end justify-center">
-                  <h2 className="w-full text-left pb-4 text-xl text-[var(--primary-color)] ">
-        Monthly & Weekly  Order
+    <div className=" w-full flex  gap-4 flex-col items-start justify-center">
+      <h2 className="w-full text-left text-xl text-[var(--primary-color)] ">
+        Order Details
       </h2>
       <button className="sm:w-[200px] w-full  cursor-pointer">
         <Select className="" options={selectOptions}></Select>
       </button>
-      <div className="w-full flex  flex-wrap items-center justify-center gap-5 sm:gap-11">
+      <div className="w-full flex  flex-wrap items-center justify-start gap-5 sm:gap-3">
         {monthlyAnalyticsData?.map((item, index) => (
           <CardAnalytics item={item} key={index} />
         ))}

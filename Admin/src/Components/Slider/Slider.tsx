@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import collegeLogo from "../../assets/logo/texas.png";
 import {
   LayoutDashboard,
@@ -13,16 +13,19 @@ import {
   ChevronRight,
   Combine,
   Fullscreen,
-  X,
   Menu,
+  User,
+  X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
-import MobileSlider from "./MobileSlider";
-import ReactPortal from "../Common/ReactPortal";
 import { signOut } from "../../Services";
 
-const Slider: React.FC = () => {
+interface DesktopSliderProp{
+  closeFn : ()=> void
+}
+
+export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
   const navigate = useNavigate();
 
   const [openContact, setOpenContact] = useState<boolean>(false);
@@ -32,184 +35,199 @@ const Slider: React.FC = () => {
     role: "Admin",
   };
 
-  // useEffect(() => {}, [auth]);
-
   return (
-    <div className=" w-[300px] 2xl:px-9 lg:h-[100vh] overflow-auto py-8  bg-[var(--light-foreground)] flex gap-10 flex-col items-center justify-between rounded px-3  ">
-      <div className="flex flex-col gap-4 w-full">
-        <div className="w-[200px]">
-          <img className="container h-full " src={collegeLogo} alt="" />
+    <div className="  w-[300px]  2xl:px-9 py-2 h-screen  bg-[var(--light-foreground)] flex  flex-col items-center justify-between rounded px-3  ">
+      <div className="flex flex-col gap-7 py-2 overflow-auto w-full">
+        <div className=" hidden xl:flex w-[200px]">
+          <img className="w-full h-full " src={collegeLogo} alt="" />
         </div>
-        <ul className=" w-full flex flex-col items-start justify-center gap-5">
-          <li
-            onClick={() => navigate("/admin")}
-            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-3 px-2 rounded-md duration-150  "
-          >
-            <LayoutDashboard />
-            <span>Dashboard</span>
-          </li>
-          {auth.role !== "Admin" ? (
-            ""
-          ) : (
+        <div className=" flex pr-5 items-center justify-between xl:hidden ">
+          <div className="w-[200px]">
+            {" "}
+            <img className="w-full h-full " src={collegeLogo} alt="" />
+          </div>
+          <button onClick={closeFn}>
+          <X className="size-9"/>
+         </button>
+        </div>
+        <div className="lg:h-[100vh] overflow-auto">
+          <ul className=" w-full flex flex-col items-start justify-center gap-5">
             <li
-              onClick={() => navigate("analytics")}
-              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150 "
+              onClick={() => navigate("/admin")}
+              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-3 px-2 rounded duration-150  "
             >
-              <LineChart />
-              <span>Analytics</span>
+              <LayoutDashboard />
+              <span>Dashboard</span>
             </li>
-          )}
-          <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
-            <button
-              onClick={() => setOpenCollection(!openCollection)}
-              className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-500"
-            >
-              <Combine />
-              <span>Collections</span>
-              <ChevronRight
-                className={` duration-200 size-5 ${
-                  openCollection ? "rotate-90" : ""
-                } `}
-              />
-            </button>
-            <ul
-              className={`px-2 w-full flex flex-col duration-500  ${
-                openCollection
-                  ? "flex z-[8] bottom-[-80px] opacity-100"
-                  : "hidden opacity-0 bottom-[0px] z-[-1]"
-              } items-start   gap-3 justify-center`}
-            >
+            {auth.role !== "Admin" ? (
+              ""
+            ) : (
               <li
-                onClick={() => navigate("collection/foodlist")}
-                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
+                onClick={() => navigate("analytics")}
+                className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150 "
               >
-                <Utensils className="size-5" />
-                Food list
+                <LineChart />
+                <span>Analytics</span>
               </li>
-              <li
-                onClick={() => navigate("collection/banner")}
-                className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
+            )}
+            <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
+              <button
+                onClick={() => setOpenCollection(!openCollection)}
+                className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-500"
               >
-                <Fullscreen className="size-5" />
-                Banner
-              </li>
-            </ul>
-          </li>
-          <li className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150 ">
-            <Shapes />
-            <span>Category</span>
-          </li>
-          <li
-            onClick={() => navigate("order-list")}
-            className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full p-3 rounded-md duration-150   "
-          >
-            <ListOrdered />
-            <span>Order</span>
-          </li>
-          {auth.role !== "Admin" ? (
-            ""
-          ) : (
+                <Combine />
+                <span>Collections</span>
+                <ChevronRight
+                  className={` duration-200 size-5 ${
+                    openCollection ? "rotate-90" : ""
+                  } `}
+                />
+              </button>
+              <ul
+                className={`px-2 w-full flex flex-col duration-500  ${
+                  openCollection
+                    ? "flex z-[8] bottom-[-80px] opacity-100"
+                    : "hidden opacity-0 bottom-[0px] z-[-1]"
+                } items-start   gap-3 justify-center`}
+              >
+                <li
+                  onClick={() => navigate("collection/foodlist")}
+                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
+                >
+                  <Utensils className="size-5" />
+                  Food list
+                </li>
+                <li
+                  onClick={() => navigate("collection/banner")}
+                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
+                >
+                  <Fullscreen className="size-5" />
+                  Banner
+                </li>
+              </ul>
+            </li>
             <li
-              onClick={() => navigate("customer-list")}
-              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150  "
+              onClick={() => navigate("category")}
+              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150 "
             >
-              <BookUser />
-              <span>Customers</span>
+              <Shapes />
+              <span>Category</span>
             </li>
-          )}
-          <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
-            <button
-              onClick={() => setOpenContact(!openContact)}
-              className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-500"
+            <li
+              onClick={() => navigate("order-list")}
+              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full p-3 rounded duration-150   "
             >
-              <Mail />
-              <span>Contact</span>
-              <ChevronRight
-                className={` duration-200 size-5 ${
-                  openContact ? "rotate-90" : ""
-                } `}
-              />
-            </button>
-            <ul
-              className={`px-2 w-full flex flex-col duration-500  ${
-                openContact
-                  ? "flex z-[8] bottom-[-80px] opacity-100"
-                  : "hidden opacity-0 bottom-[0px] z-[-1]"
-              } items-start   gap-3 justify-center`}
-            >
-              {auth.role !== "Admin" ? (
-                ""
-              ) : (
-                <li
-                  onClick={() => navigate("contact/admin")}
-                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
-                >
-                  <CircleUser />
-                  Admin Details
-                </li>
-              )}
-              {auth.role !== "Chef" ? (
-                ""
-              ) : (
-                <li
-                  onClick={() => navigate("contact/admin")}
-                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
-                >
-                  <CircleUser />
-                  Chef Details
-                </li>
-              )}
-              {auth.role !== "Admin" ? (
-                ""
-              ) : (
-                <li
-                  onClick={() => navigate("contact/tickets")}
-                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded-md duration-150"
-                >
-                  <Ticket />
-                  My Requests
-                </li>
-              )}
-            </ul>
-          </li>
-        </ul>
+              <ListOrdered />
+              <span>Order</span>
+            </li>
+            {auth.role !== "Admin" ? (
+              ""
+            ) : (
+              <li
+                onClick={() => navigate("customer-list")}
+                className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150  "
+              >
+                <BookUser />
+                <span>Customers</span>
+              </li>
+            )}
+            <li className="flex relative w-full flex-col gap-3 items-center justify-start  ">
+              <button
+                onClick={() => setOpenContact(!openContact)}
+                className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-500"
+              >
+                <Mail />
+                <span>Contact</span>
+                <ChevronRight
+                  className={` duration-200 size-5 ${
+                    openContact ? "rotate-90" : ""
+                  } `}
+                />
+              </button>
+              <ul
+                className={`px-2 w-full flex flex-col duration-500  ${
+                  openContact
+                    ? "flex z-[8] bottom-[-80px] opacity-100"
+                    : "hidden opacity-0 bottom-[0px] z-[-1]"
+                } items-start   gap-3 justify-center`}
+              >
+                {auth.role !== "Admin" ? (
+                  ""
+                ) : (
+                  <li
+                    onClick={() => navigate("contact/admin")}
+                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
+                  >
+                    <CircleUser />
+                    Admin Details
+                  </li>
+                )}
+                {auth.role !== "Chef" ? (
+                  ""
+                ) : (
+                  <li
+                    onClick={() => navigate("contact/admin")}
+                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
+                  >
+                    <CircleUser />
+                    Chef Details
+                  </li>
+                )}
+                {auth.role !== "Admin" ? (
+                  ""
+                ) : (
+                  <li
+                    onClick={() => navigate("contact/tickets")}
+                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
+                  >
+                    <Ticket />
+                    My Requests
+                  </li>
+                )}
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <Logout logout={() => signOut()} />
       </div>
-      <Logout logout={() => signOut()} />
     </div>
   );
 };
 
-export default Slider;
+export const MobileSlider: React.FC = () => {
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const reference = useRef<HTMLDivElement>();
+  useEffect(() => {
+    if (openMenu) {
+      document.body.style.overflow = "hidden";
+      if (reference.current) {
+        reference.current.style.overflow = "auto";
+      }
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [openMenu]);
 
-export const NavbarSend = () => {
-  const [isClose, setIsClose] = useState<boolean>(true);
   return (
-    <div className="relative bg-[var(--light-foreground)] py-3 w-full flex items-center justify-between px-5">
-      <div className="flex items-center justify-center gap-3">
-        <button onClick={() => setIsClose(!isClose)}>
-          {isClose ? <Menu className="size-6" /> : <X className="size-6" />}
+    <div className=" relative w-full lg:shadow-none flex justify-between items-center  px-4">
+      <div className="flex items-center justify-center gap-4">
+        <button onClick={() => setOpenMenu(!openMenu)}>
+          {openMenu ? <X className="size-8" /> : <Menu className="size-8" />}
         </button>
         <div className="w-[150px]">
-          <img className="container h-full " src={collegeLogo} alt="" />
+          <img className="w-full h-full" src={collegeLogo} alt="" />
         </div>
       </div>
-      <div className="  w-[40px] h-[40px]">
-        <img
-          className="container bg-green-700 rounded-full h-full"
-          src=""
-          alt=""
-        />
+      <div>
+        <User />
       </div>
       <div
-        className={`fixed z-[3000] py-3 duration-200 px-2 bottom-0 left-0 top-0 ${
-          isClose ? "left-[-2000px]" : "left-0"
-        }`}
+        ref={reference as any}
+        className={`absolute z-[3000] shadow shadow-black duration-150 top-[-11px] ${
+          openMenu ? "left-[-11px]" : "left-[-3000px]"
+        } `}
       >
-        <MobileSlider
-          children={<Slider />}
-          close={isClose}
-          closeNavbar={() => setIsClose(!isClose)}
-        />
+        <DesktopSlider closeFn={()=>setOpenMenu(!openMenu)} />
       </div>
     </div>
   );

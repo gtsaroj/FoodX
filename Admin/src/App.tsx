@@ -5,10 +5,9 @@ import {
   Route,
   Routes,
   Navigate,
-  useLocation,
   Outlet,
 } from "react-router-dom";
-import Slider, { NavbarSend } from "./Components/Slider/Slider";
+import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
 import Analytics from "./Pages/Analytics";
 import OrderList from "./Pages/OrderList";
 import CustomerList from "./Pages/CustomerList";
@@ -20,23 +19,28 @@ import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState, persistor } from "./Reducer/Store";
+import { RootState } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
+import Footer from "./Footer/Footer";
+import { CategoryPage } from "./Pages/CategoryPage";
 
 const MainPage = () => {
   return (
-    <div className="w-full overflow-hidden flex justify-center items-center ">
+    <div className="w-full overflow-hidden flex  flex-col justify-center items-center ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-2 py-3 items-start justify-center  px-3 xl:px-5">
         <div className="xl:flex hidden ">
-          <Slider />
+          <DesktopSlider />
         </div>
-        <div className="xl:hidden w-full overflow-y-auto flex">
-          <NavbarSend />
-        </div>
-        <div className="2xl:container px-2 w-full lg:h-[100vh]  overflow-y-scroll rounded flex  items-start justify-center bg-[var(--light-foreground)]  ">
+        <div className="flex  xl:hidden w-full">
+          <MobileSlider/>
+         </div>
+        <div className="2xl:container px-7 w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
           <Outlet />
+          <Footer/>
         </div>
+       
       </div>
+
     </div>
   );
 };
@@ -81,8 +85,11 @@ const App: React.FC = () => {
             <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["amdins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/banner" element={<BannerPage />} />
+            </Route>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+              <Route path="category" element={<CategoryPage />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />

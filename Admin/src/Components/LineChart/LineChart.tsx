@@ -10,14 +10,14 @@ export const WeekReveneuChart: React.FC = () => {
   // const yScale = useYScale();
   return (
     <div className="w-full bg-[var(--light-background)] h-[250px] sm:h-[400px] pt-2 pb-16 sm:px-5 rounded">
-      <h2 className="w-full text-left text-xl pb-4 text-[var(--primary-color)] ">
+      <h2 className="w-full p-2 text-left text-xl text-[var(--primary-color)] ">
         Weekly Revenue
       </h2>
-      <div className="w-full flex items-center justify-between px-3">
+      <div className="w-full flex p-2 items-center justify-between">
         <button className="w-[200px] cursor-pointer">
           <Select className="" options={selectOptions}></Select>
         </button>
-        <h1 className="  font-bold text-[#429180] text-[16px] flex items-start gap-1 justify-center ">
+        <h1 className="  font-bold text-[#459142] text-[16px] flex items-start gap-1 justify-center ">
           <span>12.5%</span>
           <ArrowUp className="size-5" />
         </h1>
@@ -51,7 +51,7 @@ export const WeekReveneuChart: React.FC = () => {
 export const MonthlyRevenueChart: React.FC = () => {
   return (
     <div className="w-full px-2 py-5 h-[250px] sm:h-[400px] bg-[var(--light-background)] ">
-      <h2 className="w-full text-left pb-4  text-xl text-[var(--primary-color)] ">Monthly Revenue</h2>
+      <h2 className="w-full px-3 text-left pb-4  text-xl text-[var(--primary-color)] ">Monthly Revenue</h2>
       <LineChart
         xAxis={[
           {
@@ -62,8 +62,6 @@ export const MonthlyRevenueChart: React.FC = () => {
         series={[
           {
             data: [1000, 1500, 1350, 1600, 1700, 1512, 1500],
-
-            area: true,
           },
         ]}
       />
