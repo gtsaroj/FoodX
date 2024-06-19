@@ -32,16 +32,16 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
   const [openCollection, setOpenCollection] = useState<boolean>(false);
 
   const auth = {
-    role: "Admin",
+    role: "admins",
   };
 
   return (
-    <div className="  w-[300px]  2xl:px-9 py-2 h-screen  bg-[var(--light-foreground)] flex  flex-col items-center justify-between rounded px-3  ">
-      <div className="flex flex-col gap-7 py-2 overflow-auto w-full">
-        <div className=" hidden xl:flex w-[200px]">
+    <div className="  w-[300px]  2xl:px-9 py-6 h-screen  bg-[var(--light-foreground)] flex  flex-col items-center justify-between rounded px-3  ">
+      <div className="flex flex-col justify-between gap-5 py-2 overflow-auto w-full">
+        <div className=" hidden xl:flex pb-8 w-[200px]">
           <img className="w-full h-full " src={collegeLogo} alt="" />
         </div>
-        <div className=" flex pr-5 items-center justify-between xl:hidden ">
+        <div className=" flex pr-5  pb-8 items-center justify-between xl:hidden ">
           <div className="w-[200px]">
             {" "}
             <img className="w-full h-full " src={collegeLogo} alt="" />
@@ -50,8 +50,8 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
           <X className="size-9"/>
          </button>
         </div>
-        <div className="lg:h-[100vh] overflow-auto">
-          <ul className=" w-full flex flex-col items-start justify-center gap-5">
+        <div className="lg:h-[80vh] overflow-auto">
+          <ul className=" w-full flex flex-col items-start justify-center gap-7">
             <li
               onClick={() => navigate("/admin")}
               className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577] w-full py-3 px-2 rounded duration-150  "
@@ -59,7 +59,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
               <LayoutDashboard />
               <span>Dashboard</span>
             </li>
-            {auth.role !== "Admin" ? (
+            {auth.role !== "admins" ? (
               ""
             ) : (
               <li
@@ -151,11 +151,11 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
                     : "hidden opacity-0 bottom-[0px] z-[-1]"
                 } items-start   gap-3 justify-center`}
               >
-                {auth.role !== "Admin" ? (
+                {auth.role !== "admins" ? (
                   ""
                 ) : (
                   <li
-                    onClick={() => navigate("contact/admin")}
+                    onClick={() => navigate("contact/profile")}
                     className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
@@ -166,14 +166,14 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
                   ""
                 ) : (
                   <li
-                    onClick={() => navigate("contact/admin")}
+                    onClick={() => navigate("contact/profile")}
                     className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#8a849577]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
                     Chef Details
                   </li>
                 )}
-                {auth.role !== "Admin" ? (
+                {auth.role !== "admins" ? (
                   ""
                 ) : (
                   <li

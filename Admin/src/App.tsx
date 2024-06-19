@@ -34,8 +34,10 @@ const MainPage = () => {
         <div className="flex  xl:hidden w-full">
           <MobileSlider/>
          </div>
-        <div className="2xl:container px-7 w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
+        <div className="w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
+          <div className="w-full px-3">
           <Outlet />
+         </div>
           <Footer/>
         </div>
        
@@ -80,7 +82,7 @@ const App: React.FC = () => {
               <Route path="contact/tickets" element={<TicketPage />} />
             </Route>
             <Route element={<PrivateRoute UserRole={["admins"]} />}>
-              <Route path="contact/admin" element={<AdminProfile />} />
+              <Route path="contact/profile" element={<AdminProfile />} />
             </Route>
             <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
@@ -90,6 +92,9 @@ const App: React.FC = () => {
             </Route>
             <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
               <Route path="category" element={<CategoryPage />} />
+            </Route>
+            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+              <Route path="profile" element={<AdminProfile/>} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />

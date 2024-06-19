@@ -15,9 +15,11 @@ export const MonthlyAnalytics: React.FC = () => {
       <button className="sm:w-[200px] w-full  cursor-pointer">
         <Select className="" options={selectOptions}></Select>
       </button>
-      <div className="w-full flex  flex-wrap items-center justify-start gap-5 sm:gap-3">
+      <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 ">
         {monthlyAnalyticsData?.map((item, index) => (
-          <CardAnalytics item={item} key={index} />
+          <div className="col-span-1">
+              <CardAnalytics item={item} key={index} />
+        </div>
         ))}
       </div>
     </div>

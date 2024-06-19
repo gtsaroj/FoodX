@@ -21,27 +21,9 @@ const DeleteAccount: React.FC = () => {
     setStep2(true);
   };
 
-  // const confirmToDelete = async (event: FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   try {
-  //     await makeRequest.post("/users/delete-user");
-  //     await deleteAccount().then(() =>
-  //       setTimeout(() => {
-  //         toast.success("Account Deleted Successfully");
-  //       }, 2000)
-  //     );
-
-  //     dispatch(authLogout());
-  //     Cookies.remove("refreshToken");
-  //     Cookies.remove("accessToken");
-  //   } catch (error) {
-  //     throw new Error("Failed To Delete Account" + error);
-  //   }
-  // };
-
   return (
     <div
-      className={`relative px-7 py-5 flex  flex-col items-start justify-center max-w-[600px] bg-[var(--light-foreground)] gap-10 p-3 pb-5 rounded-md text-[var(--dark-text)] ${
+      className={`relative px-7 py-5 flex  flex-col items-start justify-center max-w-[600px] bg-[var(--light-foreground)] gap-10 p-3 pb-5 rounded text-[var(--dark-text)] ${
         step2 ? "invisible" : ""
       }`}
     >
@@ -69,11 +51,11 @@ const DeleteAccount: React.FC = () => {
             type="text"
             onChange={(e) => setConfirmDelete(e.target.value)}
             value={confirmDelete}
-            className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded-md border-[1px] w-full"
+            className="outline-none py-[5px] lg:py-[7px] px-[8px] focus:bg-[#d9d9d9] rounded border-[1px] w-full"
           />
         </div>
         <div className="flex  w-full">
-          <button className=" w-[200px] h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+          <button className=" w-[200px] h-[40px] rounded bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-sm font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
             Delete Account
           </button>
         </div>

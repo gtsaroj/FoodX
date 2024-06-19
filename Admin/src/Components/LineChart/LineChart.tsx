@@ -17,7 +17,7 @@ export const WeekReveneuChart: React.FC = () => {
         <button className="w-[200px] cursor-pointer">
           <Select className="" options={selectOptions}></Select>
         </button>
-        <h1 className="  font-bold text-[#459142] text-[16px] flex items-start gap-1 justify-center ">
+        <h1 className="  font-bold text-[#45c241] text-[16px] flex items-start gap-1 justify-center ">
           <span>12.5%</span>
           <ArrowUp className="size-5" />
         </h1>
