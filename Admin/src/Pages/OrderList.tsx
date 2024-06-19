@@ -14,9 +14,8 @@ const OrderList = () => {
   };
 
   return (
-    <div className="w-full sm:px-5  py-2 flex flex-col items-start justify-center gap-8">
-      <h1 className="text-[20px] font-semibold">Order</h1>
-      <div className="w-full py-6 flex rounded-sm  flex-col gap-5 items-start justify-center px-4">
+
+      <div className="w-full py-6 flex rounded-sm  flex-col gap-16 items-start justify-center px-4">
         <div className="flex sm:flex-row flex-col-reverse items-start gap-5 sm:gap-2 sm:items-center justify-between  w-full">
           <form action="" className="relative w-full">
             <Search className="absolute top-3 cursor-pointer text-[var(--dark-secondary-text)]   size-5 left-2" />
@@ -28,7 +27,7 @@ const OrderList = () => {
           </form>
           <div className="flex items-center justify-center gap-4">
             <FilterButton />
-            <button className="flex gap-1 text-[var(--light-text)] bg-[var(--dark-text)] px-5 py-3 rounded items-center justify-center">
+            <button className="flex gap-1 text-[var(--light-text)] bg-[var(--dark-foreground)] px-5 py-3 rounded items-center justify-center">
               <Download className="size-5" />
               <span className="text-[15px] ">Export</span>
             </button>
@@ -45,7 +44,6 @@ const OrderList = () => {
           />
         </div>
       </div>
-    </div>
   );
 };
 

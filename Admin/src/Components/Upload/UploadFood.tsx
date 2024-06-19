@@ -69,7 +69,7 @@ const UploadFood: React.FC = () => {
               <input
                 type="text"
                 placeholder="Pizza"
-                className="w-full placeholder:text-sm py-2 px-4 rounded-md"
+                className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-2 px-4 rounded"
               />
             </div>
             <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
@@ -82,7 +82,7 @@ const UploadFood: React.FC = () => {
               <input
                 type="text"
                 placeholder="Rs. 1,200"
-                className="w-full placeholder:text-sm py-2 px-4 rounded-md"
+                className="w-full placeholder:text-sm  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
               />
             </div>
           </div>
@@ -94,15 +94,15 @@ const UploadFood: React.FC = () => {
             >
               Category
             </label>
-            <div className="w-full py-1 border-[1px] rounded-md px-2 bg-[var(--light-foreground)] ">
+            <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
               {" "}
               <select
-                className=" rounded-md bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
+                className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
                 name=""
                 id=""
               >
                 {options.map((opt) => (
-                  <option className="" value={opt.value}>
+                  <option className="text-[var(--dark-text)]" value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
@@ -112,7 +112,7 @@ const UploadFood: React.FC = () => {
           {/* Third Row */}
           <div
             onClick={() => fileRef.current?.click()}
-            className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded-md border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+            className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
           >
             <input ref={fileRef as any} type="file" className="hidden" />
             <div className="absolute w-full flex flex-col items-center bottom-10 justify-center gap-1">

@@ -24,7 +24,7 @@
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.365.0",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
@@ -38,6 +38,7 @@
     "sass": "^1.77.2",
     "shadcn-ui": "^0.8.0",
     "styled-component": "^2.8.0",
+    "styled-components": "^6.1.11",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },

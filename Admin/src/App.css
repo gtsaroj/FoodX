@@ -25,6 +25,14 @@
     --light-secondary-text: #d8d6dc;
     --dark-text: #3e3e3e;
     --dark-secondary-text: #8a8495;
+
+
+    --danger-text: #d91006;
+    --danger-bg: #e00b0b;
+    --popup-bg: #4b4a4a60;
+    --orange-bg : #ff9800;
+    --green-bg : #4caf50;
+    
   }
 
   ::-webkit-scrollbar {

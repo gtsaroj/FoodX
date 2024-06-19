@@ -13,14 +13,19 @@ import toast from "react-hot-toast";
 // import { updateUserPassword } from "../../firebase/utils";
 import DeleteAccount from "./DeleteAccount";
 import DisableAccount from "./DisableAccount";
+import { getUserData } from "../../firebase/db";
+import { RootState, Store } from "../../Reducer/Store";
+import { DbUser } from "../../models/UserModels";
+import { authLogout } from "../../Reducer/Action";
+import { updateUserPassword } from "../../firebase/utils";
 
 export const AdminProfile = () => {
-  // const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
-  // const [userData, setUserData] = useState<DbUser>();
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const [userData, setUserData] = useState<DbUser>();
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getUserData("customers", authUser?.uid);
+      const data = await getUserData("admins", authUser?.uid);
 
       setUserData(data);
       return data;
@@ -28,7 +33,9 @@ export const AdminProfile = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {}, [userData]);
+  useEffect(() => { }, [userData]);
+  
+  console.log(userData)
 
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-5 ">
@@ -238,7 +245,7 @@ const PersonlInformation = (props: any) => {
   };
 
   return (
-    <div className="container flex-col items-center">
+    <div className="w-full lg:px-3 flex-col items-center">
       <div className="flex justify-between w-full pt-3 pb-4 ">
         <p className="text-xl font-semibold tracking-wide  text-[var(--dark-text)]">
           Personal Information
@@ -259,7 +266,7 @@ const PersonlInformation = (props: any) => {
       >
         <div
           className={`grid  items-center grid-cols-2 grid-flow-cols gap-7 ${
-            loading ? " py-1.5 px-2 rounded-md bg-slate-400 animate-pulse" : ""
+            loading ? " py-1.5 px-2 rounded bg-slate-400 animate-pulse" : ""
           }`}
         >
           <div
@@ -315,7 +322,7 @@ const PersonlInformation = (props: any) => {
         </div>
         <div
           className={`${
-            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded-md" : ""
+            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded" : ""
           } grid items-center grid-flow-col grid-cols-2 gap-7 `}
         >
           <div
@@ -359,7 +366,7 @@ const PersonlInformation = (props: any) => {
         </div>
         <div
           className={` ${
-            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded-md" : ""
+            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded" : ""
           } grid items-center grid-flow-col grid-cols-2 gap-7`}
         >
           <div
@@ -413,7 +420,7 @@ const ChangePasswordComponent = () => {
   };
   const HandlePasswordChange = async () => {
     try {
-      await updateUserPassword(newPassword as string).then((res: any) => {
+      await updateUserPassword(newPassword as string).then(() => {
         toast.success("Your password Changed SuccessFully");
         setTimeout(() => {
           Store.dispatch(authLogout());
@@ -434,7 +441,7 @@ const ChangePasswordComponent = () => {
         </p>
         <div
           onClick={() => setOpenChangePassword(!openChangePassword)}
-          className="border-[var(--danger-text)] border bg-[var(--light-background)] p-3 rounded-md text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
+          className="border-[var(--danger-text)] border  p-3 rounded text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
         >
           <p className="w-full text-center">Change Password</p>
         </div>
@@ -449,7 +456,7 @@ const ChangePasswordComponent = () => {
             This will temporarily disable your account.
           </span>
         </p>
-        <div className="border-[var(--danger-text)] border bg-[var(--light-background)] p-3 rounded-md text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all">
+        <div className="border-[var(--danger-text)] border p-3 rounded text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all">
           <p className="w-full text-center">Disable Account</p>
         </div>
       </div>
@@ -463,7 +470,7 @@ const ChangePasswordComponent = () => {
         </p>
         <div
           onClick={() => setConfirmDeleteAccount(!confirmDeleteAccount)}
-          className="border-[var(--danger-text)] border bg-[var(--light-background)] p-3 rounded-md text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
+          className="border-[var(--danger-text)] border  p-3 rounded text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
         >
           <p className="w-full text-center">Delete Account</p>
         </div>
@@ -524,7 +531,7 @@ const ChangePasswordComponent = () => {
                           value={newPassword}
                           onChange={(e) => setNewpassword(e.target.value)}
                           required
-                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
                         />
                       </div>
                       <div className="relative flex flex-col gap-2">
@@ -541,7 +548,7 @@ const ChangePasswordComponent = () => {
                             setConfirmNewpassword(e.target.value)
                           }
                           required
-                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
                         />
 
                         {show ? (
@@ -562,7 +569,7 @@ const ChangePasswordComponent = () => {
                       </div>
 
                       <button
-                        className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
+                        className="h-[40px] rounded bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
                         type="submit"
                       >
                         Submit
@@ -601,3 +608,4 @@ export const UpdateUser: React.FC = () => {
     </div>
   );
 };
+
