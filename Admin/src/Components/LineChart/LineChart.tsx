@@ -4,6 +4,7 @@ import Select from "react-select";
 import { selectOptions } from "./data";
 import { ArrowUp } from "lucide-react";
 import "./LineChart.css";
+import { DropDown } from "../Common/DropDown/DropDown";
 
 export const WeekReveneuChart: React.FC = () => {
   // const svgHeight = useDrawingArea();
@@ -14,9 +15,7 @@ export const WeekReveneuChart: React.FC = () => {
         Weekly Revenue
       </h2>
       <div className="w-full flex p-2 items-center justify-between">
-        <button className="w-[200px] cursor-pointer">
-          <Select className="" options={selectOptions}></Select>
-        </button>
+        <DropDown options={["Current Week", "1 week ago"]} />
         <h1 className="  font-bold text-[#45c241] text-[16px] flex items-start gap-1 justify-center ">
           <span>12.5%</span>
           <ArrowUp className="size-5" />
@@ -40,7 +39,7 @@ export const WeekReveneuChart: React.FC = () => {
           {
             data: [0, 300, 400, 200, 150, 290],
             type: "line",
-            color: "#478612a1",
+            color: "#45c241",
           },
         ]}
       ></LineChart>
@@ -50,8 +49,13 @@ export const WeekReveneuChart: React.FC = () => {
 
 export const MonthlyRevenueChart: React.FC = () => {
   return (
-    <div className="w-full px-2 py-5 h-[250px] sm:h-[400px] bg-[var(--light-background)] ">
-      <h2 className="w-full px-3 text-left pb-4  text-xl text-[var(--primary-color)] ">Monthly Revenue</h2>
+    <div className="w-full  flex flex-col items-start justify-center px-4 py-5 h-[250px] sm:h-[400px] bg-[var(--light-background)] ">
+      <h2 className="w-full text-left pb-4  text-xl text-[var(--primary-color)] ">
+        Monthly Revenue
+      </h2>
+      <div className="w-full">
+      <DropDown options={["Current week", "Previous week"]} />
+      </div>
       <LineChart
         xAxis={[
           {

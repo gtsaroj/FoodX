@@ -1,6 +1,7 @@
 import { PieChart } from "@mui/x-charts";
 import Select from "react-select";
 import { selectOptions } from "../LineChart/data";
+import { DropDown } from "../Common/DropDown/DropDown";
 
 export default function ResponsiveChartExample() {
   return (
@@ -47,9 +48,7 @@ export const PieChartAnalytics = () => {
         Monthly & Weekly Order
       </h2>
 
-      <button className="sm:w-[200px]  cursor-pointer">
-        <Select options={selectOptions}></Select>
-      </button>
+      <DropDown options={["Current week", "Previous week"]} />
       <PieChart
         sx={{ cursor: "pointer" }}
         series={[

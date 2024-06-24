@@ -1,6 +1,7 @@
 import { BarChart } from "@mui/x-charts";
 import React from "react";
 import { orderCharts, orderChartsOfMonthly } from "../LineChart/data";
+import { DropDown } from "../Common/DropDown/DropDown";
 
 export const BarChartOfWeeklyOrder: React.FC = () => {
   const valueFormatter = (value: number | null) => value;
@@ -52,6 +53,7 @@ export const MonthlyOrderChart: React.FC = () => {
       <h2 className="w-full text-left text-xl pb-4 text-[var(--primary-color)] ">
         Monthly Revenue
       </h2>
+      <DropDown options={["Current week","Previous week"]}/>
       <BarChart
         slotProps={{
           legend: {

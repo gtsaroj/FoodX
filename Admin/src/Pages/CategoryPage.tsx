@@ -32,15 +32,15 @@ export const CategoryPage: React.FC = () => {
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
-        <button
-          onClick={() => setIsModelOpen(!isModalOpen)}
-          className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
-        >
-          <Plus className="size-5" />
-          <h1 className="text-[15px]">Item</h1>
-        </button>
-       <FilterButton/>
- </div>
+          <FilterButton />
+          <button
+            onClick={() => setIsModelOpen(!isModalOpen)}
+            className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
+          >
+            <Plus className="size-5" />
+            <h1 className="text-[15px]">Item</h1>
+          </button>
+        </div>
       </div>
       <CategoryTable />
       <div className="absolute ">
@@ -51,4 +51,3 @@ export const CategoryPage: React.FC = () => {
     </div>
   );
 };
-

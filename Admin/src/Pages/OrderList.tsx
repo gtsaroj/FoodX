@@ -27,7 +27,7 @@ const OrderList = () => {
           </form>
           <div className="flex items-center justify-center gap-4">
             <FilterButton />
-            <button className="flex gap-1 text-[var(--light-text)] bg-[var(--dark-foreground)] px-5 py-3 rounded items-center justify-center">
+            <button className="flex gap-1 text-[var(--light-text)] bg-[var(--primary-color)] px-5 py-3 rounded items-center justify-center">
               <Download className="size-5" />
               <span className="text-[15px] ">Export</span>
             </button>
