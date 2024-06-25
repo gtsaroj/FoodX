@@ -8,13 +8,13 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
   console.log(item)
   return (
     <div className=" flex px-8  h-[160px] w-full sm:w-[300px] items-center justify-between gap-10 bg-[var(--light-background)]   rounded  ">
-      <div className="flex flex-col items-start justify-center gap-2">
-        <p className="text-[18px] font-[650] brightness-100 contrast-100  text-[var(--primary-color)] ">{item.title} </p>
+      <div className={`flex flex-col items-start justify-center gap-2 ${item ? "visible": "invisible"} `}>
+        <p className="text-[18px] font-[650] brightness-100 contrast-100  text-[var(--primary-color)] ">{item?.title} </p>
         <p className="text-[25px] text-[var(--dark-foreground)]  font-bold ">
-          {item.total}{" "}
+          {item?.total}{" "}
         </p>
         <p className="text-[11px] text-[var(--dark-secondary-text)] ">
-          {item.revenueInOneDay}
+          {item?.revenueInOneDay}
         </p>
       </div>
       <div className="w-[100px]">
@@ -23,8 +23,8 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
         strokeWidth={15}
         circleRatio={0.9}
         minValue={0}
-        value={item.percentage}
-        text={`${item.percentage}%`}
+        value={item?.percentage}
+        text={`${item?.percentage}%`}
         styles={ buildStyles({
           rotation: 0.25,
           textSize: "17px",

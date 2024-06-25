@@ -21,22 +21,47 @@ import { useNavigate } from "react-router-dom";
 import Logout from "../Logout/Logout";
 import { signOut } from "../../Services";
 
-interface DesktopSliderProp{
-  closeFn : ()=> void
+interface DesktopSliderProp {
+  closeFn: () => void;
+  open: boolean;
 }
 
-export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
+export const DesktopSlider: React.FC<DesktopSliderProp> = ({
+  closeFn,
+  open,
+}) => {
+  console.log(open);
   const navigate = useNavigate();
-
+  const reference = useRef<HTMLDivElement | null>(null);
   const [openContact, setOpenContact] = useState<boolean>(false);
   const [openCollection, setOpenCollection] = useState<boolean>(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (reference.current && !reference.current.contains(event.target)) {
+        open && closeFn();
+      }
+    };
+    if (open) {
+      document.body.style.overflowY = "hidden";
+      window.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      window.addEventListener("mousedown", handleClickOutside);
+      document.body.style.overflowY = "unset";
+    };
+  }, [open, closeFn]);
 
   const auth = {
     role: "admins",
   };
 
   return (
-    <div className="  w-[300px]  2xl:px-9 py-6 h-screen  bg-[var(--light-foreground)] flex  flex-col items-center justify-between rounded px-3  ">
+    <div
+      ref={reference}
+      className="  w-[300px]  2xl:px-9 py-4 h-screen  bg-[var(--light-foreground)] flex  flex-col items-center justify-between rounded px-3  "
+    >
       <div className="flex flex-col justify-between gap-5 py-2 overflow-auto w-full">
         <div className=" hidden xl:flex pb-8 w-[200px]">
           <img className="w-full h-full " src={collegeLogo} alt="" />
@@ -47,8 +72,8 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
             <img className="w-full h-full " src={collegeLogo} alt="" />
           </div>
           <button onClick={closeFn}>
-          <X className="size-9"/>
-         </button>
+            <X className="size-9" />
+          </button>
         </div>
         <div className="lg:h-[80vh] overflow-auto">
           <ul className=" w-full flex flex-col items-start justify-center gap-7">
@@ -196,17 +221,8 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({closeFn}) => {
 
 export const MobileSlider: React.FC = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const reference = useRef<HTMLDivElement>();
-  useEffect(() => {
-    if (openMenu) {
-      document.body.style.overflow = "hidden";
-      if (reference.current) {
-        reference.current.style.overflow = "auto";
-      }
-    } else {
-      document.body.style.overflow = "auto";
-    }
-  }, [openMenu]);
+  console.log(openMenu);
+  const reference = useRef<HTMLDivElement>(null);
 
   return (
     <div className=" relative w-full lg:shadow-none flex justify-between items-center  px-4">
@@ -221,13 +237,16 @@ export const MobileSlider: React.FC = () => {
       <div>
         <User />
       </div>
+
       <div
         ref={reference as any}
-        className={`absolute z-[3000] shadow shadow-black duration-150 top-[-11px] ${
+        className={`absolute w-[1300px] z-[100] duration-200  ${
+          openMenu ? "backdrop-blur-sm opacity-100 " : "blur-0 "
+        }   duration-150 top-[-11px] ${
           openMenu ? "left-[-11px]" : "left-[-3000px]"
         } `}
       >
-        <DesktopSlider closeFn={()=>setOpenMenu(!openMenu)} />
+        <DesktopSlider open={openMenu} closeFn={() => setOpenMenu(!openMenu)} />
       </div>
     </div>
   );

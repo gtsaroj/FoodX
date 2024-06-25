@@ -15,11 +15,11 @@ export const DropDown: React.FC<DropDownProp> = ({ onSelect, options }) => {
   };
 
   return (
-    <div className="w-[200px] ">
+    <div className="w-[150px] ">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger>
+        <DropdownMenu.Trigger className="w-full">
           <button
-            className={` py-2 px-9 bg-[var(--color)] text-[var(--light-foreground)] rounded w-[200px]  duration-200`}
+            className={` py-2  text-start px-2 bg-[var(--primary-color)] font-[600] brightness-100 contrast-100 text-[var(--light-foreground)] rounded w-full text-[15px]  duration-200`}
           >
             {selectedOption || "Select an options"}
           </button>
@@ -30,7 +30,7 @@ export const DropDown: React.FC<DropDownProp> = ({ onSelect, options }) => {
               <DropdownMenu.Item
                 key={index}
                 onClick={() => handleSelect(item as string)}
-                className=" outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "
+                className=" outline-none w-full cursor-pointer duration-150 font-[560] contrast-100 brightness-100 rounded px-1 pr-10 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "
               >
                 {item}
               </DropdownMenu.Item>

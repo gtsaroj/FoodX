@@ -1,14 +1,15 @@
-// export interface Order {
-//   orderId: string;
-//   uid: string;
-//   products: Product[];
-//   orderRequest: RequestTime;
-//   orderFullFilled: RequestTime;
-// }
-// interface RequestTime {
-//   seconds: string | number,
-//   nanoseconds : string | number
-// }
+ export interface RequestTime {
+  _seconds: number,
+  _nanoseconds : number
+}
+export interface Order {
+  orderId: string;
+  uid: string;
+  products: Product[];
+  orderRequest: RequestTime;
+  orderFullFilled: RequestTime;
+}
+
 
 import { ProductType } from "./productMode";
 
@@ -48,3 +49,10 @@ interface Category {
 //   quantity: number;
 //   image: string;
 // }
+
+export interface DailyAggregateData{
+  title: string;
+  total: string | number;
+  percentage: number | string;
+}
+

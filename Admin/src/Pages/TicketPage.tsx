@@ -22,16 +22,14 @@ const TicketComponents = {
 
 const TicketPage: React.FC = () => {
   const [ticketState, setTicketState] = useState<string>();
-  const [initialIndex, setInitialIndex] = useState<number>();
   const [closeModal, setCloseModal] = useState<boolean>(true);
 
   function handleClick(item: string) {
     setTicketState(item as string);
-    setInitialIndex(index);
   }
 
   useEffect(() => {
-    setTicketState("Pending");
+    setTicketState("pending");
   }, []);
 
   const ticketStateLower = ticketState?.toLowerCase();
@@ -66,31 +64,35 @@ const TicketPage: React.FC = () => {
         <button
           onClick={() => handleClick("pending")}
           className={`${
-            ticketState === "pending" ? "bg-[var(--primary-dark)]" : ""
-          } py-3 sm:text-[15px] bg-[var(--primary-light)]  text-sm duration-150   font-[550] contrast-150 rounded text-[var(--light-text)]`}
+            ticketState === "pending"
+              ? "bg-[var(--primary-dark)]"
+              : "bg-[var(--primary-light)]  "
+          } py-3 sm:text-[15px] text-sm duration-150   font-[550] contrast-150 rounded text-[var(--light-text)]`}
         >
           Pending
         </button>
         <button
           onClick={() => handleClick("progress")}
-          className={` py-3 sm:text-[15px]  bg-[var(--orange-bg)]  duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] ${
-            ticketState === "progress" ? "bg-[#bb8115]" : ""
+          className={` py-3 sm:text-[15px]    duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] ${
+            ticketState === "progress"
+              ? "bg-[#bb8115]"
+              : "bg-[var(--orange-bg)]"
           } `}
         >
           Progress
         </button>
         <button
           onClick={() => handleClick("resolve")}
-          className={`py-3 sm:text-[15px] duration-150   bg-[var(--green-bg)] ${
-            ticketState === "resolve" ? "bg-[#287e28fd]" : ""
+          className={`py-3 sm:text-[15px] duration-150   ${
+            ticketState === "resolve" ? "bg-[#287e28fd]" : "bg-[var(--green-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >
           Resolve
         </button>
         <button
           onClick={() => handleClick("cancel")}
-          className={`py-3 sm:text-[15px] duration-150   bg-[var(--danger-bg)] ${
-            ticketState === "cancel" ? "bg-[#a82d2dfd]" : ""
+          className={`py-3 sm:text-[15px] duration-150  ${
+            ticketState === "cancel" ? "bg-[#a82d2dfd]" : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >
           Cancel
