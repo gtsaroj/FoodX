@@ -5,6 +5,7 @@ import { ValidationType } from "../models/Register.model";
 import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
 import { authState } from "../models/UserModels";
 import { Satellite } from "lucide-react";
+import { stat } from "fs";
 
 interface ProductState {
   products: Product[] | null;
@@ -21,7 +22,7 @@ const initialState: ProductState = {
 };
 
 const authState: authState = {
-  success: false,
+  success: true,
   error: false,
   loading: true,
   userInfo: [],
@@ -193,7 +194,7 @@ const authSlice = createSlice({
   reducers: {
     authLogout: (state) => {
       state.userInfo = null;
-      state.success = false;
+      if (state.success) state.success = false;
       state.loading = true;
     },
   },
@@ -215,6 +216,7 @@ const authSlice = createSlice({
     // action to login existing user
     builder.addCase(singInAction.pending, (state) => {
       state.loading = true;
+      state.success = false;
     });
     builder.addCase(singInAction.fulfilled, (state, action) => {
       state.loading = false;

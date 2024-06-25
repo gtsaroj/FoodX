@@ -91,12 +91,13 @@ export const signOut = async () => {
 
 export const getOrders = async () => {
   try {
-    const response = await globalRequest({
-      method: "post",
-      url: "users/register",
+    const response = await makeRequest({
+      method: "get",
+      url: "orders/all-orders",
     });
     return response.data;
   } catch (error) {
+    if(error ==="You have not access, please login again...") Store.dispatch(authLogout())
     console.log(`Error while getting revenueperday : ${error}`);
   }
 };

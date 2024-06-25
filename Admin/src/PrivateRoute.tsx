@@ -10,9 +10,7 @@ interface PrivateRouteProp {
 export const PrivateRoute: React.FC<PrivateRouteProp> = ({ UserRole }) => {
   const auth = useSelector((state: RootState) => state.root.auth);
 
-  useEffect(()=>{ auth.success = true}, [auth, auth.userInfo])
-
-  
+  useEffect(() => {}, [auth.success, auth?.userInfo]);
 
   return auth.success ? (
     UserRole.includes("admins") ? (

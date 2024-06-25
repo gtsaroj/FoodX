@@ -19,12 +19,13 @@ import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/CategoryPage";
 
 const MainPage = () => {
+  persistor.purge()
   return (
     <div className="w-full overflow-hidden flex  flex-col justify-center items-center ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-2 py-3 items-start justify-center  px-3 xl:px-5">
@@ -34,7 +35,7 @@ const MainPage = () => {
         <div className="flex  xl:hidden w-full">
           <MobileSlider/>
          </div>
-        <div className="w-full h-[100vh] overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
+        <div className="w-full h-[100vh]  2xl:justify-between overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
           <div className="w-full px-3">
           <Outlet />
          </div>

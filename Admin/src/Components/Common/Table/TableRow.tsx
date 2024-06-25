@@ -57,33 +57,36 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
-            ) : hdr.toLowerCase() === "status" ?               <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <button className={` py-2 px-9 bg-[var(--color)] text-[var(--light-foreground)] rounded  duration-200`}>
-                 {row?.status}
-              </button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Portal>
-              <DropdownMenu.Content className="relative bg-[var(--light-background)] w-[135px]  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
-                <DropdownMenu.Item className=" outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "> 
-                  Recieved
-                </DropdownMenu.Item>
-                <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "> 
-                  Preparing
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "> 
-                  Completed
-                          </DropdownMenu.Item>
-                          <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "> 
-                  Canceled
-                </DropdownMenu.Item>
-                <div className="w-[10px] h-[10px] z-[-1] absolute top-[-5px] right-16 rotate-45  bg-[var(--light-background)] "></div>
-              </DropdownMenu.Content>
-            </DropdownMenu.Portal>
-          </DropdownMenu.Root> :  (
+            ) : hdr.toLowerCase() === "status" ? (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <button
+                    className={` py-2 px-9 bg-[var(--color)] text-[var(--light-foreground)] rounded  duration-200`}
+                  >
+                    {row?.status}
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content className="relative bg-[var(--light-background)] w-[135px]  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
+                    <DropdownMenu.Item className=" outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  ">
+                      Recieved
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  ">
+                      Preparing
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  ">
+                      Completed
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item className="outline-none w-full cursor-pointer duration-150 rounded px-9 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  ">
+                      Canceled
+                    </DropdownMenu.Item>
+                    <div className="w-[10px] h-[10px] z-[-1] absolute top-[-5px] right-16 rotate-45  bg-[var(--light-background)] "></div>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            ) : (
               row[hdr.toLowerCase()?.replace(" ", "")]
-            )
-            }
+            )}
           </td>
         ))}
       </tr>

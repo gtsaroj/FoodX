@@ -32,6 +32,7 @@ const FoodPage: React.FC = () => {
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
+          <FilterButton isActive={ "false"} />
         <button
           onClick={() => setIsModelOpen(!isModalOpen)}
           className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
@@ -39,7 +40,7 @@ const FoodPage: React.FC = () => {
           <Plus className="size-5" />
           <h1 className="text-[15px]">Item</h1>
         </button>
-       <FilterButton/>
+
  </div>
       </div>
       <BannerTable />
