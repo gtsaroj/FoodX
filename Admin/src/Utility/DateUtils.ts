@@ -1,5 +1,21 @@
-import { DailyAggregateData, Order, RequestTime } from "../models/order.model";
+import {
+  DailyAggregateData,
+  Order,
+  RequestTime,
+} from "../models/order.model";
 
+// Day Name
+export const dayNames: string[] = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+// convert timestamp
 export function convertTimestampToDate(timestamp: RequestTime) {
   if (timestamp) {
     const milliseconds =
@@ -8,13 +24,85 @@ export function convertTimestampToDate(timestamp: RequestTime) {
     return new Date(milliseconds).toISOString().split("T")[0];
   }
 }
+// aggregate current week data
+export const aggregateDataCurrentWeek = (orders: Order[]) => {
+  const today = new Date();
+  const startDay = new Date(today);
+  const endDay = new Date(today);
 
-// export function isSameWeek(date1: Date, date2: Date) {
-//   const copydate = (date : any) => {
-//     const dateCopy = new Date(date);
-//       const diffDate = dateCopy.getDate() - dateCopy.getDay() + dateCopy.getDay()=== 0 ? -6 : 1;
-//    }
-// }
+  startDay.setDate(today.getDate() - today.getDay());
+
+  const currentOrderData = orders?.filter((order) => {
+    const orderDate = convertTimestampToDate(order.orderFullFilled);
+    return (
+      orderDate &&
+      orderDate >= startDay.toISOString().split("T")[0] &&
+      orderDate <= endDay.toISOString().split("T")[0]
+    );
+  });
+  console.log(currentOrderData)
+  return currentOrderData;
+};
+
+// aggregate previous week data
+export const aggregateDataPreviousWeek = (orders: Order[]) => {
+  const today = new Date();
+  const startDay = new Date(today);
+  const endDay = new Date(today);
+
+  startDay.setDate(today.getDate() - today.getDay() - 6);
+  endDay.setDate(today.getDate() - today.getDay());
+
+  const prevOrderData = orders?.filter((order) => {
+    const orderDate = convertTimestampToDate(order.orderFullFilled);
+    return (
+      orderDate &&
+      orderDate >= startDay.toISOString().split("T")[0] &&
+      orderDate <= endDay.toISOString().split("T")[0]
+    );
+  });
+  return prevOrderData;
+};
+
+// aggregate current Month
+export const aggregateDataCurrentMonth = (orders: Order[]) => {
+  const today = new Date();
+  const startDay = new Date(today);
+  const endDay = new Date(today);
+  startDay.setDate(1);
+
+  const datas = orders?.filter((order) => {
+    const orderDate = convertTimestampToDate(order.orderFullFilled);
+    return (
+      orderDate &&
+      orderDate >= startDay.toISOString().split("T")[0] &&
+      orderDate <= endDay.toISOString().split("T")[0]
+    );
+  });
+  return datas;
+};
+
+// aggregate previous Month
+export const aggregateDataPreviousMonth = (orders: Order[]) => {
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setMonth(startDate.getMonth() - 1);
+  startDate.setDate(1);
+
+  const endDate = new Date(startDate);
+  endDate.setMonth(endDate.getDate() + 1);
+  endDate.setDate(0);
+
+  const datas = orders?.filter((order) => {
+    const orderDate = convertTimestampToDate(order.orderFullFilled);
+    return (
+      orderDate &&
+      orderDate >= startDate.toISOString().split("T")[0] &&
+      orderDate <= endDate.toISOString().split("T")[0]
+    );
+  });
+  return datas;
+};
 
 export const aggregateCurrentDayData = (orders: Order[]) => {
   try {
@@ -23,7 +111,7 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
 
     const currentDayOrder = orders.filter((order) => {
       const orderDate = convertTimestampToDate(order.orderFullFilled);
-      return todayString === orderDate;
+      return "2024-04-07" === orderDate;
     });
 
     if (currentDayOrder.length === 0) {
@@ -80,12 +168,12 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
       {
         title: "Delivered",
         total: totalDelivered,
-        percentage: ` ${(totalDelivered / totalOrders) * 100}% in 1 day `,
+        percentage: ` ${Math.round((totalDelivered / totalOrders) * 100)}`,
       },
       {
         title: "Revenue",
         total: totalRevenue,
-        percentage: ` ${(totalRevenue / totalOrders) * 100}% in 1 day `,
+        percentage: ` ${Math.round((totalRevenue / totalOrders) * 100)}`,
       },
     ];
 
@@ -96,36 +184,16 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
 };
 
 export const aggregateWeeklyData = (orders: Order[], option: string) => {
-  console.log(orders, option)
-  const today = new Date();
-  const startDate = new Date(today);
-  const endDate = new Date(today);
-  let filterData: Order[];
+  let filterData: Order[] = [];
   try {
     // filterData of running week
     if (option === "current week") {
-      startDate.setDate(today.getDate() - today.getDay());
-
-      const currentWeeklyData = orders?.filter((order) => {
-        const orderDates = convertTimestampToDate(order.orderFullFilled);
-        return (
-          orderDates &&
-          orderDates >= startDate.toISOString().split("T")[0] &&
-          orderDates <= endDate.toISOString().split("T")[0]
-        );
-      });
+      const currentWeeklyData = aggregateDataCurrentWeek(orders);
       currentWeeklyData ? (filterData = currentWeeklyData) : "";
-    } else if (option === "previous week") {
-      startDate.setDate(today.getDate() - today.getDay() - 6);
-      endDate.setDate(today.getDate() - today.getDay());
-      const previousWeeklyData = orders?.filter((order) => {
-        const orderDates = convertTimestampToDate(order.orderFullFilled);
-        return (
-          orderDates &&
-          orderDates >= startDate.toISOString().split("T")[0] &&
-          orderDates <= endDate.toISOString().split("T")[0]
-        );
-      });
+    }
+    // filterdata of prev week
+    else if (option === "previous week") {
+      const previousWeeklyData = aggregateDataPreviousWeek(orders);
       previousWeeklyData ? (filterData = previousWeeklyData) : "";
     }
 
@@ -196,4 +264,34 @@ export const aggregateWeeklyData = (orders: Order[], option: string) => {
   } catch (error) {
     throw new Error("Unable to filtered weekly order");
   }
+};
+
+export const aggregateBarData = (orders: Order[]) => {
+  let datas: { [key: string]: string }[] = [];
+
+  orders?.forEach((order) => {
+    const orderDate = convertTimestampToDate(order.orderFullFilled);
+    const orderDay = dayNames[new Date(orderDate as string).getDay() as any];
+
+    // check date exist or not
+    let found: boolean = false;
+
+    datas.forEach((data) => {
+      if (data["week"] === orderDay) found = true;
+    });
+
+    if (!found) datas.push({ week: orderDay } as { [key: string]: string });
+
+    datas?.forEach((data) => {
+      order?.products?.forEach((product) => {
+        if (data["week"] === orderDay) {
+          data[product.name]
+            ? (data[product.name] += product.quantity)
+            : (data[product.name] = product.quantity);
+        }
+      });
+    });
+  });
+  console.log(datas);
+  return datas;
 };

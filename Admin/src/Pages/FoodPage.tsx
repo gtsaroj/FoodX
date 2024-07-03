@@ -1,9 +1,16 @@
-import { ArrowDownWideNarrow, ChevronLeft, Plus, Search } from "lucide-react";
+import {
+  ArrowDownWideNarrow,
+  ChevronLeft,
+  Filter,
+  Plus,
+  Search,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import FoodTable from "../Components/Collection/FoodTable";
 import UploadFood from "../Components/Upload/UploadFood";
 import Modal from "../Components/Common/Popup/Popup";
 import { FilterButton } from "../Components/Common/Filter/Filter";
+import { DropDown } from "../Components/Common/DropDown/DropDown";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -30,14 +37,35 @@ const FoodPage: React.FC = () => {
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
-          <FilterButton isActive="false" />
           <button
             onClick={() => setIsModelOpen(!isModalOpen)}
-            className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
+            className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
           >
-            <Plus className="size-5" />
+            <Plus className="size-4" />
             <h1 className="text-[15px]">Item</h1>
           </button>
+          <DropDown
+            children={
+              <>
+                {" "}
+                <Filter className="size-4" />
+                <span>Filter</span>
+              </>
+            }
+            options={[]}
+            style={{
+              display: "flex",
+              fontSize: "15px",
+              borderRadius: "4px",
+              padding: "0.5rem 1rem 0.5rem 1rem",
+              color: "var(--dark-text)",
+              border: "1px solid var(--dark-secondary-text)  ",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              background: "",
+            }}
+          />
         </div>
       </div>
       <FoodTable />

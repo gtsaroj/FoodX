@@ -1,3 +1,5 @@
+import { DailyCategoryAgrregateData, Order } from "../../models/order.model";
+
 export interface ColourOption {
   readonly value: string;
   readonly label: string;
@@ -90,6 +92,7 @@ export const orderCharts = [
     day: "saturday",
   },
 ];
+
 function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -145,3 +148,31 @@ export const orderChartsOfMonthly = [
     week: "Week 7",
   },
 ];
+
+
+
+
+export const aggregateDailyCategoryOrder = (orders: Order[]) => {
+  // let category: DailyCategoryAgrregateData[];
+
+  const categoryMap: { [key: string]: number } = {};
+
+  orders.forEach((order) => {
+    order?.products?.forEach((product) => {
+      if (categoryMap[product.name]) {
+        categoryMap[product?.name] += product?.quantity;
+      } else {
+        categoryMap[product?.name] = product?.quantity;
+      }
+    });
+  });
+  const dailyaggregateCategories: DailyCategoryAgrregateData[] = Object.keys(
+    categoryMap
+  ).map((tag) => ({
+    label: tag,
+    value: categoryMap[tag],
+  }));
+
+  return dailyaggregateCategories;
+};
+

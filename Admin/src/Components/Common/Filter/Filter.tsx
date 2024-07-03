@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowDownWideNarrow } from "lucide-react";
+import { ArrowDownWideNarrow, Filter } from "lucide-react";
 
 interface FilterButtonProp {
   label?: string;
@@ -13,8 +13,8 @@ export const FilterButton: React.FC<FilterButtonProp> = ({
   onClick,
 }) => {
   return (
-    <button  className="flex rounded py-3 bg-[var(--dark-foreground)] text-[var(--light-text)] items-center justify-center gap-2 px-5">
-      <ArrowDownWideNarrow />
+    <button  className="flex  text-[15px] rounded py-2 bg-[var(--dark-foreground)] text-[var(--light-text)] items-center justify-center gap-2 px-4">
+      <Filter className="size-4" />
       <span>{label ? label : "Filter"}</span>
     </button>
   );

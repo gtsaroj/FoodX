@@ -8,11 +8,12 @@ import {
 import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import toast from "react-hot-toast";
-import { ValidationType } from "./models/Register.model";
+import { ValidationType } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/Action";
 import { makeRequest } from "./makeRequest";
+import { UseFetch } from "../../frontend/src/UseFetch";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -97,7 +98,8 @@ export const getOrders = async () => {
     });
     return response.data;
   } catch (error) {
-    if(error ==="You have not access, please login again...") Store.dispatch(authLogout())
+    if (error === "You have not access, please login again...")
+      Store.dispatch(authLogout());
     console.log(`Error while getting revenueperday : ${error}`);
   }
 };
@@ -146,5 +148,19 @@ export const getProducts = async () => {
     return response.data;
   } catch (error) {
     console.log(`Error while adding banners : ${error}`);
+  }
+};
+
+export const getOrderByUser = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "orders/user-order",
+    });
+    return response.data;
+  } catch (error) {
+    if (error === "You have not access, please login again...")
+      Store.dispatch(authLogout());
+    console.log(`Error while getting order by userId : ${error}`);
   }
 };

@@ -42,10 +42,10 @@ const TicketPage: React.FC = () => {
         </h1>
         <button
           onClick={() => setCloseModal(!closeModal)}
-          className="flex gap-1 text-[var(--light-text)] bg-[var(--primary-color)] px-5 py-3 rounded items-center justify-center"
+          className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
         >
-          <CirclePlus className="size-5" />
-          New Ticket
+          <CirclePlus className="size-4" />
+          <span className="tex-[15px] "> New Ticket</span>
         </button>
         <Modal
           close={closeModal}
@@ -67,15 +67,15 @@ const TicketPage: React.FC = () => {
             ticketState === "pending"
               ? "bg-[var(--primary-dark)]"
               : "bg-[var(--primary-light)]  "
-          } py-3 sm:text-[15px] text-sm duration-150   font-[550] contrast-150 rounded text-[var(--light-text)]`}
+          } py-3 hover:bg-[var(--primary-dark)]  sm:text-[15px] text-sm duration-150   font-[550] contrast-150 rounded text-[var(--light-text)]`}
         >
           Pending
         </button>
         <button
           onClick={() => handleClick("progress")}
-          className={` py-3 sm:text-[15px]    duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] ${
+          className={` py-3 sm:text-[15px] hover:bg-[#bb8115]   duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] ${
             ticketState === "progress"
-              ? "bg-[#bb8115]"
+              ? "bg-[#bb8115] "
               : "bg-[var(--orange-bg)]"
           } `}
         >
@@ -83,7 +83,7 @@ const TicketPage: React.FC = () => {
         </button>
         <button
           onClick={() => handleClick("resolve")}
-          className={`py-3 sm:text-[15px] duration-150   ${
+          className={`py-3 sm:text-[15px] hover:bg-[#287e28fd] duration-150   ${
             ticketState === "resolve" ? "bg-[#287e28fd]" : "bg-[var(--green-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >
@@ -91,7 +91,7 @@ const TicketPage: React.FC = () => {
         </button>
         <button
           onClick={() => handleClick("cancel")}
-          className={`py-3 sm:text-[15px] duration-150  ${
+          className={`py-3 hover:bg-[#a82d2dfd] sm:text-[15px] duration-150  ${
             ticketState === "cancel" ? "bg-[#a82d2dfd]" : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >

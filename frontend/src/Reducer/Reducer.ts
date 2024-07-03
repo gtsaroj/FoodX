@@ -1,17 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Order } from "../models/order.model";
+import { Order, Product } from "../models/order.model";
 
-export interface ProductType {
-  id: string;
-  name: string;
-  image: string;
-  price: number;
-  quantity: number;
-}
 
 
 interface ProductsType {
-  products: ProductType[];
+  products: Product[];
 }
 
 const initialState: ProductsType = {

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as ProductService from "../Services";
 import { Product } from "../models/order.model";
-import { ValidationType } from "../models/Register.model";
+import { ValidationType } from "../models/user.model";
 import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
 import { authState } from "../models/UserModels";
 import { Satellite } from "lucide-react";

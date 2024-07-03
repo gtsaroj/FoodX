@@ -1,10 +1,25 @@
-import { ChevronDown, Ellipsis, Search } from "lucide-react";
-import React, { useRef } from "react";
-import { Table } from "../Components/Common/Table/Table";
+import { Filter, Search } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import Table from "../Components/Common/Table/Table";
 import data from "../data.json";
-import { FilterButton } from "../Components/Common/Filter/Filter";
+import { DropDown } from "../Components/Common/DropDown/DropDown";
+import { getCustomerData, getOrderByUserId } from "../firebase/db";
+import { DbUser } from "../models/UserModels";
+import { getOrderByUser } from "../Services";
+import { aggregateCustomerData } from "../Utility/CustomerUtils";
 
 const CustomerList: React.FC = () => {
+  const [initialCustomer, setInitialCustomer] = useState<DbUser[]>();
+
+  useEffect(() => {
+    getCustomerData("customers")
+      .then((data: DbUser[]) => {
+         aggregateCustomerData(data);
+        setInitialCustomer(data);
+      })
+      .catch((err) => new Error("Unable to get customer datas" + err));
+  }, []);
+
   const { customers, customerDetails } = data;
   const handleCheckboxChange = (
     rowIndex: number,
@@ -15,6 +30,8 @@ const CustomerList: React.FC = () => {
   };
 
   const searchFormRef = useRef<HTMLButtonElement>(null);
+
+
   return (
     <div className="2xl:container w-full py-2  flex flex-col gap-7 items-start justify-center">
       <h1 className="text-[20px] pt-3 ">Customer</h1>
@@ -27,7 +44,28 @@ const CustomerList: React.FC = () => {
             placeholder="Search for customer"
           />
         </form>
-        <FilterButton />
+        <DropDown
+          children={
+            <>
+              {" "}
+              <Filter className="size-4" />
+              <span>Filter</span>
+            </>
+          }
+          options={[]}
+          style={{
+            display: "flex",
+            fontSize: "15px",
+            borderRadius: "4px",
+            padding: "0.5rem 1rem 0.5rem 1rem",
+            color: "var(--dark-text)",
+            border: "1px solid var(--dark-secondary-text)  ",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            background: "",
+          }}
+        />
       </div>
       <div className="w-full">
         <Table

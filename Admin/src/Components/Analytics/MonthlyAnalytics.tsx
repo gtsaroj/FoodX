@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import data from "../../data.json";
 import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
 import Select from "react-select";
-import { selectOptions } from "../LineChart/data";
+import { selectOptions } from "../LineChart/LineChart";
 import { DropDown } from "../Common/DropDown/DropDown";
 import { DailyAggregateData } from "../../models/order.model";
 import { getOrders } from "../../Services";
 import { aggregateWeeklyData } from "../../Utility/DateUtils";
+import { Filter } from "lucide-react";
 
 export const MonthlyAnalytics: React.FC = () => {
   const [weeklyFilterOrder, setWeeklyFilterOrder] =
@@ -32,13 +33,32 @@ export const MonthlyAnalytics: React.FC = () => {
 
   return (
     <div className=" w-full flex  gap-4 flex-col items-start justify-center">
-      <h2 className="w-full text-left text-xl text-[var(--primary-color)] ">
+      <div className="w-full flex items-center px-5  justify-between">
+      <h2 className="text-left text-xl text-[var(--primary-color)] ">
         Order Details
       </h2>
       <DropDown
-        onSelect={handleSelect}
-        options={["Current week", "Previous week"]}
-      />
+          style={{
+            display: "flex",
+            fontSize: "15px",
+            borderRadius: "4px",
+            padding: "0.5rem 1rem 0.5rem 1rem",
+            color: "var(--dark-text)",
+            border: "1px solid var(--dark-secondary-text)  ",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            background: "",
+          }}
+          children={
+            <>
+              <Filter className="size-4" />
+              <span>Filter</span>
+            </>
+          }
+          options={["Current Week", "1 week ago"]}
+        />
+  </div>
       <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 ">
         { weeklyFilterOrder?.map((item, index) => (
           <div className="col-span-1">

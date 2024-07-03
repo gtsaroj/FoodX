@@ -1,10 +1,10 @@
 {
-  "headers": ["SN", "Product", "Image", "Categories", "Status", "Button"],
+  "headers": ["SN", "Product", "Image", "Categories", "status", "Button"],
   "orderHeaders": [
-    "orderid",
-    "CUSTOMER",
-    "PRODUCT",
-    "DATE",
+    "orderId",
+    "uid",
+    "products",
+    "date",
     "STATUS",
     "Button"
   ],

@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
-import data from "../../data.json";
 import { getOrders } from "../../Services";
-import { DailyAggregate, DailyAggregateData, Order } from "../../models/order.model";
+import { DailyAggregateData } from "../../models/order.model";
 import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 
 const Revenue: React.FC = () => {
-  const { dailyAnalyticsData } = data;
   const [totalOrder, setTotalOrder] = useState<DailyAggregateData[]>();
 
   useEffect(() => {
     getOrders()
       .then((order) => {
         const currentData = aggregateCurrentDayData(order.data);
-        console.log(currentData)
+        console.log(currentData);
         if (currentData) setTotalOrder(currentData as DailyAggregateData[]);
       })
       .catch((error) => {
-        throw new Error("Unable to aggregate current data" + error);
+        // throw new Error("Unable to aggregate current data" + error);
+        console.log(error)
       });
   }, []);
-      console.log(totalOrder)
   return (
     <React.Fragment>
       <div className="flex w-full items-center flex-wrap  justify-center xl:justify-start md:justify-between sm:justify-start gap-3 sm:gap-5">

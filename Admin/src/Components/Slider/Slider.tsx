@@ -145,7 +145,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <ListOrdered />
               <span>Order</span>
             </li>
-            {auth.role !== "Admin" ? (
+            {auth.role !== "admins" ? (
               ""
             ) : (
               <li

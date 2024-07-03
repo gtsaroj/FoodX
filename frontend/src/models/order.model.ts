@@ -1,9 +1,10 @@
 export interface Order {
-  orderId: string;
+  orderId?: string;
   uid: string;
   products: Product[];
-  orderRequest: RequestTime;
-  orderFullFilled: RequestTime;
+  orderRequest: RequestTime | string;
+  orderFullFilled?: RequestTime | string;
+  status? : string;
 }
 interface RequestTime {
   seconds: string | number,
