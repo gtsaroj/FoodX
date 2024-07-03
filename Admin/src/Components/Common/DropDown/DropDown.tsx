@@ -27,9 +27,7 @@ export const DropDown: React.FC<DropDownProp> = ({
   return (
     <div className="">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="">
-          <button style={style}>{children}</button>
-        </DropdownMenu.Trigger>
+        <DropdownMenu.Trigger className="">{children}</DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="relative bg-[var(--light-background)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
             {options?.map((item, index) => (

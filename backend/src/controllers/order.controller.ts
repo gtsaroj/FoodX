@@ -27,11 +27,12 @@ const getAllOrdersFromDatabase = asyncHandler(async (_: any, res: any) => {
   }
 });
 const getOrderByUserIdFromDatabase = asyncHandler(
-  async (req: any, res: any) => {
+  async (req: express.Request, res: express.Response) => {
     try {
-      const { id } = req.body;
+       const {id} = req.body;
+     console.log(id)
       const response = await getOrdersByUserId(id);
-      console.log(response);
+      console.log("Response=========="+response);
       return res
         .status(200)
         .json(

@@ -47,16 +47,17 @@ export const getCustomerData = async (
   }
 };
 
-export const getOrderByUserId = async (docName: "orders", uid: string) => {
-  try {
-    const userRef = doc(db, docName, uid);
+// export const getOrderByUserId = async (docName: "orders", uid: string) => {
+//   try {
+//     const orderRef
 
-    const snapShot = await getDoc(userRef);
-    if (!snapShot.exists) throw new Error("User document is empty.");
-    console.log(snapShot.data())
-    const data = snapShot.data();
-    return data as Order[];
-  } catch (error) {
-    throw new Error("Error while getting user from database.");
-  }
-};
+//     const querySnapshot = orderRef.
+//     const snapShot = await getDoc(userRef);
+//     if (!snapShot.exists) throw new Error("User document is empty.");
+//     console.log(snapShot.data());
+//     const data = snapShot.data();
+//     return data as Order[];
+//   } catch (error) {
+//     throw new Error("Error while getting user from database.");
+//   }
+// };

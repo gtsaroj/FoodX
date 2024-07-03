@@ -27,20 +27,26 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
   colSpan,
   actions,
 }) => {
-  console.log(row)
-
   return (
     <React.Fragment>
       <tr
         className={`w-full px-2  grid  border-b-[1px] grid-cols-${colSpan} gap-x-8 items-center py-5  justify-items-center`}
       >
         {headerColSpan.map((hdr, hdrIndex) => (
-          <td key={hdrIndex} className={`col-span-1 text-sm ${hdr.toLowerCase() === "products" ? " overflow-auto h-[40px] bg-[var(--light-background)] py-1 rounded shadow-inner px-2 " : ""} `}>
+          <td
+            key={`${hdr}-${hdrIndex}`}
+            className={`col-span-1 text-sm ${
+              hdr.toLowerCase() === "products"
+                ? " overflow-auto h-[40px] bg-[var(--light-background)] py-1 rounded shadow-inner px-2 "
+                : ""
+            } `}
+          >
             {hdr.toLowerCase() === "image" ? (
               <div className="w-[60px] h-[50px]">
                 <img className="w-full h-full rounded" src={row.image} alt="" />
               </div>
-            ) : hdr.toLowerCase() === "sn" || hdr.toLowerCase() === "orderid" ? (
+            ) : hdr.toLowerCase() === "sn" ||
+              hdr.toLowerCase() === "orderid" ? (
               rowIndex + 1
             ) : hdr.toLowerCase() === "checkbox" ? (
               <input className="w-4 cursor-pointer h-4" type="checkbox" />
@@ -84,11 +90,11 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
             ) : (
-              row[hdr.toLowerCase().replace(" ", "")]
+              row[hdr.replace(" ", "")]
             )}
           </td>
         ))}
-      </tr>{" "}
+      </tr>
     </React.Fragment>
   );
 };

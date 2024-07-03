@@ -5,11 +5,12 @@ import { HeaderProp } from "../../Collection/FoodTable";
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { convertTimestampToDate } from "../../../Utility/DateUtils";
+import { CustomerType } from "../../../models/user.model";
 
 interface TableProp {
   headers: string[];
   actions: (rowData: string) => void;
-  data: HeaderProp[] | [];
+  data: HeaderProp[] | [] | CustomerType[];
   width: string;
   onCheckBoxChange: (
     rowIndex: number,

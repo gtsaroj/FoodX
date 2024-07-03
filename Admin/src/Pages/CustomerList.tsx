@@ -1,26 +1,34 @@
 import { Filter, Search } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Table from "../Components/Common/Table/Table";
-import data from "../data.json";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
-import { getCustomerData, getOrderByUserId } from "../firebase/db";
+import { getCustomerData } from "../firebase/db";
 import { DbUser } from "../models/UserModels";
-import { getOrderByUser } from "../Services";
 import { aggregateCustomerData } from "../Utility/CustomerUtils";
+import { CustomerType } from "../models/user.model";
 
 const CustomerList: React.FC = () => {
-  const [initialCustomer, setInitialCustomer] = useState<DbUser[]>();
+  const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
+  const [customerHeader, setCustomerHeader] = useState<string[]>([]);
 
   useEffect(() => {
-    getCustomerData("customers")
-      .then((data: DbUser[]) => {
-         aggregateCustomerData(data);
-        setInitialCustomer(data);
-      })
-      .catch((err) => new Error("Unable to get customer datas" + err));
+    const handleCustomerData = async () => {
+      const customers = await getCustomerData("customers");
+      const customerList = await aggregateCustomerData(customers);
+      setInitialCustomer(customerList);
+    };
+    handleCustomerData()
   }, []);
+  console.table(initialCustomer)
 
-  const { customers, customerDetails } = data;
+  useEffect(() => {
+    if (initialCustomer.length > 0) {
+      const CustomerHeadersObject = initialCustomer[0];
+      const headers = Object.keys(CustomerHeadersObject);
+      setCustomerHeader(headers);
+    }
+  }, [initialCustomer.length, initialCustomer]);
+
   const handleCheckboxChange = (
     rowIndex: number,
     colName: string,
@@ -29,8 +37,9 @@ const CustomerList: React.FC = () => {
     console.log(rowIndex, colName, checked);
   };
 
-  const searchFormRef = useRef<HTMLButtonElement>(null);
+  console.log(initialCustomer, customerHeader);
 
+  const searchFormRef = useRef<HTMLButtonElement>(null);
 
   return (
     <div className="2xl:container w-full py-2  flex flex-col gap-7 items-start justify-center">
@@ -52,7 +61,7 @@ const CustomerList: React.FC = () => {
               <span>Filter</span>
             </>
           }
-          options={[]}
+          options={["fljds", "lfkdsj"]}
           style={{
             display: "flex",
             fontSize: "15px",
@@ -71,9 +80,9 @@ const CustomerList: React.FC = () => {
         <Table
           pagination={{ perPage: 2, currentPage: 1 }}
           width="800px"
-          data={customerDetails}
+          data={initialCustomer as CustomerType[]}
           colSpan="7"
-          headers={customers}
+          headers={customerHeader as string[]}
           onCheckBoxChange={handleCheckboxChange}
         />
       </div>

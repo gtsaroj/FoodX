@@ -151,11 +151,12 @@ export const getProducts = async () => {
   }
 };
 
-export const getOrderByUser = async () => {
+export const getOrderByUser = async (id: string) => {
   try {
     const response = await makeRequest({
-      method: "get",
+      method: "post",
       url: "orders/user-order",
+      data: {id : id},
     });
     return response.data;
   } catch (error) {
