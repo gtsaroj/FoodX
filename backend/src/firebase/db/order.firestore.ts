@@ -8,15 +8,20 @@ const addNewOrderToDatabase = async (order: Order) => {
   if (!orderDocRef) throw new ApiError(404, "Couldn't find order collection.");
   try {
     const { orderFullFilled, orderRequest, products, uid, status } = order;
-
-    await orderDocRef.add({
-      orderFullFilled,
-      orderId: nanoid(),
-      orderRequest,
-      products,
-      status,
-      uid,
-    });
+    await orderDocRef
+      .add({
+        orderFullFilled,
+        orderId: "",
+        orderRequest,
+        products,
+        status,
+        uid,
+      })
+      .then((docRef) => {
+        docRef.update({
+          orderId: docRef.id,
+        });
+      });
   } catch (err) {
     throw new ApiError(400, "Unable to add order in database.");
   }
