@@ -3,34 +3,40 @@ import React, { useState } from "react";
 
 interface DropDownProp {
   options: string[];
+  children: React.ReactNode;
+  style: React.CSSProperties;
+  value?: string;
   onSelect?: (selectedOption: string) => void;
 }
 
-export const DropDown: React.FC<DropDownProp> = ({ onSelect, options }) => {
+export const DropDown: React.FC<DropDownProp> = ({
+  onSelect,
+  options,
+  children,
+  style,
+  value,
+}) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const handleSelect = (selectOption: string) => {
     setSelectedOption(selectOption);
-    if (onSelect) onSelect(selectOption);
+    if (selectOption === "Delete") onSelect(value);
+    else if (selectOption !== "Delete") onSelect(selectOption);
   };
 
   return (
-    <div className="w-[150px] ">
+    <div className="">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="w-full">
-          <button
-            className={` py-2  text-start px-2 bg-[var(--primary-color)] font-[600] brightness-100 contrast-100 text-[var(--light-foreground)] rounded w-full text-[15px]  duration-200`}
-          >
-            {selectedOption || "Select an options"}
-          </button>
+        <DropdownMenu.Trigger className="">
+          <button style={style}>{children}</button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <DropdownMenu.Content className="relative bg-[var(--light-foreground)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
+          <DropdownMenu.Content className="relative bg-[var(--light-background)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
             {options?.map((item, index) => (
               <DropdownMenu.Item
                 key={index}
                 onClick={() => handleSelect(item as string)}
-                className=" outline-none w-full cursor-pointer duration-150 font-[560] contrast-100 brightness-100 rounded px-1 pr-10 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "
+                className=" outline-none w-full cursor-pointer duration-150 ] contrast-100 brightness-100 rounded px-10 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "
               >
                 {item}
               </DropdownMenu.Item>

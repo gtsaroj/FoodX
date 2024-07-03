@@ -7,9 +7,9 @@ interface CardAnalyticsProp {
 export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
   console.log(item)
   return (
-    <div className=" flex px-8  h-[160px] w-full sm:w-[300px] items-center justify-between gap-10 bg-[var(--light-background)]   rounded  ">
+    <div className=" flex px-8 shadow-sm  h-[160px] w-full sm:w-[300px] items-center justify-between gap-10 bg-[var(--light-background)]   rounded  ">
       <div className={`flex flex-col items-start justify-center gap-2 ${item ? "visible": "invisible"} `}>
-        <p className="text-[18px] font-[650] brightness-100 contrast-100  text-[var(--primary-color)] ">{item?.title} </p>
+        <p className="text-[18px] font-[500] brightness-100 contrast-100  text-[var(--primary-color)] ">{item?.title} </p>
         <p className="text-[25px] text-[var(--dark-foreground)]  font-bold ">
           {item?.total}{" "}
         </p>

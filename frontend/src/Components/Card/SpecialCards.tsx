@@ -4,9 +4,10 @@ import { ProductType } from "../../Reducer/Reducer";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../Reducer/Reducer";
 import { RootState } from "../../Reducer/Store";
+import { Product } from "../../models/order.model";
 
 interface MenuProp {
-  prop: ProductType;
+  prop: Product;
 }
 export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
@@ -114,6 +115,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
                   image: prop.image,
                   price: prop.price,
                   quantity: 1,
+                  tag : prop.tag
                 })
               );
             }}

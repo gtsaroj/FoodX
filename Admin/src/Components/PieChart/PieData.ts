@@ -1,26 +1,38 @@
-import { Order } from "../../models/order.model";
+import {
+  aggregateDataCurrentWeek,
+  aggregateDataPreviousWeek,
+} from "../../Utility/DateUtils";
+import { DailyCategoryAgrregateData, Order } from "../../models/order.model";
 
-export function quantityOfEachCategory(todayOrder: Order[]) {
-  const tagQuantity = {};
-  todayOrder.map((order) => {
-    order.products.map((product) => {
-      if (!tagQuantity[product.tag])
-        tagQuantity[product.tag] = product.quantity;
-      tagQuantity[product.tag] = +product.quantity;
+export const aggregateDailyCategoryOrder = (
+  orders: Order[],
+  options: string
+) => {
+  // let category: DailyCategoryAgrregateData[];
+
+  const categoryMap: { [key: string]: number } = {};
+  let currentWeekOrders: Order[] = [];
+  if (options === "current week")
+    currentWeekOrders = aggregateDataCurrentWeek(orders);
+  if (options === "previous week")
+    currentWeekOrders = aggregateDataPreviousWeek(orders);
+
+  currentWeekOrders.forEach((order) => {
+    order?.products?.forEach((product) => {
+      if (categoryMap[product.tag]) {
+        categoryMap[product?.tag] += product?.quantity;
+      } else {
+        categoryMap[product?.tag] = product?.quantity;
+      }
     });
   });
-  return tagQuantity;
-}
+  const dailyaggregateCategories: DailyCategoryAgrregateData[] = Object.keys(
+    categoryMap
+  ).map((tag) => ({
+    label: tag,
+    value: categoryMap[tag],
+  }));
+  console.log(categoryMap, dailyaggregateCategories);
 
-export function totalQuantityOfOrder(todayOrder: Order[]) {
-  let total = 0;
-  todayOrder.forEach((order) => {
-    order.products.forEach((product) => {
-      total += product.quantity;
-    });
-  });
-  return total;
-}
-
-
-
+  return dailyaggregateCategories;
+};

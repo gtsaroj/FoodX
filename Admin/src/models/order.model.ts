@@ -1,17 +1,16 @@
- export interface RequestTime {
-  _seconds: number,
-  _nanoseconds : number
+export interface RequestTime {
+  _seconds: number;
+  _nanoseconds: number;
 }
 export interface Order {
   orderId: string;
   uid: string;
-  products: Product[];
+  products: Product[] | string[];
   orderRequest: RequestTime;
   orderFullFilled: RequestTime;
 }
 
-
-import { ProductType } from "./productMode";
+// import { ProductType } from "./productMode";
 
 export interface Product {
   name: string;
@@ -25,18 +24,18 @@ export interface Banner {
   img: string;
 }
 
-export interface Order {
-  orderId: string;
-  customer: string;
-  products: ProductType[];
-  orderRequest: string;
-  orderFullFilled: string;
-  status: OrderStatus["types"];
-}
+// export interface Order {
+//   orderId: string;
+//   customer: string;
+//   products: ProductType[];
+//   orderRequest: string;
+//   orderFullFilled: string;
+//   status: OrderStatus["types"];
+// }
 
-interface OrderStatus {
-  types: "Recieved" | "Preparing" | "Completed" | "Canceled";
-}
+// interface OrderStatus {
+//   types: "Recieved" | "Preparing" | "Completed" | "Canceled";
+// }
 
 interface Category {
   types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
@@ -50,9 +49,18 @@ interface Category {
 //   image: string;
 // }
 
-export interface DailyAggregateData{
+export interface DailyAggregateData {
   title: string;
   total: string | number;
   percentage: number | string;
 }
 
+export interface DailyCategoryAgrregateData {
+  label: string;
+  value: string | number;
+}
+
+export interface BarChartDataTypes {
+  items: { [key: string]: string | number }[];
+  week: string;
+}

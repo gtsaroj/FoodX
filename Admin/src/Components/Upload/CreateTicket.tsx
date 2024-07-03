@@ -1,7 +1,7 @@
 import { UploadIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import Select from "react-select"
-import { requestSelectOption } from "../LineChart/data";
+import { requestSelectOption } from "../LineChart/D";
 
 const options = [
   {

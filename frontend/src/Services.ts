@@ -5,6 +5,8 @@ import { signInUser, signUpNewUser } from "./firebase/Authentication";
 import { ValidationType } from "./models/Register.model";
 import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
+import { Order } from "./models/order.model";
+import { makeRequest } from "./makeRequest";
 
 interface userInfo {
   uid: string;
@@ -93,3 +95,18 @@ export const updateUser = async (data: UpdateProfileInfo) => {
 //     throw new Error(`Unable to log out user -> ${error}`);
 //   }
 // };
+
+export const order = async (data: Order) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "/orders/add-order",
+      data: { ...data },
+    });
+    console.log(response.statusText)
+    return response.data.data;
+  } catch (error) {
+    toast.error("Unable to update user");
+    throw new Error("Unable to update user");
+  }
+};

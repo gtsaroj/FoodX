@@ -28,7 +28,8 @@ const addOrderToDatabase = async (order: Order) => {
 const deleteOrderFromDatabase = async (id: string) => {
   const orderRef = doc(db, "orders", id);
   try {
-    await deleteDoc(orderRef);
+    const a = await deleteDoc(orderRef);
+    console.log(a);
   } catch (error) {
     throw new Error("Error deleting the order from database!");
   }

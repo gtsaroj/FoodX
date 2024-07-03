@@ -35,7 +35,7 @@ const FoodPage: React.FC = () => {
           <FilterButton isActive={ "false"} />
         <button
           onClick={() => setIsModelOpen(!isModalOpen)}
-          className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
+          className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
         >
           <Plus className="size-5" />
           <h1 className="text-[15px]">Item</h1>

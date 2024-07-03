@@ -1,7 +1,5 @@
-import { ArrowDownWideNarrow, ChevronLeft, Plus, Search } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import FoodTable from "../Components/Collection/FoodTable";
-import UploadFood from "../Components/Upload/UploadFood";
+import { Plus, Search } from "lucide-react";
+import React, { useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
 import { FilterButton } from "../Components/Common/Filter/Filter";
 import { CategoryTable } from "../Components/Collection/CategoryTable";
@@ -35,7 +33,7 @@ export const CategoryPage: React.FC = () => {
           <FilterButton />
           <button
             onClick={() => setIsModelOpen(!isModalOpen)}
-            className="flex shadow-inner items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-3 border-[1px] border-[var(--primary-color)] px-5 rounded"
+            className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
           >
             <Plus className="size-5" />
             <h1 className="text-[15px]">Item</h1>

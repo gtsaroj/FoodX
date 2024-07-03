@@ -1,20 +1,16 @@
 import React from "react";
-import {
-  ArrowLeft,
-  Delete,
-  DeleteIcon,
-  ShoppingBag,
-  Trash,
-} from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { SingleCard } from "../../Pages/Cart/SingleCard";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { ProductType } from "../../models/productMode";
-import { addToCart, removeCart } from "../../Reducer/Reducer";
+import { order } from "../../Services";
+import { Order, Product } from "../../models/order.model";
+import toast from "react-hot-toast";
 
 interface CartProp {
-  prop: ProductType;
+  prop: Product;
 }
 
 export const Payment: React.FC = () => {
@@ -30,6 +26,31 @@ export const Payment: React.FC = () => {
     );
     return total;
   };
+
+  // fetch products
+  const products = useSelector(
+    (state: RootState) => state.root.Products.cart.products
+  );
+  const userId = useSelector((state: RootState) => state.root.auth.userInfo.uid);
+  console.log(products, userId.uid);
+
+  const handleOrder = async () => {
+    console.log("fkdjl");
+    const today = new Date().toISOString();
+    try {
+      const sendOrder = await order({
+        products: products,
+        uid: userId,
+        orderRequest: today,
+        orderFullFilled: "",
+        status: "Pending",
+      });
+      if (sendOrder) toast.success("Order Succesfully");
+    } catch (error) {
+      throw new Error("Error while ordering food " + error);
+    }
+  };
+
   return (
     <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
       {/* <MobileCart/> */}
@@ -96,7 +117,9 @@ export const Payment: React.FC = () => {
               </div>
             </div>
             <div>
+              {/* payment */}
               <form
+                onClick={() => handleOrder()}
                 action=""
                 className="flex flex-col gap-[20px] items-center "
               >
@@ -122,7 +145,7 @@ export const Payment: React.FC = () => {
                   />
                 </div>
                 <div className="flex  bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px] py-2 px-5">
-                  <button>Pay Now</button>
+                  <button type="submit">Pay Now</button>
                 </div>
               </form>
             </div>
@@ -150,45 +173,45 @@ export const MobileCart: React.FC = () => {
   return (
     // Desktop
     <div className="w-full flex items-center  py-6 justify-center ">
-         <div className="flex flex-col w-[600px] items-center justify-center h-[580px] gap-3  sm:px-1 px-[30px]">
-      <div className="flex flex-col items-start ">
-        <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
-          My Order
-        </h3>
-      </div>
-      <div className="flex flex-col items-center gap-2 w-full py-5 overflow-y-scroll">
-        {selectedProducts.length > 0 ? (
-          selectedProducts?.map((singleSelectedProduct) => (
-            <SingleCard
-              prop={singleSelectedProduct}
-              key={singleSelectedProduct.id}
-            />
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center gap-2">
-            <ShoppingBag className=" cursor-pointer size-16" />
-
-            <h1 className="text-[25px]">Your cart is empty</h1>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col w-full gap-5">
-        <div className="flex justify-between p-2  text-[var(--dark-text)]">
-          <p className="text-lg font-bold tracking-wide">Total Amount:</p>
-          <p className="text-lg">
-            Rs <span>{Total()}</span>
-          </p>
+      <div className="flex flex-col w-[600px] items-center justify-center h-[580px] gap-3  sm:px-1 px-[30px]">
+        <div className="flex flex-col items-start ">
+          <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
+            My Order
+          </h3>
         </div>
-        <div
-          onClick={() => navigate("/cart/checkout")}
-          className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
-        >
-          <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">
-            Checkout
-          </button>
+        <div className="flex flex-col items-center gap-2 w-full py-5 overflow-y-scroll">
+          {selectedProducts.length > 0 ? (
+            selectedProducts?.map((singleSelectedProduct) => (
+              <SingleCard
+                prop={singleSelectedProduct}
+                key={singleSelectedProduct.id}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-2">
+              <ShoppingBag className=" cursor-pointer size-16" />
+
+              <h1 className="text-[25px]">Your cart is empty</h1>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col w-full gap-5">
+          <div className="flex justify-between p-2  text-[var(--dark-text)]">
+            <p className="text-lg font-bold tracking-wide">Total Amount:</p>
+            <p className="text-lg">
+              Rs <span>{Total()}</span>
+            </p>
+          </div>
+          <div
+            onClick={() => navigate("/cart/checkout")}
+            className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
+          >
+            <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">
+              Checkout
+            </button>
+          </div>
         </div>
       </div>
     </div>
-</div>
   );
 };

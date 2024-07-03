@@ -9,8 +9,16 @@ export interface ValidationType {
   role?: userRole;
 }
 
- export enum userRole {
+export enum userRole {
   admin = "admin",
   chef = "chef",
   customer = "customer",
+}
+
+export interface CustomerType {
+  name: string;
+  email: string;
+  location: string;
+  amountSpent: string;
+  role: string;
 }
