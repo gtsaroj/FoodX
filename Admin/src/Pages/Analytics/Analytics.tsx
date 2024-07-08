@@ -1,8 +1,8 @@
 import React from "react";
-import { MonthlyRevenueChart } from "../Components/LineChart/LineChart";
-import { MonthlyOrderChart } from "../Components/BarChart/BarChart";
-import { MonthlyAnalytics } from "../Components/Analytics/MonthlyAnalytics";
-import { PieChartAnalytics } from "../Components/PieChart/PieChart";
+import { MonthlyRevenueChart } from "../../Components/LineChart/LineChart";
+import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
+import { MonthlyAnalytics } from "../../Components/Analytics/MonthlyAnalytics";
+import { PieChartAnalytics } from "../../Components/PieChart/PieChart";
 // import {  LineChartOfSellsOfAnalytics, LineChartRevenueOfAnalytics } from '../Components/LineChart/LineChart'
 
 const Analytics: React.FC = () => {

@@ -1,16 +1,13 @@
 import {
-  ArrowDownWideNarrow,
-  ChevronLeft,
   Filter,
   Plus,
   Search,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import FoodTable from "../Components/Collection/FoodTable";
-import UploadFood from "../Components/Upload/UploadFood";
-import Modal from "../Components/Common/Popup/Popup";
-import { FilterButton } from "../Components/Common/Filter/Filter";
-import { DropDown } from "../Components/Common/DropDown/DropDown";
+import React, { useState } from "react";
+import FoodTable from "../../Components/Collection/FoodTable";
+import UploadFood from "../../Components/Upload/UploadFood";
+import Modal from "../../Components/Common/Popup/Popup";
+import { DropDown } from "../../Components/Common/DropDown/DropDown";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);

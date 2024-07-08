@@ -1,52 +1,68 @@
-import { order } from "./../../../frontend/src/Services";
 import { getOrderByUser } from "../Services";
 import { DbUser } from "../models/UserModels";
 import { Order, Product } from "../models/order.model";
 import { CustomerType } from "../models/user.model";
 import { SearchCustomer } from "./Search";
 import { totalCost, totalQuantity } from "./Utils";
-import { orders } from "../Components/DummyData";
-import { Users } from "lucide-react";
 
 // aggregate Customer Data
 export const aggregateCustomerData = async (customers: DbUser[]): Promise<CustomerType[]> => {
-  let customerList: CustomerType[] = [];
+  const customerList: CustomerType[] = [];
+  const batchSize = 10;
 
-  try {
-    const totalCustomersPromises = customers.map(async (data: DbUser): Promise<CustomerType> => {
-      const userOrderData = await getOrderByUser(data.uid);
-      const totalUserOrder = userOrderData.data as Order[];
+  // Split customers into batches
+  for (let i = 0; i < customers.length; i += batchSize) {
+    const batch = customers.slice(i, i + batchSize);
+    console.log(i,i+batchSize);
+    const totalCustomersPromises = batch.map(async (data: DbUser): Promise<CustomerType> => {
+      try {
+        const userOrderData = await getOrderByUser(data.uid);
+        const totalUserOrder = userOrderData.data as Order[];
 
-      let totalCustomerCost: number = 0;
-      let totalCustomerQuantity: number = 0;
+        let totalCustomerCost: number = 0;
+        let totalCustomerQuantity: number = 0;
 
-      totalUserOrder.forEach((order) => {
-        totalCustomerQuantity += totalQuantity(order.products as Product[]);
-        totalCustomerCost += totalCost(order.products as Product[]);
-      });
+        totalUserOrder.forEach((order) => {
+          totalCustomerQuantity += totalQuantity(order.products as Product[]);
+          totalCustomerCost += totalCost(order.products as Product[]);
+        });
 
-      return {
-        name: data.fullName,
-        email: data.email,
-        location: "fljds",
-        amountSpent: totalCustomerCost.toFixed(2),
-        totalOrder: totalCustomerQuantity,
-        role: data.role as string,
-      };
+        return {
+          name: data.fullName,
+          email: data.email,
+          location: "fljds",
+          amountSpent: totalCustomerCost.toFixed(2),
+          totalOrder: totalCustomerQuantity,
+          role: data.role as string,
+        };
+      } catch (error) {
+        console.error(`Error fetching orders for user ${data.uid}:`, error);
+        throw error;
+      }
     });
 
-    customerList = await Promise.all(totalCustomersPromises);
-
-    if (customerList.length > 0) {
-      return customerList;
-    } else {
-      throw new Error("No customers found or processed.");
+    try {
+      const results = await Promise.all(totalCustomersPromises);
+      customerList.push(...results);
+    } catch (error) {
+      console.error("Error processing batch:", error);
+      throw error;
     }
-  } catch (error) {
-    console.error("Error aggregating customer data:", error);
-    throw error; // Rethrow the error to be handled elsewhere if needed
+  }
+
+  if (customerList.length > 0) {
+    return customerList;
+  } else {
+    throw new Error("No customers found or processed.");
   }
 };
 
+export const aggregateCustomerSearchData = async (
+  customers: DbUser[],
+  value: string
+) => {
+  const searchingCustomer = SearchCustomer(customers, value);
 
-export const aggregateCustomerSearchData = async (orders: Order[]) => {};
+  const eachCustomer = await aggregateCustomerData(searchingCustomer);
+  return eachCustomer;
+};

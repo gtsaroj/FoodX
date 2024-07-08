@@ -2,9 +2,17 @@ export interface ProductType {
   id: string;
   image: string;
   name: string;
-  price: number;
-  quantity: number;
+  price: number | string;
+  quantity: number | string;
   tag?: string;
+}
+export interface UploadProductType {
+  products: ProductType;
+  collection: Collection["name"];
+}
+
+export interface Collection {
+  name: "products" | "specials";
 }
 
 export interface ProductsType {

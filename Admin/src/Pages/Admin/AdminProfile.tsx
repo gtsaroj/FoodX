@@ -7,17 +7,19 @@ import React, { FormEvent, useEffect, useRef, useState } from "react";
 import avatar from "../../assets/logo/avatar.png"
 // import { storeImageInFirebase } from "../../firebase/storage";
 // import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
-import ReAuth from "./ReAuth";
+import ReAuth from "../../Auth/Profile/ReAuth";
 import toast from "react-hot-toast";
 // import { authLogout } from "../../Reducer/authReducer";
 // import { updateUserPassword } from "../../firebase/utils";
-import DeleteAccount from "./DeleteAccount";
-import DisableAccount from "./DisableAccount";
+import DeleteAccount from "../../Auth/Profile/DeleteAccount";
+import DisableAccount from "../../Auth/Profile/DisableAccount";
 import { getUserData } from "../../firebase/db";
 import { RootState, Store } from "../../Reducer/Store";
 import { DbUser } from "../../models/UserModels";
 import { authLogout } from "../../Reducer/Action";
 import { updateUserPassword } from "../../firebase/utils";
+import { UpdateProfileUser } from "../../../../frontend/src/Reducer/AuthUpdateUser";
+import { storeImageInFirebase } from "../../firebase/storage";
 
 export const AdminProfile = () => {
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
@@ -120,7 +122,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
   return (
     <div
       className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--light-border)] rounded ${
-        loading ? "" : "bg-slate-400 animate-pulse  "
+        loading ? "" : "bg-gradient-to-r from-gray-300 to-slate-400 animate-pulse "
       } `}
     >
       <div className="flex gap-5">
@@ -226,6 +228,8 @@ const PersonlInformation = (props: any) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!props.email) setLoading(true);
+     else setLoading(false)
     setUpdateProfileInfo((prev) => ({
       ...prev,
       email: props?.email,
@@ -233,6 +237,7 @@ const PersonlInformation = (props: any) => {
       lastName: lastName,
       phoneNumber: props.phoneNumber,
     }));
+    
   }, [props]);
 
   const UpdateProfile = async () => {
@@ -243,6 +248,8 @@ const PersonlInformation = (props: any) => {
 
     setLoading(false);
   };
+
+
 
   return (
     <div className="w-full lg:px-3 flex-col items-center">
@@ -266,7 +273,7 @@ const PersonlInformation = (props: any) => {
       >
         <div
           className={`grid  items-center grid-cols-2 grid-flow-cols gap-7 ${
-            loading ? " py-1.5 px-2 rounded bg-slate-400 animate-pulse" : ""
+            loading ? " py-1.5 px-2 rounded bg-gradient-to-r from-gray-300 to-slate-400  animate-pulse" : ""
           }`}
         >
           <div

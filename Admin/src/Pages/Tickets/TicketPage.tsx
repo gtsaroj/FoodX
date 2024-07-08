@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import PendingTicket from "../Components/Tickets/PendingTicket";
-import ProgressTicket from "../Components/Tickets/ProgressTicket";
-import ResolveTicket from "../Components/Tickets/ResolveTicket";
-import CancelTicket from "../Components/Tickets/CancelTicket";
+import PendingTicket from "../../Components/Tickets/PendingTicket";
+import ProgressTicket from "../../Components/Tickets/ProgressTicket";
+import ResolveTicket from "../../Components/Tickets/ResolveTicket";
+import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
-import Modal from "../Components/Common/Popup/Popup";
-import CreateTicket from "../Components/Upload/CreateTicket";
-import { EmployeeCard } from "../Components/Common/Cards/EmployeeCard";
+import Modal from "../../Components/Common/Popup/Popup";
+import CreateTicket from "../../Components/Upload/CreateTicket";
+import { EmployeeCard } from "../../Components/Common/Cards/EmployeeCard";
 
 // interface ButtonProp {
 //   title: string[];

@@ -1,4 +1,4 @@
-import { UpdateProfileType } from "./AdminProfile";
+import { UpdateProfileType } from "../../Pages/Admin/AdminProfile";
 
 export interface ChangePasswordType {
   newPassword: string;
@@ -38,21 +38,15 @@ export const checkPassword = (
   password: ChangePasswordType,
   error: Record<string, string>
 ) => {
-  if (
-
-    !password.newPassword &&
-    !password.confirmNewPassword
-  ) {
+  if (!password.newPassword && !password.confirmNewPassword) {
     error.oldPassword = "*required";
     error.newPassword = "*required";
     error.confirmNewPassword = "*required";
     return;
   }
-  
-  const passkey = (
-    password.newPassword?.trim() &&
-    password.confirmNewPassword.trim()
-  )
+
+  const passkey =
+    password.newPassword?.trim() && password.confirmNewPassword.trim();
 
   //Regular Expression
   const lowerCase = new RegExp("(?=.*[a-z])");

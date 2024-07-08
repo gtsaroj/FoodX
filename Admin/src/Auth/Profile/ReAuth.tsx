@@ -4,8 +4,12 @@ import { Eye, EyeOff, X } from "lucide-react";
 import ClipLoader from "react-spinners/HashLoader";
 // import { reAuthUser } from "../../firebase/utils";
 import toast from "react-hot-toast";
+import { reAuthUser } from "../../firebase/utils";
 
-const ReAuth = ({ reAuthUsers }: any) => {
+
+
+
+const ReAuth = ({ reAuthUsers }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -53,8 +57,7 @@ const ReAuth = ({ reAuthUsers }: any) => {
           <div className="px-3 py-4">
             <form
               className="flex flex-col gap-4 p-2"
-              onSubmit={() =>
-                HandleSubmit(event as unknown as FormEvent<HTMLFormElement>)
+              onSubmit={HandleSubmit
               }
             >
               <div className="relative flex flex-col gap-2">

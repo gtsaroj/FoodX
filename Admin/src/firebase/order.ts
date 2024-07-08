@@ -1,5 +1,4 @@
 // add new order to database
-
 import {
   addDoc,
   collection,
@@ -11,6 +10,7 @@ import {
   orderBy,
   query,
   startAfter,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { Order } from "../models/order.model";
@@ -84,6 +84,17 @@ const getOrderByUser = async (
   } catch (error) {
     console.error(error);
     throw new Error("Error getting user orders!");
+  }
+};
+
+export const updateOrderStatus = async (newStatus: string, orderId: any) => {
+
+  const orderRef = doc(db, "orders", orderId);
+  try {
+    const updateStatus = await updateDoc(orderRef, { status: newStatus });
+    return updateStatus;
+  } catch (err) {
+    throw new Error("Unable to update user order status");
   }
 };
 

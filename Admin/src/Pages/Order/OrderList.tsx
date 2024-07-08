@@ -1,19 +1,21 @@
 import { Download, Filter, Search } from "lucide-react";
-import data from "../data.json";
-import { DropDown } from "../Components/Common/DropDown/DropDown";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { getOrders } from "../Services";
-import { Order } from "../models/order.model";
-import { deleteOrderFromDatabase } from "../firebase/oder";
-import Table from "../Components/Common/Table/Table";
-import { getUserData } from "../firebase/db";
-import { debounce } from "../Utility/Debounce";
-import { SearchProduct } from "../Utility/Search";
-import { getFullName } from "../Utility/Utils";
+import data from "../../data.json";
+import { DropDown } from "../../Components/Common/DropDown/DropDown";
+import { useCallback, useEffect, useState } from "react";
+import { getOrders } from "../../Services";
+import { Order } from "../../models/order.model";
+import {
+  deleteOrderFromDatabase,
+  updateOrderStatus,
+} from "../../firebase/order";
+import Table from "../../Components/Common/Table/Table";
+import { debounce } from "../../Utility/Debounce";
+import { SearchProduct } from "../../Utility/Search";
+import { getFullName } from "../../Utility/Utils";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<Order[]>([]);
-  const { orderHeaders, orders } = data;
+  const [orderHeader, setOrderHeader] = useState<string[]>([]);
 
   const handleCheckboxChange = (
     rowIndex: number,
@@ -23,9 +25,18 @@ const OrderList = () => {
     console.log(rowIndex, colName, checked);
   };
 
- const handleChange = (value: string) => {
+  const handleChange = (value: string) => {
     const filterOrder = SearchProduct(initialOrders, value);
     if (filterOrder) setInitialOrders(filterOrder);
+  };
+
+  const changeOrderStatus = async (value: string, uid: string) => {
+    try {
+      const updateStatus = await updateOrderStatus(value, uid);
+      console.log(updateStatus);
+    } catch (error) {
+      throw new Error("Unable to update order status");
+    }
   };
 
   const handleDelete = async (orderId: string) => {
@@ -50,8 +61,10 @@ const OrderList = () => {
         const totalOrders = orders.data as Order[];
         const aggregateData = totalOrders?.map(async (item) => {
           const getUserName = await getFullName(item.uid);
-          const productNames =  item.products?.map((product)=> product.name as string);
-          return { ...item, uid: getUserName,products : productNames };
+          const productNames = item.products?.map(
+            (product) => product.name as string
+          );
+          return { ...item, uid: getUserName, products: productNames };
         });
         const getaggregateDataPromises = await Promise.all(aggregateData);
 
@@ -62,6 +75,21 @@ const OrderList = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (initialOrders.length > 0) {
+          const headersOfOrder = initialOrders[0];
+          const keys = Object.keys(headersOfOrder);
+          keys.push("Button");
+          setOrderHeader(keys);
+        }
+      } catch (error) {
+        throw new Error(error);
+      }
+    })();
+  }, [initialOrders]);
 
   return (
     <div className="w-full py-6 flex rounded-sm  flex-col gap-16 items-start justify-center px-4">
@@ -76,6 +104,10 @@ const OrderList = () => {
           />
         </form>
         <div className="flex items-center justify-center gap-4">
+          <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+            <Download className="size-4" />
+            <span className="text-[15px] ">Export</span>
+          </button>
           <DropDown
             options={[]}
             children={
@@ -90,27 +122,29 @@ const OrderList = () => {
               fontSize: "15px",
               borderRadius: "4px",
               padding: "0.5rem 1rem 0.5rem 1rem",
-              color: "var(--light-text)",
+              color: "var(--dark-text)",
+              border: "1px solid var(--dark-secondary-text)  ",
               alignItems: "center",
               justifyContent: "center",
               gap: "0.5rem",
-              background: "var(--dark-foreground) ",
+              background: "",
             }}
           />
-          <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
-            <Download className="size-4" />
-            <span className="text-[15px] ">Export</span>
-          </button>
         </div>
       </div>
       <div className="w-full shadow-lime-300 rounded-t-md  shadow-inner overflow-auto">
         <Table
+          loading={false}
+          option={(value: string, orderId: string) =>
+            changeOrderStatus(value, orderId)
+          }
+          options={["Pending", "Canceled", "Recieved", "Delivered"]}
           actions={(value) => handleDelete(value)}
           pagination={{ currentPage: 1, perPage: 10 }}
           width="800px"
-          colSpan={"6"}
+          colSpan={"7"}
           data={initialOrders}
-          headers={orderHeaders}
+          headers={orderHeader}
           onCheckBoxChange={handleCheckboxChange}
         />
       </div>

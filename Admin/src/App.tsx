@@ -8,13 +8,13 @@ import {
   Outlet,
 } from "react-router-dom";
 import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
-import Analytics from "./Pages/Analytics";
-import OrderList from "./Pages/OrderList";
+import Analytics from "./Pages/Analytics/Analytics";
+import OrderList from "./Pages/Order/OrderList";
 import CustomerList from "./Pages/CustomerList";
-import TicketPage from "./Pages/TicketPage";
+import TicketPage from "./Pages/Tickets/TicketPage";
 import { AdminProfile } from "./Pages/Admin/AdminProfile";
 import BannerPage from "./Pages/BannerPage";
-import FoodPage from "./Pages/FoodPage";
+import FoodPage from "./Pages/Food/FoodPage";
 import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
@@ -22,7 +22,7 @@ import { useSelector } from "react-redux";
 import { RootState, persistor } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
-import { CategoryPage } from "./Pages/CategoryPage";
+import { CategoryPage } from "./Pages/Category/CategoryPage";
 
 const MainPage = () => {
   persistor.purge()
