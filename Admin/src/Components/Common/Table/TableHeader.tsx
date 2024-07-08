@@ -6,9 +6,9 @@ interface TableHeaderProp {
   colSpan: string;
   // onCheckBox: (rowIndex: number, colName: string, checked: boolean) => void;
 }
-`x`;
+
 export const TableHeader: React.FC<TableHeaderProp> = ({ header, colSpan }) => {
-  console.log(header);
+  console.log(header)
   return (
     <React.Fragment>
       <thead className="w-full bg-[var(--light-background)] py-5 border-b-[1px]">
@@ -17,13 +17,15 @@ export const TableHeader: React.FC<TableHeaderProp> = ({ header, colSpan }) => {
         >
           {header.map((hd, index) =>
             hd.toLowerCase() === "checkbox" ? (
-              <input className="w-4 cursor-pointer h-4" type="checkbox" />
+              <th key={index}>
+                <input className="w-4 cursor-pointer h-4" type="checkbox" />
+              </th>
             ) : hd.toLowerCase() === "button" ? (
               ""
             ) : (
-              <td key={index} className="col-span-1">
+              <th key={index} className="col-span-1">
                 {hd}
-              </td>
+              </th>
             )
           )}
         </tr>

@@ -14,6 +14,7 @@ import { Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/Action";
 import { makeRequest } from "./makeRequest";
 import { UseFetch } from "../../frontend/src/UseFetch";
+import { UploadProductType } from "./models/productMode";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -141,9 +142,9 @@ export const postBanners = async (data: any) => {
 };
 export const getProducts = async () => {
   try {
-    const response = await globalRequest({
+    const response = await makeRequest({
       method: "get",
-      url: "users/register",
+      url: "products/all",
     });
     return response.data;
   } catch (error) {
@@ -151,11 +152,25 @@ export const getProducts = async () => {
   }
 };
 
-export const getOrderByUser = async () => {
+export const addProducts = async (data: UploadProductType) => {
   try {
     const response = await makeRequest({
-      method: "get",
+      method: "post",
+      url: "products/add-product",
+      data: { ...data },
+    });
+    return response.data;
+  } catch (error) {
+    console.log(`Error while adding banners : ${error}`);
+  }
+};
+
+export const getOrderByUser = async (id: string) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
       url: "orders/user-order",
+      data: { id: id },
     });
     return response.data;
   } catch (error) {

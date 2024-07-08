@@ -14,10 +14,10 @@ export interface Order {
 
 export interface Product {
   name: string;
-  quantity: number;
-  price: number;
-  image: string;
-  tag: Category["types"];
+  quantity: number | string;
+  price: number | string;
+  image: string | any;
+  tag: Category["types"] | undefined;
 }
 
 export interface Banner {

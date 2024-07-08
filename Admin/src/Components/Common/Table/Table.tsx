@@ -5,11 +5,15 @@ import { HeaderProp } from "../../Collection/FoodTable";
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { convertTimestampToDate } from "../../../Utility/DateUtils";
+import { CustomerType } from "../../../models/user.model";
 
 interface TableProp {
+  option: (value: string, uid: string) => void;
+  options?: string[];
+  loading: boolean;
   headers: string[];
   actions: (rowData: string) => void;
-  data: HeaderProp[] | [];
+  data: HeaderProp[] | [] | CustomerType[];
   width: string;
   onCheckBoxChange: (
     rowIndex: number,
@@ -21,6 +25,9 @@ interface TableProp {
 }
 
 const Table: React.FC<TableProp> = ({
+  option,
+  options,
+  loading,
   data,
   actions,
   headers,
@@ -45,7 +52,7 @@ const Table: React.FC<TableProp> = ({
     const currentData: Order[] = data.slice(startIndex, endIndex);
     setCurrentDatas(currentData as any[]);
   }, [data, startIndex, endIndex]);
-  
+
   //
 
   return (
@@ -58,9 +65,11 @@ const Table: React.FC<TableProp> = ({
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (
               <TableRowComponent
+                option={option}
                 actions={(value) => {
                   actions(value);
                 }}
+                options={options}
                 headerColSpan={headers}
                 row={row}
                 rowIndex={rowIndex}
@@ -77,7 +86,7 @@ const Table: React.FC<TableProp> = ({
           onChange={onChangePage}
           currentPage={currentPage}
           perPage={pagination?.perPage}
-          totalData={data.length}
+          totalData={data?.length}
         />
       </div>
     </div>

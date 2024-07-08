@@ -1,12 +1,13 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
+import { Button } from "../components/ui/button";
 
 interface DropDownProp {
-  options: string[];
+  options: string[] | ReactNode;
   children: React.ReactNode;
   style: React.CSSProperties;
   value?: string;
-  onSelect?: (selectedOption: string) => void;
+  onSelect?: (selectedOption: string, uid?: string) => void;
 }
 
 export const DropDown: React.FC<DropDownProp> = ({
@@ -25,23 +26,19 @@ export const DropDown: React.FC<DropDownProp> = ({
   };
 
   return (
-    <div className="">
+    <div className="w-full flex justify-end">
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="">
-          <button style={style}>{children}</button>
+        <DropdownMenu.Trigger style={style} className="">
+          {children}
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="relative bg-[var(--light-background)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
-            {options?.map((item, index) => (
-              <DropdownMenu.Item
-                key={index}
-                onClick={() => handleSelect(item as string)}
-                className=" outline-none w-full cursor-pointer duration-150 ] contrast-100 brightness-100 rounded px-10 py-1.5 text-[15px] hover:text-[var(--light-foreground)] hover:bg-[#666]  "
-              >
+            {options?.map((item: any, index): any => (
+              <button onClick={()=>handleSelect(item)} className="w-full duration-150 px-9 py-2 hover:bg-[var(--light-foreground)] ">
                 {item}
-              </DropdownMenu.Item>
+              </button>
             ))}
-            <div className="w-[10px] h-[10px] z-[-1] absolute top-[-5px] right-16 rotate-45  bg-[var(--light-background)] "></div>
+            <div className="w-[10px] h-[10px] z-[-1] absolute top-[-5px]  rotate-45  bg-[var(--light-background)] "></div>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>

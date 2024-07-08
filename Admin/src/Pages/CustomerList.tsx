@@ -1,26 +1,21 @@
-import { Filter, Search } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { ArrowDown, ArrowDownAZ, ArrowUp, Search } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import Table from "../Components/Common/Table/Table";
-import data from "../data.json";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
-import { getCustomerData, getOrderByUserId } from "../firebase/db";
-import { DbUser } from "../models/UserModels";
-import { getOrderByUser } from "../Services";
-import { aggregateCustomerData } from "../Utility/CustomerUtils";
+import { getCustomerData } from "../firebase/db";
+import "../index.css";
+import {
+  aggregateCustomerData,
+  aggregateCustomerSearchData,
+} from "../Utility/CustomerUtils";
+import { CustomerType } from "../models/user.model";
+import { debounce } from "../Utility/Debounce";
+import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
 
 const CustomerList: React.FC = () => {
-  const [initialCustomer, setInitialCustomer] = useState<DbUser[]>();
+  const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
+  const [customerHeader, setCustomerHeader] = useState<string[]>([]);
 
-  useEffect(() => {
-    getCustomerData("customers")
-      .then((data: DbUser[]) => {
-         aggregateCustomerData(data);
-        setInitialCustomer(data);
-      })
-      .catch((err) => new Error("Unable to get customer datas" + err));
-  }, []);
-
-  const { customers, customerDetails } = data;
   const handleCheckboxChange = (
     rowIndex: number,
     colName: string,
@@ -29,8 +24,34 @@ const CustomerList: React.FC = () => {
     console.log(rowIndex, colName, checked);
   };
 
-  const searchFormRef = useRef<HTMLButtonElement>(null);
+  const handleChange = async (value: string) => {
+    const customers = await getCustomerData("customers");
+    const customerList = await aggregateCustomerSearchData(customers, value);
+    console.table(customerList);
+    if (customerList) setInitialCustomer(customerList);
+  };
 
+  useEffect(() => {
+    const handleCustomerData = async () => {
+      const customers = await getCustomerData("customers");
+      const customerList = await aggregateCustomerData(customers);
+      setInitialCustomer(customerList);
+    };
+    handleCustomerData();
+  }, []);
+
+  useEffect(() => {
+    if (initialCustomer.length > 0) {
+      const CustomerHeadersObject = initialCustomer[0];
+      const headers = Object.keys(CustomerHeadersObject);
+      headers.unshift("Checkbox");
+      setCustomerHeader(headers);
+    }
+  }, [initialCustomer.length, initialCustomer]);
+
+  const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
+    initialCustomer,
+  ]);
 
   return (
     <div className="2xl:container w-full py-2  flex flex-col gap-7 items-start justify-center">
@@ -40,6 +61,7 @@ const CustomerList: React.FC = () => {
           <Search className="absolute text-[var(--dark-secondary-text)]    top-3 size-5 left-2" />
           <input
             type="search"
+            onChange={(e) => debouncedHandleChange(e.target.value)}
             className=" pl-9 border-[1px] placeholder:text-sm outline-none w-full sm:w-[250px] rounded py-2 px-8 border-[var(--dark-secondary-text)] "
             placeholder="Search for customer"
           />
@@ -48,11 +70,12 @@ const CustomerList: React.FC = () => {
           children={
             <>
               {" "}
-              <Filter className="size-4" />
-              <span>Filter</span>
+              <ArrowDownAZ className="size-4" />
+              <span>Sort By</span>
             </>
           }
-          options={[]}
+          options={[ <SortOptions/>
+          ]}
           style={{
             display: "flex",
             fontSize: "15px",
@@ -66,14 +89,16 @@ const CustomerList: React.FC = () => {
             background: "",
           }}
         />
+
+        <DatePickerDemo />
       </div>
       <div className="w-full">
         <Table
-          pagination={{ perPage: 2, currentPage: 1 }}
+          pagination={{ perPage: 5, currentPage: 1 }}
           width="800px"
-          data={customerDetails}
+          data={initialCustomer as CustomerType[]}
           colSpan="7"
-          headers={customers}
+          headers={customerHeader as string[]}
           onCheckBoxChange={handleCheckboxChange}
         />
       </div>
@@ -82,3 +107,31 @@ const CustomerList: React.FC = () => {
 };
 
 export default CustomerList;
+
+export const SortOptions = () => {
+  return (
+    <div className="flex flex-col items-start px-5 justify-center gap-2">
+      <div className="flex text-[15px]  items-center gap-5 justify-center">
+        Name{" "}
+        {/* <div className="flex items-center justify-center gap-2">
+          <ArrowDown className="size-4" />
+          <ArrowUp className="size-4" />
+        </div>{" "} */}
+      </div>
+      <div className="flex  text-[15px] items-center gap-5 justify-center">
+        Amount Spent{" "}
+        {/* <div className="flex items-center justify-center gap-2">
+          <ArrowDown className="size-4" />
+          <ArrowUp className="size-4" />
+        </div>{" "} */}
+      </div>
+      <div className="flex text-[15px]  items-center gap-5 justify-center">
+        Order{" "}
+        {/* <div className="flex items-center justify-center gap-2">
+          <ArrowDown className="size-4" />
+          <ArrowUp className="size-4" />
+        </div>{" "} */}
+      </div>
+    </div>
+  );
+};

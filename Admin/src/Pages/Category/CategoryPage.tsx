@@ -1,9 +1,9 @@
 import { Plus, Search } from "lucide-react";
 import React, { useState } from "react";
-import Modal from "../Components/Common/Popup/Popup";
-import { FilterButton } from "../Components/Common/Filter/Filter";
-import { CategoryTable } from "../Components/Collection/CategoryTable";
-import { UploadCategory } from "../Components/Upload/UploadCategory";
+import Modal from "../../Components/Common/Popup/Popup";
+import { FilterButton } from "../../Components/Common/Filter/Filter";
+import { CategoryTable } from "../../Components/Collection/CategoryTable";
+import { UploadCategory } from "../../Components/Upload/UploadCategory";
 
 export const CategoryPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);

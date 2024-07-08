@@ -9,6 +9,9 @@ import { UpdateProfileType } from "./UpdateAdminProfile";
 // import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 // import { updateUserProfile } from "../../firebase/utils";
 import HashLoader from "react-spinners/HashLoader";
+import { AppDispatch, RootState } from "../../Reducer/Store";
+import { storeImageInFirebase } from "../../firebase/storage";
+import { updateUserProfile } from "../../firebase/utils";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();

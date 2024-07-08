@@ -8,7 +8,7 @@ import {
 
 const orderRoutes = Router();
 orderRoutes.route("/all-orders").get(verifyJwt, getAllOrdersFromDatabase);
-orderRoutes.route("/user-order").get(verifyJwt, getOrderByUserIdFromDatabase);
+orderRoutes.route("/user-order").post(getOrderByUserIdFromDatabase);
 orderRoutes.route("/add-order").post(verifyJwt, addNewOrder)
 
 export { orderRoutes };

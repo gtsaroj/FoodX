@@ -92,6 +92,7 @@ const updateProduct = async (
   }
 };
 
+
 export {
   addProductToFirestore,
   getProductByName,

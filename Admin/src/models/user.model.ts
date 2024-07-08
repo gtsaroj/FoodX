@@ -19,6 +19,7 @@ export interface CustomerType {
   name: string;
   email: string;
   location: string;
-  amountSpent: string;
+  amountSpent: string | number;
+  totalOrder : string | number;
   role: string;
 }

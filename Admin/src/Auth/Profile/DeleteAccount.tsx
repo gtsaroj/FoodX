@@ -1,17 +1,9 @@
 import React, { FormEvent, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { makeRequest } from "../../makeRequest";
-// import { deleteAccount } from "../../firebase/utils";
-import { useDispatch } from "react-redux";
-// import { authLogout } from "../../Reducer/authReducer";
-import Cookies from "js-cookie";
-import ReAuth from "./ReAuth";
 
 const DeleteAccount: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
   const [step2, setStep2] = useState<boolean>(false);
-
-  const dispatch = useDispatch();
 
   const HandleDeleteAccount = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

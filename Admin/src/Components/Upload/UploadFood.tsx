@@ -1,42 +1,55 @@
 import { UploadIcon } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
+import { UploadProductType } from "../../models/productMode";
+import { nanoid } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
+import { addProducts } from "../../Services";
 
 const options = [
   {
     label: "Pizza",
-    value: 1,
+    value: "pizza",
   },
   {
     label: "Cold drinks",
-    value: 2,
+    value: "cold_drinks",
   },
   {
     label: "Hot drinks",
-    value: 3,
+    value: "hot_drinks",
   },
   {
     label: "MOMO",
-    value: 4,
+    value: "momo",
   },
 ];
 
 const UploadFood: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
+  const [addFood, setAddFood] = useState<UploadProductType>({
+    products: {
+      id: nanoid(),
+      name: "",
+      image: "",
+      price: NaN,
+      quantity: NaN,
+      tag: undefined,
+    },
+    collection: "products",
+  });
 
-  const [Scroll, setScroll] = useState<boolean>(false);
-
-  const scroller = () => {
-    if (reference.current && reference.current?.scrollTop > 0) {
-      console.log("detected");
-    }
-  };
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const currentRef = reference.current;
-    if (currentRef) currentRef.addEventListener("scroll", scroller);
-    return () => currentRef?.removeEventListener("scroll", scroller);
-  },);
+  const handleClick = async (event : FormEvent , data: UploadProductType) => {
+     event.preventDefault();
+    if (!data) return toast.error("Product are unavailable");
+    try {
+      const addProduct = await addProducts(data);
+      if (addProduct) return toast.success("Succesfully Added");
+    } catch (error) {
+      return toast.error("Unable to add product");
+    }
+  };
 
   return (
     <React.Fragment>
@@ -49,13 +62,13 @@ const UploadFood: React.FC = () => {
         </h3>
 
         <form
+          onSubmit={(event) => handleClick(event , addFood)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-3 flex flex-col items-start justify-center"
         >
           {/* First Row */}
           <div
             className="flex sm:flex-row flex-col
-
           w-full items-center gap-5  justify-start "
           >
             {" "}
@@ -68,6 +81,12 @@ const UploadFood: React.FC = () => {
               </label>
               <input
                 type="text"
+                onChange={(event) =>
+                  setAddFood((prev) => ({
+                    ...prev,
+                    products: { ...prev.products, name: event.target.value },
+                  }))
+                }
                 placeholder="Pizza"
                 className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-2 px-4 rounded"
               />
@@ -80,54 +99,129 @@ const UploadFood: React.FC = () => {
                 Price
               </label>
               <input
-                type="text"
+                type="number"
+                onChange={(event) =>
+                  setAddFood((prev) => ({
+                    ...prev,
+                    products: { ...prev.products, price: event.target.value },
+                  }))
+                }
                 placeholder="Rs. 1,200"
                 className="w-full placeholder:text-sm  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
               />
             </div>
           </div>
           {/* Second Row */}
-          <div className="flex w-full flex-col items-start justify-center gap-0.5">
-            <label
-              className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
-              htmlFor=""
-            >
-              Category
-            </label>
-            <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
-              {" "}
-              <select
-                className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-                name=""
-                id=""
+          <div className="flex sm:flex-row flex-col w-full items-center gap-5  justify-start">
+            <div className="w-full flex flex-col items-baseline justify-center gap-0.5">
+              <label
+                className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+                htmlFor=""
               >
-                {options.map((opt) => (
-                  <option className="text-[var(--dark-text)]" value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                Category
+              </label>
+              <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
+                {" "}
+                <select
+                  className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
+                  name=""
+                  id=""
+                  onChange={(event) =>
+                    setAddFood((prev) => ({
+                      ...prev,
+                      products: {
+                        ...prev.products,
+                        tag: event.target.value as any,
+                      },
+                    }))
+                  }
+                >
+                  {options.map((opt) => (
+                    <option
+                      className="text-[var(--dark-text)]"
+                      value={opt.value}
+                    >
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="w-full flex flex-col items-baseline justify-center gap-0.5">
+              <label
+                className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+                htmlFor=""
+              >
+                Quantity
+              </label>
+              <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
+                <input
+                  type="number"
+                  onChange={(event) =>
+                    setAddFood((prev) => ({
+                      ...prev,
+                      products: {
+                        ...prev.products,
+                        quantity: event.target.value,
+                      },
+                    }))
+                  }
+                  placeholder="Enter Quantity"
+                  className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
+                />
+              </div>
             </div>
           </div>
           {/* Third Row */}
-          <div
-            onClick={() => fileRef.current?.click()}
-            className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
-          >
-            <input ref={fileRef as any} type="file" className="hidden" />
-            <div className="absolute w-full flex flex-col items-center bottom-10 justify-center gap-1">
-              <UploadIcon className="size-7 text-[var(--dark-text)] " />
-              <span className="text-sm text-[var(--dark-text)] ">
-                Upload a file or drag and drop
-              </span>
-              <span className="text-[var(--dark-secondary-text)] text-sm ">
-                jpg,png upto 10 mb
-              </span>
+          {addFood.products.image ? (
+            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+              {" "}
+              <img
+                className="w-full h-[230px] object-fill"
+                src={URL.createObjectURL(addFood?.products.image as any)}
+              />
             </div>
-          </div>
+          ) : (
+            <div
+              onClick={() => fileRef.current?.click()}
+              className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+            >
+              <input
+                ref={fileRef as any}
+                onChange={(event) => {
+                  if (event.target.files)
+                    setAddFood((prev) => ({
+                      ...prev,
+                      products: {
+                        ...prev.products,
+                        image: event.target.files[0] as any,
+                      },
+                    }));
+                }}
+                type="file"
+                className="hidden"
+              />
+              <div className=" w-full flex flex-col items-center bottom-10 justify-center gap-1">
+                <UploadIcon className="size-7 text-[var(--dark-text)] " />
+                <span className="text-sm text-[var(--dark-text)] ">
+                  Upload a file or drag and drop
+                </span>
+                <span className="text-[var(--dark-secondary-text)] text-sm ">
+                  jpg,png upto 10 mb
+                </span>
+              </div>
+            </div>
+          )}
           <div className="  pl-2 flex items-center justify-center gap-4">
             <input
+              onChange={(event) => {
+                if (event.target.checked)
+                  setAddFood((prev) => ({ ...prev, collection: "specials" }));
+                else
+                  setAddFood((prev) => ({ ...prev, collection: "products" }));
+              }}
               type="checkbox"
+              value={"specials"}
               className="w-[15px] cursor-pointer scale-[1.1] h-[15px] "
             />
             <p className="text-[16px] text-[var(--dark-text)] ">
@@ -135,7 +229,7 @@ const UploadFood: React.FC = () => {
               Would you like to mark this as a special product ?
             </p>
           </div>
-          <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button type="submit" className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             Save
           </button>
         </form>

@@ -27,16 +27,18 @@ const addNewOrderToDatabase = async (order: Order) => {
   }
 };
 const getOrdersByUserId = async (uid: string) => {
+  console.log(uid);
   const orderDocRef = db.collection("orders");
   try {
-    const orders: Order[] = [];
-    const query = orderDocRef.where("uid", "==", uid);
-    const observer = query.onSnapshot((querySnapshot) => {
-      return querySnapshot.docs.map((doc) => {
-        const data = doc.data() as Order;
-        orders.push(data);
-      });
+    let orders: Order[] = [];
+    const query = await orderDocRef.where("uid", "==", uid).get();
+    if (query.empty) return orders;
+    query.docs.forEach((doc) => {
+      const data = doc.data() as Order;
+      orders.push(data);
     });
+
+    console.log(orders);
     return orders;
   } catch (error) {
     throw new ApiError(400, "No orders found.");

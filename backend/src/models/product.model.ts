@@ -6,6 +6,11 @@ export interface Product {
   image: string;
   tag: Category["types"];
 }
+export interface UploadProductType {
+  products: Product;
+  collection: Collection["name"];
+}
+
 
 export interface Category {
   types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
