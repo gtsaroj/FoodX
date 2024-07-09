@@ -10,7 +10,7 @@ import {
   getUserFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
-import { DecodeToken, User } from "../models/user.model.js";
+import { CustomerType, DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -238,6 +238,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
     throw new ApiError(400, "Error updating user in database.");
   }
 });
+
 
 export {
   loginUser,

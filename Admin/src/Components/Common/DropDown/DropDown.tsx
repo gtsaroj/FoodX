@@ -34,11 +34,11 @@ export const DropDown: React.FC<DropDownProp> = ({
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="relative bg-[var(--light-background)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
             {options?.map((item: any, index): any => (
-              <button onClick={()=>handleSelect(item)} className="w-full duration-150 px-9 py-2 hover:bg-[var(--light-foreground)] ">
+              <button onClick={()=>handleSelect(item)} className="w-full text-[15px] duration-150 px-9 py-2 hover:bg-[var(--light-foreground)] ">
                 {item}
               </button>
             ))}
-            <div className="w-[10px] h-[10px] z-[-1] absolute top-[-5px]  rotate-45  bg-[var(--light-background)] "></div>
+            <div className="w-[10px] h-[10px] z-[-1] absolute right-20 top-[-5px]  rotate-45  bg-[var(--light-background)] "></div>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
       </DropdownMenu.Root>

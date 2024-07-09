@@ -11,13 +11,13 @@ export const aggregateDailyCategoryOrder = (
   // let category: DailyCategoryAgrregateData[];
 
   const categoryMap: { [key: string]: number } = {};
-  let currentWeekOrders: Order[] = [];
-  if (options === "current week")
-    currentWeekOrders = aggregateDataCurrentWeek(orders);
-  if (options === "previous week")
-    currentWeekOrders = aggregateDataPreviousWeek(orders);
+  // let currentWeekOrders: Order[] = [];
+  // if (options === "current week")
+  //   currentWeekOrders = aggregateDataCurrentWeek(orders);
+  // if (options === "previous week")
+  //   currentWeekOrders = aggregateDataPreviousWeek(orders);
 
-  currentWeekOrders.forEach((order) => {
+  orders.forEach((order) => {
     order?.products?.forEach((product) => {
       if (categoryMap[product.tag]) {
         categoryMap[product?.tag] += product?.quantity;
@@ -32,7 +32,6 @@ export const aggregateDailyCategoryOrder = (
     label: tag,
     value: categoryMap[tag],
   }));
-  console.log(categoryMap, dailyaggregateCategories);
 
   return dailyaggregateCategories;
 };

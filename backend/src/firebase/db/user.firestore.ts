@@ -69,7 +69,6 @@ const getUserFromDatabase = async (uid: string) => {
 
     const customerInfo = await userRef.get();
     const adminInfo = await adminRef.get();
-
     if (customerInfo.exists) {
       const customerData = customerInfo.data() as User;
       return customerData;

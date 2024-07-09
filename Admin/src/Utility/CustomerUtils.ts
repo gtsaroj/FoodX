@@ -6,40 +6,45 @@ import { SearchCustomer } from "./Search";
 import { totalCost, totalQuantity } from "./Utils";
 
 // aggregate Customer Data
-export const aggregateCustomerData = async (customers: DbUser[]): Promise<CustomerType[]> => {
+export const aggregateCustomerData = async (
+  customers: DbUser[]
+): Promise<CustomerType[]> => {
   const customerList: CustomerType[] = [];
   const batchSize = 10;
 
   // Split customers into batches
   for (let i = 0; i < customers.length; i += batchSize) {
     const batch = customers.slice(i, i + batchSize);
-    console.log(i,i+batchSize);
-    const totalCustomersPromises = batch.map(async (data: DbUser): Promise<CustomerType> => {
-      try {
-        const userOrderData = await getOrderByUser(data.uid);
-        const totalUserOrder = userOrderData.data as Order[];
+    console.log(i, i + batchSize);
+    const totalCustomersPromises = batch.map(
+      async (data: DbUser): Promise<CustomerType> => {
+        try {
+          const userOrderData = await getOrderByUser(data.uid);
+          const totalUserOrder = userOrderData.data as Order[];
 
-        let totalCustomerCost: number = 0;
-        let totalCustomerQuantity: number = 0;
+          let totalCustomerCost: number = 0;
+          let totalCustomerQuantity: number = 0;
 
-        totalUserOrder.forEach((order) => {
-          totalCustomerQuantity += totalQuantity(order.products as Product[]);
-          totalCustomerCost += totalCost(order.products as Product[]);
-        });
+          totalUserOrder.forEach((order) => {
+            totalCustomerQuantity += totalQuantity(order.products as Product[]);
+            totalCustomerCost += totalCost(order.products as Product[]);
+          });
 
-        return {
-          name: data.fullName,
-          email: data.email,
-          location: "fljds",
-          amountSpent: totalCustomerCost.toFixed(2),
-          totalOrder: totalCustomerQuantity,
-          role: data.role as string,
-        };
-      } catch (error) {
-        console.error(`Error fetching orders for user ${data.uid}:`, error);
-        throw error;
+          return {
+            id: data.uid,
+            name: data.fullName,
+            email: data.email,
+            location: "fljds",
+            amountSpent: totalCustomerCost.toFixed(2),
+            totalOrder: totalCustomerQuantity,
+            role: data.role as string,
+          };
+        } catch (error) {
+          console.error(`Error fetching orders for user ${data.uid}:`, error);
+          throw error;
+        }
       }
-    });
+    );
 
     try {
       const results = await Promise.all(totalCustomersPromises);

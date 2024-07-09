@@ -63,6 +63,8 @@ export const aggregateLineDataWeekly = (orders: Order[]) => {
 export const aggregateLineDataMonthly = (orders: Order[], option: string) => {
   const datas: { [key: string]: string | number }[] = [];
 
+  console.log(orders)
+
   let currentFilterData: Order[] = [];
 
   if (option === "previous month")

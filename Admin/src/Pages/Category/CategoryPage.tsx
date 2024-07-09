@@ -1,14 +1,65 @@
-import { Plus, Search } from "lucide-react";
-import React, { useState } from "react";
+import { Filter, Plus, Search } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { FilterButton } from "../../Components/Common/Filter/Filter";
 import { CategoryTable } from "../../Components/Collection/CategoryTable";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
+import Table from "../../Components/Common/Table/Table";
+import { getCategory } from "../../firebase/db";
+import { SearchCategory } from "../../Utility/Search";
+import { debounce } from "../../Utility/Debounce";
+import { DropDown } from "../../Components/Common/DropDown/DropDown";
 
 export const CategoryPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
-
+  const [category, setCategory] = useState<{ [key: string]: string }>();
+  const [search, setSearch] = useState<string>("");
+  const [categoryData, setCategoryData] = useState<
+    { category: string; image: string }[]
+  >([]);
+  const [categoryHeader, setCategoryHeader] = useState<string[]>([]);
   const closeModal = () => setIsModelOpen(true);
+
+  const getAllCategories = async () => {
+    const categories = await getCategory("bnw");
+    setCategory(categories.icons as any);
+  };
+
+  useEffect(() => {
+    if (category) {
+      const arrayOfObject = Object.keys(category as any).map((item) => ({
+        category: item,
+        image: category[item],
+      }));
+      setCategoryData(arrayOfObject);
+    }
+  }, [category]);
+
+  useEffect(() => {
+    if (categoryData.length > 0) {
+      const headers = Object.keys(categoryData[0]);
+      headers.push("Button");
+      headers.unshift("sn");
+      setCategoryHeader(headers);
+    }
+  }, [categoryData]);
+
+  useEffect(() => {
+    getAllCategories();
+  }, []);
+
+  const SearchingCategories = async (value: string) => {
+    const getCategories = (await getCategory("bnw")).icons;
+
+    const arrayOfObject = Object.keys(getCategories as any).map((item) => ({
+      category: item,
+      image: getCategories[item],
+    }));
+    const filterCategories = SearchCategory(arrayOfObject, value);
+    setCategoryData(filterCategories);
+  };
+
+  const debouncingSearch  = useCallback(debounce(SearchingCategories,250),[categoryData]);
 
   return (
     <div className="w-full relative py-4 flex flex-col gap-10 sm:px-4  items-start justify-center ">
@@ -24,13 +75,25 @@ export const CategoryPage: React.FC = () => {
         <form action="" className="relative">
           <Search className="absolute text-[var(--dark-secondary-text)]   cursor-pointer top-3 size-5 left-2" />
           <input
+            onChange={(event) => debouncingSearch(event.target.value)}
             type="search"
             className=" pl-9 border-[1px] placeholder:text-sm outline-none sm:w-[250px] w-full py-2 px-8 border-[var(--dark-secondary-text)] rounded  "
             placeholder="Search"
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
-          <FilterButton />
+        <DropDown options={[]}             style={{
+              display: "flex",
+              fontSize: "15px",
+              borderRadius: "4px",
+              padding: "0.4rem 1rem 0.4rem 1rem",
+              color: "var(--dark-text)",
+              border: "1px solid var(--dark-secondary-text)  ",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              background: "",
+            }} children={<><Filter className="size-4"/>Filter</> } />
           <button
             onClick={() => setIsModelOpen(!isModalOpen)}
             className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
@@ -40,10 +103,17 @@ export const CategoryPage: React.FC = () => {
           </button>
         </div>
       </div>
-      <CategoryTable />
+      <Table
+        actions={(string: string)=> console.log(string)}
+        pagination={{ currentPage: 1, perPage: 5 }}
+        width="500px"
+        colSpan={"4"}
+        headers={categoryHeader}
+        data={categoryData}
+      />
       <div className="absolute ">
         <Modal close={isModalOpen} closeModal={closeModal}>
-          <UploadCategory />
+          <UploadCategory categories={setCategory} />
         </Modal>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { EllipsisVertical } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./Table.css";
@@ -13,11 +13,8 @@ interface TableRowProps {
   actions: (row: string) => void;
   colSpan: string;
   rowIndex: number;
-  oncheckBoxChange?: (
-    rowIndex: number,
-    colName: string,
-    checked: boolean
-  ) => void;
+  oncheckBoxChange?: (checked: boolean, id: string) => void;
+  onSelectAll: boolean;
   option: (value: string, uid: string) => void;
 }
 
@@ -30,11 +27,18 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
   headerColSpan,
   colSpan,
   actions,
+  onSelectAll,
 }) => {
-  console.log(row);
+  const [isChecked, setIsChecked] = useState<boolean>(onSelectAll);
+  console.log(isChecked);
+
   function handleClick(value: string, uid: string) {
+    console.log(value, uid);
     option(value, uid);
   }
+  useEffect(() => {
+    setIsChecked(onSelectAll);
+  }, [onSelectAll]);
   return (
     <React.Fragment>
       <tr
@@ -57,14 +61,24 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
               hdr.toLowerCase() === "orderid" ? (
               rowIndex + 1
             ) : hdr.toLowerCase() === "checkbox" ? (
-              <input className="w-4 cursor-pointer h-4" type="checkbox" />
+              <input
+                checked={isChecked}
+                onChange={(event) => {
+                  if (event.target) {
+                    setIsChecked(event.target.checked);
+                    oncheckBoxChange(event.target.checked, row.id);
+                  }
+                }}
+                className="w-4 cursor-pointer h-4"
+                type="checkbox"
+              />
             ) : hdr.toLowerCase() === "button" ? (
               <DropDown
                 onSelect={(value) => {
                   actions(value);
                 }}
                 style={{}}
-                value={row.orderId}
+                value={row["id"]}
                 options={["Edit", "Delete"]}
                 children={
                   <EllipsisVertical className="size-6 duration-150 hover:text-[var(--danger-bg)] " />

@@ -10,8 +10,9 @@ import {
 } from "../../firebase/order";
 import Table from "../../Components/Common/Table/Table";
 import { debounce } from "../../Utility/Debounce";
-import { SearchProduct } from "../../Utility/Search";
+import { SearchOrder, SearchProduct } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
+import toast from "react-hot-toast";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<Order[]>([]);
@@ -26,14 +27,16 @@ const OrderList = () => {
   };
 
   const handleChange = (value: string) => {
-    const filterOrder = SearchProduct(initialOrders, value);
-    if (filterOrder) setInitialOrders(filterOrder);
+    const filterOrder = SearchOrder(initialOrders, value);
+    if (value?.length === 0) getAllOrders();
+    setInitialOrders(filterOrder);
   };
 
   const changeOrderStatus = async (value: string, uid: string) => {
     try {
-      const updateStatus = await updateOrderStatus(value, uid);
-      console.log(updateStatus);
+      await updateOrderStatus(value, uid);
+      await getAllOrders();
+      toast.success("Updated status");
     } catch (error) {
       throw new Error("Unable to update order status");
     }
@@ -42,8 +45,7 @@ const OrderList = () => {
   const handleDelete = async (orderId: string) => {
     if (!orderId) throw new Error("orderId not found");
     try {
-      const deleteOrder = await deleteOrderFromDatabase(orderId);
-      console.log(deleteOrder);
+      await deleteOrderFromDatabase(orderId);
     } catch (error) {
       throw new Error("Unable to delete order" + error);
     }
@@ -53,26 +55,35 @@ const OrderList = () => {
     initialOrders,
   ]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        //  get total orders data from  server
-        const orders = await getOrders();
-        const totalOrders = orders.data as Order[];
-        const aggregateData = totalOrders?.map(async (item) => {
-          const getUserName = await getFullName(item.uid);
+  const getAllOrders = async () => {
+    try {
+      //  get total orders data from  server
+      const orders = await getOrders();
+      const totalOrders = orders.data as Order[];
+      console.log(totalOrders)
+      const aggregateData = totalOrders?.map(async (item) => {
+      
+        const getUserName = await getFullName(item?.uid);
+     console.log(getUserName)
+        if (getUserName) {
           const productNames = item.products?.map(
             (product) => product.name as string
           );
           return { ...item, uid: getUserName, products: productNames };
-        });
-        const getaggregateDataPromises = await Promise.all(aggregateData);
+       }
+      });
+      const getaggregateDataPromises = await Promise.all(aggregateData);
 
-        if (getaggregateDataPromises)
-          setInitialOrders(getaggregateDataPromises as Order[]);
-      } catch (error) {
-        throw new Error("Unable to display orders data" + error);
-      }
+      if (getaggregateDataPromises)
+        setInitialOrders(getaggregateDataPromises as Order[]);
+    } catch (error) {
+      throw new Error("Unable to display orders data" + error);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      getAllOrders();
     })();
   }, []);
 

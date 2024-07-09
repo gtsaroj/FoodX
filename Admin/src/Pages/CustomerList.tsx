@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowDownAZ, ArrowUp, Search } from "lucide-react";
+import { ArrowDown, ArrowDownAZ, ArrowUp, Search, Trash } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Table from "../Components/Common/Table/Table";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
@@ -11,32 +11,66 @@ import {
 import { CustomerType } from "../models/user.model";
 import { debounce } from "../Utility/Debounce";
 import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
+import { deleteAllUser } from "../Services";
+import toast from "react-hot-toast";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [customerHeader, setCustomerHeader] = useState<string[]>([]);
+  const [checked, setChecked] = useState<CustomerType[]>([]);
+  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
 
-  const handleCheckboxChange = (
-    rowIndex: number,
-    colName: string,
-    checked: boolean
-  ) => {
-    console.log(rowIndex, colName, checked);
+  const handleCustomerData = async () => {
+    const customers = await getCustomerData("customers");
+    const customerList = await aggregateCustomerData(customers);
+    setInitialCustomer(customerList);
   };
+
+  const handleCheckboxChange = (isChecked: boolean, id: string) => {
+    setChecked((prevChecked) => {
+      console.log(id)
+      const checkedCustomer = initialCustomer.find((customer) => customer.id === id);
+      
+      if (isChecked && checkedCustomer) {
+        return [...prevChecked, checkedCustomer]; // Add customer to checked list
+      } else {
+        return prevChecked.filter((customer) => customer.id !== id); // Remove customer from checked list
+      }
+    });
+  };
+  
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setChecked(initialCustomer); // Select all customers
+    } else {
+      setChecked([]); // Deselect all customers
+    }
+  };
+  
+
+  const deleteUsers = async () => {
+    try {
+      const allUsers = await deleteAllUser(checked);
+      if (allUsers) {
+        handleCustomerData()
+        return toast.success("users deleted successfully")
+      }
+      
+    } catch (error) {
+      throw new Error("Unable to delete users");
+    }
+    
+  }
+
+
 
   const handleChange = async (value: string) => {
     const customers = await getCustomerData("customers");
     const customerList = await aggregateCustomerSearchData(customers, value);
-    console.table(customerList);
     if (customerList) setInitialCustomer(customerList);
   };
 
   useEffect(() => {
-    const handleCustomerData = async () => {
-      const customers = await getCustomerData("customers");
-      const customerList = await aggregateCustomerData(customers);
-      setInitialCustomer(customerList);
-    };
     handleCustomerData();
   }, []);
 
@@ -45,6 +79,8 @@ const CustomerList: React.FC = () => {
       const CustomerHeadersObject = initialCustomer[0];
       const headers = Object.keys(CustomerHeadersObject);
       headers.unshift("Checkbox");
+      const index = headers.indexOf("id");
+       headers.splice(index,1);
       setCustomerHeader(headers);
     }
   }, [initialCustomer.length, initialCustomer]);
@@ -53,8 +89,34 @@ const CustomerList: React.FC = () => {
     initialCustomer,
   ]);
 
+  const handleSelect = async (value: string) => {
+    const newOrder = sortOrder.order === 'asc' ? 'desc' : 'asc';
+  
+    let sortedCustomers;
+    if (value === "Amount spent") {
+      sortedCustomers = [...initialCustomer].sort((a, b) => (
+        newOrder === 'desc' ? b.amountSpent - a.amountSpent : a.amountSpent - b.amountSpent
+      ));
+    }
+    if (value === "Name") {
+      sortedCustomers = [...initialCustomer].sort((a, b) => (
+        newOrder === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
+      ));
+    }
+    if (value === "Total Order") {
+      sortedCustomers = [...initialCustomer].sort((a, b) => (
+        newOrder === 'desc' ? b.totalOrder - a.totalOrder : a.totalOrder - b.totalOrder
+      ));
+    }
+  
+    setSortOrder({ field: value, order: newOrder });
+    setInitialCustomer(sortedCustomers);
+  };
+  
+ console.log(initialCustomer)
+
   return (
-    <div className="2xl:container w-full py-2  flex flex-col gap-7 items-start justify-center">
+    <div className="2xl:container w-full py-2  flex flex-col gap-4 items-start justify-center">
       <h1 className="text-[20px] pt-3 ">Customer</h1>
       <div className="w-full flex sm:flex-row flex-col-reverse gap-2 items-start sm:items-center justify-between">
         <form action="" className="relative w-full">
@@ -66,7 +128,14 @@ const CustomerList: React.FC = () => {
             placeholder="Search for customer"
           />
         </form>
+        <div className="flex items-center justify-center w-full gap-5">
+        {checked.length > 0 && (
+          <button onClick={()=>deleteUsers()} className=" border border-[var(--danger-bg)] px-10 py-2 rounded">
+            <Trash className="hover:scale-[1.1] duration-150 text-[var(--dark-secondary-text)] size-5" />
+          </button>
+        )}
         <DropDown
+          onSelect={handleSelect}
           children={
             <>
               {" "}
@@ -74,8 +143,7 @@ const CustomerList: React.FC = () => {
               <span>Sort By</span>
             </>
           }
-          options={[ <SortOptions/>
-          ]}
+          options={["Name","Amount spent","Total Order"]}
           style={{
             display: "flex",
             fontSize: "15px",
@@ -91,9 +159,11 @@ const CustomerList: React.FC = () => {
         />
 
         <DatePickerDemo />
+ </div>
       </div>
       <div className="w-full">
         <Table
+          onSelectAll={handleSelectAll}
           pagination={{ perPage: 5, currentPage: 1 }}
           width="800px"
           data={initialCustomer as CustomerType[]}
@@ -108,30 +178,30 @@ const CustomerList: React.FC = () => {
 
 export default CustomerList;
 
-export const SortOptions = () => {
-  return (
-    <div className="flex flex-col items-start px-5 justify-center gap-2">
-      <div className="flex text-[15px]  items-center gap-5 justify-center">
-        Name{" "}
-        {/* <div className="flex items-center justify-center gap-2">
-          <ArrowDown className="size-4" />
-          <ArrowUp className="size-4" />
-        </div>{" "} */}
-      </div>
-      <div className="flex  text-[15px] items-center gap-5 justify-center">
-        Amount Spent{" "}
-        {/* <div className="flex items-center justify-center gap-2">
-          <ArrowDown className="size-4" />
-          <ArrowUp className="size-4" />
-        </div>{" "} */}
-      </div>
-      <div className="flex text-[15px]  items-center gap-5 justify-center">
-        Order{" "}
-        {/* <div className="flex items-center justify-center gap-2">
-          <ArrowDown className="size-4" />
-          <ArrowUp className="size-4" />
-        </div>{" "} */}
-      </div>
-    </div>
-  );
-};
+// export const SortOptions = () => {
+//   return (
+//     <div className="flex flex-col items-start px-5 justify-center gap-2">
+//       <div className="flex text-[15px]  items-center gap-5 justify-center">
+//         Name{" "}
+//         {/* <div className="flex items-center justify-center gap-2">
+//           <ArrowDown className="size-4" />
+//           <ArrowUp className="size-4" />
+//         </div>{" "} */}
+//       </div>
+//       <div className="flex  text-[15px] items-center gap-5 justify-center">
+//         Amount Spent{" "}
+//         {/* <div className="flex items-center justify-center gap-2">
+//           <ArrowDown className="size-4" />
+//           <ArrowUp className="size-4" />
+//         </div>{" "} */}
+//       </div>
+//       <div className="flex text-[15px]  items-center gap-5 justify-center">
+//         Order{" "}
+//         {/* <div className="flex items-center justify-center gap-2">
+//           <ArrowDown className="size-4" />
+//           <ArrowUp className="size-4" />
+//         </div>{" "} */}
+//       </div>
+//     </div>
+//   );
+// };

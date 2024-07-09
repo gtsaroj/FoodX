@@ -8,7 +8,7 @@ import {
 import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import toast from "react-hot-toast";
-import { ValidationType } from "./models/user.model";
+import { CustomerType, ValidationType } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/Action";
@@ -179,3 +179,20 @@ export const getOrderByUser = async (id: string) => {
     console.log(`Error while getting order by userId : ${error}`);
   }
 };
+
+export const deleteAllUser = async (users: CustomerType[]) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "users/delete-all",
+      data: [...users],
+    });
+    return response.data;
+  } catch (error) {
+    if (error === "You have not access, please login again...")
+      Store.dispatch(authLogout());
+    console.log(`Error while getting order by userId : ${error}`);
+  }
+};
+
+
