@@ -27,7 +27,6 @@ const CustomerList: React.FC = () => {
   const handleChange = async (value: string) => {
     const customers = await getCustomerData("customers");
     const customerList = await aggregateCustomerSearchData(customers, value);
-    console.table(customerList);
     if (customerList) setInitialCustomer(customerList);
   };
 

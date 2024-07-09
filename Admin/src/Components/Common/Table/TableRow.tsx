@@ -31,7 +31,6 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
   colSpan,
   actions,
 }) => {
-  console.log(row);
   function handleClick(value: string, uid: string) {
     option(value, uid);
   }
@@ -64,7 +63,7 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
                   actions(value);
                 }}
                 style={{}}
-                value={row.orderId}
+                value={row["id"]}
                 options={["Edit", "Delete"]}
                 children={
                   <EllipsisVertical className="size-6 duration-150 hover:text-[var(--danger-bg)] " />

@@ -13,6 +13,7 @@ export interface Order {
 // import { ProductType } from "./productMode";
 
 export interface Product {
+  id?: string
   name: string;
   quantity: number | string;
   price: number | string;

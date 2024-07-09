@@ -28,8 +28,17 @@ const addOrderToDatabase = async (order: Order) => {
 const deleteOrderFromDatabase = async (id: string) => {
   const orderRef = doc(db, "orders", id);
   try {
-    const a = await deleteDoc(orderRef);
-    console.log(a);
+    const deleteOrder = await deleteDoc(orderRef);
+    return deleteOrder;
+  } catch (error) {
+    throw new Error("Error deleting the order from database!");
+  }
+};
+const deleteProductFromDatabase = async (id: string) => {
+  const orderRef = doc(db, "products", id);
+  try {
+    const deleteProduct = await deleteDoc(orderRef);
+    return deleteProduct;
   } catch (error) {
     throw new Error("Error deleting the order from database!");
   }
@@ -88,11 +97,10 @@ const getOrderByUser = async (
 };
 
 export const updateOrderStatus = async (newStatus: string, orderId: any) => {
-
   const orderRef = doc(db, "orders", orderId);
   try {
-    const updateStatus = await updateDoc(orderRef, { status: newStatus });
-    return updateStatus;
+    await updateDoc(orderRef, { status: newStatus });
+    return;
   } catch (err) {
     throw new Error("Unable to update user order status");
   }
@@ -135,7 +143,12 @@ const getOrderByDate = async () => {};
 const getOrder = async () => {};
 const getAllOrders = async () => {};
 
-export { addOrderToDatabase, deleteOrderFromDatabase, getOrderByUser };
+export {
+  addOrderToDatabase,
+  deleteProductFromDatabase,
+  deleteOrderFromDatabase,
+  getOrderByUser,
+};
 
 // const unsub = onSnapshot(docs, (snapshot) => {
 //   snapshot.docChanges().forEach((change) => {
