@@ -16,10 +16,11 @@ export enum userRole {
 }
 
 export interface CustomerType {
+  id: string;
   name: string;
   email: string;
   location: string;
   amountSpent: string | number;
-  totalOrder : string | number;
+  totalOrder: string | number;
   role: string;
 }

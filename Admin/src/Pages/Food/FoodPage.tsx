@@ -44,14 +44,7 @@ const FoodPage: React.FC = () => {
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
-          <button
-            onClick={() => setIsModelOpen(!isModalOpen)}
-            className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
-          >
-            <Plus className="size-4" />
-            <h1 className="text-[15px]">Item</h1>
-          </button>
-          <DropDown
+        <DropDown
             children={
               <>
                 {" "}
@@ -73,6 +66,13 @@ const FoodPage: React.FC = () => {
               background: "",
             }}
           />
+          <button
+            onClick={() => setIsModelOpen(!isModalOpen)}
+            className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+          >
+            <Plus className="size-4" />
+            <h1 className="text-[15px]">Item</h1>
+          </button>
         </div>
       </div>
       <FoodTable userInput={userSearch as string} />

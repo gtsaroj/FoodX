@@ -1,11 +1,10 @@
-import { ArrowDownWideNarrow, ChevronLeft, Plus, Search } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import FoodTable from "../Components/Collection/FoodTable";
-import UploadFood from "../Components/Upload/UploadFood";
+import { Filter, Plus, Search } from "lucide-react";
+import React, { useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
 import { FilterButton } from "../Components/Common/Filter/Filter";
 import { BannerTable } from "../Components/Collection/BannerTable";
 import UploadBanner from "../Components/Upload/UploadBanner";
+import { DropDown } from "../Components/Common/DropDown/DropDown";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -32,7 +31,18 @@ const FoodPage: React.FC = () => {
           />
         </form>
         <div className="flex items-center gap-2 justify-center">
-          <FilterButton isActive={ "false"} />
+          <DropDown options={[]}             style={{
+              display: "flex",
+              fontSize: "15px",
+              borderRadius: "4px",
+              padding: "0.4rem 1rem 0.4rem 1rem",
+              color: "var(--dark-text)",
+              border: "1px solid var(--dark-secondary-text)  ",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              background: "",
+            }} children={<><Filter className="size-4"/>Filter</> } />
         <button
           onClick={() => setIsModelOpen(!isModalOpen)}
           className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"

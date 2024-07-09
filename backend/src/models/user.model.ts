@@ -31,4 +31,5 @@ export interface DecodeToken {
   exp: number;
 }
 
+
 export type RoleType = "customer" | "chef" | "superadmin";

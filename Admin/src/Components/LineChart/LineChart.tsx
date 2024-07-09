@@ -17,7 +17,8 @@ export const WeekReveneuChart: React.FC = () => {
 
   useEffect(() => {
     getOrders().then((data) => {
-      const revenueOfOrders = aggregateLineDataWeekly(data.data as Order[]);
+      const revenueOfOrders = aggregateLineDataMonthly(data.data as Order[], "current month");
+      console.log(revenueOfOrders)
       setOrderRevenue(revenueOfOrders);
     });
   }, []);

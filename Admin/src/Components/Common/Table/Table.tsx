@@ -15,11 +15,8 @@ interface TableProp {
   actions: (rowData: string) => void;
   data: HeaderProp[] | [] | CustomerType[];
   width: string;
-  onCheckBoxChange: (
-    rowIndex: number,
-    colName: string,
-    checked: boolean
-  ) => void;
+  onCheckBoxChange: (checked: boolean, id: string) => void;
+  onSelectAll : (checked : boolean)=>void;
   colSpan: string;
   pagination: { perPage: number; currentPage: 1 };
 }
@@ -28,6 +25,7 @@ const Table: React.FC<TableProp> = ({
   option,
   options,
   loading,
+  onSelectAll,
   data,
   actions,
   headers,
@@ -40,6 +38,7 @@ const Table: React.FC<TableProp> = ({
     pagination.currentPage
   );
   const [currentDatas, setCurrentDatas] = useState<Order[]>([]);
+  const [isCheckedAll, setIsCheckedAll] = useState<boolean>(false);
 
   const onChangePage = (page: number) => {
     setCurrentPage(page);
@@ -53,6 +52,12 @@ const Table: React.FC<TableProp> = ({
     setCurrentDatas(currentData as any[]);
   }, [data, startIndex, endIndex]);
 
+
+  const handleSelectAll = (checked: boolean) => {
+    setIsCheckedAll(checked);
+    onSelectAll(checked);
+  };
+
   //
 
   return (
@@ -61,10 +66,11 @@ const Table: React.FC<TableProp> = ({
         <table
           className={`w-${width} sm:w-full border-[1px] rounded flex flex-col`}
         >
-          <TableHeader header={headers} colSpan={colSpan} />
+          <TableHeader onSelectAll={handleSelectAll} header={headers} colSpan={colSpan} />
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (
               <TableRowComponent
+                onSelectAll={isCheckedAll}
                 option={option}
                 actions={(value) => {
                   actions(value);

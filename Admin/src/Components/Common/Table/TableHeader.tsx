@@ -4,11 +4,15 @@ import "./Table.css";
 interface TableHeaderProp {
   header: string[];
   colSpan: string;
+  onSelectAll: (checked: boolean) => void;
   // onCheckBox: (rowIndex: number, colName: string, checked: boolean) => void;
 }
 
-export const TableHeader: React.FC<TableHeaderProp> = ({ header, colSpan }) => {
-  console.log(header)
+export const TableHeader: React.FC<TableHeaderProp> = ({
+  header,
+  colSpan,
+  onSelectAll,
+}) => {
   return (
     <React.Fragment>
       <thead className="w-full bg-[var(--light-background)] py-5 border-b-[1px]">
@@ -18,7 +22,11 @@ export const TableHeader: React.FC<TableHeaderProp> = ({ header, colSpan }) => {
           {header.map((hd, index) =>
             hd.toLowerCase() === "checkbox" ? (
               <th key={index}>
-                <input className="w-4 cursor-pointer h-4" type="checkbox" />
+                <input
+                  onChange={(event) => onSelectAll(event.target.checked)}
+                  className="w-4 cursor-pointer h-4"
+                  type="checkbox"
+                />
               </th>
             ) : hd.toLowerCase() === "button" ? (
               ""

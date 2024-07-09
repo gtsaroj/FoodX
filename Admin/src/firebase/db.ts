@@ -1,4 +1,10 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from ".";
 import { Category } from "../models/productMode";
 import { DbUser } from "../models/UserModels";
@@ -14,6 +20,59 @@ export const getCategory = async (docName: "bnw" | "color") => {
     return data as Category;
   } catch (error) {
     throw new Error("Error while getting category from database.");
+  }
+};
+export const addCategory = async (
+  docName: "bnw" | "color",
+  newCategory: string,
+  img: string
+): Promise<Category> => {
+  try {
+    const categoryRef = doc(db, "category", docName);
+
+    await updateDoc(categoryRef, {
+      [`icons.${newCategory}`]: img,
+    });
+
+    const docSnap = await getDoc(categoryRef);
+    if (!docSnap.exists()) throw new Error("Document does not exist.");
+
+    const data = docSnap.data();
+    return data as Category;
+  } catch (error) {
+    throw new Error("Error while getting category from database: " + error);
+  }
+};
+
+export const deleteCategory = async (
+  docName: "bnw" | "color",
+  categoryName: string
+): Promise<Category> => {
+  try {
+    const categoryRef = doc(db, "category", docName);
+
+    const docSnap = await getDoc(categoryRef);
+    if (!docSnap.exists()) throw new Error("Document does not exist.");
+
+    const data = docSnap.data();
+    if (data && data.icons && data.icons[categoryName]) {
+      const updatedIcons = { ...data.icons };
+      delete updatedIcons[categoryName];
+
+      await updateDoc(categoryRef, {
+        icons: updatedIcons,
+      });
+    } else {
+      throw new Error("Category does not exist.");
+    }
+
+    const updatedDocSnap = await getDoc(categoryRef);
+    if (!updatedDocSnap.exists()) throw new Error("Document does not exist after update.");
+
+    const updatedData = updatedDocSnap.data();
+    return updatedData as Category;
+  } catch (error) {
+    throw new Error("Error while deleting category from database: " + error);
   }
 };
 

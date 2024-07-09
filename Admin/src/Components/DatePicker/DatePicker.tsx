@@ -2,17 +2,8 @@
 
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Flag, X } from "lucide-react";
-
-import { cn } from "../../../@/lib/Utils";
-import { Button } from "../Common/components/ui/button";
+import { Calendar as CalendarIcon, X } from "lucide-react";
 import { Calendar } from "../Common/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../Common/components/ui/popover";
-
 export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date | undefined>();
   const [open, setOpen] = React.useState<boolean>(false);
@@ -21,9 +12,9 @@ export function DatePickerDemo() {
     <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={` w-[180px] ${
-          date ? "bg-slate-200" : ""
-        } duration-150 hover:text-[var(--light-text)] hover:bg-[#b4b3b3c5]  rounded py-2 border-[var(--dark-secondary-text)] border flex items-center  justify-center gap-3`}
+        className={` duration-150 w-[180px] ${
+          date ? "bg-[var(--primary-dark)] " : ""
+        } duration-150 bg-[var(--primary-color)] text-[var(--light-text)] hover:bg-[var(--primary-dark)]  rounded py-2 border-[var(--dark-secondary-text)] border flex items-center  justify-center gap-3`}
       >
         <CalendarIcon className="size-4" />
         {date ? (

@@ -17,7 +17,7 @@ export default function ResponsiveChartExample() {
   useEffect(() => {
     getOrders()
       .then((data: any) => {
-        console.log(data.data)
+        console.log(data.data);
         const orders = data?.data;
         const aggregateData = aggregateDailyCategoryOrder(
           orders,
@@ -80,11 +80,14 @@ export const PieChartAnalytics = () => {
   useEffect(() => {
     getOrders().then((data) => {
       const totalOrders = data.data;
-
-      if (totalOrders)
-      setCategoryData(categoryData);
+      const getFilterOrders = aggregateDailyCategoryOrder(
+        totalOrders,
+        "current week"
+      );
+      if (getFilterOrders) setCategoryData(getFilterOrders);
     });
-  }, [categoryData]);
+  }, []);
+   console.log(categoryData)
   return (
     <div className="w-full px-5 py-5 sm:h-[400px] h-[500px] bg-[var(--light-background)] flex flex-col gap-5 items-start justify-center ">
       <h2 className="w-full text-left text-xl text-[var(--primary-color)] ">

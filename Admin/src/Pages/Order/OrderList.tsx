@@ -60,12 +60,17 @@ const OrderList = () => {
       //  get total orders data from  server
       const orders = await getOrders();
       const totalOrders = orders.data as Order[];
+      console.log(totalOrders)
       const aggregateData = totalOrders?.map(async (item) => {
-        const getUserName = await getFullName(item.uid);
-        const productNames = item.products?.map(
-          (product) => product.name as string
-        );
-        return { ...item, uid: getUserName, products: productNames };
+      
+        const getUserName = await getFullName(item?.uid);
+     console.log(getUserName)
+        if (getUserName) {
+          const productNames = item.products?.map(
+            (product) => product.name as string
+          );
+          return { ...item, uid: getUserName, products: productNames };
+       }
       });
       const getaggregateDataPromises = await Promise.all(aggregateData);
 

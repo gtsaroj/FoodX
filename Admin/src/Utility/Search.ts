@@ -1,5 +1,6 @@
 import { DbUser } from "../models/UserModels";
 import { Order, Product } from "../models/order.model";
+import { Categories } from "../models/productMode";
 
 export const SearchCustomer = (customers: DbUser[], value: string) => {
   const searchingCustomer = customers?.filter((customer) => {
@@ -19,4 +20,13 @@ export const SearchOrder = (customers: Order[], value: string) => {
     return order.uid.toLowerCase().includes(value);
   });
   return searchingProduct;
+};
+export const SearchCategory = (
+  categories: { category: string; image: any }[],
+  value: string
+) => {
+  const searchingCategory = categories?.filter((category) => {
+    return category.category.toLowerCase().includes(value);
+  });
+  return searchingCategory;
 };
