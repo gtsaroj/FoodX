@@ -10,10 +10,11 @@ import {
   getUserFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
-import { CustomerType, DecodeToken, User } from "../models/user.model.js";
+import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import { CustomerType } from "../models/order.model.js";
 
 //Cookie options
 const options = {
@@ -239,6 +240,36 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const deletAllUser = asyncHandler(async (req: any, res: any) => {
+  try {
+    const users = req.body as CustomerType[];
+    if (!users || users.length === 0) {
+      throw new ApiError(404, "Users not found.");
+    }
+    const deletionPromises = users.map(async (user) => {
+      const foundUser = await getUserFromDatabase(user.id);
+
+      if (!foundUser) {
+        throw new ApiError(404, `User with uid ${user.id} not found.`);
+      }
+
+      await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+    });
+
+    await Promise.all(deletionPromises);
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "Users deleted successfully", true));
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error; // Re-throw ApiError with custom message
+    } else {
+      throw new ApiError(400, "Error deleting users from firestore.");
+    }
+  }
+});
 
 export {
   loginUser,
@@ -247,4 +278,5 @@ export {
   refreshAccessToken,
   deleteAccount,
   updateUser,
+  deletAllUser,
 };

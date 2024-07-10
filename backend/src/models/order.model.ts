@@ -9,4 +9,14 @@ export interface Order {
   orderFullFilled: string;
 }
 
-type OrderStatus = "fullfilled" | "cancelled" | "preparing" | "received" ; 
+type OrderStatus = "fullfilled" | "cancelled" | "preparing" | "received";
+
+export interface CustomerType {
+  id: string;
+  name: string;
+  email: string;
+  location: string;
+  amountSpent: string | number;
+  totalOrder: string | number;
+  role: string;
+}
