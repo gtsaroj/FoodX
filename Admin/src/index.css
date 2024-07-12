@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --color : #1ba13dd2;
+    --color: #1ba13dd2;
     --primary-color: #2c398d;
     --primary-light: #00a3d9;
     --primary-dark: #0e76a8;
@@ -13,26 +13,32 @@
     --secondary-light: #ec008d;
     --secondary-dark: #ec008e;
 
+    /* f4f6f8 
+    f5f9ff
+    */
+    --body-bg: #f4f6f8;
     --light-foreground: #fbfbfb;
-    --light-background: #efeff1;
+    --light-background: #f4f6f8;
+    --light-secondary-background: #dadada;
     --light-border: #dedde2;
 
     --dark-foreground: #252329;
     --dark-background: #19181b;
+    --dark-secondary-background: #919191;
     --dark-border: #3e3b45;
 
     --light-text: #fefefe;
     --light-secondary-text: #d8d6dc;
-    --dark-text: #3e3e3e;
-    --dark-secondary-text: #8a8495;
-
+    --dark-text: #202020;
+    --dark-secondary-text: #646168;
 
     --danger-text: #d91006;
     --danger-bg: #e00b0b;
     --popup-bg: #4b4a4a60;
-    --orange-bg : #ff9800;
-    --green-bg : #4caf50;
-    
+    --orange-bg: #ff9800;
+    --green-bg: #4caf50;
+
+    --green-text: #177e1a;
   }
 
   ::-webkit-scrollbar {
@@ -42,7 +48,7 @@
   body {
     font-family: "Poppins", sans-serif;
     overflow-x: hidden;
-    background: var(--light-background);
+    background: var(--body-bg);
     scroll-behavior: smooth;
   }
 
@@ -61,6 +67,5 @@
 
   #specials {
     scroll-behavior: smooth;
-    
   }
 }

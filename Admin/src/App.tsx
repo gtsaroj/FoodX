@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Dasboard from "./Pages/Dasboard";
+import Dasboard from "./Pages/Dashboard/Dasboard";
 import {
   BrowserRouter as Router,
   Route,
@@ -23,27 +23,27 @@ import { RootState, persistor } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/Category/CategoryPage";
+import Navbar from "./Navbar/Navbar";
 
 const MainPage = () => {
-  persistor.purge()
+  persistor.purge();
   return (
-    <div className="w-full overflow-hidden flex  flex-col justify-center items-center ">
-      <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-2 py-3 items-start justify-center  px-3 xl:px-5">
-        <div className="xl:flex hidden ">
+    <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
+      <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
+        <div className="hidden xl:flex ">
           <DesktopSlider />
         </div>
-        <div className="flex  xl:hidden w-full">
-          <MobileSlider/>
-         </div>
-        <div className="w-full h-[100vh]  2xl:justify-between overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
-          <div className="w-full px-3">
-          <Outlet />
-         </div>
-          <Footer/>
+        <div className="flex w-full xl:hidden">
+          <MobileSlider />
         </div>
-       
+        <div className="w-full h-[100vh]  2xl:justify-between overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
+          <div className="w-full">
+            <Navbar />
+            <Outlet />
+          </div>
+          <Footer />
+        </div>
       </div>
-
     </div>
   );
 };
@@ -95,7 +95,7 @@ const App: React.FC = () => {
               <Route path="category" element={<CategoryPage />} />
             </Route>
             <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
-              <Route path="profile" element={<AdminProfile/>} />
+              <Route path="profile" element={<AdminProfile />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundPage />} />
