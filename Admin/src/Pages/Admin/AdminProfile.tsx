@@ -167,7 +167,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
                 selected ? "hidden" : ""
               }`}
             >
-              <div className=" absolute bottom-2 right-3 flex items-end justify-end">
+              <div className="absolute flex items-end justify-end  bottom-2 right-3">
                 <EditIcon className="size-4" />
               </div>
             </div>
@@ -252,7 +252,7 @@ const PersonlInformation = (props: any) => {
 
 
   return (
-    <div className="w-full lg:px-3 flex-col items-center">
+    <div className="flex-col items-center w-full lg:px-3">
       <div className="flex justify-between w-full pt-3 pb-4 ">
         <p className="text-xl font-semibold tracking-wide  text-[var(--dark-text)]">
           Personal Information
@@ -294,7 +294,7 @@ const PersonlInformation = (props: any) => {
                     firstName: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">
@@ -320,7 +320,7 @@ const PersonlInformation = (props: any) => {
                     lastName: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">{lastName}</p>
@@ -362,7 +362,7 @@ const PersonlInformation = (props: any) => {
                     phoneNumber: e.target.value as string,
                   }))
                 }
-                className="py-1 rounded-sm px-2 outline-none"
+                className="px-2 py-1 rounded-sm outline-none"
               />
             ) : (
               <p className="text-[var(--dark-text)] font-medium ">

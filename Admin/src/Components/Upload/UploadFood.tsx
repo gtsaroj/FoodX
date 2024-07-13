@@ -55,7 +55,7 @@ const UploadFood: React.FC = () => {
     <React.Fragment>
       <div
         ref={reference as any}
-        className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
+        className="relative flex flex-col items-center justify-center w-full h-full gap-5 overflow-auto"
       >
         <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
           Add an item
@@ -64,12 +64,11 @@ const UploadFood: React.FC = () => {
         <form
           onSubmit={(event) => handleClick(event , addFood)}
           action=""
-          className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-3 flex flex-col items-start justify-center"
+          className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
           {/* First Row */}
           <div
-            className="flex sm:flex-row flex-col
-          w-full items-center gap-5  justify-start "
+            className="flex flex-col items-center justify-start w-full gap-5 sm:flex-row "
           >
             {" "}
             <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
@@ -77,7 +76,7 @@ const UploadFood: React.FC = () => {
                 className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
                 htmlFor=""
               >
-                Food Name
+                Item Name
               </label>
               <input
                 type="text"
@@ -112,7 +111,7 @@ const UploadFood: React.FC = () => {
             </div>
           </div>
           {/* Second Row */}
-          <div className="flex sm:flex-row flex-col w-full items-center gap-5  justify-start">
+          <div className="flex flex-col items-center justify-start w-full gap-5 sm:flex-row">
             <div className="w-full flex flex-col items-baseline justify-center gap-0.5">
               <label
                 className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
@@ -201,7 +200,7 @@ const UploadFood: React.FC = () => {
                 type="file"
                 className="hidden"
               />
-              <div className=" w-full flex flex-col items-center bottom-10 justify-center gap-1">
+              <div className="flex flex-col items-center justify-center w-full gap-1 bottom-10">
                 <UploadIcon className="size-7 text-[var(--dark-text)] " />
                 <span className="text-sm text-[var(--dark-text)] ">
                   Upload a file or drag and drop
@@ -212,7 +211,7 @@ const UploadFood: React.FC = () => {
               </div>
             </div>
           )}
-          <div className="  pl-2 flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-4 pl-2 ">
             <input
               onChange={(event) => {
                 if (event.target.checked)

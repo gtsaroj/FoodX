@@ -35,8 +35,8 @@ const TicketPage: React.FC = () => {
   const ticketStateLower = ticketState?.toLowerCase();
   const component = ticketStateLower && TicketComponents[ticketStateLower];
   return (
-    <div className="flex flex-col items-start justify-center gap-7  px-1sm:px-3 py-5">
-      <div className="flex items-center justify-between w-full ">
+    <div className="flex flex-col items-start justify-center px-4 py-5 gap-7">
+      <div className="flex items-center justify-between w-full px-5">
         <h1 className="text-[25px] brightness-125 contrast-125 font-[600] text-[var(--dark-text)] ">
           Tickets
         </h1>
@@ -53,7 +53,7 @@ const TicketPage: React.FC = () => {
           closeModal={() => setCloseModal(!closeModal)}
         />
       </div>
-      <div className="w-full pt-10 grid grid-cols-4 gap-2 sm:gap-6">
+      <div className="grid w-full grid-cols-4 gap-2 px-5 pt-10 sm:gap-6">
         {/* /
            className={`${ item === "Pending" ? "bg-[var(--primary-light)]" : item === "Progress" ? "bg-[var(--orange-bg)]" : item === "Resolve" ? "bg-[var(--green-bg)] " : item === "Cancel" ? "bg-[var(--danger-bg)]":'' } ${initialIndex === index ? "shadow-inner shadow-black  duration-200" : ""}`}
           //   onClick={() => handleClick(item, index)}
@@ -84,7 +84,9 @@ const TicketPage: React.FC = () => {
         <button
           onClick={() => handleClick("resolve")}
           className={`py-3 sm:text-[15px] hover:bg-[#287e28fd] duration-150   ${
-            ticketState === "resolve" ? "bg-[#287e28fd]" : "bg-[var(--green-bg)] "
+            ticketState === "resolve"
+              ? "bg-[#287e28fd]"
+              : "bg-[var(--green-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >
           Resolve
@@ -92,7 +94,9 @@ const TicketPage: React.FC = () => {
         <button
           onClick={() => handleClick("cancel")}
           className={`py-3 hover:bg-[#a82d2dfd] sm:text-[15px] duration-150  ${
-            ticketState === "cancel" ? "bg-[#a82d2dfd]" : " bg-[var(--danger-bg)] "
+            ticketState === "cancel"
+              ? "bg-[#a82d2dfd]"
+              : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
         >
           Cancel
@@ -100,7 +104,7 @@ const TicketPage: React.FC = () => {
       </div>
       {/* Employee Card */}
       <div className="w-full">{component ? component : ""}</div>
-      <div className="w-full flex flex-col items-start justify-center gap-9">
+      {/* <div className="flex flex-col items-start justify-center w-full gap-9">
         <h1 className="text-3xl contrast-125 ">
           <span className="text-[#c79d2a] brightness-100 contrast-100 font-[570]">
             32
@@ -109,15 +113,16 @@ const TicketPage: React.FC = () => {
             Employee
           </span>
         </h1>
-        <div className="w-full grid sm:grid-cols-2 sm:gap-x-6 grid-cols-1  place-items-center lg:grid-cols-3 gap-y-6 ">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-2 sm:gap-x-6 place-items-center lg:grid-cols-3 gap-y-6 ">
           <EmployeeCard />
           <EmployeeCard />
           <EmployeeCard />
           <EmployeeCard />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
 
 export default TicketPage;
+  

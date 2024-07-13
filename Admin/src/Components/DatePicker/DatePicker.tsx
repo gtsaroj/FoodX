@@ -14,13 +14,16 @@ export function DatePickerDemo() {
         onClick={() => setOpen(!open)}
         className={` duration-150 w-[180px] ${
           date ? "bg-[var(--primary-dark)] " : ""
-        } duration-150 bg-[var(--primary-color)] text-[var(--light-text)] hover:bg-[var(--primary-dark)]  rounded py-2 border-[var(--dark-secondary-text)] border flex items-center  justify-center gap-3`}
+        } duration-150 bg-[var(--primary-color)] text-[var(--light-text)] hover:bg-[var(--primary-light)] hover:border-[var(--primary-light)] rounded py-2 border-[var(--dark-secondary-text)] border flex items-center  justify-center gap-3`}
       >
         <CalendarIcon className="size-4" />
         {date ? (
           <span className="flex items-center text-[14px] justify-center gap-2">
             {format(date, "PPP")}
-            <button onClick={()=>setDate(undefined)} className=" bg-[var(--dark-foreground)] rounded-full p-1">
+            <button
+              onClick={() => setDate(undefined)}
+              className=" bg-[var(--dark-foreground)] rounded-full p-1"
+            >
               {" "}
               <X className=" text-[var(--light-text)] size-3" />
             </button>{" "}

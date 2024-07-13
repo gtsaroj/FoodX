@@ -28,9 +28,11 @@ const CustomerList: React.FC = () => {
 
   const handleCheckboxChange = (isChecked: boolean, id: string) => {
     setChecked((prevChecked) => {
-      console.log(id)
-      const checkedCustomer = initialCustomer.find((customer) => customer.id === id);
-      
+      console.log(id);
+      const checkedCustomer = initialCustomer.find(
+        (customer) => customer.id === id
+      );
+
       if (isChecked && checkedCustomer) {
         return [...prevChecked, checkedCustomer]; // Add customer to checked list
       } else {
@@ -38,7 +40,7 @@ const CustomerList: React.FC = () => {
       }
     });
   };
-  
+
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setChecked(initialCustomer); // Select all customers
@@ -46,23 +48,18 @@ const CustomerList: React.FC = () => {
       setChecked([]); // Deselect all customers
     }
   };
-  
 
   const deleteUsers = async () => {
     try {
       const allUsers = await deleteAllUser(checked);
       if (allUsers) {
-        handleCustomerData()
-        return toast.success("users deleted successfully")
+        handleCustomerData();
+        return toast.success("users deleted successfully");
       }
-      
     } catch (error) {
       throw new Error("Unable to delete users");
     }
-    
-  }
-
-
+  };
 
   const handleChange = async (value: string) => {
     const customers = await getCustomerData("customers");
@@ -80,7 +77,7 @@ const CustomerList: React.FC = () => {
       const headers = Object.keys(CustomerHeadersObject);
       headers.unshift("Checkbox");
       const index = headers.indexOf("id");
-       headers.splice(index,1);
+      headers.splice(index, 1);
       setCustomerHeader(headers);
     }
   }, [initialCustomer.length, initialCustomer]);
@@ -90,35 +87,42 @@ const CustomerList: React.FC = () => {
   ]);
 
   const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === 'asc' ? 'desc' : 'asc';
-  
+    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+
     let sortedCustomers;
     if (value === "Amount spent") {
-      sortedCustomers = [...initialCustomer].sort((a, b) => (
-        newOrder === 'desc' ? b.amountSpent - a.amountSpent : a.amountSpent - b.amountSpent
-      ));
+      sortedCustomers = [...initialCustomer].sort((a, b) =>
+        newOrder === "desc"
+          ? b.amountSpent - a.amountSpent
+          : a.amountSpent - b.amountSpent
+      );
     }
     if (value === "Name") {
-      sortedCustomers = [...initialCustomer].sort((a, b) => (
-        newOrder === 'desc' ? b.name.localeCompare(a.name) : a.name.localeCompare(b.name)
-      ));
+      sortedCustomers = [...initialCustomer].sort((a, b) =>
+        newOrder === "desc"
+          ? b.name.localeCompare(a.name)
+          : a.name.localeCompare(b.name)
+      );
     }
     if (value === "Total Order") {
-      sortedCustomers = [...initialCustomer].sort((a, b) => (
-        newOrder === 'desc' ? b.totalOrder - a.totalOrder : a.totalOrder - b.totalOrder
-      ));
+      sortedCustomers = [...initialCustomer].sort((a, b) =>
+        newOrder === "desc"
+          ? b.totalOrder - a.totalOrder
+          : a.totalOrder - b.totalOrder
+      );
     }
-  
+
     setSortOrder({ field: value, order: newOrder });
     setInitialCustomer(sortedCustomers);
   };
-  
- console.log(initialCustomer)
+
+  console.log(initialCustomer);
 
   return (
-    <div className="2xl:container w-full py-2  flex flex-col gap-4 items-start justify-center">
+    <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
+      {/* 
       <h1 className="text-[20px] pt-3 ">Customer</h1>
-      <div className="w-full flex sm:flex-row flex-col-reverse gap-2 items-start sm:items-center justify-between">
+      <div className="flex flex-col-reverse items-start justify-between w-full gap-2 sm:flex-row sm:items-center">
         <form action="" className="relative w-full">
           <Search className="absolute text-[var(--dark-secondary-text)]    top-3 size-5 left-2" />
           <input
@@ -129,37 +133,91 @@ const CustomerList: React.FC = () => {
           />
         </form>
         <div className="flex items-center justify-center w-full gap-5">
-        {checked.length > 0 && (
-          <button onClick={()=>deleteUsers()} className=" border border-[var(--danger-bg)] px-10 py-2 rounded">
-            <Trash className="hover:scale-[1.1] duration-150 text-[var(--dark-secondary-text)] size-5" />
-          </button>
-        )}
-        <DropDown
-          onSelect={handleSelect}
-          children={
-            <>
-              {" "}
-              <ArrowDownAZ className="size-4" />
-              <span>Sort By</span>
-            </>
-          }
-          options={["Name","Amount spent","Total Order"]}
-          style={{
-            display: "flex",
-            fontSize: "15px",
-            borderRadius: "4px",
-            padding: "0.5rem 1rem 0.5rem 1rem",
-            color: "var(--dark-text)",
-            border: "1px solid var(--dark-secondary-text)  ",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            background: "",
-          }}
-        />
+          {checked.length > 0 && (
+            <button
+              onClick={() => deleteUsers()}
+              className=" border border-[var(--danger-bg)] px-10 py-2 rounded"
+            >
+              <Trash className="hover:scale-[1.1] duration-150 text-[var(--dark-secondary-text)] size-5" />
+            </button>
+          )}
+          <DropDown
+            onSelect={handleSelect}
+            children={
+              <>
+                {" "}
+                <ArrowDownAZ className="size-4" />
+                <span>Sort By</span>
+              </>
+            }
+            options={["Name", "Amount spent", "Total Order"]}
+            style={{
+              display: "flex",
+              fontSize: "15px",
+              borderRadius: "4px",
+              padding: "0.5rem 1rem 0.5rem 1rem",
+              color: "var(--dark-text)",
+              border: "1px solid var(--dark-secondary-text)  ",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.5rem",
+              background: "",
+            }}
+          />
 
-        <DatePickerDemo />
- </div>
+          <DatePickerDemo />
+        </div>
+      </div> 
+    */}
+      <div className="flex items-center justify-between w-full px-2 pt-5">
+        <div className="flex flex-col items-start justify-center gap-1">
+          <h4 className="text-xl tracking-wider text-[var(--dark-text)]">
+            Customers
+          </h4>
+        </div>
+        <div className="flex items-center justify-center gap-5 ">
+          <div className="flex items-center justify-center gap-2">
+            <DatePickerDemo />
+            <DropDown
+              onSelect={handleSelect}
+              children={
+                <>
+                  <ArrowDownAZ className="size-4 text-[var(--dark-secondary-text)]" />
+                  <span className="text-[var(--dark-secondary-text)]">
+                    Sort By
+                  </span>
+                </>
+              }
+              options={["Name", "Amount spent", "Total Order"]}
+              style={{
+                display: "flex",
+                fontSize: "15px",
+                borderRadius: "4px",
+                padding: "0.5rem 1rem 0.5rem 1rem",
+                color: "var(--dark-text)",
+                border: "1px solid var(--light-secondary-text)  ",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                background: "",
+              }}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-start w-full px-1 pb-5">
+        <form action="" className="relative w-full">
+          <label htmlFor="search">
+            <Search className="absolute text-[var(--dark-secondary-text)] cursor-pointer top-3 size-5 left-2" />
+          </label>
+          <input
+            id="search"
+            type="search"
+            onChange={(event) => debouncedHandleChange(event?.target.value)}
+            className=" pl-9 border placeholder:text-sm outline-none sm:w-[250px] w-full py-2 px-8 border-[var(--dark-secondary-background)] rounded bg-transparent focus:border-[var(--primary-color)] "
+            placeholder="Search"
+          />
+        </form>
       </div>
       <div className="w-full">
         <Table
@@ -180,7 +238,7 @@ export default CustomerList;
 
 // export const SortOptions = () => {
 //   return (
-//     <div className="flex flex-col items-start px-5 justify-center gap-2">
+//     <div className="flex flex-col items-start justify-center gap-2 px-5">
 //       <div className="flex text-[15px]  items-center gap-5 justify-center">
 //         Name{" "}
 //         {/* <div className="flex items-center justify-center gap-2">

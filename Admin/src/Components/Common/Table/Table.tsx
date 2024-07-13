@@ -61,7 +61,7 @@ const Table: React.FC<TableProp> = ({
   //
 
   return (
-    <div className=" w-full flex flex-col items-end gap-2 justify-center">
+    <div className="flex flex-col items-end justify-center w-full gap-2 ">
       <div className="w-full overflow-auto">
         <table
           className={`w-${width} sm:w-full border-[1px] rounded flex flex-col`}
@@ -87,7 +87,7 @@ const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      <div className="w-full justify-center items-center">
+      <div className="items-center justify-center w-full">
         <Pagination
           onChange={onChangePage}
           currentPage={currentPage}

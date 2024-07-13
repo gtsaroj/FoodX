@@ -68,6 +68,7 @@ const FoodTable: React.FC<FoodTableProp> = ({ userInput }) => {
       headers={productsHeader}
       data={fetchedProducts}
       actions={handleClick}
+      loading
     />
   );
 };

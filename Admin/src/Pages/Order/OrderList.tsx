@@ -60,17 +60,16 @@ const OrderList = () => {
       //  get total orders data from  server
       const orders = await getOrders();
       const totalOrders = orders.data as Order[];
-      console.log(totalOrders)
+      console.log(totalOrders);
       const aggregateData = totalOrders?.map(async (item) => {
-      
         const getUserName = await getFullName(item?.uid);
-     console.log(getUserName)
+        console.log(getUserName);
         if (getUserName) {
           const productNames = item.products?.map(
             (product) => product.name as string
           );
           return { ...item, uid: getUserName, products: productNames };
-       }
+        }
       });
       const getaggregateDataPromises = await Promise.all(aggregateData);
 
@@ -103,8 +102,8 @@ const OrderList = () => {
   }, [initialOrders]);
 
   return (
-    <div className="w-full py-6 flex rounded-sm  flex-col gap-16 items-start justify-center px-4">
-      <div className="flex sm:flex-row flex-col-reverse items-start gap-5 sm:gap-2 sm:items-center justify-between  w-full">
+    <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
+      {/* <div className="flex flex-col-reverse items-start justify-between w-full gap-5 sm:flex-row sm:gap-2 sm:items-center">
         <form action="" className="relative w-full">
           <Search className="absolute top-3 cursor-pointer text-[var(--dark-secondary-text)]   size-5 left-2" />
           <input
@@ -142,8 +141,61 @@ const OrderList = () => {
             }}
           />
         </div>
+      </div> */}
+
+      <div className="flex items-center justify-between w-full pt-5">
+        <div className="flex flex-col items-start justify-center gap-1">
+          <h4 className="text-xl tracking-wider text-[var(--dark-text)]">
+            Orders
+          </h4>
+        </div>
+        <div className="flex items-center justify-center gap-5 ">
+          <div className="flex items-center justify-center gap-2">
+            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+              <Download className="size-4" />
+              <p className="text-[15px]">Export</p>
+            </button>
+            <DropDown
+              children={
+                <>
+                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
+                  <span className="text-[var(--dark-secondary-text)]">
+                    Filter
+                  </span>
+                </>
+              }
+              options={[]}
+              style={{
+                display: "flex",
+                fontSize: "15px",
+                borderRadius: "4px",
+                padding: "0.5rem 1rem 0.5rem 1rem",
+                color: "var(--dark-text)",
+                border: "1px solid var(--light-secondary-text)  ",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.5rem",
+                background: "",
+              }}
+            />
+          </div>
+        </div>
       </div>
-      <div className="w-full shadow-lime-300 rounded-t-md  shadow-inner overflow-auto">
+      <div className="flex items-center justify-start w-full pb-5">
+        <form action="" className="relative w-full">
+          <label htmlFor="search">
+            <Search className="absolute text-[var(--dark-secondary-text)] cursor-pointer top-3 size-5 left-2" />
+          </label>
+          <input
+            id="search"
+            type="search"
+            onChange={(event) => debouncedHandleChange(event?.target.value)}
+            className=" pl-9 border placeholder:text-sm outline-none sm:w-[250px] w-full py-2 px-8 border-[var(--dark-secondary-background)] rounded bg-transparent focus:border-[var(--primary-color)] "
+            placeholder="Search"
+          />
+        </form>
+      </div>
+      <div className="w-full overflow-auto shadow-inner shadow-lime-300 rounded-t-md">
         <Table
           loading={false}
           option={(value: string, orderId: string) =>

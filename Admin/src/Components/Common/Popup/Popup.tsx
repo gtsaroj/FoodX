@@ -47,7 +47,7 @@ const Modal: React.FC<ModelProp> = ({
       >
         <div className="w-full overflow-auto">{children}</div>
         <button
-          className="absolute top-[0px]  rounded right-[30px] p-3 hover:cursor-pointer duration-150 ease-in-out "
+          className="absolute top-[7px] rounded right-[30px] p-3 hover:cursor-pointer duration-150 ease-in-out text-red-500 hover:text-red-600"
           onClick={closeModal}
         >
           <X />
