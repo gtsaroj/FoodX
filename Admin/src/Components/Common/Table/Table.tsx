@@ -1,37 +1,38 @@
-import React, { useEffect, useState } from "react";
+import React, { CSSProperties, useEffect, useState } from "react";
 import { TableHeader } from "./TableHeader";
 import { TableRowComponent } from "./TableRow";
-import { HeaderProp } from "../../Collection/FoodTable";
+
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
-import { convertTimestampToDate } from "../../../Utility/DateUtils";
 import { CustomerType } from "../../../models/user.model";
+import { ProductType } from "../../../models/productMode";
 
 interface TableProp {
-  option: (value: string, uid: string) => void;
-  options?: string[];
-  loading: boolean;
-  headers: string[];
-  actions: (rowData: string) => void;
-  data: HeaderProp[] | [] | CustomerType[];
-  width: string;
-  onCheckBoxChange: (checked: boolean, id: string) => void;
-  onSelectAll : (checked : boolean)=>void;
-  colSpan: string;
+  options?: string[]; // button name
+  loading?: boolean; //loading state
+  error?: boolean;
+  headers: string[]; // headers value
+  style?: React.CSSProperties;
+  actions?: (rowData: string) => void; //delete or edit single row data
+  data: [] | CustomerType[] | Order[] | ProductType[];
+  headerStyle?: React.CSSProperties;
+  bodyStyle?: React.CSSProperties;
+  onChange?: (value: boolean | string, id: string) => void; //select or delete single row data
+  onSelectAll?: (checked: boolean) => void; // for select all values
   pagination: { perPage: number; currentPage: 1 };
 }
 
 const Table: React.FC<TableProp> = ({
-  option,
+  onChange,
   options,
   loading,
+  error,
   onSelectAll,
   data,
   actions,
   headers,
-  onCheckBoxChange,
-  colSpan,
-  width,
+  headerStyle,
+  bodyStyle,
   pagination = { perPage: 3, currentPage: 1 },
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(
@@ -48,10 +49,9 @@ const Table: React.FC<TableProp> = ({
   const endIndex = startIndex + pagination.perPage;
 
   useEffect(() => {
-    const currentData: Order[] = data.slice(startIndex, endIndex);
+    const currentData: any = data.slice(startIndex, endIndex);
     setCurrentDatas(currentData as any[]);
   }, [data, startIndex, endIndex]);
-
 
   const handleSelectAll = (checked: boolean) => {
     setIsCheckedAll(checked);
@@ -60,28 +60,35 @@ const Table: React.FC<TableProp> = ({
 
   //
 
-  return (
+  return error ? (
+    <div>Error</div>
+  ) : loading ? (
+    <div>Loading...</div>
+  ) : data ? (
     <div className="flex flex-col items-end justify-center w-full gap-2 ">
       <div className="w-full overflow-auto">
         <table
-          className={`w-${width} sm:w-full border-[1px] rounded flex flex-col`}
+          className={` sm:w-full w-[800px] border-[1px] rounded flex flex-col`}
         >
-          <TableHeader onSelectAll={handleSelectAll} header={headers} colSpan={colSpan} />
+          <TableHeader
+            onSelectAll={handleSelectAll}
+            header={headers}
+            headerStyle={headerStyle as CSSProperties}
+          />
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (
               <TableRowComponent
                 onSelectAll={isCheckedAll}
-                option={option}
+                onChange={onChange}
                 actions={(value) => {
                   actions(value);
                 }}
                 options={options}
-                headerColSpan={headers}
-                row={row}
-                rowIndex={rowIndex}
-                oncheckBoxChange={onCheckBoxChange}
+                headers={headers}
+                data={row}
+                dataIndex={rowIndex}
+                bodyStyle={bodyStyle as CSSProperties}
                 key={rowIndex}
-                colSpan={colSpan}
               />
             ))}
           </tbody>
@@ -96,6 +103,8 @@ const Table: React.FC<TableProp> = ({
         />
       </div>
     </div>
+  ) : (
+    "Not found"
   );
 };
 

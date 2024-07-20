@@ -1,31 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { EllipsisVertical } from "lucide-react";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import "./Table.css";
 import { Order } from "../../../models/order.model";
-import { getUserData } from "../../../firebase/db";
 import { DropDown } from "../DropDown/DropDown";
 
-interface TableRowProps {
+interface TablerowProps {
   options?: string[];
-  row: Order | any;
-  headerColSpan: string[];
-  actions: (row: string) => void;
-  colSpan: string;
-  rowIndex: number;
-  oncheckBoxChange?: (checked: boolean, id: string) => void;
+  data: Order | any;
+  headers: string[];
+  bodyStyle: React.CSSProperties;
+  actions: (data: string) => void;
+  dataIndex: number;
+  onChange?: (value: boolean | string, id: string) => void;
   onSelectAll: boolean;
-  option: (value: string, uid: string) => void;
+  option?: (value: string, uid: string) => void;
 }
 
-export const TableRowComponent: React.FC<TableRowProps> = ({
+export const TableRowComponent: React.FC<TablerowProps> = ({
   options,
-  option,
-  row,
-  rowIndex,
-  oncheckBoxChange,
-  headerColSpan,
-  colSpan,
+  data,
+  dataIndex,
+  onChange,
+  headers,
+  bodyStyle,
   actions,
   onSelectAll,
 }) => {
@@ -33,40 +30,41 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
   console.log(isChecked);
 
   function handleClick(value: string, uid: string) {
-    console.log(value, uid);
-    option(value, uid);
+    onChange(value as string, uid as string);
   }
   useEffect(() => {
     setIsChecked(onSelectAll);
   }, [onSelectAll]);
+  console.log(data);
   return (
     <React.Fragment>
       <tr
-        className={`w-full px-2  grid  border-b-[1px] grid-cols-${colSpan} gap-x-8 items-center py-5  justify-items-center`}
+        style={bodyStyle}
+        className={`w-full px-2  grid  border-b-[1px] gap-x-8 items-center py-5  justify-items-center`}
       >
-        {headerColSpan.map((hdr, hdrIndex) => (
-          <td
-            key={`${hdr}-${hdrIndex}`}
-            className={`col-span-1 text-sm ${
-              hdr.toLowerCase() === "products"
-                ? " overflow-auto h-[40px] bg-[var(--light-background)] py-1 rounded shadow-inner px-2 "
-                : ""
-            } `}
-          >
+        {headers.map((hdr, hdrIndex) => (
+          <td key={`${hdr}-${hdrIndex}`} className={`col-span-1 text-sm`}>
             {hdr.toLowerCase() === "image" ? (
               <div className="w-[60px] h-[50px]">
-                <img className="w-full h-full rounded" src={row.image} alt="" />
+                <img
+                  className="w-full h-full rounded"
+                  src={data.image}
+                  alt=""
+                />
               </div>
             ) : hdr.toLowerCase() === "sn" ||
               hdr.toLowerCase() === "orderid" ? (
-              rowIndex + 1
+              dataIndex + 1
             ) : hdr.toLowerCase() === "checkbox" ? (
               <input
                 checked={isChecked}
                 onChange={(event) => {
                   if (event.target) {
                     setIsChecked(event.target.checked);
-                    oncheckBoxChange(event.target.checked, row.id);
+                    onChange(
+                      event.target.checked as boolean,
+                      data.id as string
+                    );
                   }
                 }}
                 className="w-4 cursor-pointer h-4"
@@ -78,7 +76,7 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
                   actions(value);
                 }}
                 style={{}}
-                value={row["id"]}
+                value={data["orderId"]}
                 options={["Edit", "Delete"]}
                 children={
                   <EllipsisVertical className="size-6 duration-150 hover:text-[var(--danger-bg)] " />
@@ -86,7 +84,7 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
               />
             ) : hdr.toLowerCase() === "status" ? (
               <DropDown
-                onSelect={(value: string) => handleClick(value, row.orderId)}
+                onSelect={(value: string) => handleClick(value, data.orderId)}
                 style={{
                   padding: "0.5rem 3rem",
                   background: "var(--green-bg)",
@@ -95,16 +93,16 @@ export const TableRowComponent: React.FC<TableRowProps> = ({
                   color: "var(--light-text)",
                 }}
                 options={
-                  options?.includes(row?.status)
-                    ? options.filter((option) => option !== row?.status)
+                  options?.includes(data?.status)
+                    ? options.filter((option) => option !== data?.status)
                     : options
                 }
-                children={row.status}
+                children={data.status}
               />
             ) : hdr === "email" ? (
-              row["email"].replace("@texascollege.edu.np", "...")
+              data["email"].replace("@texascollege.edu.np", "...")
             ) : (
-              row[hdr]
+              data[hdr]
             )}
           </td>
         ))}

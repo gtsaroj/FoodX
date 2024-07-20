@@ -6,7 +6,6 @@ import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/CreateTicket";
-import { EmployeeCard } from "../../Components/Common/Cards/EmployeeCard";
 
 // interface ButtonProp {
 //   title: string[];
@@ -125,4 +124,3 @@ const TicketPage: React.FC = () => {
 };
 
 export default TicketPage;
-  
