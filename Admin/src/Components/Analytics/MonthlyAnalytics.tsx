@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import data from "../../data.json";
-import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
+import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import Select from "react-select";
 import { selectOptions } from "../LineChart/LineChart";
 import { DropDown } from "../Common/DropDown/DropDown";
@@ -34,10 +34,10 @@ export const MonthlyAnalytics: React.FC = () => {
   return (
     <div className=" w-full flex  gap-4 flex-col items-start justify-center">
       <div className="w-full flex items-center px-5  justify-between">
-      <h2 className="text-left text-xl text-[var(--primary-color)] ">
-        Order Details
-      </h2>
-      <DropDown
+        <h2 className="text-left text-xl text-[var(--primary-color)] ">
+          Order Details
+        </h2>
+        <DropDown
           style={{
             display: "flex",
             fontSize: "15px",
@@ -58,9 +58,9 @@ export const MonthlyAnalytics: React.FC = () => {
           }
           options={["Current Week", "1 week ago"]}
         />
-  </div>
+      </div>
       <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 ">
-        { weeklyFilterOrder?.map((item, index) => (
+        {weeklyFilterOrder?.map((item, index) => (
           <div className="col-span-1">
             <CardAnalytics item={item} key={index} />
           </div>

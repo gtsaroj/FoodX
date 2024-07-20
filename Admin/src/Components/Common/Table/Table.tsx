@@ -16,9 +16,9 @@ interface TableProp {
   data: HeaderProp[] | [] | CustomerType[];
   width: string;
   onCheckBoxChange: (checked: boolean, id: string) => void;
-  onSelectAll : (checked : boolean)=>void;
+  onSelectAll: (checked: boolean) => void;
   colSpan: string;
-  pagination: { perPage: number; currentPage: 1 };
+  pagination?: { perPage: number; currentPage: 1 };
 }
 
 const Table: React.FC<TableProp> = ({
@@ -52,7 +52,6 @@ const Table: React.FC<TableProp> = ({
     setCurrentDatas(currentData as any[]);
   }, [data, startIndex, endIndex]);
 
-
   const handleSelectAll = (checked: boolean) => {
     setIsCheckedAll(checked);
     onSelectAll(checked);
@@ -66,7 +65,11 @@ const Table: React.FC<TableProp> = ({
         <table
           className={`w-${width} sm:w-full border-[1px] rounded flex flex-col`}
         >
-          <TableHeader onSelectAll={handleSelectAll} header={headers} colSpan={colSpan} />
+          <TableHeader
+            onSelectAll={handleSelectAll}
+            header={headers}
+            colSpan={colSpan}
+          />
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (
               <TableRowComponent
@@ -87,14 +90,16 @@ const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      <div className="items-center justify-center w-full">
-        <Pagination
-          onChange={onChangePage}
-          currentPage={currentPage}
-          perPage={pagination?.perPage}
-          totalData={data?.length}
-        />
-      </div>
+      {pagination && (
+        <div className="items-center justify-center w-full">
+          <Pagination
+            onChange={onChangePage}
+            currentPage={currentPage}
+            perPage={pagination?.perPage}
+            totalData={data?.length}
+          />
+        </div>
+      )}
     </div>
   );
 };

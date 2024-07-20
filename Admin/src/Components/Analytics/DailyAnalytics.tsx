@@ -1,6 +1,6 @@
 import React from "react";
 import "react-circular-progressbar/dist/styles.css";
-import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
+import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { revenueDetail } from "../../data.json";
 // import { getOrders } from "../../Services";
 // import { DailyAggregateData } from "../../models/order.model";

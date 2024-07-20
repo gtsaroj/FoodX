@@ -1,4 +1,4 @@
-import { PieChart } from "@mui/x-charts";
+import { PieChart, PieValueType } from "@mui/x-charts";
 import { DropDown } from "../Common/DropDown/DropDown";
 import { aggregateDailyCategoryOrder } from "./PieData";
 import {
@@ -64,8 +64,9 @@ export default function ResponsiveChartExample() {
 }
 
 export const PieChartAnalytics = () => {
+  
   const [categoryData, setCategoryData] = useState<
-    DailyCategoryAgrregateData[]
+    (DailyCategoryAgrregateData & PieValueType)[]
   >([]);
 
   async function handleSelect(option: string) {
@@ -87,17 +88,18 @@ export const PieChartAnalytics = () => {
       if (getFilterOrders) setCategoryData(getFilterOrders);
     });
   }, []);
-   console.log(categoryData)
+  
+  console.log(categoryData);
+  
+ 
   return (
-    <div className="w-full px-5 py-5 sm:h-[400px] h-[500px] bg-[var(--light-background)] flex flex-col gap-5 items-start justify-center ">
-      <h2 className="w-full text-left text-xl text-[var(--primary-color)] ">
-        Monthly & Weekly Order
-      </h2>
-
+    <div className="w-full h-full">
+      {/* 
       <DropDown
         options={["Current week", "Previous week"]}
         onSelect={handleSelect}
-      />
+      /> 
+      */}
       <PieChart
         sx={{ cursor: "pointer" }}
         series={[
@@ -115,15 +117,16 @@ export const PieChartAnalytics = () => {
         ]}
         slotProps={{
           legend: {
-            labelStyle: { fontSize: "12px" },
-            itemMarkHeight: 10,
-            itemMarkWidth: 10,
-            direction: "row",
-            position: { vertical: "bottom", horizontal: "right" },
+            hidden: true,
+            // labelStyle: { fontSize: "12px" },
+            // itemMarkHeight: 10,
+            // itemMarkWidth: 10,
+            // direction: "row",
+            // position: { vertical: "bottom", horizontal: "right" },
           },
         }}
         skipAnimation
-      ></PieChart>
+      />
     </div>
   );
 };
