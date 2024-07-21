@@ -11,13 +11,23 @@ interface FoodTableProp {
 }
 
 const FoodTable: React.FC<FoodTableProp> = ({ userInput }) => {
-  const { headers, foodData } = data;
   const [fetchedProducts, setFetchedProducts] = useState<ProductType[]>([]);
   const [productsHeader, setProductsHeader] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
   const getAllProducts = async () => {
-    const products = await getProducts();
-    const allProducts = await products.data;
-    setFetchedProducts(allProducts.products);
+    setLoading(true);
+    try {
+      const products = await getProducts();
+      const allProducts = await products.data;
+      setFetchedProducts(allProducts.products);
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+      return console.log(`Error while fetching products` + error);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -63,12 +73,18 @@ const FoodTable: React.FC<FoodTableProp> = ({ userInput }) => {
   return (
     <Table
       pagination={{ currentPage: 1, perPage: 7 }}
-      width="500px"
-      colSpan={"7"}
+      bodyStyle={{
+        gridTemplateColumns: "repeat(7,1fr)",
+      }}
+      headerStyle={{
+        display: "grid",
+        gridTemplateColumns: "repeat(7,1fr)",
+      }}
       headers={productsHeader}
-      data={fetchedProducts}
+      data={fetchedProducts as ProductType[]}
       actions={handleClick}
-      loading
+      loading={loading}
+      error={error}
     />
   );
 };

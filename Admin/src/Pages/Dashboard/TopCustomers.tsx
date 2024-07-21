@@ -1,6 +1,19 @@
+import { useEffect, useState } from "react";
 import { CustomerCard } from "../../Components/Common/Cards/CustomerCard";
+import { TopCustomerType } from "../../models/user.model";
+import { getTopCustomers } from "../../Utility/CustomerUtils";
 
 export const TopCustomers = () => {
+  const [TopCustomer, setTopCustomer] = useState<TopCustomerType[]>();
+
+  useEffect(() => {
+    (async () => {
+      const customers = await getTopCustomers();
+      console.log(customers)
+      if (customers) setTopCustomer(customers as any);
+    })();
+  }, []);
+  
   return (
     <div className="bg-[var(--body-bg)] flex flex-col justify-center items-start px-2 rounded-md py-3 ">
       <div className="flex items-center justify-between w-full gap-3 px-3 pt-3 pb-5">
@@ -8,10 +21,12 @@ export const TopCustomers = () => {
         <button>Filter</button>
       </div>
       <div className="flex flex-col gap-3 max-h-[350px] flex-grow overflow-y-scroll">
-        <CustomerCard />
-        <CustomerCard />
-        <CustomerCard />
-        <CustomerCard />
+        {
+          TopCustomer?.map((customer, index) => (
+            <CustomerCard key={customer.id} prop={customer} index={index} />
+          ))
+      }
+
       </div>
     </div>
   );

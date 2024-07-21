@@ -1,4 +1,5 @@
 import { getOrderByUser } from "../Services";
+import { getCustomerData } from "../firebase/db";
 import { DbUser } from "../models/UserModels";
 import { Order, Product } from "../models/order.model";
 import { CustomerType } from "../models/user.model";
@@ -26,6 +27,7 @@ export const aggregateCustomerData = async (
           let totalCustomerQuantity: number = 0;
 
           totalUserOrder.forEach((order) => {
+            console.log(order)
             totalCustomerQuantity += totalQuantity(order.products as Product[]);
             totalCustomerCost += totalCost(order.products as Product[]);
           });
@@ -34,6 +36,7 @@ export const aggregateCustomerData = async (
             id: data.uid,
             name: data.fullName,
             email: data.email,
+            image: data.avatar,
             location: "fljds",
             amountSpent: totalCustomerCost.toFixed(2),
             totalOrder: totalCustomerQuantity,
@@ -70,4 +73,17 @@ export const aggregateCustomerSearchData = async (
 
   const eachCustomer = await aggregateCustomerData(searchingCustomer);
   return eachCustomer;
+};
+
+export const getTopCustomers = async () => {
+  try {
+    const getCustomer = await getCustomerData("customers");
+    const customerList = await aggregateCustomerData(getCustomer);
+    const sortBySpent = customerList.sort(
+      (a, b) => b.amountSpent - a.amountSpent
+    );
+    return sortBySpent.slice(0, 5);
+  } catch (error) {
+    return console.log("Error while sorting top customers : " + error);
+  }
 };

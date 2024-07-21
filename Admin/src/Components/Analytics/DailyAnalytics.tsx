@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { revenueDetail } from "../../data.json";
+import { DailyAggregateData } from "../../models/order.model";
+import { getOrders } from "../../Services";
+import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 // import { getOrders } from "../../Services";
 // import { DailyAggregateData } from "../../models/order.model";
 // import { aggregateCurrentDayData } from "../../Utility/DateUtils";
@@ -27,21 +30,27 @@ interface RevenueDetailProp {
 }
 
 const Revenue: React.FC = () => {
-  // const [totalOrder, setTotalOrder] = useState<DailyAggregateData[]>();
+  const [totalOrder, setTotalOrder] = useState<DailyAggregateData[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   getOrders()
-  //     .then((order) => {
-  //       const currentData = aggregateCurrentDayData(order.data);
-  //       if (currentData) setTotalOrder(currentData as DailyAggregateData[]);
-  //     })
-  //     .catch((error) => {
-  //       // throw new Error("Unable to aggregate current data" + error);
-  //       console.log(error);
-  //     });
-  // }, []);
+  useEffect(() => {
+    setLoading(true);
+    getOrders()
+      .then((order) => {
+     
+        const currentData = aggregateCurrentDayData(order.data);
+        if (currentData) setTotalOrder(currentData as DailyAggregateData[]);
+        setLoading(false);
+      })
+      .catch((error) => {
+        // throw new Error("Unable to aggregate current data" + error);
+        console.log(error);
+      });
+  console.log("step")
+ setLoading(false)
+  }, []);
   // console.log(`Daily Aggregate data: ${totalOrder}`);
-  console.log(revenueDetail as RevenueDetailProp);
+  console.log(loading);
 
   return (
     <React.Fragment>
@@ -51,21 +60,11 @@ const Revenue: React.FC = () => {
 
         {/* })} */}
         <div className="flex flex-wrap items-center justify-start w-full gap-7 ">
-          <CardAnalytics
-            name={revenueDetail.Delivered.title}
-            value={revenueDetail.Delivered.value}
-            subtitle={revenueDetail.Delivered.subtitle}
-          />
-          <CardAnalytics
-            name={revenueDetail.Received.title}
-            value={revenueDetail.Received.value}
-            subtitle={revenueDetail.Received.subtitle}
-          />
-          <CardAnalytics
-            name={revenueDetail.Revenue.title}
-            value={revenueDetail.Revenue.value}
-            subtitle={revenueDetail.Revenue.subtitle}
-          />
+          {loading
+            ? "loadin..."
+            : totalOrder?.map((order, index) => (
+                <CardAnalytics prop={order} key={index} />
+              ))}
         </div>
       </div>
     </React.Fragment>

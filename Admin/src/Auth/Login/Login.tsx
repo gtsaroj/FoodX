@@ -82,14 +82,14 @@ const LoginContainer: React.FC = () => {
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <Eye size={23} />
+                  <Eye size={20} />
                 </div>
               ) : (
                 <div
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <EyeOff size={23} />
+                  <EyeOff size={20} />
                 </div>
               )}
             </div>

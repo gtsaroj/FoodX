@@ -3,21 +3,22 @@ import "./Table.css";
 
 interface TableHeaderProp {
   header: string[];
-  colSpan: string;
+  headerStyle: React.CSSProperties;
   onSelectAll: (checked: boolean) => void;
   // onCheckBox: (rowIndex: number, colName: string, checked: boolean) => void;
 }
 
 export const TableHeader: React.FC<TableHeaderProp> = ({
   header,
-  colSpan,
+  headerStyle,
   onSelectAll,
 }) => {
   return (
     <React.Fragment>
       <thead className="w-full bg-[var(--light-background)] py-5 border-b-[1px]">
         <tr
-          className={`w-full grid  justify-items-center justify-center items-center grid-cols-${colSpan}`}
+          style={headerStyle}
+          className={`w-full grid  justify-items-center justify-center items-center `}
         >
           {header.map((hd, index) =>
             hd.toLowerCase() === "checkbox" ? (

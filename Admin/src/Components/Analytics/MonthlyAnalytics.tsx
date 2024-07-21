@@ -12,6 +12,7 @@ import { Filter } from "lucide-react";
 export const MonthlyAnalytics: React.FC = () => {
   const [weeklyFilterOrder, setWeeklyFilterOrder] =
     useState<DailyAggregateData[]>();
+  console.log(weeklyFilterOrder)
   const handleSelect = async (option: string) => {
     try {
       const orders = await getOrders();
@@ -58,11 +59,11 @@ export const MonthlyAnalytics: React.FC = () => {
           }
           options={["Current Week", "1 week ago"]}
         />
-      </div>
-      <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 ">
-        {weeklyFilterOrder?.map((item, index) => (
+  </div>
+      <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-2 xl:gap-x-10 gap-x-4 gap-y-6 ">
+        { weeklyFilterOrder?.map((item, index) => (
           <div className="col-span-1">
-            <CardAnalytics item={item} key={index} />
+            <CardAnalytics prop={item} key={index} />
           </div>
         ))}
       </div>

@@ -1,5 +1,4 @@
 import { Download, Filter, Search } from "lucide-react";
-import data from "../../data.json";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { useCallback, useEffect, useState } from "react";
 import { getOrders } from "../../Services";
@@ -10,20 +9,49 @@ import {
 } from "../../firebase/order";
 import Table from "../../Components/Common/Table/Table";
 import { debounce } from "../../Utility/Debounce";
-import { SearchOrder, SearchProduct } from "../../Utility/Search";
+import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<Order[]>([]);
   const [orderHeader, setOrderHeader] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
-  const handleCheckboxChange = (
-    rowIndex: number,
-    colName: string,
-    checked: boolean
-  ) => {
-    console.log(rowIndex, colName, checked);
+  const getAllOrders = async () => {
+    setLoading(true);
+    try {
+      //  get total orders data from  server
+      const orders = await getOrders();
+      const totalOrders = orders.data as Order[];
+      const aggregateData = totalOrders?.map(async (item) => {
+        const getUserName = await getFullName(item?.uid);
+        if (getUserName) {
+          const productNames = item.products?.map(
+            (product) =>
+              (product.name as string) + " × " + product.quantity + ", "
+          );
+          return {
+            orderId: item.orderId,
+            Fullname: getUserName,
+            products: productNames,
+            Orderrequest: item.orderRequest,
+            OrderFullfilled: item.orderFullFilled,
+            status: item.status,
+          };
+        }
+      });
+      const getaggregateDataPromises = await Promise.all(aggregateData);
+      console.log(getaggregateDataPromises);
+      if (getaggregateDataPromises)
+        setInitialOrders(getaggregateDataPromises as Order[]);
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+      throw new Error("Unable to display orders data" + error);
+    }
+    setLoading(false);
   };
 
   const handleChange = (value: string) => {
@@ -46,6 +74,8 @@ const OrderList = () => {
     if (!orderId) throw new Error("orderId not found");
     try {
       await deleteOrderFromDatabase(orderId);
+      await getAllOrders();
+      toast.success("Order deleted!");
     } catch (error) {
       throw new Error("Unable to delete order" + error);
     }
@@ -54,31 +84,6 @@ const OrderList = () => {
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialOrders,
   ]);
-
-  const getAllOrders = async () => {
-    try {
-      //  get total orders data from  server
-      const orders = await getOrders();
-      const totalOrders = orders.data as Order[];
-      console.log(totalOrders);
-      const aggregateData = totalOrders?.map(async (item) => {
-        const getUserName = await getFullName(item?.uid);
-        console.log(getUserName);
-        if (getUserName) {
-          const productNames = item.products?.map(
-            (product) => product.name as string
-          );
-          return { ...item, uid: getUserName, products: productNames };
-        }
-      });
-      const getaggregateDataPromises = await Promise.all(aggregateData);
-
-      if (getaggregateDataPromises)
-        setInitialOrders(getaggregateDataPromises as Order[]);
-    } catch (error) {
-      throw new Error("Unable to display orders data" + error);
-    }
-  };
 
   useEffect(() => {
     (async () => {
@@ -197,20 +202,26 @@ const OrderList = () => {
       </div>
       <div className="w-full overflow-auto shadow-inner shadow-lime-300 rounded-t-md">
         <Table
-          loading={false}
-          option={(value: string, orderId: string) =>
+          loading={loading}
+          error={error}
+          onChange={(value: string, orderId: string) =>
             changeOrderStatus(value, orderId)
           }
           options={["Pending", "Canceled", "Recieved", "Delivered"]}
           actions={(value) => handleDelete(value)}
           pagination={{ currentPage: 1, perPage: 10 }}
-          width="800px"
-          colSpan={"7"}
-          data={initialOrders}
+          headerStyle={{
+            gridTemplateColumns: "repeat(7,1fr) ",
+          }}
+          bodyStyle={{
+            display: "grid",
+            gridTemplateColumns: "repeat(7,1fr) ",
+          }}
+          data={initialOrders as Order[]}
           headers={orderHeader}
-          onCheckBoxChange={handleCheckboxChange}
         />
       </div>
+      <Toaster />
     </div>
   );
 };

@@ -15,11 +15,22 @@ export const CategoryPage: React.FC = () => {
     { category: string; image: string }[]
   >([]);
   const [categoryHeader, setCategoryHeader] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
   const closeModal = () => setIsModelOpen(true);
 
   const getAllCategories = async () => {
-    const categories = await getCategory("bnw");
-    setCategory(categories.icons as any);
+    setLoading(true);
+    try {
+      const categories = await getCategory("bnw");
+      setCategory(categories.icons as any);
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+      return console.log(`Error found while fetching category` + error);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -120,12 +131,14 @@ export const CategoryPage: React.FC = () => {
         </form>
       </div>
       <Table
+        error={error}
+        loading={loading}
         actions={(string: string) => console.log(string)}
         pagination={{ currentPage: 1, perPage: 5 }}
-        width="500px"
-        colSpan={"4"}
+        headerStyle={{ gridTemplateColumns: "repeat(4,1fr)" }}
+        bodyStyle={{ gridTemplateColumns: "repeat(4,1fr)" }}
         headers={categoryHeader}
-        data={categoryData}
+        data={categoryData as any}
       />
       <div className="absolute ">
         <Modal close={isModalOpen} closeModal={closeModal}>

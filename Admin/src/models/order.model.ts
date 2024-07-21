@@ -5,18 +5,19 @@ export interface RequestTime {
 export interface Order {
   orderId: string;
   uid: string;
-  products: Product[] | string[];
-  orderRequest: RequestTime;
+  products: Product[];
+  orderRequest: RequestTime | string;
   orderFullFilled: RequestTime;
+  status?: string
 }
 
 // import { ProductType } from "./productMode";
 
 export interface Product {
-  id?: string
+  id?: string;
   name: string;
-  quantity: number | string;
-  price: number | string;
+  quantity: number;
+  price: number;
   image: string | any;
   tag: Category["types"] | undefined;
 }
@@ -64,4 +65,13 @@ export interface DailyCategoryAgrregateData {
 export interface BarChartDataTypes {
   items: { [key: string]: string | number }[];
   week: string;
+}
+
+export interface RecentOrderType {
+  orderId: string;
+  image: string;
+  products: string[];
+  price: number;
+  status: string;
+  orderRequest: string;
 }

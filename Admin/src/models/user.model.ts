@@ -19,8 +19,18 @@ export interface CustomerType {
   id: string;
   name: string;
   email: string;
+  image?: string;
   location: string;
   amountSpent: string | number;
   totalOrder: string | number;
   role: string;
+}
+
+export interface TopCustomerType {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+  amountSpent: string | number;
+  totalOrder: string | number;
 }

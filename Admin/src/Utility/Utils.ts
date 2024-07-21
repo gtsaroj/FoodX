@@ -1,4 +1,3 @@
-import { order } from "../../../frontend/src/Services";
 import { getOrders } from "../Services";
 import { getUserData } from "../firebase/db";
 import { Order, Product } from "../models/order.model";
@@ -8,6 +7,10 @@ export const getFullName = async (uid: string) => {
   const getName = (await getUserData("customers", uid)).fullName;
   return getName;
 };
+export const getUserInfo = async (uid: string) => {
+  const user = await getUserData("customers", uid);
+  return user;
+};
 
 export const totalQuantity = (products: Product[]) => {
   const customerOrderQuantity = products?.reduce(
@@ -15,6 +18,20 @@ export const totalQuantity = (products: Product[]) => {
     0
   );
   return customerOrderQuantity;
+};
+// total Revenue
+export const totalRevenue = (orders: Order[]) => {
+  const revenue = orders?.reduce(
+    (total, order) =>
+      total +
+      order?.products.reduce(
+        (totalProd, product) => totalProd + product.price,
+        1
+      ),
+
+    1
+  );
+  return revenue;
 };
 
 export const totalCost = (products: Product[]) => {

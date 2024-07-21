@@ -19,16 +19,25 @@ const CustomerList: React.FC = () => {
   const [customerHeader, setCustomerHeader] = useState<string[]>([]);
   const [checked, setChecked] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
 
   const handleCustomerData = async () => {
-    const customers = await getCustomerData("customers");
-    const customerList = await aggregateCustomerData(customers);
-    setInitialCustomer(customerList);
+    setLoading(true);
+    try {
+      const customers = await getCustomerData("customers");
+      const customerList = await aggregateCustomerData(customers);
+      setInitialCustomer(customerList);
+    } catch (error) {
+      setLoading(false);
+      setError(true);
+      return console.log(`Error while getting customers : ${error}`);
+    }
+    setLoading(false)
   };
 
   const handleCheckboxChange = (isChecked: boolean, id: string) => {
     setChecked((prevChecked) => {
-      console.log(id);
       const checkedCustomer = initialCustomer.find(
         (customer) => customer.id === id
       );
@@ -221,13 +230,15 @@ const CustomerList: React.FC = () => {
       </div>
       <div className="w-full">
         <Table
+          loading={loading}
+          error={error}
           onSelectAll={handleSelectAll}
           pagination={{ perPage: 5, currentPage: 1 }}
-          width="800px"
+          headerStyle={{ gridTemplateColumns: "repeat(8,1fr)" }}
+          bodyStyle={{ gridTemplateColumns: "repeat(8,1fr)" }}
           data={initialCustomer as CustomerType[]}
-          colSpan="7"
           headers={customerHeader as string[]}
-          onCheckBoxChange={handleCheckboxChange}
+          onChange={handleCheckboxChange}
         />
       </div>
     </div>

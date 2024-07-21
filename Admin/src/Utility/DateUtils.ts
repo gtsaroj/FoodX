@@ -1,8 +1,5 @@
-import {
-  DailyAggregateData,
-  Order,
-  RequestTime,
-} from "../models/order.model";
+import { DailyAggregateData, Order, RequestTime } from "../models/order.model";
+import { totalRevenue } from "./Utils";
 
 // Day Name
 export const dayNames: string[] = [
@@ -24,6 +21,45 @@ export function convertTimestampToDate(timestamp: RequestTime) {
     return new Date(milliseconds).toISOString().split("T")[0];
   }
 }
+//
+interface FormattedDateTime {
+  date: string;
+  time: string;
+}
+
+export const convertIsoToReadableDateTime = (isoString: string): FormattedDateTime => {
+  const date = new Date(isoString);
+
+  // Using toLocaleString for formatted date and time
+  const formattedDateTime = date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short',
+  });
+
+  // Custom formatting for date and time separately
+  const pad = (n: number) => (n < 10 ? '0' + n : n);
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1); // Months are zero-indexed
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  const seconds = pad(date.getSeconds());
+
+  const formattedDate = `${year}-${month}-${day}`;
+  const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+  return {
+    date: formattedDate,
+    time: formattedTime,
+  };
+};
+
 // aggregate current week data
 export const aggregateDataCurrentWeek = (orders: Order[]) => {
   const today = new Date();
@@ -40,7 +76,7 @@ export const aggregateDataCurrentWeek = (orders: Order[]) => {
       orderDate <= endDay.toISOString().split("T")[0]
     );
   });
-  console.log(currentOrderData)
+  console.log(currentOrderData);
   return currentOrderData;
 };
 
@@ -117,24 +153,19 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
     if (currentDayOrder.length === 0) {
       return [
         {
-          title: "Orders",
+          title: "Orders Delivered",
           total: 0,
-          percentage: 100,
+          percentage: 0,
         },
         {
-          title: "Cancel",
+          title: "Orders Received",
           total: 0,
           percentage: 100,
-        },
-        {
-          title: "Delivered",
-          total: 0,
-          percentage: 50,
         },
         {
           title: "Revenue",
           total: 0,
-          percentage: 40,
+          percentage: 0,
         },
       ];
     }
@@ -144,36 +175,23 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
       (_, order) => order.products.length,
       0
     );
-    const totalRevenue = currentDayOrder?.reduce(
-      (total, product) =>
-        total +
-        product?.products?.reduce(
-          (productSum, product) => productSum + product.price,
-          0
-        ),
-      0
-    );
+    const revenue = totalRevenue(currentDayOrder);
 
     const dailAnalyticsData: DailyAggregateData[] = [
       {
-        title: "Orders",
-        total: totalOrders,
-        percentage: 100,
-      },
-      {
-        title: "Cancel",
-        total: totalOrders,
-        percentage: 100,
-      },
-      {
-        title: "Delivered",
+        title: "Orders Delivered",
         total: totalDelivered,
         percentage: ` ${Math.round((totalDelivered / totalOrders) * 100)}`,
       },
       {
+        title: "Orders Recieved",
+        total: totalOrders,
+        percentage: 100,
+      },
+      {
         title: "Revenue",
-        total: totalRevenue,
-        percentage: ` ${Math.round((totalRevenue / totalOrders) * 100)}`,
+        total: revenue,
+        percentage: ` ${Math.round((revenue / totalOrders) * 100)}`,
       },
     ];
 
@@ -200,19 +218,14 @@ export const aggregateWeeklyData = (orders: Order[], option: string) => {
     if (filterData && filterData.length === 0) {
       return [
         {
-          title: "Orders",
+          title: "Orders Delivered",
           total: 0,
           percentage: 100,
         },
         {
-          title: "Cancel",
+          title: "Orders Recieved ",
           total: 0,
           percentage: 100,
-        },
-        {
-          title: "Delivered",
-          total: 0,
-          percentage: 50,
         },
         {
           title: "Revenue",
@@ -227,36 +240,23 @@ export const aggregateWeeklyData = (orders: Order[], option: string) => {
       (_, order) => order.products.length,
       0
     );
-    const totalRevenue = filterData?.reduce(
-      (total, product) =>
-        total +
-        product?.products?.reduce(
-          (productSum, product) => productSum + product.price,
-          0
-        ),
-      0
-    );
+    const revenue = totalRevenue(filterData);
 
     const dailAnalyticsData: DailyAggregateData[] = [
       {
-        title: "Orders",
+        title: "Orders Recieved",
         total: totalOrders,
         percentage: 100,
       },
       {
-        title: "Cancel",
-        total: totalOrders,
-        percentage: 100,
-      },
-      {
-        title: "Delivered",
+        title: "Orders Delivered",
         total: totalDelivered,
-        percentage: ` ${(totalDelivered / totalOrders) * 100}% in 1 day `,
+        percentage: 100,
       },
       {
         title: "Revenue",
-        total: totalRevenue,
-        percentage: ` ${(totalRevenue / totalOrders) * 100}% in 1 day `,
+        total: revenue,
+        percentage: ` ${(revenue / totalOrders) * 100}% in 1 day `,
       },
     ];
 

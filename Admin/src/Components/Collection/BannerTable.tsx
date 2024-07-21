@@ -1,9 +1,9 @@
 import React from "react";
-import  Table  from "../Common/Table/Table";
+import Table from "../Common/Table/Table";
 import data from "../../data.json";
 
 export const BannerTable: React.FC = () => {
-  const { Banners,  BannerData} = data;
+  const { Banners, BannerData } = data;
 
   const handleCheckboxChange = (
     rowIndex: number,
@@ -15,11 +15,13 @@ export const BannerTable: React.FC = () => {
 
   return (
     <Table
-      pagination={{currentPage : 1 , perPage:5}}
-      width="500px"
-      colSpan={"6"}
+      error={false}
+      loading={false}
+      pagination={{ currentPage: 1, perPage: 5 }}
+      headerStyle={{ gridTemplateColumns: "repeat(6,1fr)" }}
+      bodyStyle={{ gridTemplateColumns: "repeat(6,1fr)" }}
       headers={Banners}
-      data={BannerData}
+      data={BannerData as any}
       onCheckBoxChange={handleCheckboxChange}
     />
   );
