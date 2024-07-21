@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import { getRecentOrders } from "./Order";
 import { RecentOrderType } from "../../models/order.model";
-import { order } from "../../../../frontend/src/Services";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();

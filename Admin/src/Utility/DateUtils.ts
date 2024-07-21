@@ -27,22 +27,24 @@ interface FormattedDateTime {
   time: string;
 }
 
-export const convertIsoToReadableDateTime = (isoString: string): FormattedDateTime => {
+export const convertIsoToReadableDateTime = (
+  isoString: string
+): FormattedDateTime => {
   const date = new Date(isoString);
 
   // Using toLocaleString for formatted date and time
-  const formattedDateTime = date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short',
+  const formattedDateTime = date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZoneName: "short",
   });
 
   // Custom formatting for date and time separately
-  const pad = (n: number) => (n < 10 ? '0' + n : n);
+  const pad = (n: number) => (n < 10 ? "0" + n : n);
 
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1); // Months are zero-indexed
@@ -155,17 +157,20 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
         {
           title: "Orders Delivered",
           total: 0,
-          percentage: 0,
+          percentage: 10,
+          subtitle: `sell 0`,
         },
         {
           title: "Orders Received",
           total: 0,
           percentage: 100,
+          subtitle: `sell 0`,
         },
         {
           title: "Revenue",
           total: 0,
-          percentage: 0,
+          percentage: 10,
+          subtitle: `sell 0`,
         },
       ];
     }

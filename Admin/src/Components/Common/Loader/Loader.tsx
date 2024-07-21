@@ -33,6 +33,6 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
       </div>
     </div>
   ) : (
-    <Navigate to={`${url}`} replace/>
+    <Navigate to={`${url}`} replace />
   );
 };

@@ -13,7 +13,6 @@ interface TablerowProps {
   dataIndex: number;
   onChange?: (value: boolean | string, id: string) => void;
   onSelectAll: boolean;
-  option?: (value: string, uid: string) => void;
 }
 
 export const TableRowComponent: React.FC<TablerowProps> = ({

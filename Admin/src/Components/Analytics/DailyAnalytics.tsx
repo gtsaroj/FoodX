@@ -1,53 +1,36 @@
 import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
-import { revenueDetail } from "../../data.json";
-import { DailyAggregateData } from "../../models/order.model";
+import {
+  CardAnalyticsProp,
+} from "../../models/order.model";
 import { getOrders } from "../../Services";
 import { aggregateCurrentDayData } from "../../Utility/DateUtils";
+import { MoreVertical } from "lucide-react";
 // import { getOrders } from "../../Services";
 // import { DailyAggregateData } from "../../models/order.model";
 // import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 
-interface RevenueDetailProp {
-  Received: {
-    title: string;
-    value: number;
-    subtitle: string;
-  };
 
-  Delivered: {
-    title: string;
-    value: number;
-    subtitle: string;
-  };
-
-  Revenue: {
-    title: string;
-    value: number;
-    subtitle: string;
-  };
-}
 
 const Revenue: React.FC = () => {
-  const [totalOrder, setTotalOrder] = useState<DailyAggregateData[]>();
+  const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>();
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
     getOrders()
       .then((order) => {
-     
         const currentData = aggregateCurrentDayData(order.data);
-        if (currentData) setTotalOrder(currentData as DailyAggregateData[]);
+        if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
         setLoading(false);
       })
       .catch((error) => {
         // throw new Error("Unable to aggregate current data" + error);
         console.log(error);
       });
-  console.log("step")
- setLoading(false)
+    console.log("step");
+    setLoading(false);
   }, []);
   // console.log(`Daily Aggregate data: ${totalOrder}`);
   console.log(loading);
@@ -63,7 +46,18 @@ const Revenue: React.FC = () => {
           {loading
             ? "loadin..."
             : totalOrder?.map((order, index) => (
-                <CardAnalytics prop={order} key={index} />
+                <CardAnalytics
+                  filter={
+                    <span>
+                      <MoreVertical />
+                    </span>
+                  }
+                  title={order.title} 
+                  total={order.total}
+                  percentage={order.percentage}
+                  subtitle={order.subtitle}
+                  key={index}
+                />
               ))}
         </div>
       </div>
