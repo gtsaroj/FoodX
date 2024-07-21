@@ -25,7 +25,7 @@ export const TableHeader: React.FC<TableHeaderProp> = ({
               <th key={index}>
                 <input
                   onChange={(event) => onSelectAll(event.target.checked)}
-                  className="w-4 cursor-pointer h-4"
+                  className="w-4 h-4 cursor-pointer"
                   type="checkbox"
                 />
               </th>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import data from "../../data.json";
-import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
+import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import Select from "react-select";
 import { selectOptions } from "../LineChart/LineChart";
 import { DropDown } from "../Common/DropDown/DropDown";
@@ -35,10 +35,10 @@ export const MonthlyAnalytics: React.FC = () => {
   return (
     <div className=" w-full flex  gap-4 flex-col items-start justify-center">
       <div className="w-full flex items-center px-5  justify-between">
-      <h2 className="text-left text-xl text-[var(--primary-color)] ">
-        Order Details
-      </h2>
-      <DropDown
+        <h2 className="text-left text-xl text-[var(--primary-color)] ">
+          Order Details
+        </h2>
+        <DropDown
           style={{
             display: "flex",
             fontSize: "15px",

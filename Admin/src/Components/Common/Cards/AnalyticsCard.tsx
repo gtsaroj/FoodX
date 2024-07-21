@@ -45,11 +45,19 @@ prop : {  title: string;
 // };
 
 export const CardAnalytics: React.FC<CardAnalyticsProp> = ({
+<<<<<<< HEAD:Admin/src/Components/Common/Analytics/CardAnalytics.tsx
   prop
+=======
+  name,
+  subtitle,
+  value,
+  filter,
+>>>>>>> main:Admin/src/Components/Common/Cards/AnalyticsCard.tsx
 }: CardAnalyticsProp) => {
   
   return (
     <div className="flex flex-col items-center justify-center px-3 py-4 border border-[var(--light-secondary-background)] rounded-lg md:w-[350px] w-full ">
+<<<<<<< HEAD:Admin/src/Components/Common/Analytics/CardAnalytics.tsx
       <div className="flex items-center justify-start w-full gap-3 px-2 pb-2">
         <p className="text-sm text-[var(--dark-secondary-text)] text-nowrap">
           { prop?.title}
@@ -57,7 +65,19 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({
         <div className="flex text-xs text-[var(--green-text)] gap-1 px-1 py-0.5 rounded-md bg-[var(--light-secondary-background)]">
           <ArrowUpIcon size={15} />
           <p>10%</p>
+=======
+      <div className="flex items-center justify-between w-full gap-3 px-2 pb-2">
+        <div className="flex items-center justify-start gap-3">
+          <p className="text-sm text-[var(--dark-secondary-text)] text-nowrap">
+            {name}
+          </p>
+          <div className="flex text-xs text-[var(--green-text)] gap-1 px-1 py-0.5 rounded-md bg-[var(--light-secondary-background)]">
+            <ArrowUpIcon size={15} />
+            <p>10%</p>
+          </div>
+>>>>>>> main:Admin/src/Components/Common/Cards/AnalyticsCard.tsx
         </div>
+        {filter && filter}
       </div>
       <h3 className="flex items-center justify-start w-full pl-2 text-[var(--dark-text)] text-[42px] font-semibold pb-1 pr-3">
         {prop?.total}+

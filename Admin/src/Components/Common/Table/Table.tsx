@@ -73,7 +73,11 @@ const Table: React.FC<TableProp> = ({
           <TableHeader
             onSelectAll={handleSelectAll}
             header={headers}
+<<<<<<< HEAD
             headerStyle={headerStyle as CSSProperties}
+=======
+            colSpan={colSpan}
+>>>>>>> main
           />
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (
@@ -94,14 +98,16 @@ const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      <div className="items-center justify-center w-full">
-        <Pagination
-          onChange={onChangePage}
-          currentPage={currentPage}
-          perPage={pagination?.perPage}
-          totalData={data?.length}
-        />
-      </div>
+      {pagination && (
+        <div className="items-center justify-center w-full">
+          <Pagination
+            onChange={onChangePage}
+            currentPage={currentPage}
+            perPage={pagination?.perPage}
+            totalData={data?.length}
+          />
+        </div>
+      )}
     </div>
   ) : (
     "Not found"

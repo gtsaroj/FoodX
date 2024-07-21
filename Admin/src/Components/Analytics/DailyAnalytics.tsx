@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
-import { CardAnalytics } from "../Common/Analytics/CardAnalytics";
+import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { revenueDetail } from "../../data.json";
 import { DailyAggregateData } from "../../models/order.model";
 import { getOrders } from "../../Services";
