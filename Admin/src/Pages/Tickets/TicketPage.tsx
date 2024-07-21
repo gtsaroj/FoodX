@@ -6,6 +6,8 @@ import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/CreateTicket";
+import { getTickets } from "../../Services";
+import toast from "react-hot-toast";
 
 // interface ButtonProp {
 //   title: string[];
@@ -22,6 +24,17 @@ const TicketComponents = {
 const TicketPage: React.FC = () => {
   const [ticketState, setTicketState] = useState<string>();
   const [closeModal, setCloseModal] = useState<boolean>(true);
+  const [tickets, setTickets] = useState<any>([]);
+
+  const fetchTickets = async () => {
+    try {
+      const tickets = await getTickets();
+      setTickets(tickets);
+    } catch (error) {
+      toast.error("Unable to fetch ticket");
+      throw new Error("Unable to fetch tickets" + error);
+    }
+  };
 
   function handleClick(item: string) {
     setTicketState(item as string);
@@ -29,7 +42,9 @@ const TicketPage: React.FC = () => {
 
   useEffect(() => {
     setTicketState("pending");
+    fetchTickets();
   }, []);
+  console.log(tickets)
 
   const ticketStateLower = ticketState?.toLowerCase();
   const component = ticketStateLower && TicketComponents[ticketStateLower];

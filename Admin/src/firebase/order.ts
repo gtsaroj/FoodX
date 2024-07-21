@@ -5,6 +5,7 @@ import {
   deleteDoc,
   doc,
   endBefore,
+  getDoc,
   getDocs,
   limit,
   orderBy,
@@ -100,7 +101,8 @@ export const updateOrderStatus = async (newStatus: string, orderId: any) => {
   const orderRef = doc(db, "orders", orderId);
   try {
     await updateDoc(orderRef, { status: newStatus });
-    return;
+    const updatedOrder = await getDoc(orderRef);
+    if (updatedOrder.exists()) return updatedOrder.data();
   } catch (err) {
     throw new Error("Unable to update user order status");
   }

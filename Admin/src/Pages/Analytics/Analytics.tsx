@@ -2,7 +2,7 @@ import React from "react";
 // import Revenue from "../../Components/Analytics/DailyAnalytics";
 // import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
 // import Overview from "./Overview";
-import ProductAnalytics from "./ProductAnalytics";
+import Overview from "./Overview";
 // import { MonthlyRevenueChart } from "../../Components/LineChart/LineChart";
 // import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
 // import { MonthlyAnalytics } from "../../Components/Analytics/MonthlyAnalytics";
@@ -33,8 +33,8 @@ const Analytics: React.FC = () => {
       </div>
       <div className="flex items-start justify-center w-full gap-8">
         {/* content */}
-        {/* <Overview /> */}
-        <ProductAnalytics />
+        <Overview />
+        {/* <ProductAnalytics /> */}
       </div>
       {/* <MonthlyAnalytics />
       <PieChartAnalytics />
