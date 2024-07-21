@@ -1,12 +1,8 @@
 import { ArrowUpIcon } from "lucide-react";
 import React from "react";
+import { CardAnalyticsProp } from "../../../models/order.model";
 // import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 
-interface CardAnalyticsProp {
-prop : {  title: string;
-  total: number;
-  percentage: number;}
-}
 // export const CardAnalytics: React.FC<CardAnalyticsProp> = ({ item }) => {
 //   console.log(item)
 //   return (
@@ -45,45 +41,34 @@ prop : {  title: string;
 // };
 
 export const CardAnalytics: React.FC<CardAnalyticsProp> = ({
-<<<<<<< HEAD:Admin/src/Components/Common/Analytics/CardAnalytics.tsx
-  prop
-=======
-  name,
+  title,
+  percentage,
   subtitle,
-  value,
   filter,
->>>>>>> main:Admin/src/Components/Common/Cards/AnalyticsCard.tsx
+  total,
 }: CardAnalyticsProp) => {
-  
   return (
     <div className="flex flex-col items-center justify-center px-3 py-4 border border-[var(--light-secondary-background)] rounded-lg md:w-[350px] w-full ">
-<<<<<<< HEAD:Admin/src/Components/Common/Analytics/CardAnalytics.tsx
-      <div className="flex items-center justify-start w-full gap-3 px-2 pb-2">
-        <p className="text-sm text-[var(--dark-secondary-text)] text-nowrap">
-          { prop?.title}
-        </p>
-        <div className="flex text-xs text-[var(--green-text)] gap-1 px-1 py-0.5 rounded-md bg-[var(--light-secondary-background)]">
-          <ArrowUpIcon size={15} />
-          <p>10%</p>
-=======
       <div className="flex items-center justify-between w-full gap-3 px-2 pb-2">
         <div className="flex items-center justify-start gap-3">
+          {" "}
           <p className="text-sm text-[var(--dark-secondary-text)] text-nowrap">
-            {name}
+            {title}
           </p>
-          <div className="flex text-xs text-[var(--green-text)] gap-1 px-1 py-0.5 rounded-md bg-[var(--light-secondary-background)]">
-            <ArrowUpIcon size={15} />
-            <p>10%</p>
-          </div>
->>>>>>> main:Admin/src/Components/Common/Cards/AnalyticsCard.tsx
+          {percentage && (
+            <div className="flex text-xs text-[var(--green-text)] gap-1 px-1 py-0.5 rounded-md bg-[var(--light-secondary-background)]">
+              <ArrowUpIcon size={15} />
+              <p>{percentage}%</p>
+            </div>
+          )}
         </div>
         {filter && filter}
       </div>
       <h3 className="flex items-center justify-start w-full pl-2 text-[var(--dark-text)] text-[42px] font-semibold pb-1 pr-3">
-        {prop?.total}+
+        {total}+
       </h3>
       <p className="flex items-center justify-start w-full text-xs text-[var(--dark-secondary-text)] px-2 pb-1 text-nowrap">
-        {prop?.percentage}
+        {subtitle}
       </p>
     </div>
   );

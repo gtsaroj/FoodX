@@ -73,11 +73,7 @@ const Table: React.FC<TableProp> = ({
           <TableHeader
             onSelectAll={handleSelectAll}
             header={headers}
-<<<<<<< HEAD
             headerStyle={headerStyle as CSSProperties}
-=======
-            colSpan={colSpan}
->>>>>>> main
           />
           <tbody className="w-full">
             {currentDatas?.map((row, rowIndex) => (

@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from "react";
-import data from "../../data.json";
-import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
-import Select from "react-select";
-import { selectOptions } from "../LineChart/LineChart";
 import { DropDown } from "../Common/DropDown/DropDown";
 import { DailyAggregateData } from "../../models/order.model";
 import { getOrders } from "../../Services";
@@ -12,7 +8,7 @@ import { Filter } from "lucide-react";
 export const MonthlyAnalytics: React.FC = () => {
   const [weeklyFilterOrder, setWeeklyFilterOrder] =
     useState<DailyAggregateData[]>();
-  console.log(weeklyFilterOrder)
+  console.log(weeklyFilterOrder);
   const handleSelect = async (option: string) => {
     try {
       const orders = await getOrders();
@@ -59,13 +55,13 @@ export const MonthlyAnalytics: React.FC = () => {
           }
           options={["Current Week", "1 week ago"]}
         />
-  </div>
+      </div>
       <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-2 xl:gap-x-10 gap-x-4 gap-y-6 ">
-        { weeklyFilterOrder?.map((item, index) => (
+        {/* { weeklyFilterOrder?.map((item, index) => (
           <div className="col-span-1">
             <CardAnalytics prop={item} key={index} />
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   );
