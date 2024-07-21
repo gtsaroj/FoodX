@@ -1,44 +1,49 @@
-import { UploadIcon } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-import Select from "react-select"
+import React, { FormEvent, useEffect, useRef, useState } from "react";
+import Select from "react-select";
 import { requestSelectOption } from "../LineChart/D";
-
-const options = [
-  {
-    label: "Pizza",
-    value: 1,
-  },
-  {
-    label: "Cold drinks",
-    value: 2,
-  },
-  {
-    label: "Hot drinks",
-    value: 3,
-  },
-  {
-    label: "MOMO",
-    value: 4,
-  },
-];
+import { HashLoader } from "react-spinners";
+import { TicketType } from "../../models/ticket.model";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Reducer/Store";
+import { stat } from "fs";
+import toast from "react-hot-toast";
+import { createTicket } from "../../Services";
 
 const CreateTicket: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
+  const user = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const [Scroll, setScroll] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [initialTicket, setInitialTicket] = useState<TicketType>({
+    title: "",
+    category: "",
+    description: "",
+    date: new Date().toISOString().split("T") as any,
+    status: "Pending",
+    uid: user.uid,
+  });
 
-  const scroller = () => {
-    if (reference.current && reference.current?.scrollTop > 0) {
-      console.log("detected");
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (
+      !initialTicket.category &&
+      initialTicket.category &&
+      !initialTicket.description
+    )
+      return toast.error("All fields are required");
+
+    setLoading(true);
+    try {
+      const response = await createTicket({ ...initialTicket });
+      setLoading(false);
+      return toast.success("Ticket success");
+    } catch (error) {
+      toast.error("Unable to create ticket");
+      setLoading(false);
+      return console.log("Unable to create ticket" + error);
     }
-  };
-  const fileRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const currentRef = reference.current;
-    if (currentRef) currentRef.addEventListener("scroll", scroller);
-    return () => currentRef?.removeEventListener("scroll", scroller);
-  },);
+  };
 
   return (
     <React.Fragment>
@@ -51,48 +56,78 @@ const CreateTicket: React.FC = () => {
         </h3>
 
         <form
+          onSubmit={(event) => handleSubmit(event)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
-              >
-                  {/* First Row */}
-            <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
-              <label
-                className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
-                htmlFor=""
-              >
-                Topic
-              </label>
-           <Select className="w-full" options={requestSelectOption} />
+        >
+          {/* First Row */}
+          <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
+            <label
+              className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+              htmlFor=""
+            >
+              Category
+            </label>
+            <Select
+              onChange={(event) =>
+                setInitialTicket((prev) => ({
+                  ...prev,
+                  category: event.value,
+                }))
+              }
+              className="w-full"
+              options={requestSelectOption}
+            />
           </div>
           {/* Second Row */}
           <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
-              <label
-                className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
-                htmlFor=""
-              >
-                Subject
-              </label>
-              <input
-                type="text"
-              
-                className="w-full outline-none placeholder:text-sm py-2 px-4 rounded"
-              />
-            </div>
+            <label
+              className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+              htmlFor=""
+            >
+              Title
+            </label>
+            <input
+              value={initialTicket.title}
+              onChange={(event) =>
+                setInitialTicket((prev) => ({
+                  ...prev,
+                  title: event.target.value,
+                }))
+              }
+              type="text"
+              className="w-full outline-none placeholder:text-sm py-2 px-4 rounded"
+            />
+          </div>
           {/* Third Row */}
           <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
-          <label
-                className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
-                htmlFor=""
-              >
-                Request
+            <label
+              className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+              htmlFor=""
+            >
+              Description
             </label>
             <textarea
-                placeholder="Describe your request"
-                className="w-full h-[200px] resize-none  outline-none placeholder:text-sm py-2 px-4 rounded"
-              />
-     </div>
+              value={initialTicket.description}
+              onChange={(event) =>
+                setInitialTicket((prev) => ({
+                  ...prev,
+                  description: event.target.value,
+                }))
+              }
+              placeholder="Describe your request"
+              className="w-full h-[200px] resize-none  outline-none placeholder:text-sm py-2 px-4 rounded"
+            />
+          </div>
+
           <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
-            Save
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                Sending <HashLoader color="white" size={"20px"} />
+              </div>
+            ) : (
+              "Save"
+            )}
           </button>
         </form>
       </div>

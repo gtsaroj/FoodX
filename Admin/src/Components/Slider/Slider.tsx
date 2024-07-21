@@ -20,6 +20,7 @@ import {
 import Logout from "../Logout/Logout";
 import { signOut } from "../../Services";
 import { Loader } from "../Common/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 interface DesktopSliderProp {
   closeFn: () => void;
@@ -30,11 +31,10 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
   closeFn,
   open,
 }) => {
-  console.log(open);
+  const navigate = useNavigate();
   const reference = useRef<HTMLDivElement | null>(null);
   const [openContact, setOpenContact] = useState<boolean>(false);
   const [openCollection, setOpenCollection] = useState<boolean>(false);
-  const [url, setUrl] = useState<string>();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,7 +56,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
   const auth = {
     role: "admins",
   };
-  console.log(url)
+  
 
   return (
     <div
@@ -88,7 +88,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
         <div className="flex items-start justify-start flex-grow h-full overflow-auto ">
           <ul className="flex flex-col items-start justify-center w-full gap-5">
             <li
-              onClick={() => setUrl("/admin")}
+              onClick={() => navigate("/admin")}
               className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] w-full py-3 px-2 rounded duration-150  "
             >
               <LayoutDashboard />
@@ -98,7 +98,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               ""
             ) : (
               <li
-                onClick={() => setUrl("analytics")}
+                onClick={() => navigate("analytics")}
                 className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
               >
                 <LineChart />
@@ -126,14 +126,14 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 } items-start   gap-3 justify-center`}
               >
                 <li
-                  onClick={() => setUrl("collection/foodlist")}
+                  onClick={() => navigate("collection/foodlist")}
                   className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                 >
                   <Utensils className="size-5" />
                   Food list
                 </li>
                 <li
-                  onClick={() => setUrl("collection/banner")}
+                  onClick={() => navigate("collection/banner")}
                   className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                 >
                   <Fullscreen className="size-5" />
@@ -142,14 +142,14 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               </ul>
             </li>
             <li
-              onClick={() => setUrl("category")}
+              onClick={() => navigate("category")}
               className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
             >
               <Shapes />
               <span>Category</span>
             </li>
             <li
-              onClick={() => setUrl("order-list")}
+              onClick={() => navigate("order-list")}
               className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] w-full p-3 rounded duration-150   "
             >
               <ListOrdered />
@@ -159,7 +159,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               ""
             ) : (
               <li
-                onClick={() => setUrl("customer-list")}
+                onClick={() => navigate("customer-list")}
                 className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150  "
               >
                 <BookUser />
@@ -190,7 +190,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                   ""
                 ) : (
                   <li
-                    onClick={() => setUrl("contact/profile")}
+                    onClick={() => navigate("contact/profile")}
                     className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
@@ -201,7 +201,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                   ""
                 ) : (
                   <li
-                    onClick={() => setUrl("contact/profile")}
+                    onClick={() => navigate("contact/profile")}
                     className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
@@ -212,7 +212,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                   ""
                 ) : (
                   <li
-                    onClick={() => setUrl("contact/tickets")}
+                    onClick={() => navigate("contact/tickets")}
                     className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <Ticket />
@@ -227,7 +227,6 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
         {/* Logout Section */}
         <Logout logout={() => signOut()} />
       </div>
-      {url && <Loader url={`${url}`} />}
     </div>
   );
 };
