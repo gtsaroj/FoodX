@@ -27,7 +27,7 @@ export const aggregateCustomerData = async (
           let totalCustomerQuantity: number = 0;
 
           totalUserOrder.forEach((order) => {
-            console.log(order)
+            console.log(order);
             totalCustomerQuantity += totalQuantity(order.products as Product[]);
             totalCustomerCost += totalCost(order.products as Product[]);
           });
@@ -80,7 +80,7 @@ export const getTopCustomers = async () => {
     const getCustomer = await getCustomerData("customers");
     const customerList = await aggregateCustomerData(getCustomer);
     const sortBySpent = customerList.sort(
-      (a, b) => b.amountSpent - a.amountSpent
+      (a: any, b: any) => b.amountSpent - a.amountSpent
     );
     return sortBySpent.slice(0, 5);
   } catch (error) {

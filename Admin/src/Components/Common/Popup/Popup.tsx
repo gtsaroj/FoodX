@@ -13,11 +13,11 @@ const Modal: React.FC<ModelProp> = ({
   children,
   closeModal,
 }: ModelProp) => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
-      if (modalRef.current && !modalRef.current?.contains(event.target)) {
+      if (modalRef.current && !modalRef.current?.contains(event.target as any)) {
         closeModal();
       }
     };

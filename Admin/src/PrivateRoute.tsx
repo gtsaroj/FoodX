@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "./Reducer/Store";
-import { useEffect, useState } from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 
 interface PrivateRouteProp {
   UserRole: string[];

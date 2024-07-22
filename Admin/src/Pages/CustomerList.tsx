@@ -39,7 +39,7 @@ const CustomerList: React.FC = () => {
   const handleCheckboxChange = (isChecked: boolean, id: string) => {
     setChecked((prevChecked) => {
       const checkedCustomer = initialCustomer.find(
-        (customer) => customer.id === id
+        (customer) => customer.ID === id
       );
 
       if (isChecked && checkedCustomer) {
@@ -100,21 +100,21 @@ const CustomerList: React.FC = () => {
 
     let sortedCustomers;
     if (value === "Amount spent") {
-      sortedCustomers = [...initialCustomer].sort((a, b) =>
+      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
           ? b.amountSpent - a.amountSpent
           : a.amountSpent - b.amountSpent
       );
     }
     if (value === "Name") {
-      sortedCustomers = [...initialCustomer].sort((a, b) =>
+      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
           ? b.name.localeCompare(a.name)
           : a.name.localeCompare(b.name)
       );
     }
     if (value === "Total Order") {
-      sortedCustomers = [...initialCustomer].sort((a, b) =>
+      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
           ? b.totalOrder - a.totalOrder
           : a.totalOrder - b.totalOrder
@@ -122,7 +122,7 @@ const CustomerList: React.FC = () => {
     }
 
     setSortOrder({ field: value, order: newOrder });
-    setInitialCustomer(sortedCustomers);
+    setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
   console.log(initialCustomer);

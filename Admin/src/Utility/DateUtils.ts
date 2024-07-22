@@ -56,16 +56,6 @@ export const convertIsoToReadableDateTime = (
 ): FormattedDateTime => {
   const date = new Date(isoString);
 
-  // Using toLocaleString for formatted date and time
-  const formattedDateTime = date.toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    timeZoneName: "short",
-  });
 
   // Custom formatting for date and time separately
   const pad = (n: number) => (n < 10 ? "0" + n : n);
@@ -168,8 +158,8 @@ export const aggregateDataPreviousMonth = (orders: Order[]) => {
 
 export const aggregateCurrentDayData = (orders: Order[]) => {
   try {
-    const today = new Date();
-    const todayString = today.toISOString().split("T")[0];
+    // const today = new Date();
+    // const todayString = today.toISOString().split("T")[0];
 
     const currentDayOrder = orders.filter((order) => {
       const orderDate = convertTimestampToDate(order.orderFullFilled);

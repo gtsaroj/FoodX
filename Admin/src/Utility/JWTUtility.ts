@@ -6,7 +6,7 @@ export const getRoleFromAccessToken = async () => {
     const accessToken = Cookies.get("accessToken");
     if (!accessToken) throw new Error("Token not Available");
 
-    const decodeToken = jwtDecode<JwtPayload>(accessToken);
+    const decodeToken = jwtDecode<JwtPayload>(accessToken) as any;
     if (!decodeToken) throw new Error("Unverified token");
     const getRole = decodeToken?.role;
     return getRole;

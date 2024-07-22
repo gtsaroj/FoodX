@@ -13,10 +13,11 @@ import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
 import { authLogout } from "./Reducer/Action";
 import { makeRequest } from "./makeRequest";
-import { UseFetch } from "../../frontend/src/UseFetch";
+
 import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
-import { stat } from "fs";
+
+const getAccessToken = Cookies.get("accessToken")
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -94,6 +95,7 @@ export const signOut = async () => {
 };
 
 export const getOrders = async () => {
+  if(!getAccessToken) return console.log("You are not logged in")
   try {
     const response = await makeRequest({
       method: "get",
@@ -211,7 +213,11 @@ export const createTicket = async (data: TicketType) => {
 };
 
 export const getTicketByStatus = async (status: string) => {
+  let request = 5;
+  console.log(request)
+  if (request < 0) return console.log("Time finished");
   try {
+    request = -1;
     const response = await makeRequest({
       method: "post",
       url: "tickets/get-ticket-status",

@@ -13,21 +13,20 @@ interface SelectProp {
   placeholder: string;
 }
 
-export const Selector: React.FC<SelectProp> = ({
-  options,
-  value,
-  selectedOption,
-  placeholder,
-}) => {
+export const Selector: React.FC<SelectProp> = ({ options, placeholder }) => {
   return (
     <div className="w-full z-[111000] bg-slate-300">
-      <Select> 
+      <Select>
         <SelectTrigger className="w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="w-full bg-slate-400 z-[100]">
           {options?.map((option, index) => (
-            <SelectItem className="w-full cursor-pointer hover:bg-slate-100" key={index} value={option.value}>
+            <SelectItem
+              className="w-full cursor-pointer hover:bg-slate-100"
+              key={index}
+              value={option.value}
+            >
               {option.label}
             </SelectItem>
           ))}

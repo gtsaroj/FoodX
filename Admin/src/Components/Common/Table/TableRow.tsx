@@ -25,19 +25,18 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
   actions,
   onSelectAll,
 }) => {
-  console.log(data)
+  console.log(data);
   const [isChecked, setIsChecked] = useState<boolean>(onSelectAll);
   const [viewId, setViewId] = useState<string>(data?.ID?.substring(0, 5));
 
   function handleClick(value: string, uid: string) {
-    console.log(value,uid)
+    if (!onChange) return;
     onChange(value as string, uid as string);
   }
   useEffect(() => {
     setIsChecked(onSelectAll);
   }, [onSelectAll]);
 
- 
   return (
     <React.Fragment>
       <tr
@@ -49,7 +48,9 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
             key={`${hdr}-${hdrIndex}`}
             className={`col-span-1 ${
               hdr === "Email" ? "col-span-2 text-center w-full" : "col-span-1"
-            } text-center text-sm ${hdr === "Products" ? "col-span-2 text-center w-full" :""} `}
+            } text-center text-sm ${
+              hdr === "Products" ? "col-span-2 text-center w-full" : ""
+            } `}
           >
             {hdr.toLowerCase() === "image" ? (
               <div className="w-[40px] h-[40px]">
@@ -68,6 +69,7 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                 onChange={(event) => {
                   if (event.target) {
                     setIsChecked(event.target.checked);
+                    if(!onChange) return;
                     onChange(
                       event.target.checked as boolean,
                       data.id as string

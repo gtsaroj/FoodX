@@ -1,6 +1,5 @@
 import { DbUser } from "../models/UserModels";
 import { Order, Product } from "../models/order.model";
-import { Categories } from "../models/productMode";
 
 export const SearchCustomer = (customers: DbUser[], value: string) => {
   const searchingCustomer = customers?.filter((customer) => {

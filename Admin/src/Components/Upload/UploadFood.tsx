@@ -1,5 +1,5 @@
 import { UploadIcon } from "lucide-react";
-import React, { FormEvent, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { UploadProductType } from "../../models/productMode";
 import { nanoid } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
@@ -40,8 +40,8 @@ const UploadFood: React.FC = () => {
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const handleClick = async (event : FormEvent , data: UploadProductType) => {
-     event.preventDefault();
+  const handleClick = async (event: FormEvent, data: UploadProductType) => {
+    event.preventDefault();
     if (!data) return toast.error("Product are unavailable");
     try {
       const addProduct = await addProducts(data);
@@ -62,14 +62,12 @@ const UploadFood: React.FC = () => {
         </h3>
 
         <form
-          onSubmit={(event) => handleClick(event , addFood)}
+          onSubmit={(event) => handleClick(event, addFood)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
           {/* First Row */}
-          <div
-            className="flex flex-col items-center justify-start w-full gap-5 sm:flex-row "
-          >
+          <div className="flex flex-col items-center justify-start w-full gap-5 sm:flex-row ">
             {" "}
             <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
               <label
@@ -187,8 +185,9 @@ const UploadFood: React.FC = () => {
             >
               <input
                 ref={fileRef as any}
-                onChange={(event) => {
-                  if (event.target.files)
+                onChange={(event: ChangeEvent<any>) => {
+                  if (!event.target.files) return;
+                  if (event.target.files) {
                     setAddFood((prev) => ({
                       ...prev,
                       products: {
@@ -196,6 +195,7 @@ const UploadFood: React.FC = () => {
                         image: event.target.files[0] as any,
                       },
                     }));
+                  }
                 }}
                 type="file"
                 className="hidden"
@@ -228,7 +228,10 @@ const UploadFood: React.FC = () => {
               Would you like to mark this as a special product ?
             </p>
           </div>
-          <button type="submit" className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button
+            type="submit"
+            className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+          >
             Save
           </button>
         </form>

@@ -6,7 +6,7 @@ import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/CreateTicket";
-import { getTicketByStatus, getTickets } from "../../Services";
+import { getTicketByStatus } from "../../Services";
 import toast from "react-hot-toast";
 
 // interface ButtonProp {
@@ -36,7 +36,7 @@ const TicketPage: React.FC = () => {
 
   useEffect(() => {
     fetchTickets();
-  }, [ticketState]);
+  }, [ticketState]);  // Adding ticketState as a dependency
 
   const TicketComponents = {
     Pending: <PendingTicket prop={tickets} loading={loading} />,
@@ -47,6 +47,7 @@ const TicketPage: React.FC = () => {
 
   const ticketStateLower = ticketState;
   const component = ticketStateLower && TicketComponents[ticketStateLower];
+
   return (
     <div className="flex flex-col items-start justify-center px-4 py-5 gap-7">
       <div className="flex items-center justify-between w-full px-5">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Triangle } from "react-loader-spinner";
+import { BallTriangle } from "react-loader-spinner";
 import { Navigate } from "react-router-dom";
 interface LoaderProp {
   url: string;
@@ -10,7 +10,7 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoader(false);
-    }, 200);
+    }, 500);
 
     return () => {
       clearTimeout(timer);
@@ -21,7 +21,7 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
   return loader ? (
     <div className="w-screen z-[10000000]   left-0 bg-[var(--popup-bg)] top-0 fixed h-screen ">
       <div className="w-screen h-screen  backdrop-blur-md flex items-center justify-center ">
-        <Triangle
+        <BallTriangle
           color="blue"
           height={80}
           width={100}

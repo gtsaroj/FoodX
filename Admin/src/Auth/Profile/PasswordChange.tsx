@@ -1,13 +1,10 @@
 import { Eye, EyeOff } from "lucide-react";
 import { FormEvent, useState } from "react";
-import {
-  ChangePasswordType,
-  checkPassword,
-} from "./UpdateProfileValidation";
+import { ChangePasswordType, checkPassword } from "./UpdateProfileValidation";
 import { updateUserPassword } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
-import { authLogout } from "../../Reducer/authReducer";
+import { authLogout } from "../../Reducer/Action";
 import HashLoader from "react-spinners/HashLoader";
 import toast from "react-hot-toast";
 import ReAuth from "./ReAuth";
@@ -17,7 +14,9 @@ const PasswordChange = () => {
   const [newPassword, SetNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [ShowPassword, setShowPassword] = useState<boolean>(false);
-  let [ValidateError, setValidateError] = useState<Record<string, string>>({});
+  const [ValidateError, setValidateError] = useState<Record<string, string>>(
+    {}
+  );
 
   const [changePassword, setChangePassword] = useState<boolean>(false);
   const [passwordChanging, setPasswordChanging] = useState<boolean>(false);
@@ -53,7 +52,7 @@ const PasswordChange = () => {
           return toast.error("Invalid Authenticated");
         }
 
-        await updateUserPassword(newPassword).then((res: any) => {
+        await updateUserPassword(newPassword).then(() => {
           toast.success("Your password Changed SuccessFully");
           setTimeout(() => {
             dispatch(authLogout());
@@ -176,7 +175,6 @@ const PasswordChange = () => {
             : "invisible opacity-0 "
         }`}
       >
-      
         <ReAuth
           reAuthUsers={() =>
             HandlePasswordChange(event as unknown as FormEvent<HTMLFormElement>)

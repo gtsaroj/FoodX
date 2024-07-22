@@ -1,8 +1,6 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/user.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
-import { signUpNewUser } from "../../firebase/Authentication";
-import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";

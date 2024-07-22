@@ -1,9 +1,8 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import React, { ReactNode, useState } from "react";
-import { Button } from "../components/ui/button";
+import React from "react";
 
 interface DropDownProp {
-  options: string[] | ReactNode;
+  options: any;
   children: React.ReactNode;
   style: React.CSSProperties;
   value?: string;
@@ -17,11 +16,11 @@ export const DropDown: React.FC<DropDownProp> = ({
   style,
   value,
 }) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const handleSelect = (selectOption: string) => {
-    setSelectedOption(selectOption);
-    if (selectOption === "Delete") onSelect(value);
+  
+    if (!onSelect) return;
+    if (selectOption === "Delete") onSelect(value as string);
     else if (selectOption !== "Delete") onSelect(selectOption);
   };
 
@@ -33,7 +32,7 @@ export const DropDown: React.FC<DropDownProp> = ({
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
           <DropdownMenu.Content className="relative bg-[var(--light-background)] w-full  py-3 my-1 px-1 rounded flex flex-col items-start justify-center gap-2">
-            {options?.map((item: any, index): any => (
+            {options?.map((item: any, index: number): any => (
               <button
                 key={index}
                 onClick={() => handleSelect(item)}

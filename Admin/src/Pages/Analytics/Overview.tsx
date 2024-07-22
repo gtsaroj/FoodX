@@ -26,11 +26,11 @@ const Overview = () => {
           <WeekReveneuChart />
         </div>
       </div>
-      <div className="flex items-center justify-start w-full gap-3 px-5 ">
+      <div className="flex items-center flex-wrap justify-start w-full gap-3 px-5 ">
         <div className="w-full lg:max-w-[600px] border p-2 rounded-md">
           <WeekReveneuChart />
         </div>
-        <div className="flex flex-col justify-between items-center flex-grow border max-w-[400px] ">
+        <div className="flex flex-col justify-between items-center flex-grow border w-full lg:max-w-[400px] ">
           <PieChartAnalytics />
         </div>
       </div>

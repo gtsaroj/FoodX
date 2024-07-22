@@ -9,17 +9,17 @@ export const MonthlyAnalytics: React.FC = () => {
   const [weeklyFilterOrder, setWeeklyFilterOrder] =
     useState<DailyAggregateData[]>();
   console.log(weeklyFilterOrder);
-  const handleSelect = async (option: string) => {
-    try {
-      const orders = await getOrders();
+  // const handleSelect = async (option: string) => {
+  //   try {
+  //     const orders = await getOrders();
 
-      const filterData = aggregateWeeklyData(orders.data, option.toLowerCase());
-      console.log(orders);
-      setWeeklyFilterOrder(filterData);
-    } catch (error) {
-      throw new Error("Unable to filtered weekly data" + error);
-    }
-  };
+  //     const filterData = aggregateWeeklyData(orders.data, option.toLowerCase());
+  //     console.log(orders);
+  //     setWeeklyFilterOrder(filterData);
+  //   } catch (error) {
+  //     throw new Error("Unable to filtered weekly data" + error);
+  //   }
+  // };
 
   useEffect(() => {
     getOrders().then((data) => {

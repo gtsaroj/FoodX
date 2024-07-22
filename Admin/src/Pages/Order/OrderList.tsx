@@ -204,8 +204,8 @@ const OrderList = () => {
       </div>
       <div className="w-full overflow-auto rounded-t-md">
         <Table
-          loading={loading}
-          error={error}
+          loading={true}
+          error={false}
           onChange={(value: string, orderId: string) =>
             changeOrderStatus(value, orderId)
           }
