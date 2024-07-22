@@ -40,10 +40,10 @@ const getTicketByIdFromFirestore = async (id: string) => {
 };
 
 const getAllTicketFromFirestore = async () => {
-  const orderRef = db.collection("ticket");
+  const ticketRef = db.collection("ticket");
   try {
     const tickets: NewTicket[] = [];
-    const docs = await orderRef.get();
+    const docs = await ticketRef.get();
     if (!docs) throw new ApiError(404, "No document found.");
     docs.forEach((doc) => {
       tickets.push(doc.data() as NewTicket);
@@ -55,6 +55,23 @@ const getAllTicketFromFirestore = async () => {
   }
 };
 
+const getTicketByStatusFromFirestore = async (
+  status: "Pending" | "Resolved" | "Rejected"
+) => {
+  const ticketRef = db.collection("ticket");
+  try {
+    const tickets: NewTicket[] = [];
+    const query = await ticketRef.where("status", "==", status).get();
+    if (query.empty) return tickets;
+    query.docs.forEach((doc) => {
+      const data = doc.data() as NewTicket;
+      tickets.push(data);
+    });
+    return tickets;
+  } catch (error) {
+    throw new ApiError(440, "No tickets found.");
+  }
+};
 const updateTicketInFirestore = async (
   id: string,
   newData: "Pending" | "Resolved" | "Rejected"
@@ -91,4 +108,5 @@ export {
   getAllTicketFromFirestore,
   updateTicketInFirestore,
   deleteTicketFromDatabase,
+  getTicketByStatusFromFirestore,
 };
