@@ -1,26 +1,8 @@
 import { UploadIcon } from "lucide-react";
-import React, { SetStateAction, useEffect, useRef, useState } from "react";
+import React, {  useEffect, useRef, useState } from "react";
 import { addCategory } from "../../firebase/db";
 import { storeImageInFirebase } from "../../firebase/storage";
 
-const options = [
-  {
-    label: "Pizza",
-    value: 1,
-  },
-  {
-    label: "Cold drinks",
-    value: 2,
-  },
-  {
-    label: "Hot drinks",
-    value: 3,
-  },
-  {
-    label: "MOMO",
-    value: 4,
-  },
-];
 interface UploadCategoryProp {
   categories: React.Dispatch<
     React.SetStateAction<{ [key: string]: string } | undefined>
@@ -31,7 +13,7 @@ export const UploadCategory: React.FC<UploadCategoryProp> = ({
   categories,
 }) => {
   const reference = useRef<HTMLDivElement>();
-  const [Scroll, setScroll] = useState<boolean>(false);
+  // const [Scroll, setScroll] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>("");
   const [imageURL, setImageURL] = useState<string>("");
 

@@ -1,6 +1,8 @@
+import { User } from "./user.model";
+
 export interface authState {
   loading: boolean;
-  userInfo: any[]  | null;
+  userInfo: any[]  | null | User;
   error: boolean;
   success: boolean;
 }

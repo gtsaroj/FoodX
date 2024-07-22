@@ -1,4 +1,4 @@
-import { UpdateProfileType } from "../../Pages/Admin/AdminProfile";
+import { UpdateProfileType } from "./UpdateAdminProfile";
 
 export interface ChangePasswordType {
   newPassword: string;
@@ -11,7 +11,7 @@ export const allFieldsRequired = (
 ) => {
   for (const inputValue in RegisterValue) {
     if (
-      RegisterValue.hasOwnProperty(inputValue) &&
+      Object.prototype.hasOwnProperty.call(RegisterValue, inputValue) &&
       RegisterValue[inputValue as keyof UpdateProfileType] === ""
     )
       error[inputValue] = `All are required`;
@@ -29,7 +29,7 @@ export const checkValidNumber = (
   if (registervalue.phoneNumber === "") {
     return (error.number = "*Required");
   }
-  if (registervalue.phoneNumber?.length < 10) {
+  if (registervalue.phoneNumber && registervalue.phoneNumber.length < 10) {
     return (error.number = "Invalid Number");
   }
 };

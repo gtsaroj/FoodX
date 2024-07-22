@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 // import { getUserData } from "../../firebase/db";
 // import { DbUser } from "../../models/UserModels";
-import avatar from "../../assets/logo/avatar.png"
+import avatar from "../../assets/logo/avatar.png";
 // import { storeImageInFirebase } from "../../firebase/storage";
 // import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import ReAuth from "../../Auth/Profile/ReAuth";
@@ -20,9 +20,12 @@ import { authLogout } from "../../Reducer/Action";
 import { updateUserPassword } from "../../firebase/utils";
 import { UpdateProfileUser } from "../../../../frontend/src/Reducer/AuthUpdateUser";
 import { storeImageInFirebase } from "../../firebase/storage";
+import { User } from "../../models/user.model";
 
 export const AdminProfile = () => {
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const authUser = useSelector(
+    (state: RootState) => state.root.auth.userInfo
+  ) as User;
   const [userData, setUserData] = useState<DbUser>();
 
   useEffect(() => {
@@ -33,11 +36,11 @@ export const AdminProfile = () => {
       return data;
     };
     fetchData();
-  }, []);
+  }, [authUser.uid]);
 
-  useEffect(() => { }, [userData]);
-  
-  console.log(userData)
+  useEffect(() => {}, [userData]);
+
+  console.log(userData);
 
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-5 ">
@@ -122,7 +125,9 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
   return (
     <div
       className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--light-border)] rounded ${
-        loading ? "" : "bg-gradient-to-r from-gray-300 to-slate-400 animate-pulse "
+        loading
+          ? ""
+          : "bg-gradient-to-r from-gray-300 to-slate-400 animate-pulse "
       } `}
     >
       <div className="flex gap-5">
@@ -229,7 +234,7 @@ const PersonlInformation = (props: any) => {
 
   useEffect(() => {
     if (!props.email) setLoading(true);
-     else setLoading(false)
+    else setLoading(false);
     setUpdateProfileInfo((prev) => ({
       ...prev,
       email: props?.email,
@@ -237,7 +242,6 @@ const PersonlInformation = (props: any) => {
       lastName: lastName,
       phoneNumber: props.phoneNumber,
     }));
-    
   }, [props]);
 
   const UpdateProfile = async () => {
@@ -248,8 +252,6 @@ const PersonlInformation = (props: any) => {
 
     setLoading(false);
   };
-
-
 
   return (
     <div className="flex-col items-center w-full lg:px-3">
@@ -273,7 +275,9 @@ const PersonlInformation = (props: any) => {
       >
         <div
           className={`grid  items-center grid-cols-2 grid-flow-cols gap-7 ${
-            loading ? " py-1.5 px-2 rounded bg-gradient-to-r from-gray-300 to-slate-400  animate-pulse" : ""
+            loading
+              ? " py-1.5 px-2 rounded bg-gradient-to-r from-gray-300 to-slate-400  animate-pulse"
+              : ""
           }`}
         >
           <div
@@ -341,8 +345,8 @@ const PersonlInformation = (props: any) => {
               Email
             </p>
             <p className="text-[var(--dark-text)] font-medium ">
-                {props.email}
-              </p>
+              {props.email}
+            </p>
           </div>
           <div
             className={`flex flex-col w-full gap-1 ${
@@ -615,4 +619,3 @@ export const UpdateUser: React.FC = () => {
     </div>
   );
 };
-

@@ -1,17 +1,19 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 import Select from "react-select";
 import { requestSelectOption } from "../LineChart/D";
 import { HashLoader } from "react-spinners";
 import { TicketType } from "../../models/ticket.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
-import { stat } from "fs";
 import toast from "react-hot-toast";
 import { createTicket } from "../../Services";
+import { User } from "../../models/user.model";
 
 const CreateTicket: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
-  const user = useSelector((state: RootState) => state.root.auth.userInfo);
+  const user = useSelector(
+    (state: RootState) => state.root.auth.userInfo
+  ) as User;
 
   const [loading, setLoading] = useState<boolean>(false);
   const [initialTicket, setInitialTicket] = useState<TicketType>({
@@ -20,7 +22,7 @@ const CreateTicket: React.FC = () => {
     description: "",
     date: new Date().toISOString().split("T") as any,
     status: "Pending",
-    uid: user.uid,
+    uid: user?.uid as string,
   });
 
   const handleSubmit = async (event: FormEvent) => {
@@ -34,7 +36,7 @@ const CreateTicket: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await createTicket({ ...initialTicket });
+      await createTicket({ ...initialTicket });
       setLoading(false);
       return toast.success("Ticket success");
     } catch (error) {
@@ -42,7 +44,6 @@ const CreateTicket: React.FC = () => {
       setLoading(false);
       return console.log("Unable to create ticket" + error);
     }
-
   };
 
   return (
@@ -70,10 +71,14 @@ const CreateTicket: React.FC = () => {
             </label>
             <Select
               onChange={(event) =>
-                setInitialTicket((prev) => ({
-                  ...prev,
-                  category: event.value,
-                }))
+                setInitialTicket((prev: any) => {
+                  if (event) {
+                    return {
+                      ...prev,
+                      category: event.value,
+                    };
+                  }
+                })
               }
               className="w-full"
               options={requestSelectOption}

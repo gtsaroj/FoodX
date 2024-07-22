@@ -1,9 +1,11 @@
-import { ProductType } from "../../models/productMode";
+
 import React from "react";
 import { ShoppingCart } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../Reducer/Reducer";
+
 import toast from "react-hot-toast";
+import { ProductType } from "../models/productMode";
+import { addToCart } from "../Reducer/Reducer";
 
 interface PropType {
   prop: ProductType;

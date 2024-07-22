@@ -9,17 +9,15 @@ import { getTimeDifference } from "../../Utility/DateUtils";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
-  const [scroll, setScroll] = useState<boolean>(false);
+  // const [scroll, setScroll] = useState<boolean>(false);
   const [tickets, setTickets] = useState<TicketType[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchTickets = async () => {
-    setLoading(true);
     try {
       const tickets = (await getTicketByStatus("Pending")) as TicketType[];
       const sortingTicket = tickets?.sort((a, b) => {
-        const timeLeft = getTimeDifference(a.date as any);
-        const timeLeft1 = getTimeDifference(b.date as any);
+        const timeLeft = getTimeDifference(a.date as any) as any;
+        const timeLeft1 = getTimeDifference(b.date as any) as any;
         return timeLeft1 - timeLeft;
       });
       setTickets(sortingTicket);
@@ -27,7 +25,6 @@ export const RecentTickets = () => {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
     }
-    setLoading(false);
   };
 
   const orderReference = useRef<HTMLDivElement>();
@@ -49,7 +46,7 @@ export const RecentTickets = () => {
     //   reference?.removeEventListener("scroll", handleScroll);
     // };
     fetchTickets();
-  }, [loading]);
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full p-4 border rounded-lg lg:max-w-[420px]">
@@ -67,9 +64,7 @@ export const RecentTickets = () => {
       </div>
       <div
         ref={orderReference as any}
-        className={`max-h-[550px] overflow-y-scroll ${
-          scroll ? "top-shadow" : ""
-        } `}
+        className={`max-h-[550px] overflow-y-scroll`}
       >
         <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
           {tickets?.map((ticket) => (

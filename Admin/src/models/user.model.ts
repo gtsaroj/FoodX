@@ -1,4 +1,3 @@
-import { ImageFolders } from "./UserModels";
 export interface ValidationType {
   avatar: any;
   firstName: string;
@@ -8,6 +7,16 @@ export interface ValidationType {
   password: string;
   confirmpassword: string;
   role?: userRole;
+}
+
+export interface User {
+  uid?: string;
+  avatar?: string;
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  role?: string;
+  refreshToken?: string;
 }
 
 export enum userRole {

@@ -1,29 +1,10 @@
 import { UploadIcon } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
-
-const options = [
-  {
-    label: "Pizza",
-    value: 1,
-  },
-  {
-    label: "Cold drinks",
-    value: 2,
-  },
-  {
-    label: "Hot drinks",
-    value: 3,
-  },
-  {
-    label: "MOMO",
-    value: 4,
-  },
-];
+import React, { useEffect, useRef } from "react";
 
 const UploadBanner: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
 
-  const [Scroll, setScroll] = useState<boolean>(false);
+  // const [Scroll, setScroll] = useState<boolean>(false);
 
   const scroller = () => {
     if (reference.current && reference.current?.scrollTop > 0) {

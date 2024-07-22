@@ -1,13 +1,11 @@
-import { PieChart, PieValueType } from "@mui/x-charts";
-import { DropDown } from "../Common/DropDown/DropDown";
+import { PieChart } from "@mui/x-charts";
 import { aggregateDailyCategoryOrder } from "./PieData";
 import {
-  DailyAggregateData,
   DailyCategoryAgrregateData,
-  Order,
 } from "../../models/order.model";
 import { useEffect, useState } from "react";
 import { getOrders } from "../../Services";
+import data from "../../data.json"
 
 export default function ResponsiveChartExample() {
   const [categoryOrder, setCategoryOrder] = useState<
@@ -21,12 +19,12 @@ export default function ResponsiveChartExample() {
         const orders = data?.data;
         const aggregateData = aggregateDailyCategoryOrder(
           orders,
-          "current week"
+
         );
         setCategoryOrder(aggregateData);
       })
       .catch((err) => {
-        // throw new Error("Unable to categorized" + err);
+        throw new Error("Unable to categorized" + err);
       });
   }, []);
 
@@ -40,7 +38,7 @@ export default function ResponsiveChartExample() {
             data: categoryOrder?.map((order, index) => ({
               id: index + 1,
               label: order.label,
-              value: order.value,
+              value: order.value as number,
             })),
             innerRadius: 30,
             outerRadius: 100,
@@ -64,36 +62,37 @@ export default function ResponsiveChartExample() {
 }
 
 export const PieChartAnalytics = () => {
+  const {categoryData} = data
   
-  const [categoryData, setCategoryData] = useState<
-    (DailyCategoryAgrregateData & PieValueType)[]
-  >([]);
+  // const [categoryData, setCategoryData] = useState<
+  //   (DailyCategoryAgrregateData & PieValueType)[]
+  // >([]);
 
-  async function handleSelect(option: string) {
-    const totalOrders = await getOrders();
-    const getFilterOrders = aggregateDailyCategoryOrder(
-      totalOrders.data,
-      option.toLowerCase()
-    );
-    setCategoryData(getFilterOrders);
-  }
+  // async function handleSelect(option: string) {
+  //   const totalOrders = await getOrders();
+  //   const getFilterOrders = aggregateDailyCategoryOrder(
+  //     totalOrders.data,
+  //     option.toLowerCase()
+  //   );
+  //   setCategoryData(getFilterOrders);
+  // }
 
-  useEffect(() => {
-    getOrders().then((data) => {
-      const totalOrders = data.data;
-      const getFilterOrders = aggregateDailyCategoryOrder(
-        totalOrders,
-        "current week"
-      );
-      if (getFilterOrders) setCategoryData(getFilterOrders);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getOrders().then((data) => {
+  //     const totalOrders = data.data;
+  //     const getFilterOrders = aggregateDailyCategoryOrder(
+  //       totalOrders,
+  //       "current week"
+  //     );
+  //     if (getFilterOrders) setCategoryData(getFilterOrders);
+  //   });
+  // }, []);
   
   console.log(categoryData);
   
  
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-[430px] rounded-lg ">
       {/* 
       <DropDown
         options={["Current week", "Previous week"]}
@@ -106,8 +105,8 @@ export const PieChartAnalytics = () => {
           {
             data: categoryData?.map((order, index) => ({
               id: index + 1,
-              label: order.label,
-              value: order.value,
+              label: order.categoryname,
+              value: order.products,
             })),
             innerRadius: 30,
             outerRadius: 100,

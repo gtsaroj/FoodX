@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as ProductService from "../Services";
 import { Product } from "../models/order.model";
-import { ValidationType } from "../models/user.model";
+import { User, ValidationType } from "../models/user.model";
 import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
-import { authState } from "../models/UserModels";
-import { Satellite } from "lucide-react";
-import { stat } from "fs";
 
 interface ProductState {
   products: Product[] | null;
@@ -20,6 +17,13 @@ const initialState: ProductState = {
   success: false,
   error: false,
 };
+
+interface authState {
+  success: boolean;
+  error: boolean;
+  loading: boolean;
+  userInfo: [] | User;
+}
 
 const authState: authState = {
   success: true,
@@ -193,7 +197,7 @@ const authSlice = createSlice({
   name: "auth",
   reducers: {
     authLogout: (state) => {
-      state.userInfo = null;
+      state.userInfo = [];
       if (state.success) state.success = false;
       state.loading = true;
     },
@@ -201,7 +205,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     // action to add new user
     builder.addCase(singUpAction.pending, (state) => {
-      state.loading = true;
+      state.loading = false;
     });
     builder.addCase(singUpAction.fulfilled, (state, action) => {
       state.loading = false;
@@ -210,23 +214,23 @@ const authSlice = createSlice({
     });
     builder.addCase(singUpAction.rejected, (state) => {
       state.loading = false;
-      (state.success = false), (state.userInfo = null);
+      (state.success = false), (state.userInfo = []);
       state.error = false;
     });
     // action to login existing user
     builder.addCase(singInAction.pending, (state) => {
       state.loading = true;
-      state.success = false;
+      state.success = true;
     });
     builder.addCase(singInAction.fulfilled, (state, action) => {
       state.loading = false;
       state.success = true;
-      state.userInfo = action.payload;
+      state.userInfo  = action.payload as User;
     });
     builder.addCase(singInAction.rejected, (state) => {
       state.error = true;
       state.loading = false;
-      state.userInfo = null;
+      state.userInfo = [];
     });
     // action to update user
   },

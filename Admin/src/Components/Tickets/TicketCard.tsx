@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { getTimeDifference } from "../../Utility/DateUtils";
 
 interface TicketProp {

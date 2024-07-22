@@ -1,7 +1,7 @@
 import { Frown } from "lucide-react";
 import React from "react";
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
   return (
     <div>
       <div className="w-full flex flex-col gap-3 pt-10 items-center justify-center">

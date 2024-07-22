@@ -12,10 +12,12 @@ import HashLoader from "react-spinners/HashLoader";
 import { AppDispatch, RootState } from "../../Reducer/Store";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { updateUserProfile } from "../../firebase/utils";
+import { User } from "../../models/user.model";
+import { UpdateProfileUser } from "../../../../frontend/src/Reducer/AuthUpdateUser";
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo) as User;
 
   const [RegisterValue, setRegisterValue] = useState<UpdateProfileType>({
     avatar: authUser?.avatar,

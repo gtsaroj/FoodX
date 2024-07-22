@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Order } from "../models/order.model";
 
 export interface ProductType {
   id: string;

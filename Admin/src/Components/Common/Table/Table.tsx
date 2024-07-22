@@ -6,7 +6,7 @@ import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { CustomerType } from "../../../models/user.model";
 import { ArrangedProduct, ProductType } from "../../../models/productMode";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 interface TableProp {
@@ -57,7 +57,7 @@ const Table: React.FC<TableProp> = ({
 
   const handleSelectAll = (checked: boolean) => {
     setIsCheckedAll(checked);
-    if(!onSelectAll) return
+    if (!onSelectAll) return;
     onSelectAll(checked);
   };
 
@@ -67,8 +67,19 @@ const Table: React.FC<TableProp> = ({
     <div>Error</div>
   ) : loading ? (
     <div className="w-full ">
-      <Skeleton className="mb-8" height={100} />
-      <Skeleton height={70} count={4} />
+      <Skeleton
+        baseColor="var(--light-background) "
+        highlightColor="var(--light-secondary-background) "
+        className="mb-8"
+        height={100}
+      />
+      <Skeleton
+        baseColor="var(--light-background) "
+        highlightColor="var(--light-secondary-background) "
+        className=""
+        height={70}
+        count={4}
+      />
     </div>
   ) : data ? (
     <div className="flex flex-col items-end justify-center w-full gap-2 ">
@@ -87,7 +98,7 @@ const Table: React.FC<TableProp> = ({
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
                 actions={(value) => {
-                  if(!actions) return
+                  if (!actions) return;
                   actions(value);
                 }}
                 options={options}

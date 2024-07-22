@@ -67,7 +67,7 @@ makeRequest.interceptors.response.use(
         }
       }
 
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         addRefreshSubscriber((newAccessToken: string) => {
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           resolve(axios(originalRequest));

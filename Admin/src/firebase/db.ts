@@ -8,7 +8,6 @@ import {
 import { db } from ".";
 import { Category } from "../models/productMode";
 import { DbUser } from "../models/UserModels";
-import { Order } from "../models/order.model";
 
 export const getCategory = async (docName: "bnw" | "color") => {
   try {

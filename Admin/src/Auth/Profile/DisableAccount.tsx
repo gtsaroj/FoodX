@@ -6,8 +6,10 @@ import { makeRequest } from "../../makeRequest";
 // import { authLogout } from "../../Reducer/authReducer";
 import ReAuth from "./ReAuth";
 import Cookies from "js-cookie";
+import { deleteAccount } from "../../../../frontend/src/firebase/utils";
+import { authLogout } from "../../Reducer/Action";
 
-const DisableAccount = () => {
+const DisableAccount : React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<string>();
   const [step2, setStep2] = useState<boolean>(false);
 

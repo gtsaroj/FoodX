@@ -1,13 +1,6 @@
-import {
-  aggregateDataCurrentWeek,
-  aggregateDataPreviousWeek,
-} from "../../Utility/DateUtils";
 import { DailyCategoryAgrregateData, Order } from "../../models/order.model";
 
-export const aggregateDailyCategoryOrder = (
-  orders: Order[],
-  options: string
-) => {
+export const aggregateDailyCategoryOrder = (orders: Order[]) => {
   // let category: DailyCategoryAgrregateData[];
 
   const categoryMap: { [key: string]: number } = {};
@@ -18,7 +11,7 @@ export const aggregateDailyCategoryOrder = (
   //   currentWeekOrders = aggregateDataPreviousWeek(orders);
 
   orders.forEach((order) => {
-    order?.products?.forEach((product) => {
+    order?.products?.forEach((product: any) => {
       if (categoryMap[product.tag]) {
         categoryMap[product?.tag] += product?.quantity;
       } else {

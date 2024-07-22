@@ -29,7 +29,7 @@ export const getRecentOrders = async () => {
       }
     });
     const getaggregateDataPromises = await Promise.all(aggregateData);
-    const sortByTime = getaggregateDataPromises.sort((a, b) => {
+    const sortByTime = getaggregateDataPromises.sort((a: any, b: any) => {
       const dateA = new Date(b.orderRequest);
       const dateB = new Date(a.orderRequest);
       return dateB.getTime() - dateA.getTime();
