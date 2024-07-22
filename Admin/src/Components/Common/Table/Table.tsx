@@ -5,9 +5,8 @@ import { TableRowComponent } from "./TableRow";
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { CustomerType } from "../../../models/user.model";
-import { ArrangedProduct, ProductType } from "../../../models/productMode";
+import { ProductType } from "../../../models/productMode";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
 
 interface TableProp {
   options?: string[]; // button name
@@ -16,7 +15,7 @@ interface TableProp {
   headers: string[]; // headers value
   style?: React.CSSProperties;
   actions?: (rowData: string) => void; //delete or edit single row data
-  data: [] | CustomerType[] | Order[] | ProductType[] | ArrangedProduct[];
+  data: [] | CustomerType[] | Order[] | ProductType[];
   headerStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
   onChange?: (value: boolean | string, id: string) => void; //select or delete single row data
@@ -98,7 +97,10 @@ const Table: React.FC<TableProp> = ({
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
                 actions={(value) => {
+<<<<<<< HEAD
+=======
                   if (!actions) return;
+>>>>>>> 7672aed (error detect of tickets)
                   actions(value);
                 }}
                 options={options}
@@ -112,16 +114,14 @@ const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      {pagination && (
-        <div className="items-center justify-center w-full">
-          <Pagination
-            onChange={onChangePage}
-            currentPage={currentPage}
-            perPage={pagination?.perPage}
-            totalData={data?.length}
-          />
-        </div>
-      )}
+      <div className="items-center justify-center w-full">
+        <Pagination
+          onChange={onChangePage}
+          currentPage={currentPage}
+          perPage={pagination?.perPage}
+          totalData={data?.length}
+        />
+      </div>
     </div>
   ) : (
     "Not found"
