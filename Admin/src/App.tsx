@@ -25,6 +25,7 @@ import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/Category/CategoryPage";
 import Navbar from "./Navbar/Navbar";
 
+
 const MainPage = () => {
   persistor.purge();
   return (

@@ -25,29 +25,37 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
   actions,
   onSelectAll,
 }) => {
+  console.log(data)
   const [isChecked, setIsChecked] = useState<boolean>(onSelectAll);
-  console.log(isChecked);
+  const [viewId, setViewId] = useState<string>(data?.ID?.substring(0, 5));
 
   function handleClick(value: string, uid: string) {
+    console.log(value,uid)
     onChange(value as string, uid as string);
   }
   useEffect(() => {
     setIsChecked(onSelectAll);
   }, [onSelectAll]);
-  console.log(data);
+
+ 
   return (
     <React.Fragment>
       <tr
         style={bodyStyle}
-        className={`w-full px-2  grid  border-b-[1px] gap-x-8 items-center py-5  justify-items-center`}
+        className={`w-full  grid  justify-items-start px-4 border-b-[1px] gap-x-8 items-center py-3.5 hover:bg-[var(--light-background)] duration-150  `}
       >
         {headers.map((hdr, hdrIndex) => (
-          <td key={`${hdr}-${hdrIndex}`} className={`col-span-1 text-sm`}>
+          <td
+            key={`${hdr}-${hdrIndex}`}
+            className={`col-span-1 ${
+              hdr === "Email" ? "col-span-2 text-center w-full" : "col-span-1"
+            } text-center text-sm ${hdr === "Products" ? "col-span-2 text-center w-full" :""} `}
+          >
             {hdr.toLowerCase() === "image" ? (
-              <div className="w-[60px] h-[50px]">
+              <div className="w-[40px] h-[40px]">
                 <img
-                  className="w-full h-full rounded"
-                  src={data.image}
+                  className="w-full h-full rounded-full"
+                  src={data.Image}
                   alt=""
                 />
               </div>
@@ -83,7 +91,7 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
               />
             ) : hdr.toLowerCase() === "status" ? (
               <DropDown
-                onSelect={(value: string) => handleClick(value, data.orderId)}
+                onSelect={(value: string) => handleClick(value, data.ID)}
                 style={{
                   padding: "0.5rem 3rem",
                   background: "var(--green-bg)",
@@ -92,14 +100,26 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                   color: "var(--light-text)",
                 }}
                 options={
-                  options?.includes(data?.status)
-                    ? options.filter((option) => option !== data?.status)
+                  options?.includes(data?.Status)
+                    ? options.filter((option) => option !== data?.Status)
                     : options
                 }
-                children={data.status}
+                children={data.Status}
               />
             ) : hdr === "email" ? (
               data["email"].replace("@texascollege.edu.np", "...")
+            ) : hdr.toLowerCase() === "id" ? (
+              <button
+                className="hover:underline duration-150"
+                onClick={() => {
+                  if (data.ID !== viewId) setViewId(data.ID);
+                  else if (data.ID === viewId)
+                    setViewId(data.ID.substring(0, 5));
+                }}
+              >
+                {" "}
+                {viewId}
+              </button>
             ) : (
               data[hdr]
             )}

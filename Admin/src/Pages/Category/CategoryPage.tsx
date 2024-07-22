@@ -36,8 +36,8 @@ export const CategoryPage: React.FC = () => {
   useEffect(() => {
     if (category) {
       const arrayOfObject = Object.keys(category as any).map((item) => ({
-        category: item,
-        image: category[item],
+        Category: item,
+        Image: category[item],
       }));
       setCategoryData(arrayOfObject);
     }
@@ -60,8 +60,8 @@ export const CategoryPage: React.FC = () => {
     const getCategories = (await getCategory("bnw")).icons;
 
     const arrayOfObject = Object.keys(getCategories as any).map((item) => ({
-      category: item,
-      image: getCategories[item],
+      Category: item,
+      Image: getCategories[item],
     }));
     const filterCategories = SearchCategory(arrayOfObject, value);
     setCategoryData(filterCategories);
@@ -70,6 +70,8 @@ export const CategoryPage: React.FC = () => {
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     categoryData,
   ]);
+
+  console.log(categoryData)
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-4 py-7 gap-7 ">

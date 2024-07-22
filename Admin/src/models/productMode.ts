@@ -6,6 +6,14 @@ export interface ProductType {
   quantity: number | string;
   tag?: string;
 }
+export interface ArrangedProduct {
+  ID: string;
+  Image: string;
+  Name: string;
+  Price: string;
+  Quantity: string;
+  Category: string;
+}
 export interface UploadProductType {
   products: ProductType;
   collection: Collection["name"];
