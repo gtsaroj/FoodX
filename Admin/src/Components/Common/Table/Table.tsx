@@ -55,6 +55,7 @@ const Table: React.FC<TableProp> = ({
 
   const handleSelectAll = (checked: boolean) => {
     setIsCheckedAll(checked);
+    if(!onSelectAll) return
     onSelectAll(checked);
   };
 
@@ -81,6 +82,7 @@ const Table: React.FC<TableProp> = ({
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
                 actions={(value) => {
+                  if(!actions) return
                   actions(value);
                 }}
                 options={options}
