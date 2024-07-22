@@ -33,7 +33,7 @@ const CustomerList: React.FC = () => {
       setError(true);
       return console.log(`Error while getting customers : ${error}`);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   const handleCheckboxChange = (isChecked: boolean, id: string) => {
@@ -180,8 +180,8 @@ const CustomerList: React.FC = () => {
     */}
       <div className="flex items-center justify-between w-full px-2 pt-5">
         <div className="flex flex-col items-start justify-center gap-1">
-          <h4 className="text-xl tracking-wider text-[var(--dark-text)]">
-            Customers
+          <h4 className="text-[1.25rem] font-[600] tracking-wide text-[var(--dark-text)]">
+            All users
           </h4>
         </div>
         <div className="flex items-center justify-center gap-5 ">
@@ -216,14 +216,11 @@ const CustomerList: React.FC = () => {
       </div>
       <div className="flex items-center justify-start w-full px-1 pb-5">
         <form action="" className="relative w-full">
-          <label htmlFor="search">
-            <Search className="absolute text-[var(--dark-secondary-text)] cursor-pointer top-3 size-5 left-2" />
-          </label>
           <input
             id="search"
             type="search"
             onChange={(event) => debouncedHandleChange(event?.target.value)}
-            className=" pl-9 border placeholder:text-sm outline-none sm:w-[250px] w-full py-2 px-8 border-[var(--dark-secondary-background)] rounded bg-transparent focus:border-[var(--primary-color)] "
+            className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
             placeholder="Search"
           />
         </form>
@@ -234,8 +231,8 @@ const CustomerList: React.FC = () => {
           error={error}
           onSelectAll={handleSelectAll}
           pagination={{ perPage: 5, currentPage: 1 }}
-          headerStyle={{ gridTemplateColumns: "repeat(8,1fr)" }}
-          bodyStyle={{ gridTemplateColumns: "repeat(8,1fr)" }}
+          headerStyle={{ gridTemplateColumns: "repeat(9,1fr)" }}
+          bodyStyle={{ gridTemplateColumns: "repeat(9,1fr)" }}
           data={initialCustomer as CustomerType[]}
           headers={customerHeader as string[]}
           onChange={handleCheckboxChange}

@@ -12,6 +12,7 @@ import { debounce } from "../../Utility/Debounce";
 import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
 import toast, { Toaster } from "react-hot-toast";
+import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<Order[]>([]);
@@ -27,18 +28,19 @@ const OrderList = () => {
       const totalOrders = orders.data as Order[];
       const aggregateData = totalOrders?.map(async (item) => {
         const getUserName = await getFullName(item?.uid);
+        const getDate =  convertIsoToReadableDateTime(item.orderRequest);
         if (getUserName) {
           const productNames = item.products?.map(
             (product) =>
               (product.name as string) + " × " + product.quantity + ", "
           );
           return {
-            orderId: item.orderId,
-            Fullname: getUserName,
-            products: productNames,
-            Orderrequest: item.orderRequest,
-            OrderFullfilled: item.orderFullFilled,
-            status: item.status,
+            ID: item.orderId,
+            Name: getUserName,
+            Products: productNames,
+            Requested: getDate.date + " " + getDate.time,
+            Fulfilled: item.orderFullFilled,
+            Status: item.status,
           };
         }
       });
@@ -200,7 +202,7 @@ const OrderList = () => {
           />
         </form>
       </div>
-      <div className="w-full overflow-auto shadow-inner shadow-lime-300 rounded-t-md">
+      <div className="w-full overflow-auto rounded-t-md">
         <Table
           loading={loading}
           error={error}
@@ -211,11 +213,11 @@ const OrderList = () => {
           actions={(value) => handleDelete(value)}
           pagination={{ currentPage: 1, perPage: 10 }}
           headerStyle={{
-            gridTemplateColumns: "repeat(7,1fr) ",
+            gridTemplateColumns: "repeat(8,1fr) ",
           }}
           bodyStyle={{
             display: "grid",
-            gridTemplateColumns: "repeat(7,1fr) ",
+            gridTemplateColumns: "repeat(8,1fr) ",
           }}
           data={initialOrders as Order[]}
           headers={orderHeader}
