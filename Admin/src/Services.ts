@@ -15,6 +15,8 @@ import { authLogout } from "./Reducer/Action";
 import { makeRequest } from "./makeRequest";
 import { UseFetch } from "../../frontend/src/UseFetch";
 import { UploadProductType } from "./models/productMode";
+import { TicketType } from "./models/ticket.model";
+import { stat } from "fs";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -195,4 +197,54 @@ export const deleteAllUser = async (users: CustomerType[]) => {
   }
 };
 
+export const createTicket = async (data: TicketType) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "tickets/add-ticket",
+      data: data,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error while creating ticket` + error);
+  }
+};
 
+export const getTicketByStatus = async (status: string) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "tickets/get-ticket-status",
+      data: { status: status },
+    });
+    return response.data.data;
+  } catch (error) {
+    return console.log(`Error while creating ticket` + error);
+  }
+};
+
+export const deleteTicket = async (data: TicketType) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "tickets/delete-ticket",
+      data: data,
+    });
+    return response.data;
+  } catch (error) {
+    return console.log(`Error while creating ticket` + error);
+  }
+};
+
+export const updateTicket = async (data: TicketType) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "tickets/update-ticket",
+      data: data,
+    });
+    return response.data;
+  } catch (error) {
+    return console.log(`Error while creating ticket` + error);
+  }
+};

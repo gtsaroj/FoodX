@@ -33,14 +33,14 @@ export const aggregateCustomerData = async (
           });
 
           return {
-            id: data.uid,
-            name: data.fullName,
-            email: data.email,
-            image: data.avatar,
-            location: "fljds",
-            amountSpent: totalCustomerCost.toFixed(2),
-            totalOrder: totalCustomerQuantity,
-            role: data.role as string,
+            ID: data.uid,
+            Name: data.fullName,
+            Email: data.email,
+            Image: data.avatar,
+            Location: "fljds",
+            Amountspent: totalCustomerCost.toFixed(2),
+            Totalorder: totalCustomerQuantity,
+            Role: data.role as string,
           };
         } catch (error) {
           console.error(`Error fetching orders for user ${data.uid}:`, error);

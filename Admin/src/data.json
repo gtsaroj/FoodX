@@ -230,12 +230,12 @@
     }
   },
   "weekOrderRevenue": [
-    { "week": "Sunday", "revenue": 20000 },
-    { "week": "Monday", "revenue": 15000 },
-    { "week": "Tuesday", "revenue": 35000 },
-    { "week": "Wednesday", "revenue": 50000 },
-    { "week": "Thursday", "revenue": 21100 },
-    { "week": "Friday", "revenue": 61000 },
-    { "week": "Saturday", "revenue": 41800 }
+    { "week": "Sun", "revenue": 20000 },
+    { "week": "Mon", "revenue": 15000 },
+    { "week": "Tues", "revenue": 35000 },
+    { "week": "Wed", "revenue": 50000 },
+    { "week": "Thur", "revenue": 21100 },
+    { "week": "Fri", "revenue": 61000 },
+    { "week": "Sat", "revenue": 41800 }
   ]
 }

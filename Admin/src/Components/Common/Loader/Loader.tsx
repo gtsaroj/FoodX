@@ -10,7 +10,7 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoader(false);
-    }, 500);
+    }, 200);
 
     return () => {
       clearTimeout(timer);
@@ -33,6 +33,6 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
       </div>
     </div>
   ) : (
-    <Navigate to={`${url}`} replace/>
+    <Navigate to={`${url}`} replace />
   );
 };

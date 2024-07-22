@@ -1,39 +1,38 @@
 import { ChevronRight } from "lucide-react";
 import { OrderCard } from "../Common/Cards/ OrderCard";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import { getRecentOrders } from "./Order";
 import { RecentOrderType } from "../../models/order.model";
-import { order } from "../../../../frontend/src/Services";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>();
-  const [scroll, setScroll] = useState<boolean>(false);
 
-  const orderReference = useRef<HTMLDivElement>();
+  //  scroller check
+  // const [scroll, setScroll] = useState<boolean>(false);
+  // const orderReference = useRef<HTMLDivElement>();
+  // const handleScroll = () => {
+  //   if (orderReference.current) {
+  //     if (orderReference.current.scrollTop > 0) {
+  //       setScroll(true);
+  //     } else {
+  //       setScroll(false);
+  //     }
+  //   }
+  // };
+  // const reference = orderReference.current;
+  // reference?.addEventListener("scroll", handleScroll);
+
+  // return () => {
+  //   reference?.removeEventListener("scroll", handleScroll);
+  // };
 
   useEffect(() => {
     (async () => {
       const recentOrders = await getRecentOrders();
       if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
     })();
-
-    const handleScroll = () => {
-      if (orderReference.current) {
-        if (orderReference.current.scrollTop > 0) {
-          setScroll(true);
-        } else {
-          setScroll(false);
-        }
-      }
-    };
-    const reference = orderReference.current;
-    reference?.addEventListener("scroll", handleScroll);
-
-    return () => {
-      reference?.removeEventListener("scroll", handleScroll);
-    };
   }, []);
 
   return (
@@ -48,12 +47,10 @@ export const RecentOrders = () => {
         </p>
       </div>
       <div
-        ref={orderReference as any}
-        className={`duration-200 max-h-[550px] overflow-y-scroll ${
-          scroll ? "top-shadow" : ""
-        }  `}
+        className={`duration-200 max-h-[550px] overflow-y-scroll
+         `}
       >
-        <div className="flex flex-col items-center justify-center gap-2 px-2 scroll-smooth ">
+        <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
           {recentOrder?.map((order, index) => (
             <OrderCard
               image={order.image}

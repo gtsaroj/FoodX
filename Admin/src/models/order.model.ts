@@ -75,3 +75,10 @@ export interface RecentOrderType {
   status: string;
   orderRequest: string;
 }
+export interface CardAnalyticsProp {
+  title: string;
+  percentage?: number;
+  subtitle?: string;
+  filter?: React.ReactNode;
+  total: number;
+}

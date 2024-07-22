@@ -1,6 +1,30 @@
 import { DailyAggregateData, Order, RequestTime } from "../models/order.model";
 import { totalRevenue } from "./Utils";
 
+export function getTimeDifference(isoDateTime: string[]) {
+  // Parse the ISO 8601 formatted date-time string
+  if(!isoDateTime) return
+  const IsoTime = isoDateTime[0] + "T" + isoDateTime[1];
+
+  const targetDate = new Date(IsoTime) as any;
+ console.log(targetDate)
+  const now = new Date() as any;
+   
+
+  const diffMs = now -targetDate;
+  // Convert milliseconds to minutes and hours
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  const remainingMinutes = diffMinutes % 60;
+
+  // Ensure the difference is non-negative
+  return {
+    hoursLeft: Math.max(0, diffHours),
+    minutesLeft: Math.max(0, remainingMinutes),
+  };
+}
+
 // Day Name
 export const dayNames: string[] = [
   "Sunday",
@@ -27,22 +51,24 @@ interface FormattedDateTime {
   time: string;
 }
 
-export const convertIsoToReadableDateTime = (isoString: string): FormattedDateTime => {
+export const convertIsoToReadableDateTime = (
+  isoString: string
+): FormattedDateTime => {
   const date = new Date(isoString);
 
   // Using toLocaleString for formatted date and time
-  const formattedDateTime = date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    timeZoneName: 'short',
+  const formattedDateTime = date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZoneName: "short",
   });
 
   // Custom formatting for date and time separately
-  const pad = (n: number) => (n < 10 ? '0' + n : n);
+  const pad = (n: number) => (n < 10 ? "0" + n : n);
 
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1); // Months are zero-indexed
@@ -155,17 +181,20 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
         {
           title: "Orders Delivered",
           total: 0,
-          percentage: 0,
+          percentage: 10,
+          subtitle: `sell 0`,
         },
         {
           title: "Orders Received",
           total: 0,
           percentage: 100,
+          subtitle: `sell 0`,
         },
         {
           title: "Revenue",
           total: 0,
-          percentage: 0,
+          percentage: 10,
+          subtitle: `sell 0`,
         },
       ];
     }

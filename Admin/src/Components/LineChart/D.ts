@@ -126,31 +126,28 @@ export const orderChartsOfMonthly = [
     others: getRandomInt(900, 1300),
     week: "Week 4",
   },
-  {
-    samosa: getRandomInt(800, 1200),
-    pizza: getRandomInt(400, 600),
-    cold_drinks: getRandomInt(1400, 1700),
-    others: getRandomInt(900, 1300),
-    week: "Week 5",
-  },
-  {
-    samosa: getRandomInt(800, 1200),
-    pizza: getRandomInt(400, 600),
-    cold_drinks: getRandomInt(1400, 1700),
-    others: getRandomInt(900, 1300),
-    week: "Week 6",
-  },
-  {
-    samosa: getRandomInt(800, 1200),
-    pizza: getRandomInt(400, 600),
-    cold_drinks: getRandomInt(1400, 1700),
-    others: getRandomInt(900, 1300),
-    week: "Week 7",
-  },
+  // {
+  //   samosa: getRandomInt(800, 1200),
+  //   pizza: getRandomInt(400, 600),
+  //   cold_drinks: getRandomInt(1400, 1700),
+  //   others: getRandomInt(900, 1300),
+  //   week: "Week 5",
+  // },
+  // {
+  //   samosa: getRandomInt(800, 1200),
+  //   pizza: getRandomIn`t(400, 600),
+  //   cold_drinks: getRandomInt(1400, 1700),
+  //   others: getRandomInt(900, 1300),
+  //   week: "Week 6",
+  // },
+  // {
+  //   samosa: getRandomInt(800, 1200),
+  //   pizza: getRandomInt(400, 600),
+  //   cold_drinks: getRandomInt(1400, 1700),
+  //   others: getRandomInt(900, 1300),
+  //   week: "Week 7",
+  // },
 ];
-
-
-
 
 export const aggregateDailyCategoryOrder = (orders: Order[]) => {
   // let category: DailyCategoryAgrregateData[];
@@ -175,4 +172,3 @@ export const aggregateDailyCategoryOrder = (orders: Order[]) => {
 
   return dailyaggregateCategories;
 };
-

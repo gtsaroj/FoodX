@@ -5,7 +5,9 @@ import { TableRowComponent } from "./TableRow";
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { CustomerType } from "../../../models/user.model";
-import { ProductType } from "../../../models/productMode";
+import { ArrangedProduct, ProductType } from "../../../models/productMode";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface TableProp {
   options?: string[]; // button name
@@ -14,7 +16,7 @@ interface TableProp {
   headers: string[]; // headers value
   style?: React.CSSProperties;
   actions?: (rowData: string) => void; //delete or edit single row data
-  data: [] | CustomerType[] | Order[] | ProductType[];
+  data: [] | CustomerType[] | Order[] | ProductType[] | ArrangedProduct[];
   headerStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
   onChange?: (value: boolean | string, id: string) => void; //select or delete single row data
@@ -55,6 +57,7 @@ const Table: React.FC<TableProp> = ({
 
   const handleSelectAll = (checked: boolean) => {
     setIsCheckedAll(checked);
+    if(!onSelectAll) return
     onSelectAll(checked);
   };
 
@@ -63,7 +66,10 @@ const Table: React.FC<TableProp> = ({
   return error ? (
     <div>Error</div>
   ) : loading ? (
-    <div>Loading...</div>
+    <div className="w-full ">
+      <Skeleton className="mb-8" height={100} />
+      <Skeleton height={70} count={4} />
+    </div>
   ) : data ? (
     <div className="flex flex-col items-end justify-center w-full gap-2 ">
       <div className="w-full overflow-auto">
@@ -81,6 +87,7 @@ const Table: React.FC<TableProp> = ({
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
                 actions={(value) => {
+                  if(!actions) return
                   actions(value);
                 }}
                 options={options}
@@ -94,14 +101,16 @@ const Table: React.FC<TableProp> = ({
           </tbody>
         </table>
       </div>
-      <div className="items-center justify-center w-full">
-        <Pagination
-          onChange={onChangePage}
-          currentPage={currentPage}
-          perPage={pagination?.perPage}
-          totalData={data?.length}
-        />
-      </div>
+      {pagination && (
+        <div className="items-center justify-center w-full">
+          <Pagination
+            onChange={onChangePage}
+            currentPage={currentPage}
+            perPage={pagination?.perPage}
+            totalData={data?.length}
+          />
+        </div>
+      )}
     </div>
   ) : (
     "Not found"
