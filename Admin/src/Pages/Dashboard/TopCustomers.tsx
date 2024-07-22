@@ -9,7 +9,7 @@ export const TopCustomers = () => {
   useEffect(() => {
     (async () => {
       const customers = await getTopCustomers();
-      console.log(customers)
+    
       if (customers) setTopCustomer(customers as any);
     })();
   }, []);

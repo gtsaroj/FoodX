@@ -6,7 +6,7 @@ import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/CreateTicket";
-import { getTickets } from "../../Services";
+import { getTicketByStatus, getTickets } from "../../Services";
 import toast from "react-hot-toast";
 
 // interface ButtonProp {
@@ -14,39 +14,38 @@ import toast from "react-hot-toast";
 //   style?: ReactNode;
 // }
 
-const TicketComponents = {
-  pending: <PendingTicket />,
-  progress: <ProgressTicket />,
-  resolve: <ResolveTicket />,
-  cancel: <CancelTicket />,
-};
-
 const TicketPage: React.FC = () => {
-  const [ticketState, setTicketState] = useState<string>();
+  const [ticketState, setTicketState] = useState<string>("Pending");
+
   const [closeModal, setCloseModal] = useState<boolean>(true);
   const [tickets, setTickets] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchTickets = async () => {
+    if (!ticketState) return;
+    setLoading(true);
     try {
-      const tickets = await getTickets();
+      const tickets = await getTicketByStatus(ticketState as string);
       setTickets(tickets);
     } catch (error) {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
     }
+    setLoading(false);
   };
 
-  function handleClick(item: string) {
-    setTicketState(item as string);
-  }
-
   useEffect(() => {
-    setTicketState("pending");
     fetchTickets();
-  }, []);
-  console.log(tickets)
+  }, [ticketState]);
 
-  const ticketStateLower = ticketState?.toLowerCase();
+  const TicketComponents = {
+    Pending: <PendingTicket prop={tickets} loading={loading} />,
+    Progress: <ProgressTicket prop={tickets} loading={loading} />,
+    Resolved: <ResolveTicket prop={tickets} loading={loading} />,
+    Rejected: <CancelTicket prop={tickets} loading={loading} />,
+  };
+
+  const ticketStateLower = ticketState;
   const component = ticketStateLower && TicketComponents[ticketStateLower];
   return (
     <div className="flex flex-col items-start justify-center px-4 py-5 gap-7">
@@ -70,13 +69,13 @@ const TicketPage: React.FC = () => {
       <div className="grid w-full grid-cols-4 gap-2 px-5 pt-10 sm:gap-6">
         {/* /
            className={`${ item === "Pending" ? "bg-[var(--primary-light)]" : item === "Progress" ? "bg-[var(--orange-bg)]" : item === "Resolve" ? "bg-[var(--green-bg)] " : item === "Cancel" ? "bg-[var(--danger-bg)]":'' } ${initialIndex === index ? "shadow-inner shadow-black  duration-200" : ""}`}
-          //   onClick={() => handleClick(item, index)}
+          //   onClick={() => setTicketState(item, index)}
           //   key={index}
           // >
           //   {item}
           // </button> */}
         <button
-          onClick={() => handleClick("pending")}
+          onClick={() => setTicketState("Pending")}
           className={`${
             ticketState === "pending"
               ? "bg-[var(--primary-dark)]"
@@ -86,7 +85,7 @@ const TicketPage: React.FC = () => {
           Pending
         </button>
         <button
-          onClick={() => handleClick("progress")}
+          onClick={() => setTicketState("Progress")}
           className={` py-3 sm:text-[15px] hover:bg-[#bb8115]   duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] ${
             ticketState === "progress"
               ? "bg-[#bb8115] "
@@ -96,9 +95,9 @@ const TicketPage: React.FC = () => {
           Progress
         </button>
         <button
-          onClick={() => handleClick("resolve")}
+          onClick={() => setTicketState("Resolved")}
           className={`py-3 sm:text-[15px] hover:bg-[#287e28fd] duration-150   ${
-            ticketState === "resolve"
+            ticketState === "Resolved"
               ? "bg-[#287e28fd]"
               : "bg-[var(--green-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}
@@ -106,9 +105,9 @@ const TicketPage: React.FC = () => {
           Resolve
         </button>
         <button
-          onClick={() => handleClick("cancel")}
+          onClick={() => setTicketState("Rejected")}
           className={`py-3 hover:bg-[#a82d2dfd] sm:text-[15px] duration-150  ${
-            ticketState === "cancel"
+            ticketState === "Rejected"
               ? "bg-[#a82d2dfd]"
               : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-[var(--light-text)] `}

@@ -16,6 +16,7 @@ import { makeRequest } from "./makeRequest";
 import { UseFetch } from "../../frontend/src/UseFetch";
 import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
+import { stat } from "fs";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -209,11 +210,12 @@ export const createTicket = async (data: TicketType) => {
   }
 };
 
-export const getTickets = async () => {
+export const getTicketByStatus = async (status: string) => {
   try {
     const response = await makeRequest({
-      method: "get",
-      url: "tickets/get-ticket",
+      method: "post",
+      url: "tickets/get-ticket-status",
+      data: { status: status },
     });
     return response.data.data;
   } catch (error) {

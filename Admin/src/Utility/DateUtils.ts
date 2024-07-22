@@ -1,6 +1,30 @@
 import { DailyAggregateData, Order, RequestTime } from "../models/order.model";
 import { totalRevenue } from "./Utils";
 
+export function getTimeDifference(isoDateTime: string[]) {
+  // Parse the ISO 8601 formatted date-time string
+  if(!isoDateTime) return
+  const IsoTime = isoDateTime[0] + "T" + isoDateTime[1];
+
+  const targetDate = new Date(IsoTime) as any;
+ console.log(targetDate)
+  const now = new Date() as any;
+   
+
+  const diffMs = now -targetDate;
+  // Convert milliseconds to minutes and hours
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+
+  const remainingMinutes = diffMinutes % 60;
+
+  // Ensure the difference is non-negative
+  return {
+    hoursLeft: Math.max(0, diffHours),
+    minutesLeft: Math.max(0, remainingMinutes),
+  };
+}
+
 // Day Name
 export const dayNames: string[] = [
   "Sunday",

@@ -1,3 +1,4 @@
+import { ImageFolders } from "./UserModels";
 export interface ValidationType {
   avatar: any;
   firstName: string;
@@ -27,10 +28,10 @@ export interface CustomerType {
 }
 
 export interface TopCustomerType {
-  id: string;
-  name: string;
-  email: string;
-  image: string;
-  amountSpent: string | number;
-  totalOrder: string | number;
+  ImageFolders: string;
+  Name: string;
+  Email: string;
+  Image: string;
+  Amountspent: string | number;
+  Totalorder: string | number;
 }

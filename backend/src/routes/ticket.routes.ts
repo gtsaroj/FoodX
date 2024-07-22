@@ -16,7 +16,7 @@ const ticketRouter = Router();
 ticketRouter.route("/get-ticket").get(verifyJwt, getAllTicket);
 ticketRouter.route("/add-ticket").post(verifyJwt, addNewTicket);
 ticketRouter.route("/update-ticket").put(verifyJwt, updateTicket);
-ticketRouter.route("/get-ticket-status").get(verifyJwt,getTicketByStatus);
+ticketRouter.route("/get-ticket-status").post(verifyJwt,getTicketByStatus);
 ticketRouter.route("/delete-ticket").delete(verifyJwt, deleteTicket);
 
 // admin-only secured routes
