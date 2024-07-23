@@ -4,6 +4,8 @@ import {
   ArrowUp,
   Download,
   Filter,
+  Octagon,
+  OctagonX,
   Search,
   Trash,
 } from "lucide-react";
@@ -21,10 +23,12 @@ import { debounce } from "../Utility/Debounce";
 import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
 import { deleteAllUser } from "../Services";
 import toast from "react-hot-toast";
+import { FilterButton } from "../Components/Common/Sorting/Sorting";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [customerHeader, setCustomerHeader] = useState<string[]>([]);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
   const [checked, setChecked] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,6 +49,7 @@ const CustomerList: React.FC = () => {
   };
 
   const handleCheckboxChange = (isChecked: boolean, id: string) => {
+    setIsChecked(isChecked);
     setChecked((prevChecked) => {
       const checkedCustomer = initialCustomer.find(
         (customer) => customer.ID === id
@@ -53,13 +58,14 @@ const CustomerList: React.FC = () => {
       if (isChecked && checkedCustomer) {
         return [...prevChecked, checkedCustomer]; // Add customer to checked list
       } else {
-        return prevChecked.filter((customer) => customer.id !== id); // Remove customer from checked list
+        return prevChecked.filter((customer) => customer.ID !== id); // Remove customer from checked list
       }
     });
   };
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
+      setIsChecked(checked);
       setChecked(initialCustomer); // Select all customers
     } else {
       setChecked([]); // Deselect all customers
@@ -67,13 +73,16 @@ const CustomerList: React.FC = () => {
   };
 
   const deleteUsers = async () => {
+    const toastLoading = toast.loading("User deleting...");
     try {
-      const allUsers = await deleteAllUser(checked);
-      if (allUsers) {
-        handleCustomerData();
-        return toast.success("users deleted successfully");
-      }
+      await deleteAllUser(checked);
+
+      handleCustomerData();
+      toast.dismiss(toastLoading);
+      return toast.success("users deleted successfully");
     } catch (error) {
+      toast.dismiss(toastLoading);
+      toast.error("Route not found");
       throw new Error("Unable to delete users");
     }
   };
@@ -97,7 +106,7 @@ const CustomerList: React.FC = () => {
       headers.splice(index, 1);
       setCustomerHeader(headers);
     }
-  }, [initialCustomer.length, initialCustomer]);
+  }, [initialCustomer?.length, initialCustomer]);
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
@@ -107,25 +116,25 @@ const CustomerList: React.FC = () => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
     let sortedCustomers;
-    if (value === "Amount spent") {
+    if (value === "Total spent") {
       sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
-          ? b.amountSpent - a.amountSpent
-          : a.amountSpent - b.amountSpent
+          ? b.Amountspent - a.Amountspent
+          : a.Amountspent - b.Amountspent
       );
     }
     if (value === "Name") {
       sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
-          ? b.name.localeCompare(a.name)
-          : a.name.localeCompare(b.name)
+          ? b.Name.localeCompare(a.Name)
+          : a.Name.localeCompare(b.Name)
       );
     }
-    if (value === "Total Order") {
+    if (value === "Total order") {
       sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
         newOrder === "desc"
-          ? b.totalOrder - a.totalOrder
-          : a.totalOrder - b.totalOrder
+          ? b.Totalorder - a.Totalorder
+          : a.Totalorder - b.Totalorder
       );
     }
 
@@ -158,7 +167,11 @@ const CustomerList: React.FC = () => {
                 </>
               }
               options={[
-                <FilterButton onSelect={handleSelect} />,
+                <FilterButton
+                  sortOrder={sortOrder.order}
+                  sortingOptions={["Total spent", "Name", "Total order"]}
+                  onSelect={handleSelect}
+                />,
                 <DatePickerDemo />,
               ]}
               style={{
@@ -177,8 +190,8 @@ const CustomerList: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start w-full px-1 pb-5">
-        <form action="" className="relative w-full">
+      <div className="flex items-center justify-start gap-3 w-full px-1">
+        <form action="" className="relative">
           <input
             id="search"
             type="search"
@@ -187,6 +200,14 @@ const CustomerList: React.FC = () => {
             placeholder="Search"
           />
         </form>
+        <div className="w-0.5 h-8 bg-[var(--dark-secondary-background)]"></div>
+        <div>
+          {isChecked && (
+            <button onClick={() => deleteUsers()}>
+              <OctagonX className="size-7 bg-[var(dark-secondary-text)] " />
+            </button>
+          )}
+        </div>
       </div>
       <div className="w-full">
         <Table
@@ -206,57 +227,3 @@ const CustomerList: React.FC = () => {
 };
 
 export default CustomerList;
-
-interface SortValue {
-  onSelect: (value: string) => void;
-}
-export const FilterButton: React.FC<SortValue> = ({ onSelect }) => {
-  const sortOptions = ["Amount spent", "Name", "Total order"];
-  const [openChild, setOpenChild] = useState<boolean>(false);
-
-  const reference = useRef<HTMLDivElement>();
-
-  useEffect(() => {
-    const closeModal = (event: Event) => {
-      if (
-        reference.current &&
-        !reference.current.contains(event.target as any)
-      ) {
-        setOpenChild(false);
-      } else {
-        setOpenChild(true);
-      }
-    };
-
-    window.addEventListener("mousedown", closeModal);
-
-    return () => {
-      window.removeEventListener("mousedown", closeModal);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={reference as any}
-      className="relative w-full"
-    >
-      <div className="flex w-full p-1.5 hover:bg-[var(--light-secondary-background)] items-center rounded justify-start gap-2">
-        <ArrowDownAZ className="size-4" />
-        <span className=" text-[15px]">Sort By</span>
-      </div>
-      {openChild && (
-        <div className="w-[200px]  p-0.5 rounded gap-1 flex flex-col items-start justify-center absolute left-[-15.2rem] top-0 border shadow-[#00000015] shadow-sm ">
-          {sortOptions?.map((option, key) => (
-            <button
-              onClick={() => onSelect(option)}
-              className=" text-start hover:bg-[var(--light-secondary-background)] w-full p-2 tracking-wide text-[16px] "
-              key={key}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};

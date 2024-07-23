@@ -82,3 +82,11 @@ export interface CardAnalyticsProp {
   filter?: React.ReactNode;
   total: number;
 }
+export interface OrderModelType {
+  ID: string;                  // ID of the order
+  Name: string;                // Name of the user (getter function or value)
+  Products: string[];          // List of product names
+  Requested: string;           // Requested date and time in a string format
+  Fulfilled: boolean;          // Fulfilled status of the order
+  Status: string;              // Status of the order
+}

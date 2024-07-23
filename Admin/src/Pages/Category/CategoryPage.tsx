@@ -7,18 +7,36 @@ import { getCategory } from "../../firebase/db";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
+import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 
 export const CategoryPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
   const [category, setCategory] = useState<{ [key: string]: string }>();
   const [categoryData, setCategoryData] = useState<
-    { category: string; image: string }[]
+    { Category: string; Image: string }[]
   >([]);
   const [categoryHeader, setCategoryHeader] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
 
   const closeModal = () => setIsModelOpen(true);
+
+  const handleSelect = async (value: string) => {
+    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+
+    let sortedCustomers;
+    if (value === "Category") {
+      sortedCustomers = [...categoryData].sort((a: any, b: any) =>
+        newOrder === "desc"
+          ? b.Category.localeCompare(a.Category)
+          : a.Category.localeCompare(b.Category)
+      );
+    }
+
+    setSortOrder({ field: value, order: newOrder });
+    setCategoryData(sortedCustomers as { Category: string; Image: string }[]);
+  };
 
   const getAllCategories = async () => {
     setLoading(true);
@@ -57,7 +75,7 @@ export const CategoryPage: React.FC = () => {
   }, []);
 
   const SearchingCategories = async (value: string) => {
-    const getCategories = (await getCategory("bnw")).icons;
+    const getCategories = (await getCategory("bnw")).icons as any;
 
     const arrayOfObject = Object.keys(getCategories as any).map((item) => ({
       Category: item,
@@ -70,8 +88,6 @@ export const CategoryPage: React.FC = () => {
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     categoryData,
   ]);
-
-  console.log(categoryData)
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-4 py-7 gap-7 ">
@@ -102,7 +118,13 @@ export const CategoryPage: React.FC = () => {
                   </span>
                 </>
               }
-              options={[]}
+              options={[
+                <FilterButton
+                  onSelect={handleSelect}
+                  sortOrder={sortOrder.order}
+                  sortingOptions={["Category"]}
+                />,
+              ]}
               style={{
                 display: "flex",
                 fontSize: "15px",
@@ -121,13 +143,11 @@ export const CategoryPage: React.FC = () => {
       </div>
       <div className="flex items-center justify-start w-full ">
         <form action="" className="relative w-full">
-          <label htmlFor="search">
-            <Search className="absolute text-[var(--dark-secondary-text)] cursor-pointer top-3 size-5 left-2" />
-          </label>
           <input
+            onChange={(event) => debouncingSearch(event.target.value)}
             id="search"
             type="search"
-            className=" pl-9 border placeholder:text-sm outline-none sm:w-[250px] w-full py-2 px-8 border-[var(--dark-secondary-background)] rounded bg-transparent focus:border-[var(--primary-color)] "
+            className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
             placeholder="Search"
           />
         </form>
@@ -137,8 +157,8 @@ export const CategoryPage: React.FC = () => {
         loading={loading}
         actions={(string: string) => console.log(string)}
         pagination={{ currentPage: 1, perPage: 5 }}
-        headerStyle={{ gridTemplateColumns: "repeat(4,1fr)" }}
-        bodyStyle={{ gridTemplateColumns: "repeat(4,1fr)" }}
+        headerStyle={{ gridTemplateColumns: "repeat(5,1fr)" }}
+        bodyStyle={{ gridTemplateColumns: "repeat(5,1fr)" }}
         headers={categoryHeader}
         data={categoryData as any}
       />

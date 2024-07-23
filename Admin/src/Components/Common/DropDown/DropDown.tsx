@@ -32,10 +32,7 @@ export const DropDown: React.FC<DropDownProp> = ({
         <DropdownMenu.Portal>
           <DropdownMenu.Content className=" border w-full mt-1  p-0.5 rounded flex flex-col items-start justify-center gap-2">
             {options?.map((item: any, index: number): any => (
-              <button className="w-full"
-                key={index}
-               
-              >
+              <button className="w-full" key={index}>
                 {item}
               </button>
             ))}

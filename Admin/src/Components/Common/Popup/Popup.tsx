@@ -31,8 +31,6 @@ const Modal: React.FC<ModelProp> = ({
     };
   }, [close, closeModal]);
 
-  console.log(close);
-
   return (
     <div
       className={`md:w-[600px] bg-[var(--popup-bg)] w-full py-9 overflow-hidden   min-w-[100vw] px-7 sm:min-h-[100vh] h-full  z-[20] justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}

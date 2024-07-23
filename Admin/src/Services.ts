@@ -17,7 +17,7 @@ import { makeRequest } from "./makeRequest";
 import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
 
-const getAccessToken = Cookies.get("accessToken")
+const getAccessToken = Cookies.get("accessToken");
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -95,7 +95,7 @@ export const signOut = async () => {
 };
 
 export const getOrders = async () => {
-  if(!getAccessToken) return console.log("You are not logged in")
+  if (!getAccessToken) return console.log("You are not logged in");
   try {
     const response = await makeRequest({
       method: "get",
@@ -116,13 +116,15 @@ export const getBanners = async () => {
     });
     return response.data;
   } catch (error) {
+    if (error === "You have not access, please login again...")
+      Store.dispatch(authLogout());
     console.log(`Error while getting revenueperday : ${error}`);
   }
 };
 
 export const postProducts = async (data: any) => {
   try {
-    const response = await globalRequest({
+    const response = await makeRequest({
       method: "post",
       url: "users/register",
       data: { ...data },
@@ -134,7 +136,7 @@ export const postProducts = async (data: any) => {
 };
 export const postBanners = async (data: any) => {
   try {
-    const response = await globalRequest({
+    const response = await makeRequest({
       method: "post",
       url: "users/register",
       data: { ...data },
@@ -165,6 +167,8 @@ export const addProducts = async (data: UploadProductType) => {
     });
     return response.data;
   } catch (error) {
+    if (error === "You have not access, please login again...")
+      Store.dispatch(authLogout());
     console.log(`Error while adding banners : ${error}`);
   }
 };
@@ -195,7 +199,7 @@ export const deleteAllUser = async (users: CustomerType[]) => {
   } catch (error) {
     if (error === "You have not access, please login again...")
       Store.dispatch(authLogout());
-    console.log(`Error while getting order by userId : ${error}`);
+   throw new Error(`Error while getting order by userId : ${error}`);
   }
 };
 
@@ -214,7 +218,7 @@ export const createTicket = async (data: TicketType) => {
 
 export const getTicketByStatus = async (status: string) => {
   let request = 5;
-  console.log(request)
+  console.log(request);
   if (request < 0) return console.log("Time finished");
   try {
     request = -1;

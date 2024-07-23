@@ -45,6 +45,7 @@ makeRequest.interceptors.response.use(
       //  try with original request
       return await makeRequest(error.config);
     }
+     console.log(`${error.response} ${error.status}`)
     if (status === 403) {
       Cookies.remove("refreshToken");
       toast.error("Session Expired, Please Login Again");
