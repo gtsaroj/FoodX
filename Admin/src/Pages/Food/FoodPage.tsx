@@ -10,6 +10,9 @@ import { ArrangedProduct, ProductType } from "../../models/productMode";
 import { getProducts } from "../../Services";
 import { deleteProductFromDatabase } from "../../firebase/order";
 import { SearchProduct } from "../../Utility/Search";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Reducer/Store";
+import { addProducts } from "../../Reducer/Action";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -43,6 +46,8 @@ const FoodPage: React.FC = () => {
     setLoading(false);
   };
 
+  const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
     // call getAllProducts
     getAllProducts();
@@ -66,7 +71,22 @@ const FoodPage: React.FC = () => {
       headers.push("Button");
       setProductsHeader(headers);
     }
-  }, [fetchedProducts]);
+
+    if (fetchedProducts.length > 0) {
+      fetchedProducts?.forEach((product) => {
+        dispatch(
+          addProducts({
+            id: product.ID,
+            name: product.Name,
+            quantity: product.Quantity,
+            price: product.Price,
+            image: product.Image,
+            category: product.Category,
+          })
+        );
+      });
+    }
+  }, [fetchedProducts, dispatch]);
 
   useEffect(() => {
     (async () => {
@@ -91,6 +111,7 @@ const FoodPage: React.FC = () => {
     })();
   }, [userSearch]);
 
+
   const closeModal = () => setIsModelOpen(true);
 
   const handleChange = (value: string) => {
@@ -104,7 +125,7 @@ const FoodPage: React.FC = () => {
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col items-start justify-center">
           <h4 className="text-[1.25rem] font-[600] tracking-wide text-[var(--dark-text)]">
-          All products
+            All products
           </h4>
           <p className="text-[14px] text-[var(--dark-secondary-text)] text-nowrap ">
             {fetchedProducts?.length} entries found

@@ -6,38 +6,21 @@ export interface ProductType {
   image: string;
   price: number;
   quantity: number;
+  category: string;
 }
-
 
 interface ProductsType {
   products: ProductType[];
 }
 
 const initialState: ProductsType = {
-  products: []
+  products: [],
 };
 const productSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const productId = state.products.findIndex(
-        (product) => product.id === action.payload.id
-      );
-      if (productId > -1) {
-        state.products[productId].quantity += action.payload.quantity;
-      } else {
-        state.products.push(action.payload);
-      }
-    },
-    removeCart: (state, action) => {
-      state.products = state.products.filter(
-        (product) => product.id !== action.payload
-      );
-    },
-    resetCart: (state, action) => {
-      state.products = [];
-    },
+
   },
 });
 

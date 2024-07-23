@@ -97,10 +97,7 @@ const Table: React.FC<TableProp> = ({
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
                 actions={(value) => {
-<<<<<<< HEAD
-=======
                   if (!actions) return;
->>>>>>> 7672aed (error detect of tickets)
                   actions(value);
                 }}
                 options={options}
