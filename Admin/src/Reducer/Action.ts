@@ -5,7 +5,7 @@ import { User, ValidationType } from "../models/user.model";
 import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
 
 interface ProductState {
-  products: Product[] | null;
+  products: Product[];
   loading: boolean;
   success: boolean;
   error: boolean;
@@ -26,7 +26,7 @@ interface authState {
 }
 
 const authState: authState = {
-  success: true,
+  success: false,
   error: false,
   loading: true,
   userInfo: [],
@@ -142,7 +142,17 @@ export const getBannerAction = createAsyncThunk(
 const ProductSlice = createSlice({
   initialState,
   name: "Products",
-  reducers: {},
+  reducers: {
+    addProducts: (state, action) => {
+      const existingProduct = state.products.find(
+        (prod) => prod.id === action.payload.id
+      );
+
+      if (!existingProduct) {
+        state.products.push(action.payload);
+      }
+    },
+  },
   extraReducers: (builder) => {
     //get orders
     builder.addCase(getOrderAction.pending, (state) => {
@@ -157,7 +167,7 @@ const ProductSlice = createSlice({
       (state.loading = false),
         (state.success = false),
         (state.error = true),
-        (state.products = null);
+        (state.products = [null]);
     });
     //get products
     builder.addCase(getProductAction.pending, (state) => {
@@ -172,7 +182,7 @@ const ProductSlice = createSlice({
       (state.loading = false),
         (state.success = false),
         (state.error = true),
-        (state.products = null);
+        (state.products = []);
     });
     //get banners
     builder.addCase(getBannerAction.pending, (state) => {
@@ -187,7 +197,7 @@ const ProductSlice = createSlice({
       (state.loading = false),
         (state.success = false),
         (state.error = true),
-        (state.products = null);
+        (state.products = []);
     });
   },
 });
@@ -220,12 +230,11 @@ const authSlice = createSlice({
     // action to login existing user
     builder.addCase(singInAction.pending, (state) => {
       state.loading = true;
-      state.success = true;
     });
     builder.addCase(singInAction.fulfilled, (state, action) => {
       state.loading = false;
       state.success = true;
-      state.userInfo  = action.payload as User;
+      state.userInfo = action.payload as User;
     });
     builder.addCase(singInAction.rejected, (state) => {
       state.error = true;
@@ -237,6 +246,7 @@ const authSlice = createSlice({
 });
 
 export const ProductReducer = ProductSlice.reducer;
+export const { addProducts } = ProductSlice.actions;
 export const AuthReducer = authSlice.reducer;
 
 export const { authLogout } = authSlice.actions;

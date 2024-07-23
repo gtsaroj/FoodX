@@ -8,13 +8,31 @@ export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date | undefined>();
   const [open, setOpen] = React.useState<boolean>(false);
 
+  const reference = React.useRef<HTMLDivElement>();
+
+  React.useEffect(() => {
+    const closeModal = (event: Event) => {
+      if (
+        reference.current &&
+        !reference.current.contains(event.target as any)
+      ) {
+        setOpen(false);
+      } else {
+        setOpen(true);
+      }
+    };
+
+    window.addEventListener("mousedown", closeModal);
+
+    return () => {
+      window.removeEventListener("mousedown", closeModal);
+    };
+  }, []);
+
   return (
-    <div className="relative">
+    <div ref={reference as any} className="relative">
       <button
-        onClick={() => setOpen(!open)}
-        className={` duration-150 w-[180px] ${
-          date ? "bg-[var(--primary-dark)] " : ""
-        } duration-150 bg-[var(--primary-color)] text-[var(--light-text)] hover:bg-[var(--primary-light)] hover:border-[var(--primary-light)] rounded py-2 border-[var(--dark-secondary-text)] border flex items-center  justify-center gap-3`}
+        className={`  duration-150 rounded p-1.5 hover:bg-[var(--light-secondary-background)]   flex items-center  justify-start w-full gap-3`}
       >
         <CalendarIcon className="size-4" />
         {date ? (
@@ -25,7 +43,7 @@ export function DatePickerDemo() {
               className=" bg-[var(--dark-foreground)] rounded-full p-1"
             >
               {" "}
-              <X className=" text-[var(--light-text)] size-3" />
+              <X className=" text-[var(--light-text)] text-start size-3" />
             </button>{" "}
           </span>
         ) : (
@@ -34,7 +52,7 @@ export function DatePickerDemo() {
       </button>
 
       <div
-        className={` bg-slate-300 z-[1] top-10 right-0 rounded absolute ${
+        className={` bg-slate-300 z-[1] top-[-4.1rem] left-[-18.5rem] rounded absolute ${
           open ? "visible" : "invisible"
         }`}
       >

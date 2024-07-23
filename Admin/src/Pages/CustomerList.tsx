@@ -1,5 +1,13 @@
-import { ArrowDown, ArrowDownAZ, ArrowUp, Search, Trash } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import {
+  ArrowDown,
+  ArrowDownAZ,
+  ArrowUp,
+  Download,
+  Filter,
+  Search,
+  Trash,
+} from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Table from "../Components/Common/Table/Table";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
 import { getCustomerData } from "../firebase/db";
@@ -125,59 +133,8 @@ const CustomerList: React.FC = () => {
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
-  console.log(initialCustomer);
-
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
-      {/* 
-      <h1 className="text-[20px] pt-3 ">Customer</h1>
-      <div className="flex flex-col-reverse items-start justify-between w-full gap-2 sm:flex-row sm:items-center">
-        <form action="" className="relative w-full">
-          <Search className="absolute text-[var(--dark-secondary-text)]    top-3 size-5 left-2" />
-          <input
-            type="search"
-            onChange={(e) => debouncedHandleChange(e.target.value)}
-            className=" pl-9 border-[1px] placeholder:text-sm outline-none w-full sm:w-[250px] rounded py-2 px-8 border-[var(--dark-secondary-text)] "
-            placeholder="Search for customer"
-          />
-        </form>
-        <div className="flex items-center justify-center w-full gap-5">
-          {checked.length > 0 && (
-            <button
-              onClick={() => deleteUsers()}
-              className=" border border-[var(--danger-bg)] px-10 py-2 rounded"
-            >
-              <Trash className="hover:scale-[1.1] duration-150 text-[var(--dark-secondary-text)] size-5" />
-            </button>
-          )}
-          <DropDown
-            onSelect={handleSelect}
-            children={
-              <>
-                {" "}
-                <ArrowDownAZ className="size-4" />
-                <span>Sort By</span>
-              </>
-            }
-            options={["Name", "Amount spent", "Total Order"]}
-            style={{
-              display: "flex",
-              fontSize: "15px",
-              borderRadius: "4px",
-              padding: "0.5rem 1rem 0.5rem 1rem",
-              color: "var(--dark-text)",
-              border: "1px solid var(--dark-secondary-text)  ",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              background: "",
-            }}
-          />
-
-          <DatePickerDemo />
-        </div>
-      </div> 
-    */}
       <div className="flex items-center justify-between w-full px-2 pt-5">
         <div className="flex flex-col items-start justify-center gap-1">
           <h4 className="text-[1.25rem] font-[600] tracking-wide text-[var(--dark-text)]">
@@ -185,19 +142,25 @@ const CustomerList: React.FC = () => {
           </h4>
         </div>
         <div className="flex items-center justify-center gap-5 ">
-          <div className="flex items-center justify-center gap-2">
-            <DatePickerDemo />
+          <div className="flex  items-center justify-center gap-2">
+            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+              <Download className="size-4" />
+              <p className="text-[15px]">Export</p>
+            </button>
+
             <DropDown
-              onSelect={handleSelect}
               children={
                 <>
-                  <ArrowDownAZ className="size-4 text-[var(--dark-secondary-text)]" />
+                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
                   <span className="text-[var(--dark-secondary-text)]">
-                    Sort By
+                    Filter
                   </span>
                 </>
               }
-              options={["Name", "Amount spent", "Total Order"]}
+              options={[
+                <FilterButton onSelect={handleSelect} />,
+                <DatePickerDemo />,
+              ]}
               style={{
                 display: "flex",
                 fontSize: "15px",
@@ -244,30 +207,56 @@ const CustomerList: React.FC = () => {
 
 export default CustomerList;
 
-// export const SortOptions = () => {
-//   return (
-//     <div className="flex flex-col items-start justify-center gap-2 px-5">
-//       <div className="flex text-[15px]  items-center gap-5 justify-center">
-//         Name{" "}
-//         {/* <div className="flex items-center justify-center gap-2">
-//           <ArrowDown className="size-4" />
-//           <ArrowUp className="size-4" />
-//         </div>{" "} */}
-//       </div>
-//       <div className="flex  text-[15px] items-center gap-5 justify-center">
-//         Amount Spent{" "}
-//         {/* <div className="flex items-center justify-center gap-2">
-//           <ArrowDown className="size-4" />
-//           <ArrowUp className="size-4" />
-//         </div>{" "} */}
-//       </div>
-//       <div className="flex text-[15px]  items-center gap-5 justify-center">
-//         Order{" "}
-//         {/* <div className="flex items-center justify-center gap-2">
-//           <ArrowDown className="size-4" />
-//           <ArrowUp className="size-4" />
-//         </div>{" "} */}
-//       </div>
-//     </div>
-//   );
-// };
+interface SortValue {
+  onSelect: (value: string) => void;
+}
+export const FilterButton: React.FC<SortValue> = ({ onSelect }) => {
+  const sortOptions = ["Amount spent", "Name", "Total order"];
+  const [openChild, setOpenChild] = useState<boolean>(false);
+
+  const reference = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const closeModal = (event: Event) => {
+      if (
+        reference.current &&
+        !reference.current.contains(event.target as any)
+      ) {
+        setOpenChild(false);
+      } else {
+        setOpenChild(true);
+      }
+    };
+
+    window.addEventListener("mousedown", closeModal);
+
+    return () => {
+      window.removeEventListener("mousedown", closeModal);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={reference as any}
+      className="relative w-full"
+    >
+      <div className="flex w-full p-1.5 hover:bg-[var(--light-secondary-background)] items-center rounded justify-start gap-2">
+        <ArrowDownAZ className="size-4" />
+        <span className=" text-[15px]">Sort By</span>
+      </div>
+      {openChild && (
+        <div className="w-[200px]  p-0.5 rounded gap-1 flex flex-col items-start justify-center absolute left-[-15.2rem] top-0 border shadow-[#00000015] shadow-sm ">
+          {sortOptions?.map((option, key) => (
+            <button
+              onClick={() => onSelect(option)}
+              className=" text-start hover:bg-[var(--light-secondary-background)] w-full p-2 tracking-wide text-[16px] "
+              key={key}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
