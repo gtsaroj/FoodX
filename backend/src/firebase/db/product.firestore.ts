@@ -1,4 +1,4 @@
-import { Category, Collection, Product } from "../../models/product.model.js";
+import { Collection, Product } from "../../models/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 
@@ -37,10 +37,7 @@ const getProductByName = async (name: string, category: Collection["name"]) => {
   }
 };
 
-const getProductByTag = async (
-  tag: Category["types"],
-  category: Collection["name"]
-) => {
+const getProductByTag = async (tag: string, category: Collection["name"]) => {
   const productRef = db.collection(category);
   if (!productRef) throw new ApiError(400, "No collection available.");
   try {

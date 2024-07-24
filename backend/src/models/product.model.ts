@@ -4,7 +4,7 @@ export interface Product {
   quantity: number;
   price: number;
   image: string;
-  tag: Category["types"];
+  tag: string;
 }
 export interface UploadProductType {
   products: Product;
@@ -12,9 +12,9 @@ export interface UploadProductType {
 }
 
 
-export interface Category {
-  types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
-}
+// export interface Category {
+//   types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
+// }
 
 export interface Collection {
   name: "products" | "specials";
