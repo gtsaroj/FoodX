@@ -1,11 +1,14 @@
 import React, { CSSProperties, useEffect, useState } from "react";
 import { TableHeader } from "./TableHeader";
 import { TableRowComponent } from "./TableRow";
-
 import Pagination from "../Pagination/Pagination";
 import { Order } from "../../../models/order.model";
 import { CustomerType } from "../../../models/user.model";
-import { ArrangedProduct, ProductType } from "../../../models/productMode";
+import {
+  ArrangedProduct,
+  ProductTable,
+  ProductType,
+} from "../../../models/productMode";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -16,7 +19,14 @@ interface TableProp {
   headers: string[]; // headers value
   style?: React.CSSProperties;
   actions?: (rowData: string) => void; //delete or edit single row data
-  data: [] | CustomerType[] | Order[] | ProductType[] | ArrangedProduct[];
+  data:
+    | []
+    | CustomerType[]
+    | Order[]
+    | ProductType[]
+    | ArrangedProduct[]
+    | ProductTable[];
+  // data: any[];
   headerStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
   onChange?: (value: boolean | string, id: string) => void; //select or delete single row data
@@ -61,7 +71,7 @@ const Table: React.FC<TableProp> = ({
     onSelectAll(checked);
   };
 
-  // 
+  //
 
   return error ? (
     <div>Error</div>

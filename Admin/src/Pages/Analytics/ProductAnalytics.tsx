@@ -1,8 +1,13 @@
+import AllCustomerAnalytics from "./AllCategory.analytics";
+import AllCategoryAnalytics from "./AllCustomer.analytics";
+import AllProductAnalytics from "./AllProducts.analytics";
+
 const ProductAnalytics = () => {
-    const headers = ["Rank", "Products", "Price", "Total Sold", "Ratings"]
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      Hello
+    <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-2">
+      <AllProductAnalytics />
+      <AllCategoryAnalytics />
+      <AllCustomerAnalytics />
     </div>
   );
 };

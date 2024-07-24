@@ -14,6 +14,13 @@ export interface ArrangedProduct {
   Quantity: string;
   Category: string;
 }
+export interface ProductTable {
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
+  rating: number;
+}
 export interface UploadProductType {
   products: ProductType;
   collection: Collection["name"];

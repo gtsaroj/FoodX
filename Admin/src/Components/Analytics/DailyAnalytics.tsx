@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
-import {
-  CardAnalyticsProp,
-} from "../../models/order.model";
+import { CardAnalyticsProp } from "../../models/order.model";
 import { getOrders } from "../../Services";
 import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 import { MoreVertical } from "lucide-react";
 // import { getOrders } from "../../Services";
 // import { DailyAggregateData } from "../../models/order.model";
 // import { aggregateCurrentDayData } from "../../Utility/DateUtils";
-
-
 
 const Revenue: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>();
@@ -52,7 +48,7 @@ const Revenue: React.FC = () => {
                       <MoreVertical />
                     </span>
                   }
-                  title={order.title} 
+                  title={order.title}
                   total={order.total}
                   percentage={order.percentage}
                   subtitle={order.subtitle}
