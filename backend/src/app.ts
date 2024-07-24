@@ -8,6 +8,7 @@ import userRouter from "./routes/user.routes.js";
 import { productRouter } from "./routes/products.routes.js";
 import { orderRoutes } from "./routes/orders.routes.js";
 import { ticketRouter } from "./routes/ticket.routes.js";
+import { logRouter } from "./routes/logs.routes.js";
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use(express.static("public"));
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/orders", orderRoutes);
-app.use("/tickets", ticketRouter)
+app.use("/tickets", ticketRouter);
+app.use("/logs", logRouter);
 
 export { app };

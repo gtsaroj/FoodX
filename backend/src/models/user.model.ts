@@ -32,4 +32,4 @@ export interface DecodeToken {
 }
 
 
-export type RoleType = "customer" | "chef" | "superadmin";
+export type RoleType = "customer" | "chef" | "admin";
