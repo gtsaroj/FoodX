@@ -37,7 +37,10 @@ const getProductByName = async (name: string, category: Collection["name"]) => {
   }
 };
 
-const getProductByTag = async (tag: string, category: Collection["name"]) => {
+const getProductByTagFromDatabase = async (
+  tag: string,
+  category: Collection["name"]
+) => {
   const productRef = db.collection(category);
   if (!productRef) throw new ApiError(400, "No collection available.");
   try {
@@ -55,7 +58,7 @@ const getProductByTag = async (tag: string, category: Collection["name"]) => {
   }
 };
 
-const getAllProducts = async (category: Collection["name"]) => {
+const getAllProductsFromDatabase = async (category: Collection["name"]) => {
   const productRef = db.collection(category);
   if (!productRef) throw new ApiError(400, "No collection available.");
   try {
@@ -72,7 +75,7 @@ const getAllProducts = async (category: Collection["name"]) => {
   }
 };
 
-const updateProduct = async (
+const updateProductInDatabase = async (
   category: Collection["name"],
   field: keyof Product,
   name: string,
@@ -94,7 +97,7 @@ const updateProduct = async (
 export {
   addProductToFirestore,
   getProductByName,
-  getProductByTag,
-  getAllProducts,
-  updateProduct,
+  getProductByTagFromDatabase,
+  getAllProductsFromDatabase,
+  updateProductInDatabase,
 };

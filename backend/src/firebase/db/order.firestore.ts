@@ -1,7 +1,8 @@
 import { nanoid } from "nanoid";
-import { Order } from "../../models/order.model.js";
+import { Order, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
+import { Product } from "../../models/product.model.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
@@ -61,5 +62,48 @@ const getAllOrders = async () => {
     throw new ApiError(440, "No orders found.");
   }
 };
+const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
+  const orderRef = db.collection("orders");
+  if (!orderRef) throw new ApiError(404, "No document found.");
+  try {
+    let doc;
+    if (status !== "fullfilled") {
+      doc = await orderRef.doc(id).update({
+        status,
+      });
+    } else {
+      doc = await orderRef.doc(id).update({
+        status,
+        orderFullfilled: new Date().getTime(),
+      });
+      return doc;
+    }
+  } catch (error) {
+    throw new ApiError(440, "Error updating orders in database.");
+  }
+};
 
-export { addNewOrderToDatabase, getAllOrders, getOrders, getOrdersByUserId };
+// const updateOrderItemInDatabase = async (
+//   id: string,
+//   action: "add" | "delete",
+//   productId: string,
+//   prevData: Product[]
+// ) => {
+//   const orderRef = db.collection("orders");
+//   if (!orderRef) throw new ApiError(404, "No document found.");
+//   try {
+//     // const doc = orderRef.doc(id).update({
+//     //   [`products`]:
+//     // })
+//   } catch (error) {
+//     throw new ApiError(440, "Error updating orders in database.");
+//   }
+// };
+
+export {
+  addNewOrderToDatabase,
+  getAllOrders,
+  getOrders,
+  getOrdersByUserId,
+  updateOrderStatusInDatabase,
+};

@@ -2,6 +2,7 @@ import {
   addNewOrderToDatabase,
   getAllOrders,
   getOrdersByUserId,
+  updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -29,10 +30,8 @@ const getAllOrdersFromDatabase = asyncHandler(async (_: any, res: any) => {
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     try {
-       const {id} = req.body;
-     console.log(id)
+      const { id } = req.body;
       const response = await getOrdersByUserId(id);
-      console.log("Response=========="+response);
       return res
         .status(200)
         .json(
@@ -69,4 +68,30 @@ const addNewOrder = asyncHandler(
   }
 );
 
-export { getAllOrdersFromDatabase, getOrderByUserIdFromDatabase, addNewOrder };
+const updateOrder = asyncHandler(
+  async (req: express.Request, res: express.Response) => {
+    const { id, status } = req.body;
+    try {
+      const updatedProduct = await updateOrderStatusInDatabase(id, status);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { updatedProduct },
+            "Product updated successfully.",
+            true
+          )
+        );
+    } catch (error) {
+      throw new ApiError(500, "Error while updating products.");
+    }
+  }
+);
+
+export {
+  getAllOrdersFromDatabase,
+  getOrderByUserIdFromDatabase,
+  addNewOrder,
+  updateOrder,
+};

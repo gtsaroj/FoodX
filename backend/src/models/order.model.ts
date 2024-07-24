@@ -9,7 +9,7 @@ export interface Order {
   orderFullFilled: string;
 }
 
-type OrderStatus = "fullfilled" | "cancelled" | "preparing" | "received";
+export type OrderStatus = "fullfilled" | "cancelled" | "preparing" | "received";
 
 export interface CustomerType {
   id: string;
