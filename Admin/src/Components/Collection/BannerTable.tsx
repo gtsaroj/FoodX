@@ -10,8 +10,8 @@ export const BannerTable: React.FC = () => {
       error={false}
       loading={false}
       pagination={{ currentPage: 1, perPage: 5 }}
-      headerStyle={{ gridTemplateColumns: "repeat(6,1fr)" }}
-      bodyStyle={{ gridTemplateColumns: "repeat(6,1fr)" }}
+      headerStyle={{ gridTemplateColumns: "repeat(7,1fr)" }}
+      bodyStyle={{ gridTemplateColumns: "repeat(7,1fr)" }}
       headers={Banners}
       data={BannerData as any}
     />

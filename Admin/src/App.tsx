@@ -27,7 +27,6 @@ import Navbar from "./Navbar/Navbar";
 
 
 const MainPage = () => {
-  persistor.purge();
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">

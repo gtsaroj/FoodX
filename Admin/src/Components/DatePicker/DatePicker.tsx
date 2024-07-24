@@ -52,7 +52,7 @@ export function DatePickerDemo() {
       </button>
 
       <div
-        className={` bg-slate-300 z-[1] top-[-4.1rem] left-[-18.5rem] rounded absolute ${
+        className={` bg-slate-300 z-[1] top-[-2.8rem] left-[-16.1rem] rounded absolute ${
           open ? "visible" : "invisible"
         }`}
       >

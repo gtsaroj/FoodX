@@ -3,6 +3,8 @@ import { EllipsisVertical } from "lucide-react";
 import "./Table.css";
 import { Order } from "../../../models/order.model";
 import { DropDown } from "../DropDown/DropDown";
+import { Button, StatusButton } from "../Filter/Filter";
+import { spawn } from "child_process";
 
 interface TablerowProps {
   options?: string[];
@@ -25,7 +27,6 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
   actions,
   onSelectAll,
 }) => {
-  console.log(data);
   const [isChecked, setIsChecked] = useState<boolean>(onSelectAll);
   const [viewId, setViewId] = useState<string>(data?.ID?.substring(0, 5));
 
@@ -36,17 +37,19 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
   useEffect(() => {
     setIsChecked(onSelectAll);
   }, [onSelectAll]);
-
+  const status = options?.includes(data?.Status)
+    ? options.filter((option) => option !== data?.Status)
+    : options;
   return (
     <React.Fragment>
       <tr
         style={bodyStyle}
-        className={`w-full  grid  justify-items-start px-4 border-b-[1px] gap-x-8 items-center py-3.5 hover:bg-[var(--light-background)] duration-150  `}
+        className={`w-full  grid  justify-items-start px-4 border-b-[1px] gap-x-5 items-center py-3.5 hover:bg-[var(--light-background)] duration-150  `}
       >
         {headers.map((hdr, hdrIndex) => (
           <td
             key={`${hdr}-${hdrIndex}`}
-            className={`col-span-1 ${
+            className={`col-span-1 ${hdr == "Button" ? "col-span-2" : ""} ${
               hdr === "Email" ? "col-span-2 text-center w-full" : "col-span-1"
             } text-center text-sm ${
               hdr === "Products" ? "col-span-2 text-center w-full" : ""
@@ -69,10 +72,10 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                 onChange={(event) => {
                   if (event.target) {
                     setIsChecked(event.target.checked);
-                    if(!onChange) return;
+                    if (!onChange) return;
                     onChange(
                       event.target.checked as boolean,
-                      data.id as string
+                      data.ID as string
                     );
                   }
                 }}
@@ -80,32 +83,33 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                 type="checkbox"
               />
             ) : hdr.toLowerCase() === "button" ? (
-              <DropDown
-                onSelect={(value) => {
-                  actions(value);
-                }}
-                style={{}}
-                value={data["orderId"]}
-                options={["Edit", "Delete"]}
-                children={
-                  <EllipsisVertical className="size-6 duration-150 hover:text-[var(--danger-bg)] " />
-                }
-              />
+              <div className="flex items-center justify-center gap-5">
+                <Button type="Edit" />
+                <Button
+                  value={data.ID}
+                  onClick={(value) => actions(value)}
+                  type="Delete"
+                />
+              </div>
             ) : hdr.toLowerCase() === "status" ? (
               <DropDown
                 onSelect={(value: string) => handleClick(value, data.ID)}
                 style={{
                   padding: "0.5rem 3rem",
                   background: "var(--green-bg)",
-                  borderRadius: "4px",
                   fontWeight: 500,
                   color: "var(--light-text)",
                 }}
-                options={
-                  options?.includes(data?.Status)
-                    ? options.filter((option) => option !== data?.Status)
-                    : options
-                }
+                options={[
+                  <StatusButton
+                    uid={data.ID}
+                    onClick={(type: string, uid: string) => {
+                      if (!onChange) return;
+                      onChange(type, uid);
+                    }}
+                    type={status as string[]}
+                  />,
+                ]}
                 children={data.Status}
               />
             ) : hdr === "email" ? (

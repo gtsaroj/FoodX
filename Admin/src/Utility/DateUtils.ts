@@ -24,6 +24,16 @@ export function getTimeDifference(isoDateTime: string[]) {
     minutesLeft: Math.max(0, remainingMinutes),
   };
 }
+export const parseDateString = (dateString: string): Date => {
+  const [datePart, timePart] = dateString.split(' | ');
+  const [month, day] = datePart.split('-').map(Number);
+  const [hours, minutes, seconds] = timePart.split(':').map(Number);
+  
+  // Use the current year, as the year is not provided in the string
+  const year = new Date().getFullYear();
+  
+  return new Date(year, month - 1, day, hours, minutes, seconds);
+};
 
 // Day Name
 export const dayNames: string[] = [

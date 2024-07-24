@@ -13,6 +13,8 @@ import { SearchProduct } from "../../Utility/Search";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { addProducts } from "../../Reducer/Action";
+import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import toast from "react-hot-toast";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -20,6 +22,7 @@ const FoodPage: React.FC = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [productsHeader, setProductsHeader] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<{field : string, order: string}>({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
@@ -39,7 +42,6 @@ const FoodPage: React.FC = () => {
       }));
       setFetchedProducts(arrangeProducts as ArrangedProduct[]);
     } catch (error) {
-      setLoading(false);
       setError(true);
       return console.log(`Error while fetching products` + error);
     }
@@ -47,6 +49,32 @@ const FoodPage: React.FC = () => {
   };
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const handleSelect = async (value: string) => {
+    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+
+    let sortedCustomers;
+    if (value === "Name") {
+      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
+        newOrder === "desc"
+          ? b.Name.localeCompare(a.Name)
+          : a.Name.localeCompare(b.Name)
+      );
+    }
+    if (value === "Quantity") {
+      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
+        newOrder === "desc" ? b.Quantity - a.Quantity : a.Quantity - b.Quantity
+      );
+    }
+    if (value === "Price") {
+      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
+        newOrder === "desc" ? b.Price - a.Price : a.Price - b.Price
+      );
+    }
+
+    setSortOrder({ field: value, order: newOrder });
+    setFetchedProducts(sortedCustomers as ArrangedProduct[]);
+  };
 
   useEffect(() => {
     // call getAllProducts
@@ -56,8 +84,11 @@ const FoodPage: React.FC = () => {
   // delete products
   const handleClick = async (id: string) => {
     try {
+     const toastLoading =  toast.loading("Product deleting...")
       await deleteProductFromDatabase(id);
       const refreshOrder = await getProducts();
+      toast.dismiss(toastLoading)
+      toast.success("Deleted successfully")
       setFetchedProducts(refreshOrder.data.products);
     } catch (error) {
       throw new Error("Unable to delete order");
@@ -111,7 +142,6 @@ const FoodPage: React.FC = () => {
     })();
   }, [userSearch]);
 
-
   const closeModal = () => setIsModelOpen(true);
 
   const handleChange = (value: string) => {
@@ -149,7 +179,14 @@ const FoodPage: React.FC = () => {
                   </span>
                 </>
               }
-              options={[]}
+              options={[
+                <FilterButton
+                  
+                sortOrder={sortOrder.order}
+                  onSelect={handleSelect}
+                  sortingOptions={["Name", "Quantity", "Price"]}
+                />,
+              ]}
               style={{
                 display: "flex",
                 fontSize: "15px",
@@ -181,11 +218,11 @@ const FoodPage: React.FC = () => {
       <Table
         pagination={{ currentPage: 1, perPage: 7 }}
         bodyStyle={{
-          gridTemplateColumns: "repeat(7,1fr)",
+          gridTemplateColumns: "repeat(8,1fr)",
         }}
         headerStyle={{
           display: "grid",
-          gridTemplateColumns: "repeat(7,1fr)",
+          gridTemplateColumns: "repeat(8,1fr)",
         }}
         headers={productsHeader}
         data={fetchedProducts as ArrangedProduct[]}
