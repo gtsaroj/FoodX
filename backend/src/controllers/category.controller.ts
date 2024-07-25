@@ -1,5 +1,6 @@
 import {
   addNewCategoryInDatabase,
+  deleteCategoryFromDatabase,
   getAllCategoryFromDatabase,
   updateCategoryInDatabase,
 } from "../firebase/db/category.firestore.js";
@@ -80,4 +81,30 @@ const updateCategory = asyncHandler(
   }
 );
 
-export { addNewCategory, getAllCategory, updateCategory };
+const deleteCategory = asyncHandler(
+  async (req: express.Request, res: express.Response) => {
+    const { id } = req.body;
+    try {
+      const deletedCategory = await deleteCategoryFromDatabase(id);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { deletedCategory },
+            "Category deleted successfully",
+            true
+          )
+        );
+    } catch (error) {
+      throw new ApiError(
+        501,
+        "Error while deleting category.",
+        null,
+        error as string[]
+      );
+    }
+  }
+);
+
+export { addNewCategory, getAllCategory, updateCategory , deleteCategory};

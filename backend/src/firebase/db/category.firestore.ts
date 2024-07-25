@@ -13,7 +13,7 @@ const getAllCategoryFromDatabase = async () => {
       const data = doc.data() as Category;
       categories.push(data);
     });
-    return category;
+    return categories;
   } catch (error) {
     throw new ApiError(401, "Unable to get category data from database.");
   }
