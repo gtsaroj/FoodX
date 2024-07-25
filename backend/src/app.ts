@@ -10,6 +10,7 @@ import { orderRoutes } from "./routes/orders.routes.js";
 import { ticketRouter } from "./routes/ticket.routes.js";
 import { logRouter } from "./routes/logs.routes.js";
 import { categoryRouter } from "./routes/category.routes.js";
+import { bannerRouter } from "./routes/banner.routes.js";
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use("/orders", orderRoutes);
 app.use("/tickets", ticketRouter);
 app.use("/logs", logRouter);
 app.use("/categories", categoryRouter);
+app.use("/banners", bannerRouter);
 
 export { app };
