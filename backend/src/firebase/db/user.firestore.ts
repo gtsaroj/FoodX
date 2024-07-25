@@ -82,10 +82,28 @@ const getUserFromDatabase = async (uid: string) => {
     throw new ApiError(404, "User not found.");
   }
 };
+const bulkDeleteUserFromDatabase = async (
+  path: "customers" | "admins" | "chefs",
+  id: string[]
+) => {
+  const userRef = db.collection(path);
+  if (!userRef) throw new ApiError(400, "No collection available.");
+  try {
+    const batch = db.batch();
 
+    id.forEach((userId) => {
+      const docRef = userRef.doc(userId);
+      batch.delete(docRef);
+    });
+    await batch.commit();
+  } catch (error) {
+    throw new ApiError(401, "Unable to bulk delete users data.");
+  }
+};
 export {
   addUserToFirestore,
   deleteUserFromFireStore,
   updateUserDataInFirestore,
   getUserFromDatabase,
+  bulkDeleteUserFromDatabase,
 };

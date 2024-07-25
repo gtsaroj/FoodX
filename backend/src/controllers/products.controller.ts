@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addProductToFirestore,
+  bulkDeleteProductsFromDatabase,
   getAllProductsFromDatabase,
   getProductByTagFromDatabase,
   updateProductInDatabase,
@@ -125,10 +126,30 @@ const updateProducts = asyncHandler(
   }
 );
 
+const deleteProductsInBulk = asyncHandler(
+  async (req: express.Request, res: express.Response) => {
+    const {
+      category,
+      ids,
+    }: {
+      category: "products" | "specials";
+      ids: string[];
+    } = req.body;
+    try {
+      await bulkDeleteProductsFromDatabase(category, ids);
+      return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Products deleted successfully.", true));
+    } catch (error) {
+      throw new ApiError(500, "Error while deleting products.");
+    }
+  }
+);
 export {
   getNormalProducts,
   getSpecialProducts,
   addProducts,
   updateProducts,
   getProductByTag,
+  deleteProductsInBulk,
 };

@@ -1,5 +1,6 @@
 import {
   addNewCategoryInDatabase,
+  bulkDeleteCategoryFromDatabase,
   deleteCategoryFromDatabase,
   getAllCategoryFromDatabase,
   updateCategoryInDatabase,
@@ -106,5 +107,26 @@ const deleteCategory = asyncHandler(
     }
   }
 );
+const deleteCategoriesInBulk = asyncHandler(async (req: any, res: any) => {
+  const {
+    ids,
+  }: {
+    ids: string[];
+  } = req.body;
+  try {
+    await bulkDeleteCategoryFromDatabase(ids);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Categories deleted successfully.", true));
+  } catch (error) {
+    throw new ApiError(500, "Error while deleting categories.");
+  }
+});
 
-export { addNewCategory, getAllCategory, updateCategory , deleteCategory};
+export {
+  addNewCategory,
+  getAllCategory,
+  updateCategory,
+  deleteCategory,
+  deleteCategoriesInBulk,
+};

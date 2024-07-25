@@ -6,12 +6,13 @@ import {
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
+  bulkDeleteUserFromDatabase,
   deleteUserFromFireStore,
   getUserFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
 
- import { DecodeToken, User } from "../models/user.model.js";
+import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -271,6 +272,23 @@ const deletAllUser = asyncHandler(async (req: any, res: any) => {
     }
   }
 });
+const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
+  const {
+    role,
+    ids,
+  }: {
+    role: "customers" | "admins" | "chefs";
+    ids: string[];
+  } = req.body;
+  try {
+    await bulkDeleteUserFromDatabase(role, ids);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Users deleted successfully.", true));
+  } catch (error) {
+    throw new ApiError(500, "Error while deleting users.");
+  }
+});
 
 export {
   loginUser,
@@ -280,4 +298,5 @@ export {
   deleteAccount,
   updateUser,
   deletAllUser,
+  deleteUsersInBulk,
 };
