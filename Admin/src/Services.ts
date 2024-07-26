@@ -11,13 +11,11 @@ import toast from "react-hot-toast";
 import { CustomerType, ValidationType } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
-import { authLogout } from "./Reducer/Action";
 import { makeRequest } from "./makeRequest";
 
 import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
-
-const getAccessToken = Cookies.get("accessToken");
+import { CategoryType, UpdateCategoryType } from "./models/category.model";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -95,7 +93,6 @@ export const signOut = async () => {
 };
 
 export const getOrders = async () => {
-  if (!getAccessToken) return console.log("You are not logged in");
   try {
     const response = await makeRequest({
       method: "get",
@@ -103,8 +100,6 @@ export const getOrders = async () => {
     });
     return response.data;
   } catch (error) {
-    if (error === "You have not access, please login again...")
-      Store.dispatch(authLogout());
     console.log(`Error while getting revenueperday : ${error}`);
   }
 };
@@ -199,7 +194,7 @@ export const deleteAllUser = async (users: CustomerType[]) => {
   } catch (error) {
     if (error === "You have not access, please login again...")
       Store.dispatch(authLogout());
-   throw new Error(`Error while getting order by userId : ${error}`);
+    throw new Error(`Error while getting order by userId : ${error}`);
   }
 };
 
@@ -256,5 +251,52 @@ export const updateTicket = async (data: TicketType) => {
     return response.data;
   } catch (error) {
     return console.log(`Error while creating ticket` + error);
+  }
+};
+export const addCategory = async (data: CategoryType) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "categories/add-category",
+      data: { name: data.Name, image: data.Image },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to add new category" + error);
+  }
+};
+export const updateCategory = async (data: UpdateCategoryType) => {
+  try {
+    const response = await makeRequest({
+      method: "put",
+      url: "categories/update-category",
+      data: { id: data.id, field: data.field, newData: data.newData },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to update exist category" + error);
+  }
+};
+export const deleteCategory = async (id: string) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "categories/delete-category",
+      data: {id},
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete exist category" + error);
+  }
+};
+export const getCategories = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "categories/get-category",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to fetch  categories" + error);
   }
 };

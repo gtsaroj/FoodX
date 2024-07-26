@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { EllipsisVertical } from "lucide-react";
 import "./Table.css";
 import { Order } from "../../../models/order.model";
 import { DropDown } from "../DropDown/DropDown";
 import { Button, StatusButton } from "../Filter/Filter";
-import { spawn } from "child_process";
 
 interface TablerowProps {
   options?: string[];
   data: Order | any;
   headers: string[];
   bodyStyle: React.CSSProperties;
-  actions: (data: string) => void;
+  actions: (data: string, actionType?: string) => void;
   dataIndex: number;
   onChange?: (value: boolean | string, id: string) => void;
   onSelectAll: boolean;
@@ -28,7 +26,7 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
   onSelectAll,
 }) => {
   const [isChecked, setIsChecked] = useState<boolean>(onSelectAll);
-  const [viewId, setViewId] = useState<string>(data?.ID?.substring(0, 5));
+  const [viewId, setViewId] = useState<string>(`#${data?.ID?.substring(0, 8)}`);
 
   function handleClick(value: string, uid: string) {
     if (!onChange) return;
@@ -49,24 +47,19 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
         {headers.map((hdr, hdrIndex) => (
           <td
             key={`${hdr}-${hdrIndex}`}
-            className={`col-span-1 ${hdr == "Button" ? "col-span-2" : ""} ${
-              hdr === "Email" ? "col-span-2 text-center w-full" : "col-span-1"
-            } text-center text-sm ${
-              hdr === "Products" ? "col-span-2 text-center w-full" : ""
+            className={` text-[16px] col-span-1  ${
+              hdr === "Name" ? "text-start col-span-2" : ""
+            } ${hdr == "Button" ? "col-span-2" : ""} 
+            } text-center  ${
+              hdr === "Product" ? "col-span-2 " : ""
             } `}
           >
-            {hdr.toLowerCase() === "image" ? (
-              <div className="w-[40px] h-[40px]">
-                <img
-                  className="w-full h-full rounded-full"
-                  src={data.Image}
-                  alt=""
-                />
-              </div>
-            ) : hdr.toLowerCase() === "sn" ||
-              hdr.toLowerCase() === "orderid" ? (
+            {/* Image */}
+            {hdr.toLowerCase() === "sn" || //orderID
+            hdr.toLowerCase() === "orderid" ? (
               dataIndex + 1
-            ) : hdr.toLowerCase() === "checkbox" ? (
+            ) : //checkbox
+            hdr.toLowerCase() === "checkbox" ? (
               <input
                 checked={isChecked}
                 onChange={(event) => {
@@ -81,17 +74,22 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                 }}
                 className="w-4 cursor-pointer h-4"
                 type="checkbox"
-              />
+              /> //button & actions
             ) : hdr.toLowerCase() === "button" ? (
               <div className="flex items-center justify-center gap-5">
-                <Button type="Edit" />
                 <Button
                   value={data.ID}
-                  onClick={(value) => actions(value)}
+                  onClick={(value, actionType) => actions(value, actionType)}
+                  type="Edit"
+                />
+                <Button
+                  value={data.ID}
+                  onClick={(value, actionType) => actions(value, actionType)}
                   type="Delete"
                 />
               </div>
             ) : hdr.toLowerCase() === "status" ? (
+              //Dropdown
               <DropDown
                 onSelect={(value: string) => handleClick(value, data.ID)}
                 style={{
@@ -112,20 +110,47 @@ export const TableRowComponent: React.FC<TablerowProps> = ({
                 ]}
                 children={data.Status}
               />
-            ) : hdr === "email" ? (
-              data["email"].replace("@texascollege.edu.np", "...")
-            ) : hdr.toLowerCase() === "id" ? (
+            ) : //id
+            hdr.toLowerCase() === "id" ? (
               <button
-                className="hover:underline duration-150"
+                className="relative group/id hover:underline duration-150 text-sm text-[var(--dark-secondary-text)] "
                 onClick={() => {
-                  if (data.ID !== viewId) setViewId(data.ID);
-                  else if (data.ID === viewId)
-                    setViewId(data.ID.substring(0, 5));
+                  data.ID === viewId;
+                  setViewId(`#${data.ID.substring(0, 8)}`);
                 }}
               >
-                {" "}
                 {viewId}
+                <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-20px] absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
+                  {data.ID}
+                </div>
               </button>
+            ) : hdr === "Name" ? (
+              <div className="flex items-start gap-2 justify-center">
+                <div className="w-[40px] h-[40px]">
+                  <img
+                    src={data.Image}
+                    className="w-full h-full rounded-full"
+                    alt=""
+                  />
+                </div>
+                <div className="flex flex-col items-start justify-center">
+                  <h2 className="text-[15px] font-[600] ">{data.Name} </h2>
+                  <span className="text-sm text-[var(--dark-secondary-text)] ">
+                    {data.Email}{" "}
+                  </span>
+                </div>
+              </div>
+            ) : hdr === "Product" ? (
+              <div className="flex items-center gap-2 justify-center">
+                <div className="w-[40px] h-[40px]">
+                  <img
+                    src={data.Image}
+                    className="w-full h-full rounded-full"
+                    alt=""
+                  />
+                </div>
+                <h2 className="text-[15px] font-[600] ">{data.Product} </h2>
+              </div>
             ) : (
               data[hdr]
             )}

@@ -8,6 +8,7 @@ export const getFullName = async (uid: string) => {
   return getName;
 };
 export const getUserInfo = async (uid: string) => {
+  console.log(uid)
   const user = await getUserData("customers", uid);
   return user;
 };
@@ -35,10 +36,12 @@ export const totalRevenue = (orders: Order[]) => {
 };
 
 export const totalCost = (products: Product[]) => {
+  
   const customerOrderCost = products?.reduce(
     (prodSum, product) => prodSum + product?.price,
     0
   );
+  typeof(customerOrderCost)
   return customerOrderCost;
 };
 

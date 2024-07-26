@@ -1,16 +1,6 @@
-import {
-  ArrowDown,
-  ArrowDownAZ,
-  ArrowUp,
-  Download,
-  Filter,
-  Octagon,
-  OctagonX,
-  Search,
-  Trash,
-} from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import Table from "../Components/Common/Table/Table";
+import { Download, Filter, OctagonX } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import Table from "../Components/Common/NewTable/NewTable";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
 import { getCustomerData } from "../firebase/db";
 import "../index.css";
@@ -24,6 +14,7 @@ import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
 import { deleteAllUser } from "../Services";
 import toast from "react-hot-toast";
 import { FilterButton } from "../Components/Common/Sorting/Sorting";
+import { ColumnProps } from "./Food/FoodPage";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
@@ -33,6 +24,76 @@ const CustomerList: React.FC = () => {
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+
+  const Columns: ColumnProps[] = [
+    {
+      fieldName: (
+        <div className=" w-[50px]  text-start">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+      render: () => (
+        <div className="w-[50px] ">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+    },
+    {
+      fieldName: " Name",
+      colStyle: { width: "200px", justifyContent: "start" },
+      render: (value: CustomerType) => (
+        <div className="w-[200px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
+          <div className="w-[50px] h-[50px]">
+            <img
+              className="w-full h-full rounded-full"
+              src={value.image}
+              alt=""
+            />
+          </div>
+          <span className="tracking-wide text-[15px] font-[500] contrast-125 "> {value.name}</span>
+        </div>  
+      ),
+    },
+    {
+      fieldName: "Id",
+      colStyle: { width: "100px" },
+      render: (item: CustomerType) => (
+        <div className="w-[100px] relative cursor-pointer group/id text-center ">
+          #{item.id?.substring(0, 8)}
+          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
+            {item.id}
+          </div>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Role",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: CustomerType) => (
+        <div className=" w-[100px]  text-[var(--dark-text)]">
+          <p>{item.role}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Orders",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: CustomerType) => (
+        <div className=" w-[100px] text-[var(--dark-text)] ">
+          <p>{item.totalOrder}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Amount",
+      colStyle: { width: "120px", justifyContent: "start" },
+      render: (item: CustomerType) => (
+        <div className=" w-[120px] text-[var(--dark-text)]  ">
+          <p>Rs {item.amountSpent}</p>
+        </div>
+      ),
+    },
+  ];
 
   const handleCustomerData = async () => {
     setLoading(true);
@@ -99,19 +160,29 @@ const CustomerList: React.FC = () => {
 
   useEffect(() => {
     if (initialCustomer.length > 0) {
-      const CustomerHeadersObject = initialCustomer[0];
+      const CustomerHeadersObject = initialCustomer[1];
       const headers = Object.keys(CustomerHeadersObject);
+      console.log(headers);
       headers.unshift("Checkbox");
-      const index = headers.indexOf("id");
-      headers.splice(index, 1);
+      const indexOfid = headers.indexOf("id");
+      headers.splice(indexOfid, 1);
+      const indexOfImage = headers.indexOf("Image");
+      headers.splice(indexOfImage, 1);
+      const indexOfEmail = headers.indexOf("Email");
+      headers.splice(indexOfEmail, 1);
       setCustomerHeader(headers);
+      headers.push("Button");
+      const indexOfName = headers.indexOf("Name");
+      headers.splice(indexOfName, 1);
+      headers.splice(1, 0, "Name");
+      headers.splice(3, 0, "Role");
     }
   }, [initialCustomer?.length, initialCustomer]);
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
-
+  console.log(customerHeader);
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
@@ -211,15 +282,20 @@ const CustomerList: React.FC = () => {
       </div>
       <div className="w-full">
         <Table
-          loading={loading}
-          error={error}
-          onSelectAll={handleSelectAll}
-          pagination={{ perPage: 5, currentPage: 1 }}
-          headerStyle={{ gridTemplateColumns: "repeat(9,1fr)" }}
-          bodyStyle={{ gridTemplateColumns: "repeat(9,1fr)" }}
-          data={initialCustomer as CustomerType[]}
-          headers={customerHeader as string[]}
-          onChange={handleCheckboxChange}
+          data={initialCustomer}
+          columns={Columns}
+          actionIconColor="red"
+          actions={{
+            deleteFn: (value) => console.log(value),
+            editFn: (value) => console.log(value),
+          }}
+          disableActions={false}
+          loading={false}
+          bodyHeight={400}
+          pagination={{ currentPage: 1, perPage: 5 }}
+          onPageChange={(pageNumber) => console.log(pageNumber)}
+          disableNoData={false}
+          headStyle={{ width: "100%" }}
         />
       </div>
     </div>

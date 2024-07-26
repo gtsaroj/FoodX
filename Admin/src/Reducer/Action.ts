@@ -1,8 +1,9 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Action, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as ProductService from "../Services";
 import { Product } from "../models/order.model";
 import { User, ValidationType } from "../models/user.model";
 import { UpdateProfileInfo } from "../Pages/Admin/AdminProfile";
+import { stat } from "fs";
 
 interface ProductState {
   products: Product[];
@@ -230,6 +231,7 @@ const authSlice = createSlice({
     // action to login existing user
     builder.addCase(singInAction.pending, (state) => {
       state.loading = true;
+      state.success = false;
     });
     builder.addCase(singInAction.fulfilled, (state, action) => {
       state.loading = false;
@@ -244,9 +246,25 @@ const authSlice = createSlice({
     // action to update user
   },
 });
+const categoryState = {
+  categories: [],
+};
+const categorySlice = createSlice({
+  initialState: categoryState,
+  name: "category",
+  reducers: {
+    categoryAdd: (state, action) => {
+      const previousCategory = state.categories?.filter(
+        (category) => category !== action.payload
+      );
+      if (!previousCategory) state.categories.push(action.payload as never);
+    },
+  },
+});
 
 export const ProductReducer = ProductSlice.reducer;
-export const { addProducts } = ProductSlice.actions;
 export const AuthReducer = authSlice.reducer;
-
+export const categoryReducer = categorySlice.reducer;
+export const { categoryAdd } = categorySlice.actions;
+export const { addProducts } = ProductSlice.actions;
 export const { authLogout } = authSlice.actions;

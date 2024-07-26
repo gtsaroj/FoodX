@@ -8,7 +8,7 @@ export interface Order {
   products: Product[];
   orderRequest: RequestTime | string;
   orderFullFilled: RequestTime;
-  status?: string
+  status?: string;
 }
 
 // import { ProductType } from "./productMode";
@@ -43,14 +43,6 @@ interface Category {
   types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
 }
 
-// export interface OrderHistoryCard {
-//   name: string;
-//   date: Date;
-//   price: number;
-//   quantity: number;
-//   image: string;
-// }
-
 export interface DailyAggregateData {
   title: string;
   total: string | number;
@@ -83,10 +75,19 @@ export interface CardAnalyticsProp {
   total: number;
 }
 export interface OrderModelType {
-  ID: string;                  // ID of the order
-  Name: string;                // Name of the user (getter function or value)
-  Products: string[];          // List of product names
-  Requested: string;           // Requested date and time in a string format
-  Fulfilled: boolean;          // Fulfilled status of the order
-  Status: string;              // Status of the order
+  ID: string; // ID of the order
+  Name: string; // Name of the user (getter function or value)
+  Products: string[]; // List of product names
+  Requested: string; // Requested date and time in a string format
+  Fulfilled: boolean; // Fulfilled status of the order
+  Status: string; // Status of the order
+}
+
+export interface OrderModal {
+  id?: string;
+  name: string;
+  item?: string[];
+  order: {time: string,fulldate: string};
+  status: "Received" | "Preparing" | "Rejected";
+  delivered: {time: string,fulldate: string};
 }

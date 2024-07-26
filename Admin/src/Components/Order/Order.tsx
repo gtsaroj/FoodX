@@ -9,6 +9,8 @@ export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>();
 
+  console.log(recentOrder)
+
   //  scroller check
   // const [scroll, setScroll] = useState<boolean>(false);
   // const orderReference = useRef<HTMLDivElement>();
@@ -31,6 +33,7 @@ export const RecentOrders = () => {
   useEffect(() => {
     (async () => {
       const recentOrders = await getRecentOrders();
+      console.log(recentOrders)
       if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
     })();
   }, []);
