@@ -98,7 +98,7 @@ export const RegisterContainer: React.FC = () => {
           email,
           password,
           avatar: imageUrl,
-          role: "admins",
+          role: "admin",
         };
         await dispatch(singUpAction(ConvertedForm as ValidationType));
         RegisterValue.avatar = "";

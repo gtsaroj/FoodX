@@ -7,7 +7,7 @@ import {
   deleteOrderFromDatabase,
   updateOrderStatus,
 } from "../../firebase/order";
-import Table from "../../Components/Common/NewTable/NewTable";
+import Table from "../../Components/Common/Table/Table";
 import { debounce } from "../../Utility/Debounce";
 import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
@@ -19,7 +19,7 @@ import {
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
 import { Order as orderdata } from "../../data.json";
-import { ColumnProps } from "../Food/FoodPage";
+import { ColumnProps } from "../../models/table.model";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModelType[]>([]);

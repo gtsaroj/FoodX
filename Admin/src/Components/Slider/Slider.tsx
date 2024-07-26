@@ -56,7 +56,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
   }, [open, closeFn]);
 
   const auth = {
-    role: "admins",
+    role: "admin",
   };
 
 
@@ -96,7 +96,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <LayoutDashboard />
               <span>Dashboard</span>
             </li>
-            {auth.role !== "admins" ? (
+            {auth.role !== "admin" ? (
               ""
             ) : (
               <li
@@ -157,7 +157,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <ListOrdered />
               <span>Order</span>
             </li>
-            {auth.role !== "admins" ? (
+            {auth.role !== "admin" ? (
               ""
             ) : (
               <li
@@ -188,7 +188,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                     : "hidden opacity-0 bottom-[0px] z-[-1]"
                 } items-start   gap-3 justify-center`}
               >
-                {auth.role !== "admins" ? (
+                {auth.role !== "admin" ? (
                   ""
                 ) : (
                   <li
@@ -210,7 +210,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                     Chef Details
                   </li>
                 )}
-                {auth.role !== "admins" ? (
+                {auth.role !== "admin" ? (
                   ""
                 ) : (
                   <li

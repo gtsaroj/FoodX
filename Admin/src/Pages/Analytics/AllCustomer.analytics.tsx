@@ -83,19 +83,7 @@ const AllCategoryAnalytics = () => {
           />
         </div>
       </div>
-      <Table
-        headers={headers}
-        data={data}
-        pagination={{ currentPage: 1, perPage: 7 }}
-        bodyStyle={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7,1fr)",
-        }}
-        headerStyle={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7,1fr)",
-        }}
-      />
+
     </div>
   );
 };

@@ -13,10 +13,10 @@ import { categoryAdd } from "../../Reducer/Action";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import { deleteCategory, getCategories } from "../../Services";
 import toast from "react-hot-toast";
-import Table from "../../Components/Common/NewTable/NewTable";
+import Table from "../../Components/Common/Table/Table";
 import { Category } from "../../data.json";
 import { CategoryType } from "../../models/category.model";
-import { ColumnProps } from "../Food/FoodPage";
+import { ColumnProps } from "../../models/table.model";
 
 export const CategoryPage: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
@@ -70,11 +70,13 @@ export const CategoryPage: React.FC = () => {
     },
     {
       fieldName: "Items",
-      colStyle: { width: "100px", justifyContent: 'start' },
-      render: (item: CategoryType)=><div className=" w-[100px]  text-[var(--dark-text)]">
-      <p>{item.order}</p>
-    </div>
-   },
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: CategoryType) => (
+        <div className=" w-[100px]  text-[var(--dark-text)]">
+          <p>{item.order}</p>
+        </div>
+      ),
+    },
     {
       fieldName: "Total ordered",
       colStyle: { width: "135px", justifyContent: "start" },
@@ -86,7 +88,7 @@ export const CategoryPage: React.FC = () => {
     },
     {
       fieldName: "Revenue",
-      colStyle: { width: "120px", justifyContent :"start" },
+      colStyle: { width: "120px", justifyContent: "start" },
       render: (item: CategoryType) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
           <p>Rs {item.revenue}</p>
@@ -99,7 +101,6 @@ export const CategoryPage: React.FC = () => {
       render: (item: CategoryType) => (
         <div className=" w-[100px] flex  text-[var(--dark-text)] gap-2 items-center justify-start ">
           <div className="mt-1">{item.rank}</div>
-
         </div>
       ),
     },

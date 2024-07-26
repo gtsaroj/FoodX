@@ -1,6 +1,5 @@
-import { Filter, Plus, ScatterChartIcon, Search, Star } from "lucide-react";
+import { Filter, Plus, Star } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import FoodTable from "../../Components/Collection/FoodTable";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
@@ -18,19 +17,11 @@ import { AppDispatch } from "../../Reducer/Store";
 import { addProducts } from "../../Reducer/Action";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
-import Table from "../../Components/Common/NewTable/NewTable";
+import Table from "../../Components/Common/Table/Table";
 import { Products } from "../../data.json";
+import { ColumnProps } from "../../models/table.model";
 
-interface TableActions {
-  editFn?: (id: string) => void;
-  deleteFn?: (id: string) => void;
-  viewFn?: (id: string) => void;
-}
-export interface ColumnProps {
-  fieldName: string;
-  colStyle?: React.CSSProperties;
-  render?: (item: any) => React.ReactNode;
-}
+
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -94,7 +85,7 @@ const FoodPage: React.FC = () => {
     },
     {
       fieldName: "Revenue",
-      colStyle: {width :"120px"},
+      colStyle: { width: "120px" },
       render: (value: ProductModel) => (
         <div className=" text-[var(--dark-text)] tracking-wide w-[120px]   text-start ">
           <p>Rs {value.revenue}</p>
@@ -103,7 +94,7 @@ const FoodPage: React.FC = () => {
     },
     {
       fieldName: "Rating",
-      colStyle: {width : "100px", justifyContent: 'start'},
+      colStyle: { width: "100px", justifyContent: "start" },
       render: (value: ProductModel) => (
         <div className=" text-[var(--dark-text)] tracking-wide w-[100px] flex  gap-2 items-center justify-start ">
           <div className="mt-1">{value.rank}</div>

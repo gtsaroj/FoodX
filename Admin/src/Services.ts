@@ -16,6 +16,7 @@ import { makeRequest } from "./makeRequest";
 import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
 import { CategoryType, UpdateCategoryType } from "./models/category.model";
+import { LogCardProps } from "./models/logModel";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -282,7 +283,7 @@ export const deleteCategory = async (id: string) => {
     const response = await makeRequest({
       method: "delete",
       url: "categories/delete-category",
-      data: {id},
+      data: { id },
     });
     return response.data.data;
   } catch (error) {
@@ -298,5 +299,42 @@ export const getCategories = async () => {
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to fetch  categories" + error);
+  }
+};
+
+// log
+export const getRoleLogs = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "logs/get-role-logs",
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Unable to fetch role logs" + error);
+  }
+};
+
+export const getActionLogs = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "logs/get-action-logs",
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Unable to fetch action logs" + error);
+  }
+};
+export const addLogs = async (data: LogCardProps) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "logs/add-logs",
+      data: { ...data },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Unable to fetch action logs" + error);
   }
 };

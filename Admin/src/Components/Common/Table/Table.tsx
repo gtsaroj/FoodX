@@ -1,139 +1,184 @@
-import React, { CSSProperties, useEffect, useState } from "react";
-import { TableHeader } from "./TableHeader";
-import { TableRowComponent } from "./TableRow";
+import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../Pagination/Pagination";
-import { Order } from "../../../models/order.model";
-import { CustomerType } from "../../../models/user.model";
-import {
-  ArrangedProduct,
-  ProductTable,
-  ProductType,
-} from "../../../models/productMode";
-import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { useEffect, useState } from "react";
 
-interface TableProp {
-  options?: string[]; // button name
-  loading?: boolean; //loading state
-  error?: boolean;
-  headers: string[]; // headers value
-  style?: React.CSSProperties;
-  actions?: (rowData: string, actionType?: string) => void; //delete or edit single row data
-  data:
-    | []
-    | CustomerType[]
-    | Order[]
-    | ProductType[]
-    | ArrangedProduct[]
-    | ProductTable[];
-  // data: any[];
-  headerStyle?: React.CSSProperties;
-  bodyStyle?: React.CSSProperties;
-  onChange?: (value: boolean | string, id: string) => void; //select or delete single row data
-  onSelectAll?: (checked: boolean) => void; // for select all values
-  pagination: { perPage: number; currentPage: 1 };
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export declare namespace Table {
+  interface TableModalProps<T> {
+    data: Array<T>;
+    columns: ColumnProps[];
+    actions?: TableActions;
+    loading?: boolean;
+    headStyle?: React.CSSProperties;
+    actionIconColor?: string;
+    bodyHeight?: number;
+    pagination?: {
+      perPage?: number;
+      currentPage?: number;
+    };
+    disableNoData?: boolean;
+    onPageChange?: (page: number) => void;
+    disableActions?: boolean;
+  }
+  interface TableActions {
+    editFn?: (id: string) => void;
+    deleteFn?: (id: string) => void;
+    viewFn?: (id: string) => void;
+  }
+  export interface ColumnProps {
+    fieldName: string;
+    colStyle?: React.CSSProperties;
+    render?: (item: any) => React.ReactNode;
+  }
 }
 
-const Table: React.FC<TableProp> = ({
-  onChange,
-  options,
-  loading,
-  error,
-  onSelectAll,
+function Table<T extends { id: string }>({
   data,
+  columns,
+  actionIconColor,
   actions,
-  headers,
-  headerStyle,
-  bodyStyle,
-  pagination = { perPage: 3, currentPage: 1 },
-}) => {
+  bodyHeight,
+  disableActions,
+  disableNoData,
+  loading,
+  onPageChange,
+  pagination = { perPage: 2, currentPage: 1 },
+}: Table.TableModalProps<T>): React.ReactElement {
   const [currentPage, setCurrentPage] = useState<number>(
-    pagination.currentPage
+    pagination.currentPage as number
   );
-  const [currentDatas, setCurrentDatas] = useState<Order[]>([]);
-  const [isCheckedAll, setIsCheckedAll] = useState<boolean>(false);
-
-  const onChangePage = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const startIndex = (currentPage - 1) * pagination.perPage;
-  const endIndex = startIndex + pagination.perPage;
+  const [currentData, setCurrentData] = useState();
 
   useEffect(() => {
-    const currentData: any = data?.slice(startIndex, endIndex);
-    setCurrentDatas(currentData as any[]);
-  }, [data, startIndex, endIndex]);
+    const startIndex =
+      ((currentPage|| 1) - 1) * (pagination?.perPage || 2);
+    const endIndex = startIndex + (pagination?.perPage || 2);
+    const paginateData = data?.slice(startIndex, endIndex) as any;
+    setCurrentData(paginateData);
+  }, [pagination.currentPage, pagination.perPage, data,currentPage]);
 
-  const handleSelectAll = (checked: boolean) => {
-    setIsCheckedAll(checked);
-    if (!onSelectAll) return;
-    onSelectAll(checked);
+  const handlePageChange = (page: number) => {
+    if (onPageChange) {
+      setCurrentPage(page);
+      onPageChange(page);
+    }
   };
-
-  //
-
-  return error ? (
-    <div>Error</div>
-  ) : loading ? (
-    <div className="w-full">
-      <Skeleton
-        baseColor="var(--light-background) "
-        highlightColor="var(--light-secondary-background) "
-        className="mb-8"
-        height={100}
-      />
-      <Skeleton
-        baseColor="var(--light-background) "
-        highlightColor="var(--light-secondary-background) "
-        className=""
-        height={70}
-        count={4}
-      />
-    </div>
-  ) : data ? (
-    <div className="flex flex-col items-end justify-center w-full gap-2 ">
-      <div className="w-full overflow-auto">
-        <table
-          className={` sm:w-full w-[800px] border-[1px] rounded flex flex-col`}
-        >
-          <TableHeader
-            onSelectAll={handleSelectAll}
-            header={headers}
-            headerStyle={headerStyle as CSSProperties}
-          />
-          <tbody className="w-full">
-            {currentDatas?.map((row, rowIndex) => (
-              <TableRowComponent
-                onSelectAll={isCheckedAll}
-                onChange={onChange}
-                actions={(value,actionType) => {
-                  if (!actions) return;
-                  actions(value,actionType);
-                }}
-                options={options}
-                headers={headers}
-                data={row}
-                dataIndex={rowIndex}
-                bodyStyle={bodyStyle as CSSProperties}
-                key={rowIndex}
-              />
+  return (
+    <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded my-6 ">
+      <table className="w-full border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
+        <thead className="w-full px-2 bg-[var(--light-background)] ">
+          <tr className="w-full border-b flex justify-start gap-5 items-center  flex-nowrap ">
+            {columns.map((item, index) => (
+              <th
+                style={item.colStyle}
+                className="flex items-center justify-center font-bold  py-5 "
+                key={index}
+              >
+                {item.fieldName}
+              </th>
             ))}
-          </tbody>
-        </table>
-      </div>
-      <div className="items-center justify-center w-full">
-        <Pagination
-          onChange={onChangePage}
-          currentPage={currentPage}
-          perPage={pagination?.perPage}
-          totalData={data?.length}
-        />
-      </div>
+            {!!actions?.editFn && !disableActions && (
+              <th className="w-[100px]"></th>
+            )}
+            {!!actions?.deleteFn && !disableActions && (
+              <th className="w-[100px]"></th>
+            )}
+            {!!actions?.viewFn && !disableActions && (
+              <th className="w-[100px]">View</th>
+            )}
+          </tr>
+        </thead>
+        <tbody
+          className="w-full flex items-center justify-evenly flex-col flex-nowrap"
+          style={{
+            overflow: "auto",
+          }}
+        >
+          {loading ? (
+            "Loading..."
+          ) : (
+            <>
+              {currentData &&
+                currentData.map((item, index) => (
+                  <tr
+                    className=" border-b px-2 py-4 hover:bg-[var(--light-background)]  w-full flex items-center justify-start gap-5  flex-nowrap"
+                    key={(item?.id && item.id) || index}
+                  >
+                    {columns?.map(({ _, render }, index) => (
+                      <td className="table-body-content" key={index}>
+                        {render(item)}
+                      </td>
+                    ))}
+                    {!!actions?.editFn && !disableActions && (
+                      <td
+                        className="w-[100px]"
+                        onClick={() => {
+                          actions?.editFn && actions?.editFn(item.id);
+                        }}
+                      >
+                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-start p-2 px-3 rounded-lg tracking-wide text-[var(--light-text)] gap-2">
+                          <FaEdit />
+                          <span className="text-[16px]  tracking-wide">
+                            Edit
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    {!!actions?.deleteFn && !disableActions && (
+                      <td
+                        className="w-[100px]"
+                        onClick={() => {
+                          actions?.deleteFn && actions?.deleteFn(item.id);
+                        }}
+                      >
+                        <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide text-[var(--light-text)] gap-2">
+                          <FaTrash />
+                          <span className="text-[16px]  tracking-wide ">
+                            Delete
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    {!!actions?.viewFn && !disableActions && (
+                      <td
+                        className="table-body-content"
+                        onClick={() => {
+                          actions?.viewFn && actions?.viewFn(item.id);
+                        }}
+                      >
+                        <div
+                          className="table-body-content-btns"
+                          style={{
+                            color: actionIconColor ? actionIconColor : "red",
+                          }}
+                        >
+                          <FaEye />
+                          <span className="text-sm text-[var(--dark-text)] ">
+                            View
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+            </>
+          )}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>
+              <Pagination
+                totalData={data.length}
+                perPage={pagination?.perPage || 2}
+                currentPage={currentPage || 1}
+                onChange={handlePageChange}
+              />
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
-  ) : (
-    "Not found"
   );
-};
+}
 
 export default Table;

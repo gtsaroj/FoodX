@@ -13,7 +13,7 @@ export const PrivateRoute: React.FC<PrivateRouteProp> = ({ UserRole }) => {
   useEffect(() => {}, [auth.success, auth?.userInfo]);
 
   return auth.success ? (
-    UserRole.includes("admins") ? (
+    UserRole.includes("admin") ? (
       <Outlet />
     ) : (
       <div>Unauthorized Access</div>
