@@ -1,26 +1,126 @@
-import { Filter, Plus, Search } from "lucide-react";
+import { ArrowDownAZ, Filter, Plus } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
-import Table from "../../Components/Common/Table/Table";
 import { getCategory } from "../../firebase/db";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Reducer/Store";
+import { categoryAdd } from "../../Reducer/Action";
+import UpdateCategory from "../../Components/Upload/UpdateCategory";
+import { deleteCategory, getCategories } from "../../Services";
+import toast from "react-hot-toast";
+import Table from "../../Components/Common/NewTable/NewTable";
+import { Category } from "../../data.json";
+import { CategoryType } from "../../models/category.model";
+import { ColumnProps } from "../Food/FoodPage";
 
 export const CategoryPage: React.FC = () => {
-  const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
-  const [category, setCategory] = useState<{ [key: string]: string }>();
+  const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
+  const [isUploadModalOpen, setIsUPloadModalOpen] = useState<boolean>(true);
   const [categoryData, setCategoryData] = useState<
-    { Category: string; Image: string }[]
+    { ID: string; Category: string; Image: string }[]
   >([]);
   const [categoryHeader, setCategoryHeader] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [categoryId, setCategoryId] = useState<string>("");
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
 
-  const closeModal = () => setIsModelOpen(true);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const Columns: ColumnProps[] = [
+    {
+      fieldName: (
+        <div className=" w-[50px]  text-start">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+      render: () => (
+        <div className="w-[50px] ">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+    },
+    {
+      fieldName: "Category Name",
+      colStyle: { width: "150px", justifyContent: "start" },
+      render: (value: CategoryType) => (
+        <div className="w-[150px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
+          <div className="w-[40px] h-[40px]">
+            <img
+              className="w-full h-full rounded-full"
+              src={value.image}
+              alt=""
+            />
+          </div>
+          <span> {value.name}</span>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Id",
+      colStyle: { width: "100px" },
+      render: (item: CategoryType) => (
+        <div className="w-[100px] text-center ">#{item.id}</div>
+      ),
+    },
+    {
+      fieldName: "Items",
+      colStyle: { width: "100px", justifyContent: 'start' },
+      render: (item: CategoryType)=><div className=" w-[100px]  text-[var(--dark-text)]">
+      <p>{item.order}</p>
+    </div>
+   },
+    {
+      fieldName: "Total ordered",
+      colStyle: { width: "135px", justifyContent: "start" },
+      render: (item: CategoryType) => (
+        <div className=" w-[135px] text-[var(--dark-text)] ">
+          <p>{item.order}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Revenue",
+      colStyle: { width: "120px", justifyContent :"start" },
+      render: (item: CategoryType) => (
+        <div className=" w-[120px] text-[var(--dark-text)]  ">
+          <p>Rs {item.revenue}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Rank",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: CategoryType) => (
+        <div className=" w-[100px] flex  text-[var(--dark-text)] gap-2 items-center justify-start ">
+          <div className="mt-1">{item.rank}</div>
+
+        </div>
+      ),
+    },
+  ];
+
+  const handleAction = async (value: string, type: string) => {
+    console.log(value, type);
+    if (type === "Delete") {
+      const toastLoader = toast.loading("Category deleting...");
+      await deleteCategory(value);
+      toast.dismiss(toastLoader);
+      toast.success("Category deleted successfully");
+      const refreshCategory = categoryData?.filter(
+        (category) => category.ID !== value
+      );
+      setCategoryData(refreshCategory);
+    } else if (type === "Edit") {
+      setCategoryId(value);
+      setIsUpdateModelOpen(false);
+    }
+  };
 
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
@@ -41,8 +141,19 @@ export const CategoryPage: React.FC = () => {
   const getAllCategories = async () => {
     setLoading(true);
     try {
-      const categories = await getCategory("bnw");
-      setCategory(categories.icons as any);
+      const categories = (await getCategories()) as {
+        id: string;
+        name: string;
+        image: string;
+      }[];
+      const categoryDatas = categories?.map((category) => {
+        return {
+          ID: category.id,
+          Category: category.name,
+          Image: category.image,
+        };
+      });
+      setCategoryData(categoryDatas);
     } catch (error) {
       setLoading(false);
       setError(true);
@@ -52,23 +163,15 @@ export const CategoryPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (category) {
-      const arrayOfObject = Object.keys(category as any).map((item) => ({
-        Category: item,
-        Image: category[item],
-      }));
-      setCategoryData(arrayOfObject);
-    }
-  }, [category]);
-
-  useEffect(() => {
     if (categoryData.length > 0) {
       const headers = Object.keys(categoryData[0]);
       headers.push("Button");
       headers.unshift("sn");
       setCategoryHeader(headers);
+      const categories = categoryData.map((category) => category.Category);
+      dispatch(categoryAdd(categories));
     }
-  }, [categoryData]);
+  }, [categoryData, dispatch]);
 
   useEffect(() => {
     getAllCategories();
@@ -103,7 +206,7 @@ export const CategoryPage: React.FC = () => {
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
             <button
-              onClick={() => setIsModelOpen(!isModalOpen)}
+              onClick={() => setIsUPloadModalOpen(!isUploadModalOpen)}
               className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
               <Plus className="size-4" />
@@ -120,6 +223,12 @@ export const CategoryPage: React.FC = () => {
               }
               options={[
                 <FilterButton
+                  parent={
+                    <>
+                      <ArrowDownAZ className="size-4" />
+                      <span className=" text-[15px]">Sort By</span>
+                    </>
+                  }
                   onSelect={handleSelect}
                   sortOrder={sortOrder.order}
                   sortingOptions={["Category"]}
@@ -153,18 +262,35 @@ export const CategoryPage: React.FC = () => {
         </form>
       </div>
       <Table
-        error={error}
-        loading={loading}
-        actions={(string: string) => console.log(string)}
+        data={Category}
+        columns={Columns}
+        actionIconColor="red"
+        actions={{
+          deleteFn: (value) => console.log(value),
+          editFn: (value) => console.log(value),
+        }}
+        disableActions={false}
+        loading={false}
+        bodyHeight={400}
         pagination={{ currentPage: 1, perPage: 5 }}
-        headerStyle={{ gridTemplateColumns: "repeat(5,1fr)" }}
-        bodyStyle={{ gridTemplateColumns: "repeat(5,1fr)" }}
-        headers={categoryHeader}
-        data={categoryData as any}
+        onPageChange={(pageNumber) => console.log(pageNumber)}
+        disableNoData={false}
+        headStyle={{ width: "100%" }}
       />
       <div className="absolute ">
-        <Modal close={isModalOpen} closeModal={closeModal}>
-          <UploadCategory categories={setCategory} />
+        <Modal
+          close={isUpdateModalOpen}
+          closeModal={() => setIsUpdateModelOpen(!isUpdateModalOpen)}
+        >
+          <UpdateCategory categoryId={categoryId} />
+        </Modal>
+      </div>
+      <div className="absolute ">
+        <Modal
+          close={isUploadModalOpen}
+          closeModal={() => setIsUPloadModalOpen(!isUploadModalOpen)}
+        >
+          <UploadCategory />
         </Modal>
       </div>
     </div>

@@ -1,17 +1,10 @@
 import { UploadIcon } from "lucide-react";
-import React, {  useEffect, useRef, useState } from "react";
-import { addCategory } from "../../firebase/db";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
+import toast from "react-hot-toast";
+import { addCategory } from "../../Services";
 
-interface UploadCategoryProp {
-  categories: React.Dispatch<
-    React.SetStateAction<{ [key: string]: string } | undefined>
-  >;
-}
-
-export const UploadCategory: React.FC<UploadCategoryProp> = ({
-  categories,
-}) => {
+export const UploadCategory: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
   // const [Scroll, setScroll] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>("");
@@ -24,22 +17,21 @@ export const UploadCategory: React.FC<UploadCategoryProp> = ({
   };
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSave = async () => {
-    if (categoryName && imageURL) {
-      try {
-        const response = await addCategory("bnw", categoryName, imageURL);
-        console.log(response.icons)
-        categories(response.icons as any);
-      } catch (error) {
-        console.error("Error adding category:", error);
-        alert("Failed to add category");
-      }
-    } else {
-      alert("Please fill in all fields");
+  const handleSave = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!categoryName && !imageURL)
+      return toast.error("All fields are required");
+    try {
+      const response = await addCategory({
+        Name: categoryName,
+        Image: imageURL,
+      });
+      console.log(response);
+    } catch (error) {
+      console.error("Error adding category:", error);
+      alert("Failed to add category");
     }
   };
-
- 
 
   useEffect(() => {
     const currentRef = reference.current;
@@ -59,8 +51,7 @@ export const UploadCategory: React.FC<UploadCategoryProp> = ({
 
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleSave();
+            handleSave(e);
           }}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-16 flex flex-col items-start justify-center"

@@ -1,12 +1,15 @@
-import { Filter, Plus, Search } from "lucide-react";
+import { Filter, Plus, ScatterChartIcon, Search, Star } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import FoodTable from "../../Components/Collection/FoodTable";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { debounce } from "../../Utility/Debounce";
-import Table from "../../Components/Common/Table/Table";
-import { ArrangedProduct, ProductType } from "../../models/productMode";
+import {
+  ArrangedProduct,
+  ProductModel,
+  ProductType,
+} from "../../models/productMode";
 import { getProducts } from "../../Services";
 import { deleteProductFromDatabase } from "../../firebase/order";
 import { SearchProduct } from "../../Utility/Search";
@@ -15,6 +18,19 @@ import { AppDispatch } from "../../Reducer/Store";
 import { addProducts } from "../../Reducer/Action";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
+import Table from "../../Components/Common/NewTable/NewTable";
+import { Products } from "../../data.json";
+
+interface TableActions {
+  editFn?: (id: string) => void;
+  deleteFn?: (id: string) => void;
+  viewFn?: (id: string) => void;
+}
+export interface ColumnProps {
+  fieldName: string;
+  colStyle?: React.CSSProperties;
+  render?: (item: any) => React.ReactNode;
+}
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -22,9 +38,82 @@ const FoodPage: React.FC = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [productsHeader, setProductsHeader] = useState<string[]>([]);
-  const [sortOrder, setSortOrder] = useState<{field : string, order: string}>({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
+    field: "",
+    order: "desc",
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+
+  const Columns: ColumnProps[] = [
+    {
+      fieldName: (
+        <div className=" w-[50px]  text-start">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+      render: () => (
+        <div className="w-[50px] ">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+    },
+    {
+      fieldName: "Product Name",
+      colStyle: { width: "180px", justifyContent: "start" },
+      render: (value: ProductModel) => (
+        <div className="w-[180px] text-[var(--dark-text)] tracking-wide  flex items-center justify-start gap-3 ">
+          <div className="w-[50px] h-[48px]">
+            <img
+              className="w-full h-full rounded-full"
+              src={value.imageurl}
+              alt=""
+            />
+          </div>
+          <span> {value.name}</span>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Unit price",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (value: ProductModel) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[100px] ">
+          <p>Rs {value.price}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Total ordered",
+      colStyle: { width: "135px", justifyContent: "start" },
+      render: (value: ProductModel) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[135px] ">
+          <p>{value.order}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Revenue",
+      colStyle: {width :"120px"},
+      render: (value: ProductModel) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[120px]   text-start ">
+          <p>Rs {value.revenue}</p>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Rating",
+      colStyle: {width : "100px", justifyContent: 'start'},
+      render: (value: ProductModel) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[100px] flex  gap-2 items-center justify-start ">
+          <div className="mt-1">{value.rank}</div>
+          <div>
+            <Star fill="yellow" className="size-5 text-yellow-400 " />
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   // get all products
   const getAllProducts = async () => {
@@ -34,7 +123,7 @@ const FoodPage: React.FC = () => {
       const allProducts = (await products.data.products) as ProductType[];
       const arrangeProducts = allProducts?.map((product) => ({
         ID: product.id,
-        Name: product.name,
+        Product: product.name,
         Image: product.image,
         Quantity: product.quantity,
         Price: product.price,
@@ -84,11 +173,11 @@ const FoodPage: React.FC = () => {
   // delete products
   const handleClick = async (id: string) => {
     try {
-     const toastLoading =  toast.loading("Product deleting...")
+      const toastLoading = toast.loading("Product deleting...");
       await deleteProductFromDatabase(id);
       const refreshOrder = await getProducts();
-      toast.dismiss(toastLoading)
-      toast.success("Deleted successfully")
+      toast.dismiss(toastLoading);
+      toast.success("Deleted successfully");
       setFetchedProducts(refreshOrder.data.products);
     } catch (error) {
       throw new Error("Unable to delete order");
@@ -99,6 +188,12 @@ const FoodPage: React.FC = () => {
   useEffect(() => {
     if (fetchedProducts?.length > 0) {
       const headers = Object.keys(fetchedProducts[0]);
+      headers.unshift("Checkbox");
+      const indexOfImage = headers.indexOf("Image");
+      headers.splice(indexOfImage, 1);
+      const indexOfProduct = headers.indexOf("Product");
+      headers.splice(indexOfProduct, 1);
+      headers.splice(1, 0, "Product");
       headers.push("Button");
       setProductsHeader(headers);
     }
@@ -129,7 +224,7 @@ const FoodPage: React.FC = () => {
         );
         const arrangeProducts = filterProducts?.map((product) => ({
           ID: product.id,
-          Name: product.name,
+          Product: product.name,
           Image: product.image,
           Quantity: product.quantity,
           Price: product.price,
@@ -181,8 +276,7 @@ const FoodPage: React.FC = () => {
               }
               options={[
                 <FilterButton
-                  
-                sortOrder={sortOrder.order}
+                  sortOrder={sortOrder.order}
                   onSelect={handleSelect}
                   sortingOptions={["Name", "Quantity", "Price"]}
                 />,
@@ -216,19 +310,20 @@ const FoodPage: React.FC = () => {
       </div>
 
       <Table
-        pagination={{ currentPage: 1, perPage: 7 }}
-        bodyStyle={{
-          gridTemplateColumns: "repeat(8,1fr)",
+        data={Products}
+        columns={Columns}
+        actionIconColor="red"
+        actions={{
+          deleteFn: (value) => console.log(value),
+          editFn: (value) => console.log(value),
         }}
-        headerStyle={{
-          display: "grid",
-          gridTemplateColumns: "repeat(8,1fr)",
-        }}
-        headers={productsHeader}
-        data={fetchedProducts as ArrangedProduct[]}
-        actions={handleClick}
-        loading={loading}
-        error={error}
+        disableActions={false}
+        loading={false}
+        bodyHeight={400}
+        pagination={{ currentPage: 1, perPage: 5 }}
+        onPageChange={(pageNumber) => console.log(pageNumber)}
+        disableNoData={fetchedProducts?.length < 1 ? true : false}
+        headStyle={{ width: "100%" }}
       />
 
       <Modal close={isModalOpen} closeModal={closeModal}>

@@ -18,7 +18,7 @@ interface TableProp {
   error?: boolean;
   headers: string[]; // headers value
   style?: React.CSSProperties;
-  actions?: (rowData: string) => void; //delete or edit single row data
+  actions?: (rowData: string, actionType?: string) => void; //delete or edit single row data
   data:
     | []
     | CustomerType[]
@@ -107,9 +107,9 @@ const Table: React.FC<TableProp> = ({
               <TableRowComponent
                 onSelectAll={isCheckedAll}
                 onChange={onChange}
-                actions={(value) => {
+                actions={(value,actionType) => {
                   if (!actions) return;
-                  actions(value);
+                  actions(value,actionType);
                 }}
                 options={options}
                 headers={headers}

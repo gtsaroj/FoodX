@@ -1,17 +1,11 @@
 import React from "react";
 import { Edit2, FilePenLine, Filter, Trash2 } from "lucide-react";
 
-interface FilterButtonProp {
-  label?: string;
-  isActive: string;
-  onClick?: (label: string) => void;
-}
-
 interface ButtonType {
   type: string;
   style?: React.CSSProperties;
   value?: string;
-  onClick?: (label: string) => void;
+  onClick?: (label: string, type?: string) => void;
 }
 
 export const Button: React.FC<ButtonType> = ({
@@ -24,7 +18,7 @@ export const Button: React.FC<ButtonType> = ({
     <button
       onClick={() => {
         if (!onClick) return;
-        onClick(value as string);
+        onClick(value as string, type);
       }}
       className="flex items-center w-[100px] hover:bg-[var(--danger-text)] duration-150  gap-2 text-[var(--light-text)] text-[15px] tracking-wide justify-center bg-[var(--danger-bg)] rounded-lg p-2 "
     >
@@ -33,6 +27,10 @@ export const Button: React.FC<ButtonType> = ({
     </button>
   ) : (
     <button
+      onClick={() => {
+        if (!onClick) return;
+        onClick(value as string, type);
+      }}
       className="flex items-center gap-2  w-[100px] duration-150 hover:bg-[var(--primary-dark)] text-[var(--light-text)] text-[15px] tracking-wide justify-center bg-[var(--primary-color)] rounded-lg p-2 "
       style={style}
     >

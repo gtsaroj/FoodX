@@ -4,11 +4,58 @@ import Modal from "../Components/Common/Popup/Popup";
 import { BannerTable } from "../Components/Collection/BannerTable";
 import UploadBanner from "../Components/Upload/UploadBanner";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
+import Table from "../Components/Common/NewTable/NewTable";
+import { Banner } from "../data.json";
+import { BannerModel } from "../models/banner.model";
+import { ColumnProps } from "./Food/FoodPage";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
 
   const closeModal = () => setIsModelOpen(true);
+
+  const columns: ColumnProps[] = [
+    {
+      fieldName: (
+        <div className="   text-start">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+      render: () => (
+        <div className=" ">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+    },
+    { fieldName: "ID", colStyle:{width: "100px"}, render: (item: BannerModel) => <div className="w-[100px] text-center ">#{item.id}</div> },
+    {
+      fieldName: "Name",
+      colStyle :{width : "200px", justifyContent :"start"},
+      render: (item: BannerModel) => (
+        <div className="w-[200px]">{item.name}</div>
+      ),
+    },
+    {
+      fieldName: "Image",
+      colStyle :{width: "200px", justifyContent :'start'},
+      render: (item: BannerModel) => (
+        <div className="w-[200px] flex items-center justify-start">
+          {" "}
+          <img className="w-[180px] h-[50px] " src={item.image} alt="" />
+        </div>
+      ),
+    },
+    {
+      fieldName: "Date",
+      colStyle :{width: "150px", justifyContent:"start"},
+      render: (item: BannerModel) => (
+        <div className="flex flex-col items-start w-[150px]  ">
+          <span>{item.date.fulldate + ","}</span>
+          <span>{item.date.time}</span>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
@@ -56,7 +103,15 @@ const FoodPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <BannerTable />
+      <Table
+        columns={columns}
+        data={Banner}
+        actions={{
+          deleteFn: (value: string) => console.log(value),
+          editFn: (value: string) => console.log(value),
+        }}
+        pagination={{ currentPage: 1, perPage: 5 }}
+      />
       <div className="absolute ">
         <Modal close={isModalOpen} closeModal={closeModal}>
           <UploadBanner />

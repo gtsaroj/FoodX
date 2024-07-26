@@ -237,5 +237,303 @@
     { "week": "Thur", "revenue": 21100 },
     { "week": "Fri", "revenue": 61000 },
     { "week": "Sat", "revenue": 41800 }
+  ],
+  "Products": [
+    {
+      "id": "1",
+      "name": "Pizza",
+      "item": 50,
+      "order": 120,
+      "revenue": 12000,
+      "rank": 1,
+      "price": 10,
+      "imageurl": "https://www.southernliving.com/thmb/3x3cJaiOvQ8-3YxtMQX0vvh1hQw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/2652401_QFSSL_SupremePizza_00072-d910a935ba7d448e8c7545a963ed7101.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Burger",
+      "item": 30,
+      "order": 80,
+      "revenue": 8000,
+      "rank": 2,
+      "price": 8,
+      "imageurl": "https://www.southernliving.com/thmb/3x3cJaiOvQ8-3YxtMQX0vvh1hQw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/2652401_QFSSL_SupremePizza_00072-d910a935ba7d448e8c7545a963ed7101.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Pasta",
+      "item": 20,
+      "order": 50,
+      "revenue": 5000,
+      "rank": 3,
+      "price": 7,
+      "imageurl": "https://www.southernliving.com/thmb/3x3cJaiOvQ8-3YxtMQX0vvh1hQw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/2652401_QFSSL_SupremePizza_00072-d910a935ba7d448e8c7545a963ed7101.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Salad",
+      "item": 40,
+      "order": 90,
+      "revenue": 9000,
+      "rank": 4,
+      "price": 6,
+      "imageurl": "https://www.southernliving.com/thmb/3x3cJaiOvQ8-3YxtMQX0vvh1hQw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/2652401_QFSSL_SupremePizza_00072-d910a935ba7d448e8c7545a963ed7101.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Sushi",
+      "item": 10,
+      "order": 30,
+      "revenue": 3000,
+      "rank": 5,
+      "price": 5,
+      "imageurl": "https://www.southernliving.com/thmb/3x3cJaiOvQ8-3YxtMQX0vvh1hQw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/2652401_QFSSL_SupremePizza_00072-d910a935ba7d448e8c7545a963ed7101.jpg"
+    }
+  ],
+  "Banner": [
+    {
+      "id": "1",
+      "name": "Summer Sale",
+      "image": "https://via.placeholder.com/300x200.png?text=Summer+Sale",
+      "date": { "fulldate": "2025-08-08", "time": "10:00" }
+    },
+    {
+      "id": "2",
+      "name": "Winter Collection",
+      "image": "https://via.placeholder.com/300x200.png?text=Winter+Collection",
+      "date": { "fulldate": "2025-09-12", "time": "14:30" }
+    },
+    {
+      "id": "3",
+      "name": "Spring Arrivals",
+      "image": "https://via.placeholder.com/300x200.png?text=Spring+Arrivals",
+      "date": { "fulldate": "2025-10-15", "time": "09:45" }
+    },
+    {
+      "id": "4",
+      "name": "Black Friday Deals",
+      "image": "https://via.placeholder.com/300x200.png?text=Black+Friday+Deals",
+      "date": { "fulldate": "2025-11-27", "time": "08:00" }
+    },
+    {
+      "id": "5",
+      "name": "Cyber Monday",
+      "image": "https://via.placeholder.com/300x200.png?text=Cyber+Monday",
+      "date": { "fulldate": "2025-12-01", "time": "11:15" }
+    },
+    {
+      "id": "6",
+      "name": "New Year Bash",
+      "image": "https://via.placeholder.com/300x200.png?text=New+Year+Bash",
+      "date": { "fulldate": "2026-01-01", "time": "12:00" }
+    },
+    {
+      "id": "7",
+      "name": "Valentine's Day Special",
+      "image": "https://via.placeholder.com/300x200.png?text=Valentine's+Day+Special",
+      "date": { "fulldate": "2026-02-14", "time": "13:30" }
+    },
+    {
+      "id": "8",
+      "name": "Easter Promotions",
+      "image": "https://via.placeholder.com/300x200.png?text=Easter+Promotions",
+      "date": { "fulldate": "2026-04-05", "time": "15:45" }
+    },
+    {
+      "id": "9",
+      "name": "Summer Clearance",
+      "image": "https://via.placeholder.com/300x200.png?text=Summer+Clearance",
+      "date": { "fulldate": "2026-06-21", "time": "17:00" }
+    },
+    {
+      "id": "10",
+      "name": "Back to School",
+      "image": "https://via.placeholder.com/300x200.png?text=Back+to+School",
+      "date": { "fulldate": "2026-08-25", "time": "07:30" }
+    }
+  ],
+  "Category": [
+    {
+      "id": "1",
+      "name": "Beverages",
+      "Category": "Drinks",
+      "image": "https://via.placeholder.com/300.png?text=Beverages",
+      "item": 200,
+      "order": 180,
+      "revenue": 30000,
+      "rank": 1
+    },
+    {
+      "id": "2",
+      "name": "Bakery",
+      "Category": "Desserts",
+      "image": "https://via.placeholder.com/300.png?text=Bakery",
+      "item": 150,
+      "order": 140,
+      "revenue": 25000,
+      "rank": 2
+    },
+    {
+      "id": "3",
+      "name": "Snacks",
+      "Category": "Quick Bites",
+      "image": "https://via.placeholder.com/300.png?text=Snacks",
+      "item": 300,
+      "order": 290,
+      "revenue": 40000,
+      "rank": 3
+    },
+    {
+      "id": "4",
+      "name": "Fruits",
+      "Category": "Healthy",
+      "image": "https://via.placeholder.com/300.png?text=Fruits",
+      "item": 100,
+      "order": 95,
+      "revenue": 20000,
+      "rank": 4
+    },
+    {
+      "id": "5",
+      "name": "Vegetables",
+      "Category": "Fresh Produce",
+      "image": "https://via.placeholder.com/300.png?text=Vegetables",
+      "item": 80,
+      "order": 75,
+      "revenue": 15000,
+      "rank": 5
+    },
+    {
+      "id": "6",
+      "name": "Dairy",
+      "Category": "Daily Essentials",
+      "image": "https://via.placeholder.com/300.png?text=Dairy",
+      "item": 120,
+      "order": 110,
+      "revenue": 22000,
+      "rank": 6
+    },
+    {
+      "id": "7",
+      "name": "Meat",
+      "Category": "Non-Vegetarian",
+      "image": "https://via.placeholder.com/300.png?text=Meat",
+      "item": 60,
+      "order": 55,
+      "revenue": 18000,
+      "rank": 7
+    },
+    {
+      "id": "8",
+      "name": "Seafood",
+      "Category": "Non-Vegetarian",
+      "image": "https://via.placeholder.com/300.png?text=Seafood",
+      "item": 40,
+      "order": 35,
+      "revenue": 17000,
+      "rank": 8
+    },
+    {
+      "id": "9",
+      "name": "Grains",
+      "Category": "Staples",
+      "image": "https://via.placeholder.com/300.png?text=Grains",
+      "item": 70,
+      "order": 65,
+      "revenue": 19000,
+      "rank": 9
+    },
+    {
+      "id": "10",
+      "name": "Confectionery",
+      "Category": "Sweets",
+      "image": "https://via.placeholder.com/300.png?text=Confectionery",
+      "item": 90,
+      "order": 85,
+      "revenue": 21000,
+      "rank": 10
+    }
+  ],
+  "Order": [
+    {
+      "id": "1",
+      "name": "John Doe",
+      "item": ["California Roll", "Grilled Steak", "Grilled Steak"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Preparing",
+      "delivered": { "time": "12:30", "fulldate": "2025-08-08" }
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "item": ["California Roll", "Grilled Steak", "Grilled Steak"],
+      "order": { "time": "14:00", "fulldate": "2025-08-09" },
+      "status": "Received",
+      "delivered": { "time": "14:00", "fulldate": "2025-08-09" }
+    },
+    {
+      "id": "3",
+      "name": "Alice Johnson",
+      "item": ["California Roll", "Grilled Steak", "Grilled Steak"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Preparing",
+      "delivered": { "time": "15:45", "fulldate": "2025-08-10" }
+    },
+    {
+      "id": "4",
+      "name": "Robert Brown",
+      "item": ["California Roll", "Grilled Steak", "Grilled Steak"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Received",
+      "delivered": { "time": "11:00", "fulldate": "2025-08-11" }
+    },
+    {
+      "id": "5",
+      "name": "Emily Davis",
+      "item": ["California Roll", "Grilled Steak", "Grilled Steak"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Received",
+      "delivered": { "time": "09:30", "fulldate": "2025-08-12" }
+    },
+    {
+      "id": "6",
+      "name": "Michael Wilson",
+      "item": ["Grilled Steak * 3", "Grilled Steak * 3", "Grilled Steak * 3"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Received",
+      "delivered": { "time": "18:00", "fulldate": "2025-08-13" }
+    },
+    {
+      "id": "7",
+      "name": "Jessica Martinez",
+      "item": ["Grilled Steak * 3", "Grilled Steak * 3", "Grilled Steak * 3"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Preparing",
+      "delivered": { "time": "13:15", "fulldate": "2025-08-14" }
+    },
+    {
+      "id": "8",
+      "name": "David Anderson",
+      "item": ["Grilled Steak * 3", "Grilled Steak * 3", "Grilled Steak * 3"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Received",
+      "delivered": { "time": "17:45", "fulldate": "2025-08-15" }
+    },
+    {
+      "id": "9",
+      "name": "Sarah Thomas",
+      "item": ["Grilled Steak * 3", "Grilled Steak * 3", "Grilled Steak * 3"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Rejected",
+      "delivered": { "time": "10:00", "fulldate": "2025-08-16" }
+    },
+    {
+      "id": "10",
+      "name": "Daniel Jackson",
+      "item": ["Grilled Steak * 3", "Grilled Steak * 3", "Grilled Steak * 3"],
+      "order": { "time": "12:00", "fulldate": "2025-08-08" },
+      "status": "Rejected",
+      "delivered": { "time": "16:30", "fulldate": "2025-08-17" }
+    }
   ]
 }

@@ -9,10 +9,22 @@ export interface ProductType {
 export interface ArrangedProduct {
   ID: string;
   Image: string;
-  Name: string;
+  Product: string;
   Price: string;
   Quantity: string;
   Category: string;
+}
+
+export interface ProductModel {
+  id: string;
+  name: string;
+  item: number;
+  price : number
+  order: number;
+  revenue: number;
+  rank: number;
+  imageurl : string;
+  
 }
 export interface ProductTable {
   name: string;

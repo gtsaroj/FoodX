@@ -2,12 +2,12 @@ import { Download, Filter, Search } from "lucide-react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { useCallback, useEffect, useState } from "react";
 import { getOrders } from "../../Services";
-import { Order, OrderModelType } from "../../models/order.model";
+import { Order, OrderModelType, OrderModal } from "../../models/order.model";
 import {
   deleteOrderFromDatabase,
   updateOrderStatus,
 } from "../../firebase/order";
-import Table from "../../Components/Common/Table/Table";
+import Table from "../../Components/Common/NewTable/NewTable";
 import { debounce } from "../../Utility/Debounce";
 import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
@@ -18,6 +18,8 @@ import {
 } from "../../Utility/DateUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
+import { Order as orderdata } from "../../data.json";
+import { ColumnProps } from "../Food/FoodPage";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModelType[]>([]);
@@ -95,6 +97,78 @@ const OrderList = () => {
     setSortOrder({ field: value, order: newOrder });
     setInitialOrders(sortedCustomers as OrderModelType[]);
   };
+  const Columns: ColumnProps[] = [
+    {
+      fieldName: (
+        <div className=" w-[50px]  text-start">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+      render: () => (
+        <div className="w-[50px] ">
+          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
+        </div>
+      ),
+    },
+    {
+      fieldName: "Id",
+      colStyle: { width: "100px" },
+      render: (item: OrderModal) => (
+        <div className="w-[100px] text-center ">#{item.id}</div>
+      ),
+    },
+    {
+      fieldName: "Name",
+      colStyle: { width: "150px", justifyContent: "start" },
+      render: (value: OrderModal) => (
+        <div className="w-[150px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
+          <span> {value.name}</span>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Items",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: OrderModal) => (
+        <div className=" w-[100px]  text-[var(--dark-text)]">
+          {item.item?.map((data) => (
+            <p>{data}{", " }</p>
+          ))}
+        </div>
+      ),
+    },
+    {
+      fieldName: "Order at",
+      colStyle: { width: "135px", justifyContent: "start" },
+      render: (item: OrderModal) => (
+        <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
+          <span>{item.delivered.fulldate +", "}</span>
+          <span>{ item.delivered.time}</span>
+        </div>
+      ),
+    },
+    {
+      fieldName: "Status",
+      colStyle: { width: "140px", justifyContent: "start" },
+      render: (item: OrderModal) => (
+        <div className=" w-[140px] gap-2 flex  items-center justify-start  text-[var(--dark-text)]  ">
+          <div className={`w-2 h-2 rounded-full ${item.status ==="Received" ? "bg-[var(--green-bg)] ": item?.status ==="Rejected" ? "bg-[var(--danger-bg)] " : item.status === "Preparing" ? "bg-[var(--orange-bg)] ":"" } `}></div>
+          <p>{item.status}</p>
+        
+        </div>
+      ),
+    },
+    {
+      fieldName: "Rank",
+      colStyle: { width: "100px", justifyContent: "start" },
+      render: (item: OrderModal) => (
+        <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
+        <span>{item.delivered.fulldate + ", "}</span>
+        <span>{ item.delivered.time}</span>
+      </div>
+      ),
+    },
+  ];
 
   const handleChange = (value: string) => {
     const filterOrder = SearchOrder(initialOrders, value);
@@ -120,7 +194,7 @@ const OrderList = () => {
       const toastLoading = toast.loading("Order deleting...");
       await deleteOrderFromDatabase(orderId);
       await getAllOrders();
-      toast.dismiss(toastLoading);  
+      toast.dismiss(toastLoading);
       toast.success("Order deleted!");
     } catch (error) {
       throw new Error("Unable to delete order" + error);
@@ -212,23 +286,17 @@ const OrderList = () => {
       </div>
       <div className="w-full overflow-auto rounded-t-md">
         <Table
-          loading={loading}
-          error={error}
-          onChange={(value: string, orderId: string) =>
-            changeOrderStatus(value, orderId)
-          }
-          options={["Pending", "Canceled", "Recieved", "Delivered"]}
-          actions={(value) => handleDelete(value)}
-          pagination={{ currentPage: 1, perPage: 10 }}
-          headerStyle={{
-            gridTemplateColumns: "repeat(9,1fr) ",
-          }}
-          bodyStyle={{
-            display: "grid",
-            gridTemplateColumns: "repeat(9,1fr) ",
-          }}
-          data={initialOrders as Order[]}
-          headers={orderHeader}
+          data={orderdata}
+          columns={Columns}
+          actionIconColor="red"
+     
+          disableActions={false}
+          loading={false}
+          bodyHeight={400}
+          pagination={{ currentPage: 1, perPage: 5 }}
+          onPageChange={(pageNumber: number) => console.log(pageNumber)}
+          disableNoData={false}
+          headStyle={{ width: "100%" }}
         />
       </div>
       <Toaster />

@@ -83,6 +83,7 @@ export const getUserData = async (
     const userRef = doc(db, docName, uid);
 
     const snapShot = await getDoc(userRef);
+    console.log(snapShot.data())
     if (!snapShot.exists) throw new Error("User document is empty.");
     const data = snapShot.data();
     return data as DbUser;

@@ -31,16 +31,15 @@ export const aggregateCustomerData = async (
             totalCustomerQuantity += totalQuantity(order.products as Product[]);
             totalCustomerCost += totalCost(order.products as Product[]);
           });
-
+          
           return {
-            ID: data.uid,
-            Name: data.fullName,
-            Email: data.email,
-            Image: data.avatar,
-            Location: "fljds",
-            Amountspent: totalCustomerCost.toFixed(2),
-            Totalorder: totalCustomerQuantity,
-            Role: data.role as string,
+            id: data.uid,
+            name: data.fullName,
+            email: data.email,
+            image: data.avatar,
+            amountSpent: totalCustomerCost.toFixed(2),
+            totalOrder: totalCustomerQuantity,
+            role: data.role as string,
           };
         } catch (error) {
           console.error(`Error fetching orders for user ${data.uid}:`, error);
