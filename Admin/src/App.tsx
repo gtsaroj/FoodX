@@ -64,37 +64,37 @@ const App: React.FC = () => {
           element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}
         />
         <Route path="register/" element={<Register />} />
-        <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+        <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
           <Route path="admin/" element={<MainPage />}>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route index element={<Dasboard />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin"]} />}>
               <Route path="analytics" element={<Analytics />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route path="order-list" element={<OrderList />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin"]} />}>
               <Route path="customer-list" element={<CustomerList />} />
             </Route>
 
-            <Route element={<PrivateRoute UserRole={["admins"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin"]} />}>
               <Route path="contact/tickets" element={<TicketPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin"]} />}>
               <Route path="contact/profile" element={<AdminProfile />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route path="collection/banner" element={<BannerPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route path="category" element={<CategoryPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admins", "Chef"]} />}>
+            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
               <Route path="profile" element={<AdminProfile />} />
             </Route>
           </Route>

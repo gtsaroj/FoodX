@@ -2,11 +2,11 @@ import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { useEffect, useState } from "react";
 import { LogCardProps } from "../../models/logModel";
 import { LogCard } from "../../Components/Common/Cards/LogCard";
+import { addLogs, getActionLogs, getRoleLogs } from "../../Services";
+import { log } from "console";
 
-const LogData: LogCardProps[] = [
+const LogData = [
   {
-    id: "asdwiaiwao",
-    uid: "sadiawnolncls",
     action: "checkout",
     name: "Aayush Lamichhane",
     profile:
@@ -66,6 +66,18 @@ const Logs = () => {
     });
     setItems(logItems);
   };
+  const getAllRoleLogs = async () => {
+    try {
+      const logs = await addLogs(LogData[0]);
+      console.log(logs);
+    } catch (error) {
+      throw new Error("Unable to get role logs" + error);
+    }
+  };
+
+  useEffect(() => {
+    getAllRoleLogs()
+  },[])
 
   return (
     <div className="items-start justify-start w-full h-full p-2">

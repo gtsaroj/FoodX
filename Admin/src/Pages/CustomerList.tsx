@@ -1,6 +1,6 @@
 import { Download, Filter, OctagonX } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import Table from "../Components/Common/NewTable/NewTable";
+import Table from "../Components/Common/Table/Table";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
 import { getCustomerData } from "../firebase/db";
 import "../index.css";
@@ -14,7 +14,7 @@ import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
 import { deleteAllUser } from "../Services";
 import toast from "react-hot-toast";
 import { FilterButton } from "../Components/Common/Sorting/Sorting";
-import { ColumnProps } from "./Food/FoodPage";
+import { ColumnProps } from "../models/table.model";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);

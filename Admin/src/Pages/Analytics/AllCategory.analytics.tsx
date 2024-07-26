@@ -1,9 +1,16 @@
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import Table from "../../Components/Common/Table/Table";
 import { ProductTable } from "../../models/productMode";
+import { ColumnProps } from "../../models/table.model";
 
 const AllCustomerAnalytics = () => {
   const headers = ["name", "image", "price", "quantity", "rating"];
+  // const columns: ColumnProps[] = [
+  //   {
+  //     fieldName: "Name",
+  //     render: (item)=>
+  //   }
+  // ]
 
   const data: ProductTable[] = [
     {
@@ -83,19 +90,7 @@ const AllCustomerAnalytics = () => {
           />
         </div>
       </div>
-      <Table
-        headers={headers}
-        data={data}
-        pagination={{ currentPage: 1, perPage: 7 }}
-        bodyStyle={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7,1fr)",
-        }}
-        headerStyle={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7,1fr)",
-        }}
-      />
+    {/* <Table columns={} /> */}
     </div>
   );
 };

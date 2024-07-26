@@ -1,13 +1,13 @@
 import { Filter, Plus } from "lucide-react";
 import React, { useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
-import { BannerTable } from "../Components/Collection/BannerTable";
 import UploadBanner from "../Components/Upload/UploadBanner";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
-import Table from "../Components/Common/NewTable/NewTable";
+import Table from "../Components/Common/Table/Table";
 import { Banner } from "../data.json";
 import { BannerModel } from "../models/banner.model";
-import { ColumnProps } from "./Food/FoodPage";
+import { ColumnProps } from "../models/table.model";
+
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
