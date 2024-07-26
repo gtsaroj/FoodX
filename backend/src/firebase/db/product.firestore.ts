@@ -93,11 +93,29 @@ const updateProductInDatabase = async (
     throw new ApiError(401, "Unable to update product data.");
   }
 };
+const bulkDeleteProductsFromDatabase = async (
+  category: Collection["name"],
+  id: string[]
+) => {
+  const productRef = db.collection(category);
+  if (!productRef) throw new ApiError(400, "No collection available.");
+  try {
+    const batch = db.batch();
 
+    id.forEach((productId) => {
+      const docRef = productRef.doc(productId);
+      batch.delete(docRef);
+    });
+    await batch.commit();
+  } catch (error) {
+    throw new ApiError(401, "Unable to bulk delete product data.");
+  }
+};
 export {
   addProductToFirestore,
   getProductByName,
   getProductByTagFromDatabase,
   getAllProductsFromDatabase,
   updateProductInDatabase,
+  bulkDeleteProductsFromDatabase,
 };

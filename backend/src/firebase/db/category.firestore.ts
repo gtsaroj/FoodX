@@ -63,10 +63,25 @@ const updateCategoryInDatabase = async (
     throw new ApiError(401, "Unable to update category data in database.");
   }
 };
+const bulkDeleteCategoryFromDatabase = async (id: string[]) => {
+  const categoryRef = db.collection("category");
+  if (!categoryRef) throw new ApiError(400, "No collection available.");
+  try {
+    const batch = db.batch();
 
+    id.forEach((categoryId) => {
+      const docRef = categoryRef.doc(categoryId);
+      batch.delete(docRef);
+    });
+    await batch.commit();
+  } catch (error) {
+    throw new ApiError(401, "Unable to bulk delete categories data.");
+  }
+};
 export {
   getAllCategoryFromDatabase,
   addNewCategoryInDatabase,
   deleteCategoryFromDatabase,
   updateCategoryInDatabase,
+  bulkDeleteCategoryFromDatabase,
 };

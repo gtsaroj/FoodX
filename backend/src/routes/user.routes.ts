@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   deleteAccount,
+  deleteUsersInBulk,
   logOutUser,
   loginUser,
   refreshAccessToken,
@@ -27,4 +28,5 @@ router.route("/refresh-token").post(refreshAccessToken);
 router.route("/delete-user").post(verifyJwt, deleteAccount);
 router.route("/update-user").post(verifyJwt, updateUser);
 router.route("/logout").post(verifyJwt, logOutUser);
+router.route("/bulk-delete").delete(verifyJwt, deleteUsersInBulk);
 export default router;
