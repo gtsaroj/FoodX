@@ -4,7 +4,11 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { addCategory } from "../../Services";
 
-export const UploadCategory: React.FC = () => {
+interface CategoryModal {
+  closeModal: () => void;
+}
+
+export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
   // const [Scroll, setScroll] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>("");
@@ -21,16 +25,21 @@ export const UploadCategory: React.FC = () => {
     event.preventDefault();
     if (!categoryName && !imageURL)
       return toast.error("All fields are required");
+    const toastLoader = toast.loading("Adding new category...");
+
     try {
-      const response = await addCategory({
-        Name: categoryName,
-        Image: imageURL,
+      await addCategory({
+        name: categoryName,
+        image: imageURL,
       });
-      console.log(response);
+      toast.dismiss(toastLoader);
+      toast.success("Successfully updated");
     } catch (error) {
+      toast.dismiss(toastLoader);
       console.error("Error adding category:", error);
-      alert("Failed to add category");
+      toast.error("Failed to add category");
     }
+    closeModal();
   };
 
   useEffect(() => {

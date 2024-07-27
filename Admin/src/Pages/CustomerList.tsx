@@ -1,4 +1,4 @@
-import { Download, Filter, OctagonX } from "lucide-react";
+import { Download, Filter, OctagonX, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Table from "../Components/Common/Table/Table";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
@@ -11,19 +11,24 @@ import {
 import { CustomerType } from "../models/user.model";
 import { debounce } from "../Utility/Debounce";
 import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
-import { deleteAllUser } from "../Services";
+import { deleteAllUser, deleteUser } from "../Services";
 import toast from "react-hot-toast";
 import { FilterButton } from "../Components/Common/Sorting/Sorting";
 import { ColumnProps } from "../models/table.model";
+import Modal from "../Components/Common/Popup/Popup";
+import UpdateCategory from "../Components/Upload/UpdateCustomer";
+import UpdateCustomer from "../Components/Upload/UpdateCustomer";
+import Delete from "../Components/Common/Delete/Delete";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
-  const [customerHeader, setCustomerHeader] = useState<string[]>([]);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [checked, setChecked] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+  const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [id, setId] = useState<string>();
 
   const Columns: ColumnProps[] = [
     {
@@ -40,9 +45,9 @@ const CustomerList: React.FC = () => {
     },
     {
       fieldName: " Name",
-      colStyle: { width: "200px", justifyContent: "start" },
+      colStyle: { width: "280px", justifyContent: "start", textAlign: "start" },
       render: (value: CustomerType) => (
-        <div className="w-[200px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
+        <div className="w-[280px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
           <div className="w-[50px] h-[50px]">
             <img
               className="w-full h-full rounded-full"
@@ -50,15 +55,23 @@ const CustomerList: React.FC = () => {
               alt=""
             />
           </div>
-          <span className="tracking-wide text-[15px] font-[500] contrast-125 "> {value.name}</span>
-        </div>  
+          <div className="flex flex-col">
+            <span className="tracking-wide text-[15px] font-[500] contrast-125 ">
+              {" "}
+              {value.name}
+            </span>
+            <span className="tracking-wide text-[var(--dark-secondary-text)] text-sm font-[500] contrast-125">
+              {value.email}
+            </span>
+          </div>
+        </div>
       ),
     },
     {
       fieldName: "Id",
-      colStyle: { width: "100px" },
+      colStyle: { width: "150px", textAlign: "start" },
       render: (item: CustomerType) => (
-        <div className="w-[100px] relative cursor-pointer group/id text-center ">
+        <div className="w-[150px] text-[var(--dark-secondary-text)]  relative cursor-pointer group/id text-start ">
           #{item.id?.substring(0, 8)}
           <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
             {item.id}
@@ -68,25 +81,25 @@ const CustomerList: React.FC = () => {
     },
     {
       fieldName: "Role",
-      colStyle: { width: "100px", justifyContent: "start" },
+      colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
       render: (item: CustomerType) => (
-        <div className=" w-[100px]  text-[var(--dark-text)]">
+        <div className=" w-[150px]  text-[var(--dark-text)]">
           <p>{item.role}</p>
         </div>
       ),
     },
     {
       fieldName: "Orders",
-      colStyle: { width: "100px", justifyContent: "start" },
+      colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
       render: (item: CustomerType) => (
-        <div className=" w-[100px] text-[var(--dark-text)] ">
+        <div className=" w-[150px] text-[var(--dark-text)] ">
           <p>{item.totalOrder}</p>
         </div>
       ),
     },
     {
       fieldName: "Amount",
-      colStyle: { width: "120px", justifyContent: "start" },
+      colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
       render: (item: CustomerType) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
           <p>Rs {item.amountSpent}</p>
@@ -103,7 +116,6 @@ const CustomerList: React.FC = () => {
       setInitialCustomer(customerList);
     } catch (error) {
       setLoading(false);
-      setError(true);
       return console.log(`Error while getting customers : ${error}`);
     }
     setLoading(false);
@@ -113,13 +125,13 @@ const CustomerList: React.FC = () => {
     setIsChecked(isChecked);
     setChecked((prevChecked) => {
       const checkedCustomer = initialCustomer.find(
-        (customer) => customer.ID === id
+        (customer) => customer.id === id
       );
 
       if (isChecked && checkedCustomer) {
         return [...prevChecked, checkedCustomer]; // Add customer to checked list
       } else {
-        return prevChecked.filter((customer) => customer.ID !== id); // Remove customer from checked list
+        return prevChecked.filter((customer) => customer.id !== id); // Remove customer from checked list
       }
     });
   };
@@ -158,31 +170,9 @@ const CustomerList: React.FC = () => {
     handleCustomerData();
   }, []);
 
-  useEffect(() => {
-    if (initialCustomer.length > 0) {
-      const CustomerHeadersObject = initialCustomer[1];
-      const headers = Object.keys(CustomerHeadersObject);
-      console.log(headers);
-      headers.unshift("Checkbox");
-      const indexOfid = headers.indexOf("id");
-      headers.splice(indexOfid, 1);
-      const indexOfImage = headers.indexOf("Image");
-      headers.splice(indexOfImage, 1);
-      const indexOfEmail = headers.indexOf("Email");
-      headers.splice(indexOfEmail, 1);
-      setCustomerHeader(headers);
-      headers.push("Button");
-      const indexOfName = headers.indexOf("Name");
-      headers.splice(indexOfName, 1);
-      headers.splice(1, 0, "Name");
-      headers.splice(3, 0, "Role");
-    }
-  }, [initialCustomer?.length, initialCustomer]);
-
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
-  console.log(customerHeader);
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
@@ -211,6 +201,28 @@ const CustomerList: React.FC = () => {
 
     setSortOrder({ field: value, order: newOrder });
     setInitialCustomer(sortedCustomers as CustomerType[]);
+  };
+
+  const handleDelete = async (id: string) => {
+    const toastLoading = toast.loading("Deleting user...");
+    const findUser = initialCustomer?.find((customer) => customer.id === id);
+    try {
+      await deleteUser({
+        id: [findUser?.id as string],
+        role: findUser?.role as string,
+      });
+      toast.dismiss(toastLoading);
+      toast.success("Successfully deleted");
+      const refreshData = initialCustomer?.filter(
+        (customer) => customer.id !== id
+      );
+      setInitialCustomer(refreshData);
+      setIsDelete(false);
+    } catch (error) {
+      toast.dismiss(toastLoading);
+      toast.error("Failed to delete user");
+    }
+    setIsDelete(false);
   };
 
   return (
@@ -261,7 +273,7 @@ const CustomerList: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start gap-3 w-full px-1">
+      <div className="flex items-center justify-start gap-2 w-full px-1">
         <form action="" className="relative">
           <input
             id="search"
@@ -271,30 +283,22 @@ const CustomerList: React.FC = () => {
             placeholder="Search"
           />
         </form>
-        <div className="w-0.5 h-8 bg-[var(--dark-secondary-background)]"></div>
+        <div className="h-10  w-[1px] bg-gray-300 "></div>
         <div>
-          {isChecked && (
-            <button onClick={() => deleteUsers()}>
-              <OctagonX className="size-7 bg-[var(dark-secondary-text)] " />
-            </button>
-          )}
-        </div>
+          <Trash2 className="size-7"/>
+         </div>
       </div>
       <div className="w-full">
         <Table
           data={initialCustomer}
           columns={Columns}
           actionIconColor="red"
-          actions={{
-            deleteFn: (value) => console.log(value),
-            editFn: (value) => console.log(value),
-          }}
-          disableActions={false}
-          loading={false}
+          disableActions={true}
+          loading={loading}
           bodyHeight={400}
           pagination={{ currentPage: 1, perPage: 5 }}
           onPageChange={(pageNumber) => console.log(pageNumber)}
-          disableNoData={false}
+          disableNoData={initialCustomer?.length < 1 ? true : false}
           headStyle={{ width: "100%" }}
         />
       </div>

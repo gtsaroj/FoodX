@@ -1,5 +1,4 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { updateCategory } from "../../Services";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { UploadIcon } from "lucide-react";
@@ -8,38 +7,31 @@ import { updateComponentProp } from "../../models/table.model";
 interface UpdateCategoryType {
   label: string;
   value: string;
-  placeholder?: string;
 }
 
 const UpdateCategoryOption: UpdateCategoryType[] = [
-  { label: "Name", value: "name", placeholder :"Eg. Pizza" },
+  { label: "Banner", value: "name" },
   {
     label: "Image",
     value: "image",
   },
 ];
 
-const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
-  const [newData, setNewData] = useState<string>("");
-  const [field, setField] = useState<"image" | "name">("name");
 
+
+const UpdateBanner: React.FC<updateComponentProp> = ({ id }) => {
+  const [newData, setNewData] = useState<string>("");
+  const [field, setField] = useState<"image" | "name">();
+  
   const fileRef = useRef<HTMLImageElement>();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!id) return toast.error("Category id not found");
-    const toastLoader = toast.loading("Updating...");
+    if (!id) return toast.error("Banner id not found");
     try {
-      await updateCategory({
-        id: id,
-        field: field as string,
-        newData: newData,
-      });
-      toast.dismiss(toastLoader);
-      toast.success("Successfully updated");
+     console.log('dk')
+      
     } catch (error) {
-      toast.dismiss(toastLoader);
-      toast.error("Failed to update");
       throw new Error("Unable to update category" + error);
     }
   };
@@ -76,13 +68,10 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
         </div>
 
         {field === "image" ? (
-          newData ? (
-            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
-              {" "}
-              <img className="w-full h-[230px] object-fill" src={newData} />
-            </div>
-          ) : (
-            <div
+         newData ?   <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+         {" "}
+         <img className="w-full h-[230px] object-fill" src={newData} />
+       </div> :             <div
               onClick={() => fileRef.current?.click()}
               className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
             >
@@ -102,11 +91,9 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
                 </span>
               </div>
             </div>
-          )
         ) : field === "name" ? (
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-              <input
-                placeholder="Eg. Pizza"
+            <input
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -125,4 +112,4 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   );
 };
 
-export default UpdateCategory;
+export default UpdateBanner;

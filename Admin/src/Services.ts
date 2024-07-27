@@ -8,15 +8,28 @@ import {
 import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import toast from "react-hot-toast";
-import { CustomerType, ValidationType } from "./models/user.model";
+import {
+  CustomerType,
+  UserDeleteType,
+  ValidationType,
+} from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
 import { makeRequest } from "./makeRequest";
 
-import { UploadProductType } from "./models/productMode";
+import {
+  ProductBulkDeleteModal,
+  ProductModel,
+  UploadProductType,
+} from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
-import { CategoryType, UpdateCategoryType } from "./models/category.model";
+import {
+  CategoryType,
+  UpdateCategoryType,
+  UpdateComponentType,
+} from "./models/category.model";
 import { LogCardProps } from "./models/logModel";
+import { updateComponentProp } from "./models/table.model";
 
 export const signIn = async (email: string, password?: string) => {
   try {
@@ -99,9 +112,9 @@ export const getOrders = async () => {
       method: "get",
       url: "orders/all-orders",
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
-    console.log(`Error while getting revenueperday : ${error}`);
+    throw new Error(`Error while getting revenueperday : ${error}`);
   }
 };
 export const getBanners = async () => {
@@ -153,6 +166,17 @@ export const getProducts = async () => {
     console.log(`Error while adding banners : ${error}`);
   }
 };
+export const getSpecialProducts = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "products/specials",
+    });
+    return response.data;
+  } catch (error) {
+    console.log(`Error while adding banners : ${error}`);
+  }
+};
 
 export const addProducts = async (data: UploadProductType) => {
   try {
@@ -166,6 +190,23 @@ export const addProducts = async (data: UploadProductType) => {
     if (error === "You have not access, please login again...")
       Store.dispatch(authLogout());
     console.log(`Error while adding banners : ${error}`);
+  }
+};
+export const updateProduct = async (data: UpdateComponentType) => {
+  try {
+    const response = await makeRequest({
+      method: "put",
+      url: "products/update-product",
+      data: {
+        category: data.category,
+        id: data.id,
+        field: data.field,
+        newData: data.newData,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(`Error while updating food : ${error}`);
   }
 };
 
@@ -259,7 +300,7 @@ export const addCategory = async (data: CategoryType) => {
     const response = await makeRequest({
       method: "post",
       url: "categories/add-category",
-      data: { name: data.Name, image: data.Image },
+      data: { name: data.name, image: data.image },
     });
     return response.data.data;
   } catch (error) {
@@ -290,7 +331,7 @@ export const deleteCategory = async (id: string) => {
     throw new Error("Unable to delete exist category" + error);
   }
 };
-export const getCategories = async () => {
+export const getCategories = async (): Promise<CategoryType[]> => {
   try {
     const response = await makeRequest({
       method: "get",
@@ -336,5 +377,65 @@ export const addLogs = async (data: LogCardProps) => {
     return response.data;
   } catch (error) {
     throw new Error("Unable to fetch action logs" + error);
+  }
+};
+
+export const deleteUser = async (data: UserDeleteType) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      data: {
+        ids: data.id,
+        role: data.role,
+      },
+      url: "users/delete",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete user" + error);
+  }
+};
+
+export const bulkeDeleteOfCategory = async (id: string) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "categories/bulk-delete",
+      data: [id],
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete categories");
+  }
+};
+export const bulkDeleteOfProduct = async (data: {
+  ids: string[];
+  category: "products" | "specials";
+}) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "products/bulk-delete",
+      data: data,
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete categories");
+  }
+};
+
+export const updateOrderStatus = async (data: {
+  id: string;
+  status: string;
+}) => {
+  try {
+    const response = await makeRequest({
+      method: "put",
+      data: { id: data.id, status: data.status },
+      url: "orders/update-order",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("unable to update order status" + error);
   }
 };
