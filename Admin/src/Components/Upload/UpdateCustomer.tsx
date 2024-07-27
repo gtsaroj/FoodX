@@ -1,5 +1,4 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { updateCategory } from "../../Services";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { UploadIcon } from "lucide-react";
@@ -8,18 +7,18 @@ import { updateComponentProp } from "../../models/table.model";
 interface UpdateCategoryType {
   label: string;
   value: string;
-  placeholder?: string;
 }
 
 const UpdateCategoryOption: UpdateCategoryType[] = [
-  { label: "Name", value: "name", placeholder :"Eg. Pizza" },
+  { label: "Name", value: "name" },
   {
     label: "Image",
     value: "image",
   },
 ];
 
-const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
+
+const UpdateCustomer: React.FC<updateComponentProp> = ({ id }) => {
   const [newData, setNewData] = useState<string>("");
   const [field, setField] = useState<"image" | "name">("name");
 
@@ -28,18 +27,9 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!id) return toast.error("Category id not found");
-    const toastLoader = toast.loading("Updating...");
     try {
-      await updateCategory({
-        id: id,
-        field: field as string,
-        newData: newData,
-      });
-      toast.dismiss(toastLoader);
-      toast.success("Successfully updated");
+      console.log("fkldj");
     } catch (error) {
-      toast.dismiss(toastLoader);
-      toast.error("Failed to update");
       throw new Error("Unable to update category" + error);
     }
   };
@@ -105,8 +95,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
           )
         ) : field === "name" ? (
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-              <input
-                placeholder="Eg. Pizza"
+            <input
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -125,4 +114,4 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   );
 };
 
-export default UpdateCategory;
+export default UpdateCustomer;

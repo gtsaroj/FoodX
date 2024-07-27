@@ -25,6 +25,11 @@ export enum userRole {
   customer = "customer",
 }
 
+export interface UserDeleteType {
+  id: string[];
+  role: string;
+}
+
 export interface CustomerType {
   id?: string;
   name: string;

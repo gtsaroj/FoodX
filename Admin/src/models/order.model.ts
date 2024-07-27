@@ -6,8 +6,8 @@ export interface Order {
   orderId: string;
   uid: string;
   products: Product[];
-  orderRequest: RequestTime | string;
-  orderFullFilled: RequestTime;
+  orderRequest: string;
+  orderFullFilled: string;
   status?: string;
 }
 
@@ -74,20 +74,14 @@ export interface CardAnalyticsProp {
   filter?: React.ReactNode;
   total: number;
 }
-export interface OrderModelType {
-  ID: string; // ID of the order
-  Name: string; // Name of the user (getter function or value)
-  Products: string[]; // List of product names
-  Requested: string; // Requested date and time in a string format
-  Fulfilled: boolean; // Fulfilled status of the order
-  Status: string; // Status of the order
-}
+
 
 export interface OrderModal {
   id?: string;
   name: string;
-  item?: string[];
-  order: {time: string,fulldate: string};
-  status: "Received" | "Preparing" | "Rejected";
+  products?: string[];
+  rank?: string
+  orderRequest: {time: string,fulldate: string};
+  status: "Received" | "Preparing" | "Delivered" | "Canceled";
   delivered: {time: string,fulldate: string};
 }

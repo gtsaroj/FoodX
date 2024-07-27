@@ -7,31 +7,38 @@ export interface ProductType {
   tag?: string;
 }
 export interface ArrangedProduct {
-  ID: string;
-  Image: string;
-  Product: string;
-  Price: string;
-  Quantity: string;
-  Category: string;
+  id: string;
+  image: string;
+  name: string;
+  price: number;
+  order?: number;
+  revenue?: number;
+  rating?: number;
+  quantity: number;
+  category?: string;
+  type: "products" | "specials";
 }
 
 export interface ProductModel {
   id: string;
   name: string;
-  item: number;
-  price : number
-  order: number;
-  revenue: number;
-  rank: number;
-  imageurl : string;
-  
+  item?: number;
+  price: number;
+  order?: number;
+  revenue?: number;
+  rank?: number;
+  imageurl?: string;
+}
+export interface ProductBulkDeleteModal {
+  id: string;
+  category: string;
 }
 export interface ProductTable {
   name: string;
   image: string;
   price: number;
   quantity: number;
-  rating: number;
+  rating?: number;
 }
 export interface UploadProductType {
   products: ProductType;

@@ -1,45 +1,69 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { updateCategory } from "../../Services";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { UploadIcon } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Reducer/Store";
 import { updateComponentProp } from "../../models/table.model";
+import { updateCategory, updateProduct } from "../../Services";
+import { ArrangedProduct } from "../../models/productMode";
 
 interface UpdateCategoryType {
   label: string;
-  value: string;
-  placeholder?: string;
+  value: string | number;
 }
 
 const UpdateCategoryOption: UpdateCategoryType[] = [
-  { label: "Name", value: "name", placeholder :"Eg. Pizza" },
+  { label: "Product Name", value: "name" },
   {
     label: "Image",
     value: "image",
   },
+  {
+    label: "Price",
+    value: "price",
+  },
+  {
+    label: "Quantity",
+    value: "quantity",
+  },
+  { label: "Category", value: "category" },
 ];
 
-const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
-  const [newData, setNewData] = useState<string>("");
-  const [field, setField] = useState<"image" | "name">("name");
+interface updateProductProp {
+  product: ArrangedProduct;
+  closeModal: () => void;
+}
+
+const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
+  const [newData, setNewData] = useState<string | number>();
+  const [field, setField] = useState<
+    "image" | "name" | "price" | "category" | "quantity"
+  >("name");
+  const options = useSelector(
+    (state: RootState) => state.root.category.categories[0]
+  ) as [];
 
   const fileRef = useRef<HTMLImageElement>();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!id) return toast.error("Category id not found");
-    const toastLoader = toast.loading("Updating...");
+    if (!product.id) return toast.error("food id not found");
+    const toastLoading = toast.loading("Updating...");
     try {
-      await updateCategory({
-        id: id,
-        field: field as string,
-        newData: newData,
+      await updateProduct({
+        category: product.type,
+        field: field,
+        id: product.id,
+        newData: newData as any,
       });
-      toast.dismiss(toastLoader);
-      toast.success("Successfully updated");
+      toast.dismiss(toastLoading);
+      toast.success("Successfully updated...");
+      closeModal();
     } catch (error) {
-      toast.dismiss(toastLoader);
-      toast.error("Failed to update");
+      toast.dismiss(toastLoading);
+      closeModal();
+      toast.error("Failed to delete");
       throw new Error("Unable to update category" + error);
     }
   };
@@ -52,7 +76,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   return (
     <div className="flex flex-col items-start justify-center gap-5">
       <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
-        Update Category
+        Update Food
       </h3>
       <form
         action=""
@@ -68,7 +92,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
             onClick={(event: any) => setField(event.target.value)}
           >
             {UpdateCategoryOption?.map((category) => (
-              <option className="px-2" value={category.value}>
+              <option className="px-2" value={category.value as string}>
                 {category.label}
               </option>
             ))}
@@ -79,7 +103,10 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
           newData ? (
             <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
               {" "}
-              <img className="w-full h-[230px] object-fill" src={newData} />
+              <img
+                className="w-full h-[230px] object-fill"
+                src={newData as string}
+              />
             </div>
           ) : (
             <div
@@ -105,15 +132,43 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
           )
         ) : field === "name" ? (
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-              <input
-                placeholder="Eg. Pizza"
+            <input
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
+              value={newData as string}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setNewData(event.target.value)
               }
             />
           </div>
+        ) : field === "price" ? (
+          <input
+            value={newData as number}
+            type="text"
+            onChange={(event) => setNewData(parseInt(event.target.value))}
+            placeholder="1200"
+            className="w-full placeholder:text-sm  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
+          />
+        ) : field === "quantity" ? (
+          <input
+            value={newData as number}
+            onChange={(event) => setNewData(parseInt(event.target.value))}
+            type="text"
+            className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
+          />
+        ) : field === "category" ? (
+          <select
+            onChange={(event) => setNewData(event.target.value)}
+            className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
+            name=""
+            id=""
+          >
+            {options.map((opt) => (
+              <option className="text-[var(--dark-text)]" value={opt as string}>
+                {opt}
+              </option>
+            ))}
+          </select>
         ) : (
           ""
         )}
@@ -125,4 +180,4 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   );
 };
 
-export default UpdateCategory;
+export default UpdateFood;

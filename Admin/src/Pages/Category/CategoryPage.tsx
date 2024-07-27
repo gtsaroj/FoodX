@@ -1,4 +1,4 @@
-import { ArrowDownAZ, Filter, Plus } from "lucide-react";
+import { ArrowDownAZ, Filter, Plus, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
@@ -11,24 +11,27 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
-import { deleteCategory, getCategories } from "../../Services";
+import {
+  bulkeDeleteOfCategory,
+  deleteCategory,
+  getCategories,
+} from "../../Services";
 import toast from "react-hot-toast";
 import Table from "../../Components/Common/Table/Table";
-import { Category } from "../../data.json";
 import { CategoryType } from "../../models/category.model";
 import { ColumnProps } from "../../models/table.model";
+import Delete from "../../Components/Common/Delete/Delete";
 
 export const CategoryPage: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
   const [isUploadModalOpen, setIsUPloadModalOpen] = useState<boolean>(true);
-  const [categoryData, setCategoryData] = useState<
-    { ID: string; Category: string; Image: string }[]
-  >([]);
-  const [categoryHeader, setCategoryHeader] = useState<string[]>([]);
+  const [categoryData, setCategoryData] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
   const [categoryId, setCategoryId] = useState<string>("");
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [id, setId] = useState<string>();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -46,8 +49,8 @@ export const CategoryPage: React.FC = () => {
       ),
     },
     {
-      fieldName: "Category Name",
-      colStyle: { width: "150px", justifyContent: "start" },
+      fieldName: "Name",
+      colStyle: { width: "150px", justifyContent: "start", textAlign:"start" },
       render: (value: CategoryType) => (
         <div className="w-[150px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
           <div className="w-[40px] h-[40px]">
@@ -63,14 +66,19 @@ export const CategoryPage: React.FC = () => {
     },
     {
       fieldName: "Id",
-      colStyle: { width: "100px" },
+      colStyle: { width: "120px", textAlign:"start" },
       render: (item: CategoryType) => (
-        <div className="w-[100px] text-center ">#{item.id}</div>
+        <div className="w-[120px] relative cursor-pointer group/id text-start ">
+          #{item.id?.substring(0, 8)}
+          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
+            {item.id}
+          </div>
+        </div>
       ),
     },
     {
       fieldName: "Items",
-      colStyle: { width: "100px", justifyContent: "start" },
+      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
       render: (item: CategoryType) => (
         <div className=" w-[100px]  text-[var(--dark-text)]">
           <p>{item.order}</p>
@@ -78,17 +86,17 @@ export const CategoryPage: React.FC = () => {
       ),
     },
     {
-      fieldName: "Total ordered",
-      colStyle: { width: "135px", justifyContent: "start" },
+      fieldName: "Orders",
+      colStyle: { width: "120px", justifyContent: "start", textAlign:"start" },
       render: (item: CategoryType) => (
-        <div className=" w-[135px] text-[var(--dark-text)] ">
+        <div className=" w-[120px] text-[var(--dark-text)] ">
           <p>{item.order}</p>
         </div>
       ),
     },
     {
       fieldName: "Revenue",
-      colStyle: { width: "120px", justifyContent: "start" },
+      colStyle: { width: "120px", justifyContent: "start", textAlign:"start" },
       render: (item: CategoryType) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
           <p>Rs {item.revenue}</p>
@@ -97,7 +105,7 @@ export const CategoryPage: React.FC = () => {
     },
     {
       fieldName: "Rank",
-      colStyle: { width: "100px", justifyContent: "start" },
+      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
       render: (item: CategoryType) => (
         <div className=" w-[100px] flex  text-[var(--dark-text)] gap-2 items-center justify-start ">
           <div className="mt-1">{item.rank}</div>
@@ -142,36 +150,27 @@ export const CategoryPage: React.FC = () => {
   const getAllCategories = async () => {
     setLoading(true);
     try {
-      const categories = (await getCategories()) as {
-        id: string;
-        name: string;
-        image: string;
-      }[];
-      const categoryDatas = categories?.map((category) => {
-        return {
-          ID: category.id,
-          Category: category.name,
-          Image: category.image,
-        };
-      });
-      setCategoryData(categoryDatas);
+      const categories = await getCategories();
+      const categorydata: CategoryType[] = categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        item: 55,
+        order: 100,
+        rank: 45,
+        revenue: 15000,
+        image: category.image,
+      }));
+      setCategoryData(categorydata);
     } catch (error) {
       setLoading(false);
-      setError(true);
       return console.log(`Error found while fetching category` + error);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (categoryData.length > 0) {
-      const headers = Object.keys(categoryData[0]);
-      headers.push("Button");
-      headers.unshift("sn");
-      setCategoryHeader(headers);
-      const categories = categoryData.map((category) => category.Category);
-      dispatch(categoryAdd(categories));
-    }
+    const categories = categoryData.map((category) => category.name);
+    dispatch(categoryAdd(categories));
   }, [categoryData, dispatch]);
 
   useEffect(() => {
@@ -192,6 +191,19 @@ export const CategoryPage: React.FC = () => {
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     categoryData,
   ]);
+
+  const handleDelete = async (id: string) => {
+    if (!id) return toast.error("Category not exist");
+    const toastLoader = toast.loading("Deleting category...");
+    try {
+      await bulkeDeleteOfCategory(id);
+      toast.dismiss(toastLoader);
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      return toast.error("Failed to delete");
+    }
+    setIsDelete(false);
+  };
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-4 py-7 gap-7 ">
@@ -251,8 +263,8 @@ export const CategoryPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start w-full ">
-        <form action="" className="relative w-full">
+      <div className="flex items-center justify-start w-full gap-2 ">
+        <form action="" className="relative">
           <input
             onChange={(event) => debouncingSearch(event.target.value)}
             id="search"
@@ -261,39 +273,52 @@ export const CategoryPage: React.FC = () => {
             placeholder="Search"
           />
         </form>
+        <div className="h-10  w-[1px] bg-gray-300 "></div>
+        <div>
+          <Trash2 className="size-7"/>
+         </div>
       </div>
       <Table
-        data={Category}
+        data={categoryData}
         columns={Columns}
         actionIconColor="red"
         actions={{
-          deleteFn: (value) => console.log(value),
-          editFn: (value) => console.log(value),
+          deleteFn: (value: string) => {
+            setIsDelete(true);
+            setId(value);
+          },
+          editFn: (value: string) => {
+            setIsEdit(false);
+            setId(value);
+          },
         }}
         disableActions={false}
-        loading={false}
+        loading={loading}
         bodyHeight={400}
         pagination={{ currentPage: 1, perPage: 5 }}
         onPageChange={(pageNumber) => console.log(pageNumber)}
         disableNoData={false}
         headStyle={{ width: "100%" }}
       />
-      <div className="absolute ">
-        <Modal
-          close={isUpdateModalOpen}
+      <Modal
+        close={isUploadModalOpen}
+        closeModal={() => setIsUPloadModalOpen(!isUploadModalOpen)}
+      >
+        <UploadCategory
           closeModal={() => setIsUpdateModelOpen(!isUpdateModalOpen)}
-        >
-          <UpdateCategory categoryId={categoryId} />
-        </Modal>
-      </div>
-      <div className="absolute ">
-        <Modal
-          close={isUploadModalOpen}
-          closeModal={() => setIsUPloadModalOpen(!isUploadModalOpen)}
-        >
-          <UploadCategory />
-        </Modal>
-      </div>
+        />
+      </Modal>
+      <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
+        <UpdateCategory id={id as string} closeModal={() => setIsEdit(true)} />
+      </Modal>
+      {isDelete && (
+        <Delete
+          closeModal={() => setIsDelete(false)}
+          id={id as string}
+          isClose={isDelete}
+          setDelete={(id) => handleDelete(id as string)}
+        />
+      )}
     </div>
   );
 };

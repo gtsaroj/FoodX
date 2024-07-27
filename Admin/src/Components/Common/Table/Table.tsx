@@ -1,6 +1,8 @@
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../Pagination/Pagination";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace Table {
@@ -50,12 +52,11 @@ function Table<T extends { id: string }>({
   const [currentData, setCurrentData] = useState();
 
   useEffect(() => {
-    const startIndex =
-      ((currentPage|| 1) - 1) * (pagination?.perPage || 2);
+    const startIndex = ((currentPage || 1) - 1) * (pagination?.perPage || 2);
     const endIndex = startIndex + (pagination?.perPage || 2);
     const paginateData = data?.slice(startIndex, endIndex) as any;
     setCurrentData(paginateData);
-  }, [pagination.currentPage, pagination.perPage, data,currentPage]);
+  }, [pagination.currentPage, pagination.perPage, data, currentPage]);
 
   const handlePageChange = (page: number) => {
     if (onPageChange) {
@@ -67,14 +68,20 @@ function Table<T extends { id: string }>({
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded my-6 ">
       <table className="w-full border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
         <thead className="w-full px-2 bg-[var(--light-background)] ">
-          <tr className="w-full border-b flex justify-start gap-5 items-center  flex-nowrap ">
+          <tr className="w-full border-b flex justify-start gap-5 items-center overflow-auto  ">
             {columns.map((item, index) => (
               <th
-                style={item.colStyle}
-                className="flex items-center justify-center font-bold  py-5 "
+               
+                className="flex items-center  justify-center font-bold  py-5 "
                 key={index}
               >
-                {item.fieldName}
+                {typeof item.fieldName === "string" ? (
+                  <div  style={item.colStyle}> {item.fieldName}</div>
+                ) : React.isValidElement(item.fieldName) ? (
+                  item.fieldName
+                ) : (
+                  ""
+                )}
               </th>
             ))}
             {!!actions?.editFn && !disableActions && (
@@ -95,13 +102,26 @@ function Table<T extends { id: string }>({
           }}
         >
           {loading ? (
-            "Loading..."
+            <div className="w-full ">
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={80}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={3}
+              />
+            </div>
           ) : (
             <>
               {currentData &&
                 currentData.map((item, index) => (
                   <tr
-                    className=" border-b px-2 py-4 hover:bg-[var(--light-background)]  w-full flex items-center justify-start gap-5  flex-nowrap"
+                    className=" border-b px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
                     key={(item?.id && item.id) || index}
                   >
                     {columns?.map(({ _, render }, index) => (
@@ -116,7 +136,7 @@ function Table<T extends { id: string }>({
                           actions?.editFn && actions?.editFn(item.id);
                         }}
                       >
-                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-start p-2 px-3 rounded-lg tracking-wide text-[var(--light-text)] gap-2">
+                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] gap-2">
                           <FaEdit />
                           <span className="text-[16px]  tracking-wide">
                             Edit

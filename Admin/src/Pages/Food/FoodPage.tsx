@@ -1,15 +1,15 @@
-import { Filter, Plus, Star } from "lucide-react";
+import { Filter, Plus, Star, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { debounce } from "../../Utility/Debounce";
+import { ArrangedProduct, ProductType } from "../../models/productMode";
 import {
-  ArrangedProduct,
-  ProductModel,
-  ProductType,
-} from "../../models/productMode";
-import { getProducts } from "../../Services";
+  bulkDeleteOfProduct,
+  getProducts,
+  getSpecialProducts,
+} from "../../Services";
 import { deleteProductFromDatabase } from "../../firebase/order";
 import { SearchProduct } from "../../Utility/Search";
 import { useDispatch } from "react-redux";
@@ -18,46 +18,47 @@ import { addProducts } from "../../Reducer/Action";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
 import Table from "../../Components/Common/Table/Table";
-import { Products } from "../../data.json";
 import { ColumnProps } from "../../models/table.model";
-
-
+import UpdateFood from "../../Components/Upload/UpdateFood";
+import Delete from "../../Components/Common/Delete/Delete";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
   const [userSearch, setUserSearch] = useState<string>("");
+  const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<ArrangedProduct>();
+  const [id, setId] = useState<string>();
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
-  const [productsHeader, setProductsHeader] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
     field: "",
     order: "desc",
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
 
   const Columns: ColumnProps[] = [
     {
       fieldName: (
-        <div className=" w-[50px]  text-start">
+        <div className=" w-[30px] flex items-center ">
           <input className="w-4 h-4 cursor-pointer" type="checkbox" />
         </div>
       ),
       render: () => (
-        <div className="w-[50px] ">
+        <div className="w-[30px] ">
           <input className="w-4 h-4 cursor-pointer" type="checkbox" />
         </div>
       ),
     },
     {
-      fieldName: "Product Name",
-      colStyle: { width: "180px", justifyContent: "start" },
-      render: (value: ProductModel) => (
-        <div className="w-[180px] text-[var(--dark-text)] tracking-wide  flex items-center justify-start gap-3 ">
+      fieldName: "Name",
+      colStyle: { width: "200px", justifyContent: "start", textAlign:"start" },
+      render: (value: ArrangedProduct) => (
+        <div className="w-[200px] text-[var(--dark-text)] tracking-wide  flex items-center justify-start gap-3 ">
           <div className="w-[50px] h-[48px]">
             <img
               className="w-full h-full rounded-full"
-              src={value.imageurl}
+              src={value.image}
               alt=""
             />
           </div>
@@ -67,26 +68,26 @@ const FoodPage: React.FC = () => {
     },
     {
       fieldName: "Unit price",
-      colStyle: { width: "100px", justifyContent: "start" },
-      render: (value: ProductModel) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[100px] ">
+      colStyle: { width: "120px", justifyContent: "start",textAlign:"start", padding :"0px 15px 0px 0px" },
+      render: (value: ArrangedProduct) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[120px] ">
           <p>Rs {value.price}</p>
         </div>
       ),
     },
     {
-      fieldName: "Total ordered",
-      colStyle: { width: "135px", justifyContent: "start" },
-      render: (value: ProductModel) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[135px] ">
+      fieldName: "Orders",
+      colStyle: { width: "120px", justifyContent: "start",textAlign:"start" },
+      render: (value: ArrangedProduct) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[120px] ">
           <p>{value.order}</p>
         </div>
       ),
     },
     {
       fieldName: "Revenue",
-      colStyle: { width: "120px" },
-      render: (value: ProductModel) => (
+      colStyle: { width: "120px" , textAlign:"start"},
+      render: (value: ArrangedProduct) => (
         <div className=" text-[var(--dark-text)] tracking-wide w-[120px]   text-start ">
           <p>Rs {value.revenue}</p>
         </div>
@@ -94,12 +95,12 @@ const FoodPage: React.FC = () => {
     },
     {
       fieldName: "Rating",
-      colStyle: { width: "100px", justifyContent: "start" },
-      render: (value: ProductModel) => (
+      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
+      render: (value: ArrangedProduct) => (
         <div className=" text-[var(--dark-text)] tracking-wide w-[100px] flex  gap-2 items-center justify-start ">
-          <div className="mt-1">{value.rank}</div>
-          <div>
-            <Star fill="yellow" className="size-5 text-yellow-400 " />
+          <div className="">{value.rating}</div>
+          <div className="scale-[1.1]">
+          ⭐
           </div>
         </div>
       ),
@@ -111,19 +112,45 @@ const FoodPage: React.FC = () => {
     setLoading(true);
     try {
       const products = await getProducts();
-      const allProducts = (await products.data.products) as ProductType[];
-      const arrangeProducts = allProducts?.map((product) => ({
-        ID: product.id,
-        Product: product.name,
-        Image: product.image,
-        Quantity: product.quantity,
-        Price: product.price,
-        Category: product.tag,
-      }));
-      setFetchedProducts(arrangeProducts as ArrangedProduct[]);
+      const special = await getSpecialProducts();
+      const specialProducts = special.data.products;
+      const normalProducts = products.data.products;
+
+      const arrangeNormalProducts: ArrangedProduct[] = normalProducts?.map(
+        (product: ProductType) => ({
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          quantity: product.quantity as number,
+          price: product.price as number,
+          category: product.tag,
+          order: 20,
+          rating: 4.3,
+          revenue: 15000,
+          type: "products",
+        })
+      );
+      const arrangeSpecialProducts: ArrangedProduct[] = specialProducts?.map(
+        (product: ProductType) => ({
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          quantity: product.quantity as number,
+          price: product.price as number,
+          category: product.tag,
+          order: 20,
+          rating: 4.3,
+          revenue: 15000,
+          type: "specials",
+        })
+      );
+      const getAllProducts = [
+        ...arrangeNormalProducts,
+        ...arrangeSpecialProducts,
+      ];
+      setFetchedProducts(getAllProducts as ArrangedProduct[]);
     } catch (error) {
-      setError(true);
-      return console.log(`Error while fetching products` + error);
+      throw new Error(`Error while fetching products` + error);
     }
     setLoading(false);
   };
@@ -162,43 +189,40 @@ const FoodPage: React.FC = () => {
   }, []);
 
   // delete products
-  const handleClick = async (id: string) => {
+  const handleDelete = async (id: string) => {
+    const toastLoading = toast.loading("Product deleting...");
+    const findProduct = fetchedProducts?.find((product) => product.id === id);
     try {
-      const toastLoading = toast.loading("Product deleting...");
-      await deleteProductFromDatabase(id);
-      const refreshOrder = await getProducts();
+      await bulkDeleteOfProduct({
+        category: findProduct?.type as any,
+        ids: [id],
+      });
+
       toast.dismiss(toastLoading);
       toast.success("Deleted successfully");
-      setFetchedProducts(refreshOrder.data.products);
+      const refreshProducts = fetchedProducts?.filter(
+        (product) => product?.id !== id
+      );
+      setFetchedProducts(refreshProducts);
     } catch (error) {
+      toast.dismiss(toastLoading);
+      toast.error("Failed to delete");
       throw new Error("Unable to delete order");
     }
   };
 
   // headers buttons
   useEffect(() => {
-    if (fetchedProducts?.length > 0) {
-      const headers = Object.keys(fetchedProducts[0]);
-      headers.unshift("Checkbox");
-      const indexOfImage = headers.indexOf("Image");
-      headers.splice(indexOfImage, 1);
-      const indexOfProduct = headers.indexOf("Product");
-      headers.splice(indexOfProduct, 1);
-      headers.splice(1, 0, "Product");
-      headers.push("Button");
-      setProductsHeader(headers);
-    }
-
     if (fetchedProducts.length > 0) {
       fetchedProducts?.forEach((product) => {
         dispatch(
           addProducts({
-            id: product.ID,
-            name: product.Name,
-            quantity: product.Quantity,
-            price: product.Price,
-            image: product.Image,
-            category: product.Category,
+            id: product.id,
+            name: product.name,
+            quantity: product.quantity,
+            price: product.price,
+            image: product.image,
+            category: product.category,
           })
         );
       });
@@ -288,8 +312,8 @@ const FoodPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start w-full ">
-        <form action="" className="relative w-full">
+      <div className="flex items-center justify-start w-full gap-2 ">
+        <form action="" className="relative ">
           <input
             id="search"
             type="search"
@@ -298,18 +322,29 @@ const FoodPage: React.FC = () => {
             placeholder="Search for products"
           />
         </form>
+        <div className="h-10  w-[1px] bg-gray-300 "></div>
+        <div>
+          <Trash2 className="size-7"/>
+         </div>
       </div>
 
       <Table
-        data={Products}
-        columns={Columns}
+        data={fetchedProducts}
+        columns={Columns as any}
         actionIconColor="red"
         actions={{
-          deleteFn: (value) => console.log(value),
-          editFn: (value) => console.log(value),
+          deleteFn: (value) => {
+            setIsDelete(true);
+            setId(value);
+          },
+          editFn: (value) => {
+            setIsEdit(false);
+            const findProduct = fetchedProducts?.find((product)=>product.id === value)
+             setModalData(findProduct)
+          },
         }}
         disableActions={false}
-        loading={false}
+        loading={loading}
         bodyHeight={400}
         pagination={{ currentPage: 1, perPage: 5 }}
         onPageChange={(pageNumber) => console.log(pageNumber)}
@@ -320,6 +355,17 @@ const FoodPage: React.FC = () => {
       <Modal close={isModalOpen} closeModal={closeModal}>
         <UploadFood />
       </Modal>
+      <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
+        <UpdateFood product={modalData as ArrangedProduct} closeModal={() => setIsEdit(true)} />
+      </Modal>
+      {isDelete && (
+        <Delete
+          closeModal={() => setIsDelete(false)}
+          id={id as string}
+          isClose={isDelete}
+          setDelete={(id) => handleDelete(id as string)}
+        />
+      )}
     </div>
   );
 };
