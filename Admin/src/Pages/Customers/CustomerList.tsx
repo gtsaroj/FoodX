@@ -1,24 +1,24 @@
-import { Download, Filter, OctagonX, Trash2 } from "lucide-react";
+import { Download, Filter, Trash2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import Table from "../Components/Common/Table/Table";
-import { DropDown } from "../Components/Common/DropDown/DropDown";
-import { getCustomerData } from "../firebase/db";
-import "../index.css";
+import { DropDown } from "../../Components/Common/DropDown/DropDown";
+import { getCustomerData } from "../../firebase/db";
 import {
   aggregateCustomerData,
   aggregateCustomerSearchData,
-} from "../Utility/CustomerUtils";
-import { CustomerType } from "../models/user.model";
-import { debounce } from "../Utility/Debounce";
-import { DatePickerDemo } from "../Components/DatePicker/DatePicker";
-import { deleteAllUser, deleteUser } from "../Services";
+} from "../../Utility/CustomerUtils";
+import { CustomerType } from "../../models/user.model";
+import { debounce } from "../../Utility/Debounce";
+import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
+import {
+  bulkDeleteOfCategory,
+  deleteAllUser,
+  deleteUser,
+} from "../../Services";
 import toast from "react-hot-toast";
-import { FilterButton } from "../Components/Common/Sorting/Sorting";
-import { ColumnProps } from "../models/table.model";
-import Modal from "../Components/Common/Popup/Popup";
-import UpdateCategory from "../Components/Upload/UpdateCustomer";
-import UpdateCustomer from "../Components/Upload/UpdateCustomer";
-import Delete from "../Components/Common/Delete/Delete";
+import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { CustomerTable } from "./CustomerTable";
+import "../../index.css";
+import Delete from "../../Components/Common/Delete/Delete";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
@@ -29,84 +29,9 @@ const CustomerList: React.FC = () => {
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
-
-  const Columns: ColumnProps[] = [
-    {
-      fieldName: (
-        <div className=" w-[50px]  text-start">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-      render: () => (
-        <div className="w-[50px] ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-    },
-    {
-      fieldName: " Name",
-      colStyle: { width: "280px", justifyContent: "start", textAlign: "start" },
-      render: (value: CustomerType) => (
-        <div className="w-[280px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
-          <div className="w-[50px] h-[50px]">
-            <img
-              className="w-full h-full rounded-full"
-              src={value.image}
-              alt=""
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="tracking-wide text-[15px] font-[500] contrast-125 ">
-              {" "}
-              {value.name}
-            </span>
-            <span className="tracking-wide text-[var(--dark-secondary-text)] text-sm font-[500] contrast-125">
-              {value.email}
-            </span>
-          </div>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Id",
-      colStyle: { width: "150px", textAlign: "start" },
-      render: (item: CustomerType) => (
-        <div className="w-[150px] text-[var(--dark-secondary-text)]  relative cursor-pointer group/id text-start ">
-          #{item.id?.substring(0, 8)}
-          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
-            {item.id}
-          </div>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Role",
-      colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
-      render: (item: CustomerType) => (
-        <div className=" w-[150px]  text-[var(--dark-text)]">
-          <p>{item.role}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Orders",
-      colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
-      render: (item: CustomerType) => (
-        <div className=" w-[150px] text-[var(--dark-text)] ">
-          <p>{item.totalOrder}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Amount",
-      colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
-      render: (item: CustomerType) => (
-        <div className=" w-[120px] text-[var(--dark-text)]  ">
-          <p>Rs {item.amountSpent}</p>
-        </div>
-      ),
-    },
-  ];
+  const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
+    { id: string }[]
+  >([]);
 
   const handleCustomerData = async () => {
     setLoading(true);
@@ -178,29 +103,80 @@ const CustomerList: React.FC = () => {
 
     let sortedCustomers;
     if (value === "Total spent") {
-      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
-        newOrder === "desc"
-          ? b.Amountspent - a.Amountspent
-          : a.Amountspent - b.Amountspent
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.amountSpent - a.amountSpent
+            : a.amountSpent - b.amountSpent
       );
     }
     if (value === "Name") {
-      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
-        newOrder === "desc"
-          ? b.Name.localeCompare(a.Name)
-          : a.Name.localeCompare(b.Name)
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name)
       );
     }
     if (value === "Total order") {
-      sortedCustomers = [...initialCustomer].sort((a: any, b: any) =>
-        newOrder === "desc"
-          ? b.Totalorder - a.Totalorder
-          : a.Totalorder - b.Totalorder
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.totalOrder - a.totalOrder
+            : a.totalOrder - b.totalOrder
       );
     }
 
     setSortOrder({ field: value, order: newOrder });
     setInitialCustomer(sortedCustomers as CustomerType[]);
+  };
+
+  const handleBulkSelected = (id: string, isChecked: boolean) => {
+    const refreshIds = bulkSelectedCustomer?.filter(
+      (product) => product.id !== id
+    );
+
+    isChecked
+      ? setBulkSelectedCustomer((prev) => {
+          const newCategory = prev?.filter((category) => category.id !== id);
+          const findProduct = initialCustomer?.find(
+            (category) => category.id === id
+          );
+          return newCategory
+            ? [...newCategory, { id: findProduct?.id }]
+            : [{ id: findProduct?.id }];
+        })
+      : setBulkSelectedCustomer(refreshIds);
+  };
+  const handleAllSelected = (isChecked: boolean) => {
+    if (isChecked) {
+      const AllCategories = initialCustomer?.map((product) => {
+        return { id: product.id };
+      });
+      setBulkSelectedCustomer(AllCategories as { id: string }[]);
+    }
+    if (!isChecked) {
+      setBulkSelectedCustomer([]);
+    }
+  };
+
+  const handleSelectedDelete = async () => {
+    try {
+      const toastLoader = toast.loading("Deleting category...");
+      const AllCategoriesId = bulkSelectedCustomer?.map(
+        (category) => category.id
+      );
+      await bulkDeleteOfCategory(AllCategoriesId);
+      toast.dismiss(toastLoader);
+      const refreshCategory = initialCustomer.filter((category) => {
+        return !AllCategoriesId.includes(category.id as string);
+      });
+      setInitialCustomer(refreshCategory);
+      toast.success("Successfully deleted");
+    } catch (error) {
+      console.error("Error deleting products:", error);
+      // Handle the error appropriately, e.g., show a notification to the user
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -284,24 +260,31 @@ const CustomerList: React.FC = () => {
           />
         </form>
         <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <div>
-          <Trash2 className="size-7"/>
-         </div>
+        <button
+          disabled={bulkSelectedCustomer.length >= 1 ? false : true}
+          onClick={() => setIsDelete(true)}
+        >
+          <Trash2 className="size-7" />
+        </button>
       </div>
-      <div className="w-full">
-        <Table
-          data={initialCustomer}
-          columns={Columns}
-          actionIconColor="red"
-          disableActions={true}
-          loading={loading}
-          bodyHeight={400}
-          pagination={{ currentPage: 1, perPage: 5 }}
-          onPageChange={(pageNumber) => console.log(pageNumber)}
-          disableNoData={initialCustomer?.length < 1 ? true : false}
-          headStyle={{ width: "100%" }}
+      <CustomerTable
+        selectedData={bulkSelectedCustomer}
+        actions={{
+          checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
+          checkFn: (id: string, isChecked: boolean) =>
+            handleBulkSelected(id, isChecked),
+        }}
+        loading={loading}
+        users={initialCustomer}
+      />
+      {isDelete && (
+        <Delete
+          id={id as string}
+          closeModal={() => setIsDelete(false)}
+          isClose={isDelete}
+          setDelete={() => handleSelectedDelete()}
         />
-      </div>
+      )}
     </div>
   );
 };

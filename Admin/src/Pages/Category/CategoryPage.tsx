@@ -12,107 +12,36 @@ import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import {
-  bulkeDeleteOfCategory,
+  bulkDeleteOfCategory,
   deleteCategory,
   getCategories,
 } from "../../Services";
 import toast from "react-hot-toast";
-import Table from "../../Components/Common/Table/Table";
 import { CategoryType } from "../../models/category.model";
-import { ColumnProps } from "../../models/table.model";
 import Delete from "../../Components/Common/Delete/Delete";
+import { CategoryTable } from "./CategoryTable";
 
 export const CategoryPage: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
   const [isUploadModalOpen, setIsUPloadModalOpen] = useState<boolean>(true);
-  const [categoryData, setCategoryData] = useState<CategoryType[]>([]);
+  const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [categoryId, setCategoryId] = useState<string>("");
+  const [isBulkDelete, setIsBulkDeleted] = useState<boolean>(false);
+  const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
+    {
+      category: "specials" | "products";
+      id: string;
+    }[]
+  >([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
+  const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
+    { id: string }[]
+  >([]);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const Columns: ColumnProps[] = [
-    {
-      fieldName: (
-        <div className=" w-[50px]  text-start">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-      render: () => (
-        <div className="w-[50px] ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-    },
-    {
-      fieldName: "Name",
-      colStyle: { width: "150px", justifyContent: "start", textAlign:"start" },
-      render: (value: CategoryType) => (
-        <div className="w-[150px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
-          <div className="w-[40px] h-[40px]">
-            <img
-              className="w-full h-full rounded-full"
-              src={value.image}
-              alt=""
-            />
-          </div>
-          <span> {value.name}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Id",
-      colStyle: { width: "120px", textAlign:"start" },
-      render: (item: CategoryType) => (
-        <div className="w-[120px] relative cursor-pointer group/id text-start ">
-          #{item.id?.substring(0, 8)}
-          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
-            {item.id}
-          </div>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Items",
-      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
-      render: (item: CategoryType) => (
-        <div className=" w-[100px]  text-[var(--dark-text)]">
-          <p>{item.order}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Orders",
-      colStyle: { width: "120px", justifyContent: "start", textAlign:"start" },
-      render: (item: CategoryType) => (
-        <div className=" w-[120px] text-[var(--dark-text)] ">
-          <p>{item.order}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Revenue",
-      colStyle: { width: "120px", justifyContent: "start", textAlign:"start" },
-      render: (item: CategoryType) => (
-        <div className=" w-[120px] text-[var(--dark-text)]  ">
-          <p>Rs {item.revenue}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Rank",
-      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
-      render: (item: CategoryType) => (
-        <div className=" w-[100px] flex  text-[var(--dark-text)] gap-2 items-center justify-start ">
-          <div className="mt-1">{item.rank}</div>
-        </div>
-      ),
-    },
-  ];
 
   const handleAction = async (value: string, type: string) => {
     console.log(value, type);
@@ -122,7 +51,7 @@ export const CategoryPage: React.FC = () => {
       toast.dismiss(toastLoader);
       toast.success("Category deleted successfully");
       const refreshCategory = categoryData?.filter(
-        (category) => category.ID !== value
+        (category) => category.id !== value
       );
       setCategoryData(refreshCategory);
     } else if (type === "Edit") {
@@ -160,7 +89,7 @@ export const CategoryPage: React.FC = () => {
         revenue: 15000,
         image: category.image,
       }));
-      setCategoryData(categorydata);
+      setInitialCategory(categorydata);
     } catch (error) {
       setLoading(false);
       return console.log(`Error found while fetching category` + error);
@@ -168,36 +97,87 @@ export const CategoryPage: React.FC = () => {
     setLoading(false);
   };
 
+  const handleBulkSelected = (id: string, isChecked: boolean) => {
+    const refreshIds = bulkSelectedCategory?.filter(
+      (product) => product.id !== id
+    );
+
+    isChecked
+      ? setBulkSelectedCategory((prev) => {
+          const newCategory = prev?.filter((category) => category.id !== id);
+          const findProduct = initialCategory?.find(
+            (category) => category.id === id
+          );
+          return newCategory
+            ? [...newCategory, { id: findProduct?.id }]
+            : [{ id: findProduct?.id }];
+        })
+      : setBulkSelectedCategory(refreshIds);
+  };
+  const handleAllSelected = (isChecked: boolean) => {
+    if (isChecked) {
+      const AllCategories = initialCategory?.map((product) => {
+        return { id: product.id };
+      });
+      setBulkSelectedCategory(AllCategories as { id: string }[]);
+    }
+    if (!isChecked) {
+      setBulkSelectedCategory([]);
+    }
+  };
+
+  const handleSelectedDelete = async () => {
+    try {
+      const toastLoader = toast.loading("Deleting category...");
+      const AllCategoriesId = bulkSelectedCategory?.map(
+        (category) => category.id
+      );
+      await bulkDeleteOfCategory(AllCategoriesId);
+      toast.dismiss(toastLoader);
+      const refreshCategory = initialCategory.filter((category) => {
+        return !AllCategoriesId.includes(category.id as string);
+      });
+      setInitialCategory(refreshCategory);
+      toast.success("Successfully deleted");
+    } catch (error) {
+      console.error("Error deleting products:", error);
+    }
+    setIsBulkDeleted(false);
+  };
+
   useEffect(() => {
-    const categories = categoryData.map((category) => category.name);
+    const categories = initialCategory.map((category) => category.name);
     dispatch(categoryAdd(categories));
-  }, [categoryData, dispatch]);
+  }, [initialCategory, dispatch]);
 
   useEffect(() => {
     getAllCategories();
   }, []);
 
   const SearchingCategories = async (value: string) => {
-    const getCategories = (await getCategory("bnw")).icons as any;
-
-    const arrayOfObject = Object.keys(getCategories as any).map((item) => ({
-      Category: item,
-      Image: getCategories[item],
-    }));
-    const filterCategories = SearchCategory(arrayOfObject, value);
-    setCategoryData(filterCategories);
+    if (value.length > 0) {
+      const filterCategories = SearchCategory(initialCategory, value);
+      setInitialCategory(filterCategories);
+    } else {
+      getAllCategories();
+    }
   };
 
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
-    categoryData,
+    initialCategory,
   ]);
 
   const handleDelete = async (id: string) => {
     if (!id) return toast.error("Category not exist");
     const toastLoader = toast.loading("Deleting category...");
     try {
-      await bulkeDeleteOfCategory(id);
       toast.dismiss(toastLoader);
+      await deleteCategory(id);
+      toast.success("Successfully deleted");
+      const refreshCategory = initialCategory?.filter(
+        (category) => category.id !== id
+      );
+      setInitialCategory(refreshCategory);
     } catch (error) {
       toast.dismiss(toastLoader);
       return toast.error("Failed to delete");
@@ -274,31 +254,31 @@ export const CategoryPage: React.FC = () => {
           />
         </form>
         <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <div>
-          <Trash2 className="size-7"/>
-         </div>
+        <button
+          disabled={bulkSelectedCategory?.length >= 1 ? false : true}
+          onClick={() => setIsBulkDeleted(true)}
+        >
+          <Trash2 className="size-7" />
+        </button>
       </div>
-      <Table
-        data={categoryData}
-        columns={Columns}
-        actionIconColor="red"
-        actions={{
-          deleteFn: (value: string) => {
-            setIsDelete(true);
-            setId(value);
-          },
-          editFn: (value: string) => {
-            setIsEdit(false);
-            setId(value);
-          },
-        }}
-        disableActions={false}
+      <CategoryTable
+        selectedData={bulkSelectedCategory}
         loading={loading}
-        bodyHeight={400}
-        pagination={{ currentPage: 1, perPage: 5 }}
-        onPageChange={(pageNumber) => console.log(pageNumber)}
-        disableNoData={false}
-        headStyle={{ width: "100%" }}
+        category={initialCategory}
+        actions={{
+          delete: (id) => {
+            setId(id);
+            setIsDelete(true);
+          },
+          edit: (id) => {
+            setId(id);
+            setIsEdit(false);
+          },
+          checkFn: (id, isChecked) => {
+            handleBulkSelected(id, isChecked);
+          },
+          checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
+        }}
       />
       <Modal
         close={isUploadModalOpen}
@@ -317,6 +297,14 @@ export const CategoryPage: React.FC = () => {
           id={id as string}
           isClose={isDelete}
           setDelete={(id) => handleDelete(id as string)}
+        />
+      )}
+      {isBulkDelete && (
+        <Delete
+          isClose={isBulkDelete}
+          closeModal={() => setIsBulkDeleted(false)}
+          id={id as string}
+          setDelete={() => handleSelectedDelete()}
         />
       )}
     </div>

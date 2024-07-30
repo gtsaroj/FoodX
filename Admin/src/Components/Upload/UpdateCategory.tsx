@@ -46,7 +46,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, "category" as any);
+    const imageUrl = await storeImageInFirebase(image, {folder: "categories"});
     setNewData(imageUrl);
   };
   return (

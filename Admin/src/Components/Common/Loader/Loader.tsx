@@ -17,6 +17,7 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
       setLoader(true);
     };
   }, [url]);
+  console.log(url);
 
   return loader ? (
     <div className="w-screen z-[10000000]   left-0 bg-[var(--popup-bg)] top-0 fixed h-screen ">

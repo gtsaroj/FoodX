@@ -117,19 +117,6 @@ export const getOrders = async () => {
     throw new Error(`Error while getting revenueperday : ${error}`);
   }
 };
-export const getBanners = async () => {
-  try {
-    const response = await globalRequest({
-      method: "post",
-      url: "users/register",
-    });
-    return response.data;
-  } catch (error) {
-    if (error === "You have not access, please login again...")
-      Store.dispatch(authLogout());
-    console.log(`Error while getting revenueperday : ${error}`);
-  }
-};
 
 export const postProducts = async (data: any) => {
   try {
@@ -295,6 +282,8 @@ export const updateTicket = async (data: TicketType) => {
     return console.log(`Error while creating ticket` + error);
   }
 };
+
+// categories
 export const addCategory = async (data: CategoryType) => {
   try {
     const response = await makeRequest({
@@ -340,6 +329,18 @@ export const getCategories = async (): Promise<CategoryType[]> => {
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to fetch  categories" + error);
+  }
+};
+export const bulkDeleteOfCategory = async (id: string[]) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "categories/bulk-delete",
+      data: { ids: [...id] },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete categories");
   }
 };
 
@@ -395,19 +396,7 @@ export const deleteUser = async (data: UserDeleteType) => {
     throw new Error("Unable to delete user" + error);
   }
 };
-
-export const bulkeDeleteOfCategory = async (id: string) => {
-  try {
-    const response = await makeRequest({
-      method: "delete",
-      url: "categories/bulk-delete",
-      data: [id],
-    });
-    return response.data.data;
-  } catch (error) {
-    throw new Error("Unable to delete categories");
-  }
-};
+// product
 export const bulkDeleteOfProduct = async (data: {
   ids: string[];
   category: "products" | "specials";
@@ -416,7 +405,7 @@ export const bulkDeleteOfProduct = async (data: {
     const response = await makeRequest({
       method: "delete",
       url: "products/bulk-delete",
-      data: data,
+      data: { category: data.category, ids: [...data.ids] },
     });
     return response.data.data;
   } catch (error) {
@@ -437,5 +426,56 @@ export const updateOrderStatus = async (data: {
     return response.data.data;
   } catch (error) {
     throw new Error("unable to update order status" + error);
+  }
+};
+
+// banner
+export const addBanner = async (data: { name: string; img: string }) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      data: { title: data.name, image: data.img },
+      url: "banners/add-banner",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to add banners" + error);
+  }
+};
+
+export const getBanners = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "banners/get-banners",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to fetch banners" + error);
+  }
+};
+
+export const bulkDeleteBanner = async (data: { id: string[] }) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      data: { ids: [...data.id] },
+      url: "banners/bulk-delete",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete banner" + error);
+  }
+};
+export const deleteBanner = async (data: { id: string }) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      data: { id: data.id },
+      url: "banners/delete-banner",
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete banners" + error);
   }
 };

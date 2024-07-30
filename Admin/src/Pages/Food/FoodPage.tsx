@@ -21,14 +21,22 @@ import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete from "../../Components/Common/Delete/Delete";
+import { FoodTable } from "./FoodTable";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
   const [userSearch, setUserSearch] = useState<string>("");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [modalData, setModalData] = useState<ArrangedProduct>();
   const [id, setId] = useState<string>();
+  const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
+    {
+      category: "specials" | "products";
+      id: string;
+    }[]
+  >([]);
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
@@ -36,76 +44,6 @@ const FoodPage: React.FC = () => {
     order: "desc",
   });
   const [loading, setLoading] = useState<boolean>(false);
-
-  const Columns: ColumnProps[] = [
-    {
-      fieldName: (
-        <div className=" w-[30px] flex items-center ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-      render: () => (
-        <div className="w-[30px] ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-    },
-    {
-      fieldName: "Name",
-      colStyle: { width: "200px", justifyContent: "start", textAlign:"start" },
-      render: (value: ArrangedProduct) => (
-        <div className="w-[200px] text-[var(--dark-text)] tracking-wide  flex items-center justify-start gap-3 ">
-          <div className="w-[50px] h-[48px]">
-            <img
-              className="w-full h-full rounded-full"
-              src={value.image}
-              alt=""
-            />
-          </div>
-          <span> {value.name}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Unit price",
-      colStyle: { width: "120px", justifyContent: "start",textAlign:"start", padding :"0px 15px 0px 0px" },
-      render: (value: ArrangedProduct) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[120px] ">
-          <p>Rs {value.price}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Orders",
-      colStyle: { width: "120px", justifyContent: "start",textAlign:"start" },
-      render: (value: ArrangedProduct) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[120px] ">
-          <p>{value.order}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Revenue",
-      colStyle: { width: "120px" , textAlign:"start"},
-      render: (value: ArrangedProduct) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[120px]   text-start ">
-          <p>Rs {value.revenue}</p>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Rating",
-      colStyle: { width: "100px", justifyContent: "start", textAlign:"start" },
-      render: (value: ArrangedProduct) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[100px] flex  gap-2 items-center justify-start ">
-          <div className="">{value.rating}</div>
-          <div className="scale-[1.1]">
-          ⭐
-          </div>
-        </div>
-      ),
-    },
-  ];
 
   // get all products
   const getAllProducts = async () => {
@@ -162,25 +100,71 @@ const FoodPage: React.FC = () => {
 
     let sortedCustomers;
     if (value === "Name") {
-      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
-        newOrder === "desc"
-          ? b.Name.localeCompare(a.Name)
-          : a.Name.localeCompare(b.Name)
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc"
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name)
       );
     }
     if (value === "Quantity") {
-      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
-        newOrder === "desc" ? b.Quantity - a.Quantity : a.Quantity - b.Quantity
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc"
+            ? b.quantity - a.quantity
+            : a.quantity - b.quantity
       );
     }
     if (value === "Price") {
-      sortedCustomers = [...fetchedProducts].sort((a: any, b: any) =>
-        newOrder === "desc" ? b.Price - a.Price : a.Price - b.Price
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.price - a.price : a.price - b.price
       );
     }
 
     setSortOrder({ field: value, order: newOrder });
     setFetchedProducts(sortedCustomers as ArrangedProduct[]);
+  };
+
+  const handleSelectedDelete = async () => {
+    const toastLoader = toast.loading("Deleting products...");
+    try {
+      // Separate products into specials and normal products
+      const { specials, products } = bulkSelectedProduct.reduce<{
+        specials: string[];
+        products: string[];
+      }>(
+        (acc, product) => {
+          if (product.category === "specials") {
+            acc.specials.push(product.id);
+          } else if (product.category === "products") {
+            acc.products.push(product.id);
+          }
+          return acc;
+        },
+        { specials: [], products: [] }
+      );
+      if (specials.length > 0) {
+        await bulkDeleteOfProduct({ category: "specials", ids: specials });
+      }
+
+      // Perform bulk delete for normal products
+      if (products.length > 0) {
+        await bulkDeleteOfProduct({ category: "products", ids: products });
+      }
+      toast.dismiss(toastLoader);
+      const refreshProducts = fetchedProducts?.filter((product) => {
+        return !specials.includes(product.id) && !products.includes(product.id);
+      });
+      setIsDelete(false);
+      setFetchedProducts(refreshProducts);
+      toast.success("Successfully deleted");
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Unable to delete products");
+      console.error("Error deleting products:", error);
+    }
+    setIsBulkDelete(false);
   };
 
   useEffect(() => {
@@ -203,15 +187,47 @@ const FoodPage: React.FC = () => {
       const refreshProducts = fetchedProducts?.filter(
         (product) => product?.id !== id
       );
+      setIsDelete(false);
       setFetchedProducts(refreshProducts);
     } catch (error) {
+      setIsDelete(false);
       toast.dismiss(toastLoading);
       toast.error("Failed to delete");
       throw new Error("Unable to delete order");
     }
   };
+  const handleBulkSelected = (id: string, isChecked: boolean) => {
+    const refreshIds = bulkSelectedProduct?.filter(
+      (product) => product.id !== id
+    );
 
-  // headers buttons
+    isChecked
+      ? setBulkSelectedProduct((prev) => {
+          const newProduct = prev?.filter((product) => product.id !== id);
+          const findProduct = fetchedProducts?.find(
+            (product) => product.id === id
+          );
+          return newProduct
+            ? [
+                ...newProduct,
+                { category: findProduct?.type, id: findProduct?.id },
+              ]
+            : [{ category: findProduct?.type, id: findProduct?.id }];
+        })
+      : setBulkSelectedProduct(refreshIds);
+  };
+  const handleAllSelected = (isChecked: boolean) => {
+    if (isChecked) {
+      const allProducts = fetchedProducts?.map((product) => {
+        return { category: product.type, id: product.id };
+      });
+      setBulkSelectedProduct(allProducts);
+    }
+    if (!isChecked) {
+      setBulkSelectedProduct([]);
+    }
+  };
+
   useEffect(() => {
     if (fetchedProducts.length > 0) {
       fetchedProducts?.forEach((product) => {
@@ -323,40 +339,44 @@ const FoodPage: React.FC = () => {
           />
         </form>
         <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <div>
-          <Trash2 className="size-7"/>
-         </div>
+        <button
+          disabled={bulkSelectedProduct.length >= 1 ? false : true}
+          onClick={() => setIsDelete(true)}
+        >
+          <Trash2 className="size-7" />
+        </button>
       </div>
 
-      <Table
-        data={fetchedProducts}
-        columns={Columns as any}
-        actionIconColor="red"
+      <FoodTable
+        selectedData={bulkSelectedProduct}
+        products={fetchedProducts}
         actions={{
-          deleteFn: (value) => {
+          delete: (id) => {
+            setId(id);
             setIsDelete(true);
-            setId(value);
           },
-          editFn: (value) => {
+          edit: (id) => {
+            const findProduct = fetchedProducts?.find(
+              (product) => product.id === id
+            );
             setIsEdit(false);
-            const findProduct = fetchedProducts?.find((product)=>product.id === value)
-             setModalData(findProduct)
+            setModalData(findProduct);
           },
+          checkFn: (id: string, isChecked: boolean) =>
+            handleBulkSelected(id, isChecked),
+          checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
         }}
-        disableActions={false}
         loading={loading}
-        bodyHeight={400}
-        pagination={{ currentPage: 1, perPage: 5 }}
-        onPageChange={(pageNumber) => console.log(pageNumber)}
-        disableNoData={fetchedProducts?.length < 1 ? true : false}
-        headStyle={{ width: "100%" }}
       />
 
       <Modal close={isModalOpen} closeModal={closeModal}>
         <UploadFood />
       </Modal>
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
-        <UpdateFood product={modalData as ArrangedProduct} closeModal={() => setIsEdit(true)} />
+        <UpdateFood
+          product={modalData as ArrangedProduct}
+          closeModal={() => setIsEdit(true)}
+        />
       </Modal>
       {isDelete && (
         <Delete
@@ -364,6 +384,14 @@ const FoodPage: React.FC = () => {
           id={id as string}
           isClose={isDelete}
           setDelete={(id) => handleDelete(id as string)}
+        />
+      )}
+      {isBulkDelete && (
+        <Delete
+          closeModal={() => setIsBulkDelete(false)}
+          id={id as string}
+          isClose={isBulkDelete}
+          setDelete={() => handleSelectedDelete()}
         />
       )}
     </div>

@@ -82,6 +82,6 @@ export interface OrderModal {
   products?: string[];
   rank?: string
   orderRequest: {time: string,fulldate: string};
-  status: "Received" | "Preparing" | "Delivered" | "Canceled";
+  status: "Received" | "Preparing" | "Delivered" | "Canceled" | "Pending";
   delivered: {time: string,fulldate: string};
 }

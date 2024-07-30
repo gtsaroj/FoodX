@@ -10,7 +10,7 @@ import {
 import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
 import Analytics from "./Pages/Analytics/Analytics";
 import OrderList from "./Pages/Order/OrderList";
-import CustomerList from "./Pages/CustomerList";
+import CustomerList from "./Pages/Customers/CustomerList";
 import TicketPage from "./Pages/Tickets/TicketPage";
 import { AdminProfile } from "./Pages/Admin/AdminProfile";
 import BannerPage from "./Pages/BannerPage";
@@ -19,12 +19,11 @@ import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState, persistor } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/Category/CategoryPage";
 import Navbar from "./Navbar/Navbar";
-
 
 const MainPage = () => {
   return (
