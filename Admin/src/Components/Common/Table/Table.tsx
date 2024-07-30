@@ -1,6 +1,6 @@
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import Pagination from "../Pagination/Pagination";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -8,6 +8,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export declare namespace Table {
   interface TableModalProps<T> {
     data: Array<T>;
+    selectedData?: Array<T>;
     columns: ColumnProps[];
     actions?: TableActions;
     loading?: boolean;
@@ -23,12 +24,14 @@ export declare namespace Table {
     disableActions?: boolean;
   }
   interface TableActions {
+    checkAllFn?: (isChecked: boolean) => void;
     editFn?: (id: string) => void;
     deleteFn?: (id: string) => void;
     viewFn?: (id: string) => void;
+    checkFn?: (id: string, isChecked: boolean) => void;
   }
   export interface ColumnProps {
-    fieldName: string;
+    fieldName: string | React.ReactNode;
     colStyle?: React.CSSProperties;
     render?: (item: any) => React.ReactNode;
   }
@@ -44,12 +47,14 @@ function Table<T extends { id: string }>({
   disableNoData,
   loading,
   onPageChange,
+  selectedData,
   pagination = { perPage: 2, currentPage: 1 },
 }: Table.TableModalProps<T>): React.ReactElement {
+
   const [currentPage, setCurrentPage] = useState<number>(
     pagination.currentPage as number
   );
-  const [currentData, setCurrentData] = useState();
+  const [currentData, setCurrentData] = useState<any[]>();
 
   useEffect(() => {
     const startIndex = ((currentPage || 1) - 1) * (pagination?.perPage || 2);
@@ -64,19 +69,35 @@ function Table<T extends { id: string }>({
       onPageChange(page);
     }
   };
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+ console.log(selectedData)
+  const isCheckedData = selectedData?.map((data) => data.id);
+
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded my-6 ">
       <table className="w-full border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
         <thead className="w-full px-2 bg-[var(--light-background)] ">
           <tr className="w-full border-b flex justify-start gap-5 items-center overflow-auto  ">
+            {!!actions?.checkFn && !disableActions && (
+              <th className="w-[30px]">
+                <input
+                  onChange={(event) => {
+                    if (!actions.checkAllFn) return;
+                    actions.checkAllFn(event.target.checked);
+                    setIsChecked(event.target.checked);
+                  }}
+                  className="w-4 h-4 cursor-pointer"
+                  type="checkbox"
+                />
+              </th>
+            )}
             {columns.map((item, index) => (
               <th
-               
                 className="flex items-center  justify-center font-bold  py-5 "
                 key={index}
               >
                 {typeof item.fieldName === "string" ? (
-                  <div  style={item.colStyle}> {item.fieldName}</div>
+                  <div style={item.colStyle}> {item.fieldName}</div>
                 ) : React.isValidElement(item.fieldName) ? (
                   item.fieldName
                 ) : (
@@ -102,7 +123,7 @@ function Table<T extends { id: string }>({
           }}
         >
           {loading ? (
-            <div className="w-full ">
+            <tr className="w-full ">
               <Skeleton
                 height={100}
                 baseColor="var(--light-background)"
@@ -115,7 +136,7 @@ function Table<T extends { id: string }>({
                 highlightColor="var(--light-foreground)"
                 count={3}
               />
-            </div>
+            </tr>
           ) : (
             <>
               {currentData &&
@@ -124,9 +145,24 @@ function Table<T extends { id: string }>({
                     className=" border-b px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
                     key={(item?.id && item.id) || index}
                   >
-                    {columns?.map(({ _, render }, index) => (
+                    {!!actions?.checkFn && !disableActions && (
+                      <th className="w-[30px]">
+                        <input
+                          
+                          checked={isCheckedData?.includes(item.id)}
+                          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                            actions.checkFn &&
+                              actions.checkFn(item.id, event.target.checked);
+                            setIsChecked(event.target.checked);
+                          }}
+                          className="w-4 h-4 cursor-pointer"
+                          type="checkbox"
+                        />
+                      </th>
+                    )}
+                    {columns?.map(({ render }, index) => (
                       <td className="table-body-content" key={index}>
-                        {render(item)}
+                        {render ? render(item) : "Default"}
                       </td>
                     ))}
                     {!!actions?.editFn && !disableActions && (

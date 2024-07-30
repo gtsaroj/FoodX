@@ -8,7 +8,7 @@ export interface authState {
 }
 
 export interface ImageFolders {
-  folder: "users" | "products" | "banners";
+  folder: "users" | "products" | "banners" | "categories";
 }
 
 export interface DbUser {

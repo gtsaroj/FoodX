@@ -1,53 +1,57 @@
-import { Filter, Plus } from "lucide-react";
-import React, { useState } from "react";
+import { Filter, Plus, Trash2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
 import UploadBanner from "../Components/Upload/UploadBanner";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
 import Table from "../Components/Common/Table/Table";
-import { Banner } from "../data.json";
 import { BannerModel } from "../models/banner.model";
 import { ColumnProps } from "../models/table.model";
 import UpdateBanner from "../Components/Upload/UpdateBanner";
 import Delete from "../Components/Common/Delete/Delete";
+import toast from "react-hot-toast";
+import { bulkDeleteBanner, deleteBanner, getBanners } from "../Services";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
+  const [initialBanner, setInitialBanner] = useState<BannerModel[]>([]);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
+  const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
+  const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
+    { id: string }[]
+  >([]);
 
   const closeModal = () => setIsModelOpen(true);
 
   const columns: ColumnProps[] = [
     {
-      fieldName: (
-        <div className=" w-[50px] flex items-center justify-center ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-      render: () => (
-        <div className=" w-[50px] ">
-          <input className="w-4 h-4 cursor-pointer" type="checkbox" />
-        </div>
-      ),
-    },
-    {
       fieldName: "Id",
-      colStyle: { width: "100px", textAlign: "start" },
+      colStyle: { width: "150px", textAlign: "start" },
       render: (item: BannerModel) => (
-        <div className="w-[100px] ">#{item.id}</div>
+        <div className="w-[150px] text-[var(--dark-secondary-text)]  relative cursor-pointer group/id text-start ">
+          #{item.id?.substring(0, 8)}
+          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
+            {item.id}
+          </div>
+        </div>
       ),
     },
     {
       fieldName: "Name",
       colStyle: { width: "200px", justifyContent: "start", textAlign: "start" },
       render: (item: BannerModel) => (
-        <div className="w-[200px]">{item.name}</div>
+        <div className="w-[200px]">{item.title}</div>
       ),
     },
     {
       fieldName: "Image",
-      colStyle: { width: "200px", justifyContent: "start", textAlign: "center", padding: "0px 15px 0px 0px" },
+      colStyle: {
+        width: "200px",
+        justifyContent: "start",
+        textAlign: "center",
+        padding: "0px 15px 0px 0px",
+      },
       render: (item: BannerModel) => (
         <div className="w-[200px] flex items-center justify-start">
           {" "}
@@ -60,27 +64,120 @@ const FoodPage: React.FC = () => {
       colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
       render: (item: BannerModel) => (
         <div className="flex flex-col items-start w-[150px]  ">
-          <span>{item.date.fulldate + ","}</span>
-          <span>{item.date.time}</span>
+          <span>{item.date && item.date.fulldate + ","}</span>
+          <span>{item.date && item.date.time}</span>
         </div>
       ),
     },
   ];
 
-  function handleDelete(arg0?: string): void {
-    throw new Error("Function not implemented.");
-  }
+  const getAllBanners = async () => {
+    try {
+      const response = (await getBanners()) as BannerModel[];
+      console.log(response);
+      const fetchedBanners: BannerModel[] = response?.map((banner) => {
+        return {
+          id: banner.id,
+          title: banner.title,
+          image: banner.image,
+          date: { fulldate: "2024-6-01", time: "04:45" },
+        };
+      });
+      setInitialBanner(fetchedBanners);
+    } catch (error) {
+      throw new Error("Unable to fetch banners");
+    }
+  };
+
+  const handleBulkSelected = (id: string, isChecked: boolean) => {
+    const refreshIds = bulkSelectedBanner?.filter(
+      (banner: { id: string }) => banner.id !== id
+    );
+
+    isChecked
+      ? setBulkSelectedBanner((prev) => {
+          const newBanner = prev?.filter((banner) => banner.id !== id);
+          const findBanner = initialBanner?.find((banner) => banner.id === id);
+          return newBanner
+            ? [...newBanner, { id: findBanner?.id }]
+            : [{ id: findBanner?.id }];
+        })
+      : setBulkSelectedBanner(refreshIds);
+  };
+  const handleAllSelected = (isChecked: boolean) => {
+    if (isChecked) {
+      const AllCategories = initialBanner?.map((banner) => {
+        return { id: banner.id };
+      });
+      setBulkSelectedBanner(AllCategories as { id: string }[]);
+    }
+    if (!isChecked) {
+      setBulkSelectedBanner([]);
+    }
+  };
+
+  const handleSelectedDelete = async () => {
+    const toastLoader = toast.loading("Deleting category...");
+    try {
+      const AllCategoriesId = bulkSelectedBanner?.map(
+        (category) => category.id
+      );
+      await bulkDeleteBanner({ id: [...AllCategoriesId] });
+      toast.dismiss(toastLoader);
+      const refreshCategory = initialBanner.filter((category) => {
+        return !AllCategoriesId.includes(category.id as string);
+      });
+      setInitialBanner(refreshCategory);
+      toast.success("Successfully deleted");
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.dismiss("Failed to delete");
+      console.error("Error deleting products:", error);
+      // Handle the error appropriately, e.g., show a notification to the user
+    }
+    setIsBulkDelete(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!id) return toast.error("Banner not exist in database");
+    const toastLoader = toast.loading("Deleting banner...");
+    try {
+      await deleteBanner({ id: id });
+      toast.dismiss(toastLoader);
+      toast.success("Successfully deleted");
+      const refreshBanner = initialBanner?.filter((banner) => banner.id !== id);
+      setInitialBanner(refreshBanner);
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Unable to delete banner");
+      throw new Error("Unable to delet banner");
+    }
+    setIsDelete(false);
+  };
+
+  useEffect(() => {
+    getAllBanners();
+  }, []);
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
       <div className="flex items-center justify-between w-full">
-        <div className="flex flex-col items-start justify-center gap-1">
-          <h4 className="text-xl tracking-wide text-[var(--dark-text)]">
-            Banners
-          </h4>
-          <p className="text-[14px] text-[var(--dark-secondary-text)] text-nowrap ">
-            6 entries found
-          </p>
+        <div className="flex items-center justify-center gap-8">
+          <div className="flex flex-col items-start justify-center gap-1">
+            <h4 className="text-xl tracking-wide text-[var(--dark-text)]">
+              Banners
+            </h4>
+            <p className="text-[14px] text-[var(--dark-secondary-text)] text-nowrap ">
+              {initialBanner.length} entries found
+            </p>
+          </div>
+          <button
+            onClick={() => setIsBulkDelete(true)}
+            disabled={bulkSelectedBanner.length >= 1 ? false : true}
+            className="w-[1px] h-10 bg-slate-500 "
+          >
+            <Trash2 />
+          </button>
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
@@ -118,8 +215,9 @@ const FoodPage: React.FC = () => {
         </div>
       </div>
       <Table
+        selectedData={bulkSelectedBanner}
         columns={columns}
-        data={Banner}
+        data={initialBanner}
         actions={{
           deleteFn: (value: string) => {
             setIsDelete(true);
@@ -129,6 +227,9 @@ const FoodPage: React.FC = () => {
             setIsEdit(false);
             setId(value);
           },
+          checkFn: (id: string, isChecked: boolean) =>
+            handleBulkSelected(id, isChecked),
+          checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
         }}
         pagination={{ currentPage: 1, perPage: 5 }}
       />
@@ -146,6 +247,14 @@ const FoodPage: React.FC = () => {
           id={id as string}
           isClose={isDelete}
           setDelete={(id) => handleDelete(id as string)}
+        />
+      )}
+      {isBulkDelete && (
+        <Delete
+          id={id as string}
+          setDelete={() => handleSelectedDelete()}
+          isClose={isBulkDelete}
+          closeModal={() => setIsBulkDelete(false)}
         />
       )}
     </div>

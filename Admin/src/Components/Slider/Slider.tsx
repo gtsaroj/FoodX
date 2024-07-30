@@ -68,7 +68,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
       <div className="flex flex-col justify-between w-full h-full gap-5 py-2 overflow-auto ">
         {/* College Logo Section */}
         <div className="flex items-center justify-center w-full py-3 ">
-          <div className="items-center justify-center hidden lg:flex ">
+          <div className="items-center justify-center hidden xl:flex ">
             <img
               className=" xl:w-full max-w-[200px]"
               src={collegeLogo}

@@ -35,16 +35,17 @@ export interface CustomerType {
   name: string;
   email: string;
   image?: string;
-  amountSpent: string | number;
-  totalOrder: string | number;
+  amountSpent: number;
+  totalOrder: number;
   role: string;
 }
 
 export interface TopCustomerType {
-  ImageFolders: string;
-  Name: string;
-  Email: string;
-  Image: string;
-  Amountspent: string | number;
-  Totalorder: string | number;
+  id?: string;
+  ImageFolders?: string;
+  name: string;
+  email: string;
+  image: string;
+  amountSpent: number;
+  totalOrder: number;
 }

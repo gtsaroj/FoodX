@@ -1,6 +1,6 @@
 export interface BannerModel {
   id: string;
-  name: string;
+  title: string;
   image: string;
-  date: { fulldate: string; time: string };
+  date?: { fulldate: string; time: string };
 }
