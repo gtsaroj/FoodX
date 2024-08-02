@@ -70,12 +70,11 @@ function Table<T extends { id: string }>({
     }
   };
   const [isChecked, setIsChecked] = useState<boolean>(false);
- console.log(selectedData)
   const isCheckedData = selectedData?.map((data) => data.id);
 
   return (
-    <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded my-6 ">
-      <table className="w-full border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
+    <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
+      <table className="w-full relative border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
         <thead className="w-full px-2 bg-[var(--light-background)] ">
           <tr className="w-full border-b flex justify-start gap-5 items-center overflow-auto  ">
             {!!actions?.checkFn && !disableActions && (
@@ -142,7 +141,7 @@ function Table<T extends { id: string }>({
               {currentData &&
                 currentData.map((item, index) => (
                   <tr
-                    className=" border-b px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
+                    className=" border-b  px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
                     key={(item?.id && item.id) || index}
                   >
                     {!!actions?.checkFn && !disableActions && (

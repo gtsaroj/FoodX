@@ -9,7 +9,6 @@ export const getRecentOrders = async () => {
     const totalOrders = orders.data as Order[];
     const aggregateData = totalOrders?.map(async (item) => {
       const user = await getUserInfo(item?.uid);
-      console.log(user)
       if (user) {
         const productNames = item.products?.map(
           (product) =>

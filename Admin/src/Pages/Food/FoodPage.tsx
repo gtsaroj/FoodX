@@ -1,4 +1,4 @@
-import { Filter, Plus, Star, Trash2 } from "lucide-react";
+import { ChevronUp, Filter, Plus, Star, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -39,6 +39,7 @@ const FoodPage: React.FC = () => {
   >([]);
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
+  const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
   const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
     field: "",
     order: "desc",
@@ -62,9 +63,9 @@ const FoodPage: React.FC = () => {
           quantity: product.quantity as number,
           price: product.price as number,
           category: product.tag,
-          order: 20,
-          rating: 4.3,
-          revenue: 15000,
+          order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
+          rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+          revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
           type: "products",
         })
       );
@@ -76,9 +77,9 @@ const FoodPage: React.FC = () => {
           quantity: product.quantity as number,
           price: product.price as number,
           category: product.tag,
-          order: 20,
-          rating: 4.3,
-          revenue: 15000,
+          order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
+          rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+          revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
           type: "specials",
         })
       );
@@ -87,6 +88,7 @@ const FoodPage: React.FC = () => {
         ...arrangeSpecialProducts,
       ];
       setFetchedProducts(getAllProducts as ArrangedProduct[]);
+      setOriginalData(getAllProducts);
     } catch (error) {
       throw new Error(`Error while fetching products` + error);
     }
@@ -95,6 +97,7 @@ const FoodPage: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
+  //Sorting
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
@@ -119,6 +122,24 @@ const FoodPage: React.FC = () => {
       sortedCustomers = [...fetchedProducts].sort(
         (a: ArrangedProduct, b: ArrangedProduct) =>
           newOrder === "desc" ? b.price - a.price : a.price - b.price
+      );
+    }
+    if (value === "Revenue") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.revenue - a.revenue : a.revenue - b.revenue
+      );
+    }
+    if (value === "Orders") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.order - a.order : a.order - b.order
+      );
+    }
+    if (value === "Rating") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
       );
     }
 
@@ -169,8 +190,12 @@ const FoodPage: React.FC = () => {
 
   useEffect(() => {
     // call getAllProducts
-    getAllProducts();
-  }, []);
+    if (fetchedProducts?.length <= 0) {
+      (async () => {
+        await getAllProducts();
+      })();
+    }
+  }, [fetchedProducts?.length]);
 
   // delete products
   const handleDelete = async (id: string) => {
@@ -268,6 +293,12 @@ const FoodPage: React.FC = () => {
     })();
   }, [userSearch]);
 
+  useEffect(() => {
+    if (sortOrder.field === "") {
+      setFetchedProducts(originalData);
+    }
+  }, [originalData, sortOrder.field]);
+
   const closeModal = () => setIsModelOpen(true);
 
   const handleChange = (value: string) => {
@@ -309,7 +340,14 @@ const FoodPage: React.FC = () => {
                 <FilterButton
                   sortOrder={sortOrder.order}
                   onSelect={handleSelect}
-                  sortingOptions={["Name", "Quantity", "Price"]}
+                  sortingOptions={[
+                    "Name",
+                    "Quantity",
+                    "Price",
+                    "Orders",
+                    "Revenue",
+                    "Rating",
+                  ]}
                 />,
               ]}
               style={{
@@ -329,22 +367,50 @@ const FoodPage: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-start w-full gap-2 ">
-        <form action="" className="relative ">
-          <input
-            id="search"
-            type="search"
-            onChange={(event) => debounceSearch(event?.target.value)}
-            className=" border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
-            placeholder="Search for products"
-          />
-        </form>
-        <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <button
-          disabled={bulkSelectedProduct.length >= 1 ? false : true}
-          onClick={() => setIsDelete(true)}
-        >
-          <Trash2 className="size-7" />
-        </button>
+        <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
+          {" "}
+          <form action="" className="relative ">
+            <input
+              id="search"
+              type="search"
+              onChange={(event) => debounceSearch(event?.target.value)}
+              className=" border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
+              placeholder="Search for products"
+            />
+          </form>
+          <div className="h-10  w-[1px] bg-gray-300 "></div>
+          <button
+            disabled={bulkSelectedProduct.length >= 1 ? false : true}
+            onClick={() => setIsDelete(true)}
+          >
+            <Trash2 className="size-7" />
+          </button>
+        </div>
+        <div>
+          {sortOrder.field && (
+            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-sm ">
+                  {sortOrder.field.toLowerCase()}
+                </span>
+                <p
+                  className={` duration-150 ${
+                    sortOrder?.order === "desc"
+                      ? "rotate-180"
+                      : sortOrder.order === "asc"
+                      ? ""
+                      : ""
+                  } `}
+                >
+                  <ChevronUp size={20} />
+                </p>
+              </div>
+              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <FoodTable

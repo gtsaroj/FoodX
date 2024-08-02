@@ -2,7 +2,7 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { updateCategory } from "../../Services";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { UploadIcon } from "lucide-react";
+import { ChevronDown, UploadIcon } from "lucide-react";
 import { updateComponentProp } from "../../models/table.model";
 
 interface UpdateCategoryType {
@@ -22,7 +22,8 @@ const UpdateCategoryOption: UpdateCategoryType[] = [
 const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   const [newData, setNewData] = useState<string>("");
   const [field, setField] = useState<"image" | "name">("name");
-
+  const [show, setShow] = useState<boolean>(false);
+    const [showField, setShowField] = useState<string>();
   const fileRef = useRef<HTMLImageElement>();
 
   const handleSubmit = async (event: FormEvent) => {
@@ -59,20 +60,41 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
         className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-        <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-          {" "}
-          <select
-            className="rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-            name=""
-            id=""
-            onClick={(event: any) => setField(event.target.value)}
+   <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+          <div
+            onClick={() => setShow(!show)}
+            className="flex items-center  justify-between"
           >
-            {UpdateCategoryOption?.map((category) => (
-              <option className="px-2" value={category.value}>
-                {category.label}
-              </option>
+            <input
+              type="text"
+              className="w-full py-2  outline-none cursor-pointer "
+              readOnly
+              value={showField}
+              placeholder="Select option"
+            />
+            <ChevronDown />
+          </div>
+          <div
+            className={`flex bg-[var(--light-foreground)] left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex-col items-start justify-center gap-1 w-full transition-all duration-300 overflow-hidden ${
+              show
+                ? "max-h-64 opacity-100"
+                : "max-h-0 opacity-0 transform -translate-y-2"
+            }`}
+          >
+            {UpdateCategoryOption?.map((option) => (
+              <p
+                onClick={() => {
+                  setField(option.value as any)       
+                  setShowField(option.label);
+                  setShow(false);
+                }}
+                key={option.label}
+                className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
+              >
+                {option.label}
+              </p>
             ))}
-          </select>
+          </div>
         </div>
 
         {field === "image" ? (

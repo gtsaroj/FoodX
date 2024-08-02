@@ -1,4 +1,4 @@
-import { Download, Filter, Trash2 } from "lucide-react";
+import { ChevronUp, Download, Filter, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { getCustomerData } from "../../firebase/db";
@@ -9,29 +9,15 @@ import {
 import { CustomerType } from "../../models/user.model";
 import { debounce } from "../../Utility/Debounce";
 import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
-import {
-  bulkDeleteOfCategory,
-  deleteAllUser,
-  deleteUser,
-} from "../../Services";
-import toast from "react-hot-toast";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
-import Delete from "../../Components/Common/Delete/Delete";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [checked, setChecked] = useState<CustomerType[]>([]);
+  const [originalData, setOriginalData] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
-  const [isEdit, setIsEdit] = useState<boolean>(true);
-  const [isDelete, setIsDelete] = useState<boolean>(false);
-  const [id, setId] = useState<string>();
-  const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
-    { id: string }[]
-  >([]);
 
   const handleCustomerData = async () => {
     setLoading(true);
@@ -39,50 +25,12 @@ const CustomerList: React.FC = () => {
       const customers = await getCustomerData("customers");
       const customerList = await aggregateCustomerData(customers);
       setInitialCustomer(customerList);
+      setOriginalData(customerList);
     } catch (error) {
       setLoading(false);
       return console.log(`Error while getting customers : ${error}`);
     }
     setLoading(false);
-  };
-
-  const handleCheckboxChange = (isChecked: boolean, id: string) => {
-    setIsChecked(isChecked);
-    setChecked((prevChecked) => {
-      const checkedCustomer = initialCustomer.find(
-        (customer) => customer.id === id
-      );
-
-      if (isChecked && checkedCustomer) {
-        return [...prevChecked, checkedCustomer]; // Add customer to checked list
-      } else {
-        return prevChecked.filter((customer) => customer.id !== id); // Remove customer from checked list
-      }
-    });
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setIsChecked(checked);
-      setChecked(initialCustomer); // Select all customers
-    } else {
-      setChecked([]); // Deselect all customers
-    }
-  };
-
-  const deleteUsers = async () => {
-    const toastLoading = toast.loading("User deleting...");
-    try {
-      await deleteAllUser(checked);
-
-      handleCustomerData();
-      toast.dismiss(toastLoading);
-      return toast.success("users deleted successfully");
-    } catch (error) {
-      toast.dismiss(toastLoading);
-      toast.error("Route not found");
-      throw new Error("Unable to delete users");
-    }
   };
 
   const handleChange = async (value: string) => {
@@ -131,75 +79,11 @@ const CustomerList: React.FC = () => {
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
-  const handleBulkSelected = (id: string, isChecked: boolean) => {
-    const refreshIds = bulkSelectedCustomer?.filter(
-      (product) => product.id !== id
-    );
-
-    isChecked
-      ? setBulkSelectedCustomer((prev) => {
-          const newCategory = prev?.filter((category) => category.id !== id);
-          const findProduct = initialCustomer?.find(
-            (category) => category.id === id
-          );
-          return newCategory
-            ? [...newCategory, { id: findProduct?.id }]
-            : [{ id: findProduct?.id }];
-        })
-      : setBulkSelectedCustomer(refreshIds);
-  };
-  const handleAllSelected = (isChecked: boolean) => {
-    if (isChecked) {
-      const AllCategories = initialCustomer?.map((product) => {
-        return { id: product.id };
-      });
-      setBulkSelectedCustomer(AllCategories as { id: string }[]);
+  useEffect(() => {
+    if (sortOrder.field === "") {
+      setInitialCustomer(originalData);
     }
-    if (!isChecked) {
-      setBulkSelectedCustomer([]);
-    }
-  };
-
-  const handleSelectedDelete = async () => {
-    try {
-      const toastLoader = toast.loading("Deleting category...");
-      const AllCategoriesId = bulkSelectedCustomer?.map(
-        (category) => category.id
-      );
-      await bulkDeleteOfCategory(AllCategoriesId);
-      toast.dismiss(toastLoader);
-      const refreshCategory = initialCustomer.filter((category) => {
-        return !AllCategoriesId.includes(category.id as string);
-      });
-      setInitialCustomer(refreshCategory);
-      toast.success("Successfully deleted");
-    } catch (error) {
-      console.error("Error deleting products:", error);
-      // Handle the error appropriately, e.g., show a notification to the user
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    const toastLoading = toast.loading("Deleting user...");
-    const findUser = initialCustomer?.find((customer) => customer.id === id);
-    try {
-      await deleteUser({
-        id: [findUser?.id as string],
-        role: findUser?.role as string,
-      });
-      toast.dismiss(toastLoading);
-      toast.success("Successfully deleted");
-      const refreshData = initialCustomer?.filter(
-        (customer) => customer.id !== id
-      );
-      setInitialCustomer(refreshData);
-      setIsDelete(false);
-    } catch (error) {
-      toast.dismiss(toastLoading);
-      toast.error("Failed to delete user");
-    }
-    setIsDelete(false);
-  };
+  }, [sortOrder.field, originalData]);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
@@ -249,8 +133,8 @@ const CustomerList: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start gap-2 w-full px-1">
-        <form action="" className="relative">
+      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
+        <form action="" className=" w-full sm:w-auto">
           <input
             id="search"
             type="search"
@@ -259,34 +143,134 @@ const CustomerList: React.FC = () => {
             placeholder="Search"
           />
         </form>
-        <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <button
-          disabled={bulkSelectedCustomer.length >= 1 ? false : true}
-          onClick={() => setIsDelete(true)}
-        >
-          <Trash2 className="size-7" />
-        </button>
+        {sortOrder.field && (
+          <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="  text-sm ">
+                {sortOrder.field.toLowerCase()}
+              </span>
+              <p
+                className={` duration-150 ${
+                  sortOrder?.order === "desc"
+                    ? "rotate-180"
+                    : sortOrder.order === "asc"
+                    ? ""
+                    : ""
+                } `}
+              >
+                <ChevronUp size={20} />
+              </p>
+            </div>
+            <button onClick={() => setSortOrder({ field: "" })} className=" ">
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
       </div>
-      <CustomerTable
-        selectedData={bulkSelectedCustomer}
-        actions={{
-          checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
-          checkFn: (id: string, isChecked: boolean) =>
-            handleBulkSelected(id, isChecked),
-        }}
-        loading={loading}
-        users={initialCustomer}
-      />
-      {isDelete && (
+      <CustomerTable loading={loading} users={initialCustomer} />
+    </div>
+  );
+};
+
+export default CustomerList;
+
+//functions
+
+// const handleBulkSelected = (id: string, isChecked: boolean) => {
+//   const refreshIds = bulkSelectedCustomer?.filter(
+//     (product) => product.id !== id
+//   );
+
+//   isChecked
+//     ? setBulkSelectedCustomer((prev) => {
+//         const newCategory = prev?.filter((category) => category.id !== id);
+//         const findProduct = initialCustomer?.find(
+//           (category) => category.id === id
+//         );
+//         return newCategory
+//           ? [...newCategory, { id: findProduct?.id }]
+//           : [{ id: findProduct?.id }];
+//       })
+//     : setBulkSelectedCustomer(refreshIds);
+// };
+// const handleAllSelected = (isChecked: boolean) => {
+//   if (isChecked) {
+//     const AllCategories = initialCustomer?.map((product) => {
+//       return { id: product.id };
+//     });
+//     setBulkSelectedCustomer(AllCategories as { id: string }[]);
+//   }
+//   if (!isChecked) {
+//     setBulkSelectedCustomer([]);
+//   }
+// };
+
+// const handleSelectedDelete = async () => {
+//   try {
+//     const toastLoader = toast.loading("Deleting category...");
+//     const AllCategoriesId = bulkSelectedCustomer?.map(
+//       (category) => category.id
+//     );
+//     await bulkDeleteOfCategory(AllCategoriesId);
+//     toast.dismiss(toastLoader);
+//     const refreshCategory = initialCustomer.filter((category) => {
+//       return !AllCategoriesId.includes(category.id as string);
+//     });
+//     setInitialCustomer(refreshCategory);
+//     toast.success("Successfully deleted");
+//   } catch (error) {
+//     console.error("Error deleting products:", error);
+//     // Handle the error appropriately, e.g., show a notification to the user
+//   }
+// };
+
+// const handleDelete = async (id: string) => {
+//   const toastLoading = toast.loading("Deleting user...");
+//   const findUser = initialCustomer?.find((customer) => customer.id === id);
+//   try {
+//     await deleteUser({
+//       id: [findUser?.id as string],
+//       role: findUser?.role as string,
+//     });
+//     toast.dismiss(toastLoading);
+//     toast.success("Successfully deleted");
+//     const refreshData = initialCustomer?.filter(
+//       (customer) => customer.id !== id
+//     );
+//     setInitialCustomer(refreshData);
+//     setIsDelete(false);
+//   } catch (error) {
+//     toast.dismiss(toastLoading);
+//     toast.error("Failed to delete user");
+//   }
+//   setIsDelete(false);
+// };
+
+//table action
+// selectedData={bulkSelectedCustomer}
+// actions={{
+//   checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
+//   checkFn: (id: string, isChecked: boolean) =>
+//     handleBulkSelected(id, isChecked),
+// }}
+
+//modal of delete
+{
+  /* {isDelete && (
         <Delete
           id={id as string}
           closeModal={() => setIsDelete(false)}
           isClose={isDelete}
           setDelete={() => handleSelectedDelete()}
         />
-      )}
-    </div>
-  );
-};
+      )} */
+}
 
-export default CustomerList;
+// state
+// const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
+// { id: string }[]
+// >([]);
+// const [isChecked, setIsChecked] = useState<boolean>(false);
+// const [checked, setChecked] = useState<CustomerType[]>([]);
+// const [isDelete, setIsDelete] = useState<boolean>(false);
+// const [id, setId] = useState<string>();

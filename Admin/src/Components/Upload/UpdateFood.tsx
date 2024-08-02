@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { UploadIcon } from "lucide-react";
+import { ChevronDown, UploadIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { updateComponentProp } from "../../models/table.model";
@@ -39,7 +39,9 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const [newData, setNewData] = useState<string | number>();
   const [field, setField] = useState<
     "image" | "name" | "price" | "category" | "quantity"
-  >("name");
+    >("name");
+    const [show, setShow] = useState<boolean>(false);
+    const [showField, setShowField] = useState<string>();
   const options = useSelector(
     (state: RootState) => state.root.category.categories[0]
   ) as [];
@@ -83,20 +85,41 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
         className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-        <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-          {" "}
-          <select
-            className="rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-            name=""
-            id=""
-            onClick={(event: any) => setField(event.target.value)}
+   <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+          <div
+            onClick={() => setShow(!show)}
+            className="flex items-center  justify-between"
           >
-            {UpdateCategoryOption?.map((category) => (
-              <option className="px-2" value={category.value as string}>
-                {category.label}
-              </option>
+            <input
+              type="text"
+              className="w-full py-2  outline-none cursor-pointer "
+              readOnly
+              value={showField}
+              placeholder="Select option"
+            />
+            <ChevronDown />
+          </div>
+          <div
+            className={` bg-[var(--light-foreground)] h-[200px] overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
+              show
+                ? "max-h-64 opacity-100"
+                : "max-h-0 opacity-0 transform -translate-y-2"
+            }`}
+          >
+            {UpdateCategoryOption?.map((option) => (
+              <p
+                onClick={() => {
+                  setField(option.value as any)       
+                  setShowField(option.label);
+                  setShow(false);
+                }}
+                key={option.label}
+                className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
+              >
+                {option.label}
+              </p>
             ))}
-          </select>
+          </div>
         </div>
 
         {field === "image" ? (

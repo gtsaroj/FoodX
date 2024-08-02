@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { OrderModal } from "../../models/order.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
+import { stat } from "fs";
+import toast from "react-hot-toast";
+import { updateOrderStatus } from "../../Services";
 
 interface orderTableProp {
   orders: OrderModal[];
@@ -13,10 +16,28 @@ export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
   const [selectedProducts, setSelectedProducts] = useState<string[] | string>(
     []
   );
-  const [status, setStatus] = useState<string>();
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
-  const [isChangeStatus, setIsChangeStatus] = useState<boolean>(true);
+  const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
+
+  const statusChangeFn = async (newStatus: string) => {
+    if (!newStatus && !id) return toast.error("Order doesn't exist");
+    const toastLoader = toast.loading("Updating status...");
+    try {
+      const response = await updateOrderStatus({
+        id: id as string,
+        status: newStatus,
+      });
+      console.log(response);
+      toast.dismiss(toastLoader);
+      toast.success("Succussfully updated");
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Error while updating status");
+      throw new Error("Error while updating status" + error);
+    }
+    setIsChangeStatus(false);
+  };
 
   const Columns: ColumnProps[] = [
     {
@@ -85,10 +106,7 @@ export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
       fieldName: "Status",
       colStyle: { width: "140px", justifyContent: "start", textAlign: "start" },
       render: (item: OrderModal) => (
-        <div
-          onClick={() => [setIsChangeStatus(true)]}
-          className=" w-[140px] gap-2 flex  items-center justify-start  text-[var(--dark-text)]  "
-        >
+        <div className=" w-[140px]  gap-2 flex  items-center justify-start  text-[var(--dark-text)]  ">
           <div
             className={`w-2 h-2 rounded-full ${
               item.status === "Received"
@@ -104,7 +122,24 @@ export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
                 : ""
             } `}
           ></div>
-          <p>{item.status}</p>
+          <button
+            onClick={() => {
+              setIsChangeStatus(true);
+              setId(item.id);
+            }}
+          >
+            {item.status}
+          </button>
+          <div className="absolute z-[1000]">
+            {" "}
+            {isChangeStatus && id === item.id && (
+              <StatusChanger
+                isChangeStatus={() => setIsChangeStatus(false)}
+                status={item.status}
+                statusFn={(status) => statusChangeFn(status)}
+              />
+            )}
+          </div>
         </div>
       ),
     },
@@ -139,6 +174,75 @@ export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
         disableNoData={false}
         headStyle={{ width: "100%" }}
       />
+    </div>
+  );
+};
+
+interface StatusChangerProp {
+  status: "Received" | "Preparing" | "Delivered" | "Canceled" | "Pending";
+  statusFn: (status: string, id?: string) => void;
+  isChangeStatus: () => void;
+}
+
+export const StatusChanger: React.FC<StatusChangerProp> = ({
+  status,
+  statusFn,
+  isChangeStatus,
+}) => {
+  console.log(status);
+  const [showModal, setShowModal] = useState(true);
+
+  const reference = useRef<HTMLDivElement>();
+  const Status = ["Preparing", "Received", "Delivered", "Canceled", "Pending"];
+  const updateStatus = Status.filter((sts) => sts !== status);
+
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      if (
+        reference.current &&
+        !reference.current?.contains(event.target as any)
+      ) {
+        setShowModal(false);
+        isChangeStatus();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [status, isChangeStatus]);
+
+  return (
+    <div
+      ref={reference as any}
+      className={`w-full flex p-1 duration-200 flex-col bg-[var(--light-foreground)] border shadow rounded-lg items-center ${
+        showModal ? "visible" : "invisible"
+      } `}
+    >
+      {updateStatus.map((status, index) => (
+        <button
+          className={`w-[150px] flex items-center tracking-wider gap-3 justify-start py-1.5 px-5 duration-150 hover:bg-slate-200 rounded-lg `}
+          onClick={() => statusFn(status)}
+          key={index}
+        >
+          <span
+            className={` w-2 rounded-full h-2 ${
+              status === "Received"
+                ? "bg-green-500"
+                : status === "Delivered"
+                ? "bg-[var(--primary-color)] "
+                : status === "Pending"
+                ? "bg-[var(--primary-light)] "
+                : status === "Canceled"
+                ? "bg-[var(--danger-bg)]"
+                : status === "Preparing"
+                ? "bg-[var(--primary-light)] "
+                : ""
+            }`}
+          ></span>
+          <span> {status}</span>
+        </button>
+      ))}
     </div>
   );
 };

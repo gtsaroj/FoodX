@@ -189,39 +189,46 @@
     }
   ],
   "category": ["Sn", "Category Name", "Date", "Products", "Button"],
+
   "categoryData": [
     {
       "categoryname": "Pizza",
       "date": "2081/01/20",
-      "products": 5
+      "products": 5,
+      "color": "#003f5c"
     },
     {
       "categoryname": "Burger",
       "date": "2081/01/20",
-      "products": 5
+      "products": 5,
+      "color":  "#7a5195"
     },
     {
       "categoryname": "Hot Drinks",
       "date": "2081/01/20",
-      "products": 5
+      "products": 5,
+      "color": "#ef5675"
     },
     {
       "categoryname": "Cold Drinks",
       "date": "2081/01/20",
-      "products": 5
+      "products": 5,
+      "color":  "#ffa600"
     }
   ],
   "revenueDetail": {
     "Received": {
       "title": "Orders Received",
       "value": 150,
-      "subtitle": "Total Orders Received in a day."
+      "subtitle": "Total Orders Received in a day.",
+      "color" :"#FF4500"
     },
 
     "Delivered": {
       "title": "Orders Delivered",
       "value": 140,
-      "subtitle": "Total Orders Delivered in a day."
+      "subtitle": "Total Orders Delivered in a day.",
+      "color" : "#FFD700"
     },
     "Revenue": {
       "title": "Revenue",

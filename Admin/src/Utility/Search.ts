@@ -1,4 +1,5 @@
 import { DbUser } from "../models/UserModels";
+import { BannerModel } from "../models/banner.model";
 import { CategoryType } from "../models/category.model";
 import { OrderModal, Product } from "../models/order.model";
 
@@ -24,6 +25,12 @@ export const SearchOrder = (Order: OrderModal[], value: string) => {
 export const SearchCategory = (categories: CategoryType[], value: string) => {
   const searchingCategory = categories?.filter((category) => {
     return category.name.toLowerCase().includes(value);
+  });
+  return searchingCategory;
+};
+export const SearchBanner = (categories: BannerModel[], value: string) => {
+  const searchingCategory = categories?.filter((category) => {
+    return category.title?.toLowerCase().includes(value);
   });
   return searchingCategory;
 };

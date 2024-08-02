@@ -33,10 +33,12 @@ export const RecentOrders = () => {
   useEffect(() => {
     (async () => {
       const recentOrders = await getRecentOrders();
-      console.log(recentOrders)
+  
+
       if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
     })();
   }, []);
+  console.log(recentOrder)
 
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">

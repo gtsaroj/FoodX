@@ -11,11 +11,16 @@ import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete from "../../Components/Common/Delete/Delete";
-import { Trash2 } from "lucide-react";
+import { ChevronUp, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
 
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
+  const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
+  const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
+    field: "",
+    order: "desc",
+  });
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -69,6 +74,7 @@ const AllProductAnalytics = () => {
         ...arrangeNormalProducts,
         ...arrangeSpecialProducts,
       ];
+      setOriginalData(getAllProducts);
       setFetchedProducts(getAllProducts as ArrangedProduct[]);
     } catch (error) {
       throw new Error(`Error while fetching products` + error);
@@ -80,6 +86,63 @@ const AllProductAnalytics = () => {
     // call getAllProducts
     getAllProducts();
   }, []);
+
+  //Sorting
+  const handleSelect = async (value: string) => {
+    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+
+    let sortedCustomers;
+    if (value === "Name") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc"
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name)
+      );
+    }
+    if (value === "Quantity") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc"
+            ? b.quantity - a.quantity
+            : a.quantity - b.quantity
+      );
+    }
+    if (value === "Price") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.price - a.price : a.price - b.price
+      );
+    }
+    if (value === "Revenue") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.revenue - a.revenue : a.revenue - b.revenue
+      );
+    }
+    if (value === "Orders") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.order - a.order : a.order - b.order
+      );
+    }
+    if (value === "Rating") {
+      sortedCustomers = [...fetchedProducts].sort(
+        (a: ArrangedProduct, b: ArrangedProduct) =>
+          newOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
+      );
+    }
+
+    setSortOrder({ field: value, order: newOrder });
+    setFetchedProducts(sortedCustomers as ArrangedProduct[]);
+  };
+
+  useEffect(() => {
+    if (sortOrder?.field === "") {
+      setFetchedProducts(originalData);
+    }
+  }, [originalData, sortOrder?.field]);
+
   const handleSelectedDelete = async () => {
     try {
       const toastLoader = toast.loading("Deleting products...");
@@ -164,12 +227,42 @@ const AllProductAnalytics = () => {
               className="size-7"
             />
           </div>
+          {sortOrder.field && (
+            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-sm ">
+                  {sortOrder.field.toLowerCase()}
+                </span>
+                <p
+                  className={` duration-150 ${
+                    sortOrder?.order === "desc"
+                      ? "rotate-180"
+                      : sortOrder.order === "asc"
+                      ? ""
+                      : ""
+                  } `}
+                >
+                  <ChevronUp size={20} />
+                </p>
+              </div>
+              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
         </div>
-        <div>
+        <div className=" z-[1000]">
           <FilterButton
-            sortOrder=""
-            onSelect={() => {}}
-            sortingOptions={["Asc", "Desc"]}
+            sortOrder={sortOrder.order}
+            onSelect={handleSelect}
+            sortingOptions={[
+              "Name",
+              "Quantity",
+              "Price",
+              "Orders",
+              "Revenue",
+              "Rating",
+            ]}
           />
         </div>
       </div>
