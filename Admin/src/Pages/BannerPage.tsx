@@ -1,5 +1,5 @@
 import { Filter, Plus, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
 import UploadBanner from "../Components/Upload/UploadBanner";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
@@ -10,6 +10,8 @@ import UpdateBanner from "../Components/Upload/UpdateBanner";
 import Delete from "../Components/Common/Delete/Delete";
 import toast from "react-hot-toast";
 import { bulkDeleteBanner, deleteBanner, getBanners } from "../Services";
+import { debounce } from "../Utility/Debounce";
+import { SearchBanner, SearchCategory } from "../Utility/Search";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -155,6 +157,16 @@ const FoodPage: React.FC = () => {
     setIsDelete(false);
   };
 
+  const SearchingCategories = (value: string) => {
+    if (value.length <= 0) return getAllBanners();
+    const filterCategory = SearchBanner(initialBanner, value);
+    setInitialBanner(filterCategory);
+  };
+
+  const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
+    initialBanner,
+  ]);
+
   useEffect(() => {
     getAllBanners();
   }, []);
@@ -162,7 +174,7 @@ const FoodPage: React.FC = () => {
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center justify-center gap-8">
+        <div className="flex flex-col items-start justify-center gap-8">
           <div className="flex flex-col items-start justify-center gap-1">
             <h4 className="text-xl tracking-wide text-[var(--dark-text)]">
               Banners
@@ -171,13 +183,28 @@ const FoodPage: React.FC = () => {
               {initialBanner.length} entries found
             </p>
           </div>
-          <button
-            onClick={() => setIsBulkDelete(true)}
-            disabled={bulkSelectedBanner.length >= 1 ? false : true}
-            className="w-[1px] h-10 bg-slate-500 "
-          >
-            <Trash2 />
-          </button>
+          <div className="flex items-center justify-start gap-2 ">
+            {" "}
+            <form
+              action=""
+              className="relative sm:w-auto w-[300px] min-w-[200px] "
+            >
+              <input
+                onChange={(event) => debouncingSearch(event.target.value)}
+                id="search"
+                type="search"
+                className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
+                placeholder="Search"
+              />
+            </form>
+            <div className="h-10  w-[1px] bg-gray-300 "></div>
+            <button
+              disabled={bulkSelectedBanner?.length >= 1 ? false : true}
+              onClick={() => setIsBulkDelete(true)}
+            >
+              <Trash2 className="size-7" />
+            </button>
+          </div>
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">

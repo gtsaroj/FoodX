@@ -1,8 +1,8 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { UploadIcon } from "lucide-react";
-import { updateComponentProp } from "../../models/table.model";
+import { ChevronDown, UploadIcon } from "lucide-react";
+import { CustomerType } from "../../models/user.model";
 
 interface UpdateCategoryType {
   label: string;
@@ -15,18 +15,31 @@ const UpdateCategoryOption: UpdateCategoryType[] = [
     label: "Image",
     value: "image",
   },
+  {
+    label: "Role",
+    value: "role",
+  },
 ];
 
+interface UpdateCustomerProp {
+  customerInfo: CustomerType;
+  closeModal: () => void;
+}
 
-const UpdateCustomer: React.FC<updateComponentProp> = ({ id }) => {
+const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
+  closeModal,
+  customerInfo,
+}) => {
   const [newData, setNewData] = useState<string>("");
-  const [field, setField] = useState<"image" | "name">("name");
+  const [field, setField] = useState<"image" | "name" | "role">("name");
+  const [showField, setShowField] = useState<string>();
+  const [show, setShow] = useState<boolean>(false);
 
   const fileRef = useRef<HTMLImageElement>();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!id) return toast.error("Category id not found");
+    if (!customerInfo.id) return toast.error("Category id not found");
     try {
       console.log("fkldj");
     } catch (error) {
@@ -40,29 +53,52 @@ const UpdateCustomer: React.FC<updateComponentProp> = ({ id }) => {
     setNewData(imageUrl);
   };
   return (
-    <div className="flex flex-col items-start justify-center gap-5">
-      <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
-        Update Category
+    <div className="flex flex-col  items-start justify-center gap-7">
+      <h3 className=" h-12 tracking-wider  text-center  w-full border-b-[1px] text-black text-[22px]">
+        Update Customer
       </h3>
       <form
+        
         action=""
-        className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
+        className="flex text-[var(--dark-text)] py-5 sm:px-16 px-5 flex-col items-start justify-start gap-7 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-        <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-          {" "}
-          <select
-            className="rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-            name=""
-            id=""
-            onClick={(event: any) => setField(event.target.value)}
+        <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+          <div
+            onClick={() => setShow(!show)}
+            className="flex items-center  justify-between"
           >
-            {UpdateCategoryOption?.map((category) => (
-              <option className="px-2" value={category.value}>
-                {category.label}
-              </option>
+            <input
+              type="text"
+              className="w-full py-2  outline-none cursor-pointer "
+              readOnly
+              value={showField}
+              placeholder="Select option"
+            />
+            <ChevronDown />
+          </div>
+          <div
+            className={`flex bg-[var(--light-foreground)] left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex-col items-start justify-center gap-1 w-full transition-all duration-300 overflow-hidden ${
+              show
+                ? "max-h-64 opacity-100"
+                : "max-h-0 opacity-0 transform -translate-y-2"
+            }`}
+          >
+            {UpdateCategoryOption?.map((option) => (
+              <button
+                onClick={() => {
+                  setField(option.value as "image" | "name" | "role")
+                 
+                  setShowField(option.label);
+                  setShow(false);
+                }}
+                key={option.label}
+                className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
+              >
+                {option.label}
+              </button>
             ))}
-          </select>
+          </div>
         </div>
 
         {field === "image" ? (
@@ -97,7 +133,19 @@ const UpdateCustomer: React.FC<updateComponentProp> = ({ id }) => {
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
             <input
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
-              type="text"
+                type="text"
+                placeholder="Eg. Saroj GT"
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setNewData(event.target.value)
+              }
+            />
+          </div>
+        ) : field === "role" ? (
+          <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+            <input
+              className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
+                  type="text"
+                  placeholder="Eg. admin"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setNewData(event.target.value)
               }
@@ -106,7 +154,7 @@ const UpdateCustomer: React.FC<updateComponentProp> = ({ id }) => {
         ) : (
           ""
         )}
-        <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+        <button className="w-full text-[18px] tracking-wider text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
           Submit
         </button>
       </form>

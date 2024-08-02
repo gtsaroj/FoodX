@@ -65,7 +65,7 @@ const updateUserDataInFirestore = async (
 const getUserFromDatabase = async (uid: string) => {
   try {
     const userRef = db.collection("customers").doc(uid);
-    const adminRef = db.collection("admins").doc(uid);
+    const adminRef = db.collection("admin").doc(uid);
 
     const customerInfo = await userRef.get();
     const adminInfo = await adminRef.get();

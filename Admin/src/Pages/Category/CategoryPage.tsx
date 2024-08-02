@@ -1,4 +1,4 @@
-import { ArrowDownAZ, Filter, Plus, Trash2 } from "lucide-react";
+import { ArrowDownAZ, ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
@@ -36,6 +36,7 @@ export const CategoryPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [originalData, setOriginalData] = useState<CategoryType[]>([]);
   const [id, setId] = useState<string>();
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
     { id: string }[]
@@ -64,16 +65,32 @@ export const CategoryPage: React.FC = () => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
     let sortedCustomers;
-    if (value === "Category") {
-      sortedCustomers = [...categoryData].sort((a: any, b: any) =>
-        newOrder === "desc"
-          ? b.Category.localeCompare(a.Category)
-          : a.Category.localeCompare(b.Category)
+    if (value === "Items") {
+      sortedCustomers = [...initialCategory].sort(
+        (a: CategoryType, b: CategoryType) =>
+          newOrder === "desc"
+            ? (((b.item as number) - a.item) as number)
+            : (((a.item as number) - b.item) as number)
+      );
+    }
+    if (value === "Orders") {
+      sortedCustomers = [...initialCategory]?.sort((a, b) =>
+        newOrder == "desc" ? (b.order = a.order) : a.order - b.order
+      );
+    }
+    if (value === "Revenue") {
+      sortedCustomers = [...initialCategory]?.sort((a, b) =>
+        newOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
+      );
+    }
+    if (value === "Rank") {
+      sortedCustomers = [...initialCategory]?.sort((a, b) =>
+        newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
       );
     }
 
     setSortOrder({ field: value, order: newOrder });
-    setCategoryData(sortedCustomers as { Category: string; Image: string }[]);
+    setInitialCategory(sortedCustomers as CategoryType[]);
   };
 
   const getAllCategories = async () => {
@@ -83,12 +100,13 @@ export const CategoryPage: React.FC = () => {
       const categorydata: CategoryType[] = categories.map((category) => ({
         id: category.id,
         name: category.name,
-        item: 55,
-        order: 100,
-        rank: 45,
-        revenue: 15000,
+        item: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+        order: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+        rank: Math.floor(Math.random() * (50 - 10 + 1)) + 10,
+        revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
         image: category.image,
       }));
+      setOriginalData(categorydata);
       setInitialCategory(categorydata);
     } catch (error) {
       setLoading(false);
@@ -148,11 +166,16 @@ export const CategoryPage: React.FC = () => {
   useEffect(() => {
     const categories = initialCategory.map((category) => category.name);
     dispatch(categoryAdd(categories));
-  }, [initialCategory, dispatch]);
+    if (sortOrder.field === "") {
+      setInitialCategory(originalData);
+    }
+  }, [initialCategory, dispatch, sortOrder.field, originalData]);
 
   useEffect(() => {
-    getAllCategories();
-  }, []);
+    if (initialCategory.length <= 0) {
+      getAllCategories();
+  }
+  }, [initialCategory.length]);
 
   const SearchingCategories = async (value: string) => {
     if (value.length > 0) {
@@ -216,15 +239,9 @@ export const CategoryPage: React.FC = () => {
               }
               options={[
                 <FilterButton
-                  parent={
-                    <>
-                      <ArrowDownAZ className="size-4" />
-                      <span className=" text-[15px]">Sort By</span>
-                    </>
-                  }
                   onSelect={handleSelect}
                   sortOrder={sortOrder.order}
-                  sortingOptions={["Category"]}
+                  sortingOptions={["Items", "Orders", "Revenue", "Rank"]}
                 />,
               ]}
               style={{
@@ -243,23 +260,51 @@ export const CategoryPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start w-full gap-2 ">
-        <form action="" className="relative">
-          <input
-            onChange={(event) => debouncingSearch(event.target.value)}
-            id="search"
-            type="search"
-            className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
-            placeholder="Search"
-          />
-        </form>
-        <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <button
-          disabled={bulkSelectedCategory?.length >= 1 ? false : true}
-          onClick={() => setIsBulkDeleted(true)}
-        >
-          <Trash2 className="size-7" />
-        </button>
+      <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
+        <div className="flex items-center justify-start gap-2 ">
+          {" "}
+          <form action="" className="relative sm:w-auto w-[300px] min-w-[200px] ">
+            <input
+              onChange={(event) => debouncingSearch(event.target.value)}
+              id="search"
+              type="search"
+              className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
+              placeholder="Search"
+            />
+          </form>
+          <div className="h-10  w-[1px] bg-gray-300 "></div>
+          <button
+            disabled={bulkSelectedCategory?.length >= 1 ? false : true}
+            onClick={() => setIsBulkDeleted(true)}
+          >
+            <Trash2 className="size-7" />
+          </button>
+        </div>
+        <div>
+          {sortOrder.field && (
+            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-sm ">
+                  {sortOrder.field.toLowerCase()}
+                </span>
+                <p
+                  className={` duration-150 ${
+                    sortOrder?.order === "desc"
+                      ? "rotate-180"
+                      : sortOrder.order === "asc"
+                      ? ""
+                      : ""
+                  } `}
+                >
+                  <ChevronUp size={20} />
+                </p>
+              </div>
+              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <CategoryTable
         selectedData={bulkSelectedCategory}

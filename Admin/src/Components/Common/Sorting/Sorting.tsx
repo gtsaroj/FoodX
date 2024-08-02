@@ -57,7 +57,7 @@ export const FilterButton: React.FC<SortValue> = ({
               <span>
                 <ArrowUp
                   className={` size-4 gap-3 duration-150 ${
-                    sortOrder === "asc" && index === key ? "rotate-180" : ""
+                    sortOrder === "desc" && index === key ? "rotate-180" : sortOrder ==="asc" && index === key ? "":"invisible"
                   } `}
                 />
               </span>

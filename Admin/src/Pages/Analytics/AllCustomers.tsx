@@ -1,31 +1,40 @@
 import { useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import Table from "../../Components/Common/Table/Table";
-import { ProductTable } from "../../models/productMode";
 import { getCustomerData } from "../../firebase/db";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { CustomerTable } from "../Customers/CustomerTable";
-import { bulkDeleteOfCategory } from "../../Services";
+import {
+  bulkDeleteOfCategory,
+  bulkDeleteOfCustomer,
+  deleteCustomer,
+} from "../../Services";
 import toast from "react-hot-toast";
-import { Trash2 } from "lucide-react";
+import { ChevronUp, Trash2, X } from "lucide-react";
 import Delete from "../../Components/Common/Delete/Delete";
+import Modal from "../../Components/Common/Popup/Popup";
+import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
 
 const AllCustomers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
+  const [originalData, setOriginalData] = useState<CustomerType[]>([]);
+  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
-    { id: string }[]
+    { id: string; role: string }[]
   >([]);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
+  const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
+  const [customerModal, setCustomerModal] = useState<CustomerType>();
 
   const handleCustomerData = async () => {
     setLoading(true);
     try {
       const customers = await getCustomerData("customers");
       const customerList = await aggregateCustomerData(customers);
+      setOriginalData(customerList);
       setInitialCustomer(customerList);
     } catch (error) {
       setLoading(false);
@@ -41,22 +50,25 @@ const AllCustomers = () => {
 
     isChecked
       ? setBulkSelectedCustomer((prev) => {
-          const newCategory = prev?.filter((category) => category.id !== id);
-          const findProduct = initialCustomer?.find(
+          const newCustomer = prev?.filter((category) => category.id !== id);
+          const findCustomer = initialCustomer?.find(
             (category) => category.id === id
           );
-          return newCategory
-            ? [...newCategory, { id: findProduct?.id }]
-            : [{ id: findProduct?.id }];
+          return newCustomer
+            ? [
+                ...newCustomer,
+                { id: findCustomer?.id, role: findCustomer?.role },
+              ]
+            : [{ id: findCustomer?.id, role: findCustomer?.role }];
         })
       : setBulkSelectedCustomer(refreshIds);
   };
   const handleAllSelected = (isChecked: boolean) => {
     if (isChecked) {
-      const AllCategories = initialCustomer?.map((product) => {
-        return { id: product.id };
+      const AllCategories = initialCustomer?.map((customer) => {
+        return { id: customer.id as string, role: customer.role };
       });
-      setBulkSelectedCustomer(AllCategories as { id: string }[]);
+      setBulkSelectedCustomer(AllCategories as { id: string; role: string }[]);
     }
     if (!isChecked) {
       setBulkSelectedCustomer([]);
@@ -64,23 +76,104 @@ const AllCustomers = () => {
   };
 
   const handleSelectedDelete = async () => {
+    const toastLoader = toast.loading("Deleting category...");
     try {
-      const toastLoader = toast.loading("Deleting category...");
-      const AllCategoriesId = bulkSelectedCustomer?.map(
-        (category) => category.id
+      const { customer, admin } = bulkSelectedCustomer.reduce<{
+        customer: string[];
+        admin: string[];
+      }>(
+        (acc, customer) => {
+          if (customer.role === "admins") {
+            acc.admin.push(customer.id);
+          } else if (customer.role === "customers") {
+            acc.customer.push(customer.id);
+          }
+          return acc;
+        },
+        { customer: [], admin: [] }
       );
-      await bulkDeleteOfCategory(AllCategoriesId);
+      if (customer.length > 0) {
+        await bulkDeleteOfCustomer({ role: "customers", ids: [...customer] });
+      }
+      if (admin.length > 0) {
+        await bulkDeleteOfCustomer({ role: "admins", ids: [...admin] });
+      }
+      if (!admin && !customer) return toast.error("Please select the customer");
       toast.dismiss(toastLoader);
-      const refreshCategory = initialCustomer.filter((category) => {
-        return !AllCategoriesId.includes(category.id as string);
+      const refreshCategory = initialCustomer.filter((customer) => {
+        return (
+          !customer.includes(customer.id as string) &&
+          !admin.includes(customer.id as string)
+        );
       });
       setInitialCustomer(refreshCategory);
       toast.success("Successfully deleted");
     } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Error while deleting...");
       console.error("Error deleting products:", error);
       // Handle the error appropriately, e.g., show a notification to the user
     }
   };
+
+  const handleDelete = async (id: string) => {
+    if (!id) return toast.error("Customer not found");
+    const findCustomer = initialCustomer?.find(
+      (customer) => customer.id === id
+    );
+    const toastLoader = toast.loading("Deleting customer...");
+    try {
+      await deleteCustomer({
+        role: findCustomer?.role as string,
+        id: findCustomer?.id as string,
+      });
+      toast.dismiss(toastLoader);
+      toast.success("Succesfully deleted");
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Error while delting user");
+      throw new Error("Error while deleting user" + error);
+    }
+  };
+
+  const handleSelect = async (value: string) => {
+    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+
+    let sortedCustomers;
+    if (value === "Total spent") {
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.amountSpent - a.amountSpent
+            : a.amountSpent - b.amountSpent
+      );
+    }
+    if (value === "Name") {
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.name.localeCompare(a.name)
+            : a.name.localeCompare(b.name)
+      );
+    }
+    if (value === "Total order") {
+      sortedCustomers = [...initialCustomer].sort(
+        (a: CustomerType, b: CustomerType) =>
+          newOrder === "desc"
+            ? b.totalOrder - a.totalOrder
+            : a.totalOrder - b.totalOrder
+      );
+    }
+
+    setSortOrder({ field: value, order: newOrder });
+    setInitialCustomer(sortedCustomers as CustomerType[]);
+  };
+
+  useEffect(() => {
+    if (sortOrder.field === "") {
+      setInitialCustomer(originalData);
+    }
+  }, [sortOrder.field, originalData]);
 
   useEffect(() => {
     handleCustomerData();
@@ -88,21 +181,46 @@ const AllCustomers = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex items-center justify-center gap-1">
-          <p className="text-xl text-nowrap">Customers</p>
+        <div className="flex items-center justify-center gap-3">
+          <p className="text-xl text-nowrap">All Customer</p>
           <div className="h-5  w-[1px] bg-gray-300 "></div>
-          <button
-            disabled={bulkSelectedCustomer.length >= 1 ? false : true}
-            onClick={() => setIsDelete(true)}
-          >
-            <Trash2 className="size-7" />
-          </button>
+          <div>
+            <Trash2
+              onClick={() => {
+                setIsBulkDelete(true);
+              }}
+              className="size-7"
+            />
+          </div>
+          {sortOrder.field && (
+            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-sm ">
+                  {sortOrder.field.toLowerCase()}
+                </span>
+                <p
+                  className={` duration-150 ${
+                    sortOrder?.order === "desc"
+                      ? "rotate-180"
+                      : sortOrder.order === "asc"
+                      ? ""
+                      : ""
+                  } `}
+                >
+                  <ChevronUp size={20} />
+                </p>
+              </div>
+              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
         </div>
-        <div>
+        <div className="z-[100]">
           <FilterButton
-            sortOrder=""
-            onSelect={() => {}}
-            sortingOptions={["Asc", "Desc"]}
+            sortOrder={sortOrder.order}
+            sortingOptions={["Total spent", "Name", "Total order"]}
+            onSelect={handleSelect}
           />
         </div>
       </div>
@@ -111,8 +229,17 @@ const AllCustomers = () => {
         users={initialCustomer as CustomerType[]}
         loading={loading}
         actions={{
-          delete: (id) => console.log(id),
-          edit: (id) => console.log(id),
+          delete: (id) => {
+            setIsDelete(true);
+            setId(id);
+          },
+          edit: (id) => {
+            const findCustomer = initialCustomer?.find(
+              (customer) => customer.id == id
+            );
+            setCustomerModal(findCustomer);
+            setIsEdit(false);
+          },
           checkFn: (id: string, isChecked: boolean) =>
             handleBulkSelected(id, isChecked),
           checkAllFn: (isCheck: boolean) => handleAllSelected(isCheck),
@@ -121,8 +248,27 @@ const AllCustomers = () => {
       {isDelete && (
         <Delete
           closeModal={() => setIsDelete(false)}
-          id={id}
+          id={id as string}
           isClose={isDelete}
+          setDelete={(id: string) => handleDelete(id)}
+        />
+      )}
+      <Modal
+        children={
+          <UpdateCustomer
+            closeModal={() => setIsEdit(true)}
+            customerInfo={customerModal as CustomerType}
+          />
+        }
+        close={isEdit}
+        closeModal={() => setIsEdit(true)}
+        disableScroll={true}
+      />
+      {isBulkDelete && (
+        <Delete
+          closeModal={() => setIsBulkDelete(false)}
+          id={id as string}
+          isClose={isBulkDelete}
           setDelete={() => handleSelectedDelete()}
         />
       )}

@@ -11,9 +11,9 @@ export interface ArrangedProduct {
   image: string;
   name: string;
   price: number;
-  order?: number;
-  revenue?: number;
-  rating?: number;
+  order: number;
+  revenue: number;
+  rating: number;
   quantity: number;
   category?: string;
   type: "products" | "specials";

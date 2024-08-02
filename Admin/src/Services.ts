@@ -118,6 +118,28 @@ export const getOrders = async () => {
   }
 };
 
+export const bulkDeleteOfCustomer = async (data: {
+  role: string;
+  ids: string[];
+}) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      data: { role: data.role, ids: [...data.ids] },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to bulk delete" + error);
+  }
+};
+export const deleteCustomer = async (data:{role:string,id: string}) => {
+  try {
+    return toast.error("No route found");
+  } catch (error) {
+    throw new Error("Unable to delete user" + error);
+  }
+};
+
 export const postProducts = async (data: any) => {
   try {
     const response = await makeRequest({

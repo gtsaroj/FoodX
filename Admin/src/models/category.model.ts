@@ -2,10 +2,10 @@ export interface CategoryType {
   id?: string;
   name: string;
   image?: string;
-  item?: number;
-  order?: number;
-  revenue?: number;
-  rank?: number;
+  item: number;
+  order: number;
+  revenue: number;
+  rank: number;
 }
 export interface UpdateCategoryType {
   id: string;

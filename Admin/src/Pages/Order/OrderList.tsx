@@ -1,7 +1,9 @@
 import {
+  ChevronUp,
   Download,
   Filter,
   Trash2,
+  X,
 } from "lucide-react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { useCallback, useEffect, useState } from "react";
@@ -20,7 +22,7 @@ import { OrderTable } from "./OrderTable";
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [originalData, setOriginalData] = useState<OrderModal[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
 
   const getAllOrders = async () => {
@@ -54,7 +56,7 @@ const OrderList = () => {
       });
 
       const getaggregateDataPromises = await Promise.all(aggregateData);
-
+setOriginalData(getaggregateDataPromises);
       setInitialOrders(getaggregateDataPromises);
     } catch (error) {
       setLoading(false);
@@ -124,7 +126,12 @@ const OrderList = () => {
       getAllOrders();
     })();
   }, []);
-  console.log(initialOrders);
+
+  useEffect(() => {
+    if (sortOrder.field === "") {
+      setInitialOrders(originalData);
+    }
+  }, [sortOrder.field, originalData]);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -173,8 +180,8 @@ const OrderList = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-start gap-2 w-full pb-5">
-        <form action="" className="relative">
+      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
+        <form action="" className="w-full sm:w-auto">
           <input
             id="search"
             type="search"
@@ -183,10 +190,29 @@ const OrderList = () => {
             placeholder="Search"
           />
         </form>
-        <div className="h-10  w-[1px] bg-gray-300 "></div>
-        <div>
-          <Trash2 className="size-7" />
-        </div>
+        {sortOrder.field && (
+          <div className="flex w-[120px]  items-center rounded-lg border  justify-between p-2">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="  text-sm ">
+                {sortOrder.field.toLowerCase()}
+              </span>
+              <p
+                className={` duration-150 ${
+                  sortOrder?.order === "desc"
+                    ? "rotate-180"
+                    : sortOrder.order === "asc"
+                    ? ""
+                    : ""
+                } `}
+              >
+                <ChevronUp size={20} />
+              </p>
+            </div>
+            <button onClick={() => setSortOrder({ field: "" })} className=" ">
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
       </div>
       <OrderTable orders={initialOrders} loading={loading} />
     </div>
