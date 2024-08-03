@@ -64,7 +64,7 @@ const updateUserDataInFirestore = async (
 
 const getUserFromDatabase = async (uid: string) => {
   try {
-    const userRef = db.collection("customers").doc(uid);
+    const userRef = db.collection("customer").doc(uid);
     const adminRef = db.collection("admin").doc(uid);
 
     const customerInfo = await userRef.get();
@@ -83,7 +83,7 @@ const getUserFromDatabase = async (uid: string) => {
   }
 };
 const bulkDeleteUserFromDatabase = async (
-  path: "customers" | "admins" | "chefs",
+  path: "customer" | "admin" | "chef",
   id: string[]
 ) => {
   const userRef = db.collection(path);

@@ -9,6 +9,6 @@ export interface errorValidationObject {
 }
 
 export enum Role {
-  customer = "customers",
+  customer = "customer",
   admin = "admin",
 }

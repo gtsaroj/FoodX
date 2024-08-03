@@ -102,7 +102,7 @@ export const RegisterContainer: React.FC = () => {
           email,
           password,
           avatar: imageUrl,
-          role: "customers",
+          role: "customer",
         };
 
         await dispatch(singUpAction(ConvertedForm as ValidationType));
@@ -115,7 +115,7 @@ export const RegisterContainer: React.FC = () => {
         (RegisterValue.phoneNumber = ""), SetDataSend(true);
 
         SetDataSend(true);
-        toast.success("Congratulations!, You logged in");
+        toast.success("Congratulations! You logged in");
       }
     } catch (error) {
       console.log(error);
@@ -148,7 +148,7 @@ export const RegisterContainer: React.FC = () => {
             onSubmit={handleFormSubmit}
             className="flex flex-col items-center gap-[7px]  sm:items-center max-w-[400px] sm:w-full"
           >
-            <div className="relative duration-150 group/image  flex flex-col items-center justify-center gap-1">
+            <div className="relative flex flex-col items-center justify-center gap-1 duration-150 group/image">
               {SelectedImage ? (
                 <img
                   src={URL.createObjectURL(SelectedImage)}
@@ -349,7 +349,7 @@ export const RegisterContainer: React.FC = () => {
 
 export const Register = () => {
   return (
-    <div className="w-full h-full justify-center items-center">
+    <div className="items-center justify-center w-full h-full">
       <RegisterContainer />
       <AuthFooter />
       <Toaster />

@@ -277,7 +277,7 @@ const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
     role,
     ids,
   }: {
-    role: "customers" | "admins" | "chefs";
+    role: "customer" | "admin" | "chef";
     ids: string[];
   } = req.body;
   try {
@@ -290,6 +290,27 @@ const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const updateUserRole = asyncHandler(async (req: any, res: any) => {
+  const { id, newRole } = req.body;
+  console.log(id, newRole);
+  try {
+    const user = await getUserFromDatabase(id);
+    if (!user) throw new ApiError(404, "User not found.");
+    await deleteUserFromFireStore(id, user.role);
+    user.role = newRole;
+    await addUserToFirestore(user, newRole);
+    await generateAccessAndRefreshToken(id, newRole);
+    console.log(user);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, user, "User's Role updated successfully.", true)
+      );
+  } catch (error) {
+    throw new ApiError(500, "Error while updating user role.");
+  }
+});
+
 export {
   loginUser,
   logOutUser,
@@ -299,4 +320,5 @@ export {
   updateUser,
   deletAllUser,
   deleteUsersInBulk,
+  updateUserRole,
 };
