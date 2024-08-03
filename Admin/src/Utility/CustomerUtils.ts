@@ -12,7 +12,6 @@ export const aggregateCustomerData = async (
 ): Promise<CustomerType[]> => {
   const customerList: CustomerType[] = [];
   const batchSize = 10;
-
   // Split customers into batches
   for (let i = 0; i < customers.length; i += batchSize) {
     const batch = customers.slice(i, i + batchSize);
@@ -21,23 +20,23 @@ export const aggregateCustomerData = async (
       async (data: DbUser): Promise<CustomerType> => {
         try {
           const userOrderData = await getOrderByUser(data.uid);
+          if (!userOrderData) throw new Error("user not found");
+
           const totalUserOrder = userOrderData.data as Order[];
 
           let totalCustomerCost: number = 0;
           let totalCustomerQuantity: number = 0;
-
-          totalUserOrder.forEach((order) => {
-            console.log(order);
+          totalUserOrder?.forEach((order) => {
             totalCustomerQuantity += totalQuantity(order.products as Product[]);
             totalCustomerCost += totalCost(order.products as Product[]);
           });
-          
+
           return {
             id: data.uid,
             name: data.fullName,
             email: data.email,
             image: data.avatar,
-            amountSpent: totalCustomerCost.toFixed(2),
+            amountSpent: Math.round(totalCustomerCost * 100) / 100,
             totalOrder: totalCustomerQuantity,
             role: data.role as string,
           };
@@ -64,22 +63,13 @@ export const aggregateCustomerData = async (
   }
 };
 
-export const aggregateCustomerSearchData = async (
-  customers: DbUser[],
-  value: string
-) => {
-  const searchingCustomer = SearchCustomer(customers, value);
-
-  const eachCustomer = await aggregateCustomerData(searchingCustomer);
-  return eachCustomer;
-};
 
 export const getTopCustomers = async () => {
   try {
-    const getCustomer = await getCustomerData("customers");
+    const getCustomer = await getCustomerData("customer");
     const customerList = await aggregateCustomerData(getCustomer);
     const sortBySpent = customerList.sort(
-      (a: any, b: any) => b.amountSpent - a.amountSpent
+      (a: CustomerType, b: CustomerType) => b.amountSpent - a.amountSpent
     );
     return sortBySpent.slice(0, 5);
   } catch (error) {

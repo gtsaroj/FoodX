@@ -12,6 +12,7 @@ import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
+import { SearchCustomer } from "../../Utility/Search";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
@@ -22,7 +23,7 @@ const CustomerList: React.FC = () => {
   const handleCustomerData = async () => {
     setLoading(true);
     try {
-      const customers = await getCustomerData("customers");
+      const customers = await getCustomerData("customer");
       const customerList = await aggregateCustomerData(customers);
       setInitialCustomer(customerList);
       setOriginalData(customerList);
@@ -34,14 +35,11 @@ const CustomerList: React.FC = () => {
   };
 
   const handleChange = async (value: string) => {
-    const customers = await getCustomerData("customers");
-    const customerList = await aggregateCustomerSearchData(customers, value);
-    if (customerList) setInitialCustomer(customerList);
+    if (value.length <= 0) return handleCustomerData();
+    const filterCustomer = SearchCustomer(initialCustomer, value);
+    if (filterCustomer.length <= 0) return setInitialCustomer([]);
+    setInitialCustomer(filterCustomer);
   };
-
-  useEffect(() => {
-    handleCustomerData();
-  }, []);
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
@@ -78,6 +76,10 @@ const CustomerList: React.FC = () => {
     setSortOrder({ field: value, order: newOrder });
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
+
+  useEffect(() => {
+    handleCustomerData();
+  }, []);
 
   useEffect(() => {
     if (sortOrder.field === "") {

@@ -76,14 +76,13 @@ export const deleteCategory = async (
 };
 
 export const getUserData = async (
-  docName: "customers" | "admins",
+  docName: "customer" |"admin",
   uid: string
 ) => {
   try {
     const userRef = doc(db, docName, uid);
 
     const snapShot = await getDoc(userRef);
-    console.log(snapShot.data())
     if (!snapShot.exists) throw new Error("User document is empty.");
     const data = snapShot.data();
     return data as DbUser;
@@ -93,7 +92,7 @@ export const getUserData = async (
 };
 
 export const getCustomerData = async (
-  docName: "customers"
+  docName: "customer"
 ): Promise<DbUser[]> => {
   try {
     const customerRef = collection(db, docName);

@@ -19,6 +19,7 @@ import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
 import { useEffect, useState } from "react";
 import { RootState, persistor } from "./Reducer/Store.ts";
 import { useSelector } from "react-redux";
+import { app } from "./firebase/index.ts";
 
 const HomePage = () => {
   return (
@@ -28,7 +29,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <PrivateRoute userRole={["customers"]} />
+          <PrivateRoute userRole={["customer","admin"]} />
         </div>
         <div>
           <Footer />
@@ -60,7 +61,7 @@ export const App: React.FC = () => {
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
-        <Route element={<PrivateRoute userRole={["customers"]} />}>
+        <Route element={<PrivateRoute userRole={["customer","admin"]} />}>
           <Route path="/" element={<HomePage />}>
             <Route index element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>

@@ -4,25 +4,11 @@ import { UploadProductType } from "../../models/productMode";
 import { nanoid } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 import { addProducts } from "../../Services";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Reducer/Store";
+import { Selector } from "../Selector/Selector";
 
-const options = [
-  {
-    label: "Pizza",
-    value: "pizza",
-  },
-  {
-    label: "Cold drinks",
-    value: "cold_drinks",
-  },
-  {
-    label: "Hot drinks",
-    value: "hot_drinks",
-  },
-  {
-    label: "MOMO",
-    value: "momo",
-  },
-];
+
 
 const UploadFood: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
@@ -37,6 +23,7 @@ const UploadFood: React.FC = () => {
     },
     collection: "products",
   });
+  const categories = useSelector((state:RootState)=>state.root.category.categories)
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -50,6 +37,7 @@ const UploadFood: React.FC = () => {
       return toast.error("Unable to add product");
     }
   };
+
 
   return (
     <React.Fragment>
@@ -117,32 +105,8 @@ const UploadFood: React.FC = () => {
               >
                 Category
               </label>
-              <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
-                {" "}
-                <select
-                  className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-                  name=""
-                  id=""
-                  onChange={(event) =>
-                    setAddFood((prev) => ({
-                      ...prev,
-                      products: {
-                        ...prev.products,
-                        tag: event.target.value as any,
-                      },
-                    }))
-                  }
-                >
-                  {options.map((opt) => (
-                    <option
-                      className="text-[var(--dark-text)]"
-                      value={opt.value}
-                    >
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <Selector categoryOption={categories.map((category)=>({label: category,value: category}))} setField={(value)=> setAddFood((prev)=>({...prev, products:{...prev.products,tag: value}}))} />
+             
             </div>
             <div className="w-full flex flex-col items-baseline justify-center gap-0.5">
               <label

@@ -5,9 +5,17 @@ import { DropDown } from "../Common/DropDown/DropDown";
 // import { getOrders } from "../../Services";
 // import { aggregateLineDataMonthly } from "./LineChartData";
 // import { Order } from "../../models/order.model";
-import { weekOrderRevenue as orderRevenue } from "../../data.json";
+import {
+  weekOrderRevenue as orderRevenue,
+  previousOrderRevenue,
+} from "../../data.json";
+import { FilterButton } from "../Common/Sorting/Sorting";
+import { useState } from "react";
+import { Button } from "../Common/Button/Button";
 
 export const WeekReveneuChart: React.FC = () => {
+  // const [initialData, setInitialData] = useState<any>(orderRevenue);
+  const [prevData, setPrevData] = useState<any>([]);
   /*
   // useEffect(() => {
   //   getOrders().then((data) => {
@@ -36,6 +44,16 @@ export const WeekReveneuChart: React.FC = () => {
 
   // },[orderRevenue])
 */
+
+  const handleSelect = (value: string) => {
+    if (value === "Last week") {
+      setPrevData(previousOrderRevenue);
+    }
+    if (value === "Current week") {
+      setPrevData([]);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center w-full gap-5 px-3 py-5 rounded">
       <div className="flex items-center justify-between w-full gap-3 px-2">
@@ -48,27 +66,21 @@ export const WeekReveneuChart: React.FC = () => {
             </span>
           </p>
         </div>
-        <div className="flex items-center justify-between w-full p-2">
-          <DropDown
-            style={{
-              display: "flex",
-              fontSize: "14px",
-              borderRadius: "4px",
-              padding: "0.5rem 1rem 0.5rem 1rem",
-              color: "var(--dark-secondary-text)",
-              border: "1px solid var(--light-secondary-text)  ",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.5rem",
-              background: "",
-            }}
-            children={
-              <>
-                <Filter size={15} />
-                <span>Filter</span>
-              </>
+        <div>
+          <Button
+            parent={
+              <button
+                className="flex w-full duration-150 hover:text-[var(--dark-text)] text-[var(--dark-secondary-text)] items-center gap-1.5 p-2 rounded 
+               justify-center"
+              >
+                <Filter className="size-5" />
+                <span className=" text-[17px] tracking-wider ">
+                  Filter
+                </span>
+              </button>
             }
-            options={["Current Week", "1 week ago"]}
+            children={["Last week", "This week"]}
+            onSelect={(value) => handleSelect(value)}
           />
         </div>
       </div>
@@ -93,8 +105,12 @@ export const WeekReveneuChart: React.FC = () => {
               type: "line",
               color: "#45c241",
             },
+            prevData && {
+              data: prevData?.map((order: any) => order["revenue"]),
+              type: "line",
+              color: "red",
+            },
           ]}
-          skipAnimation={true}
           grid={{ vertical: true, horizontal: true }}
         ></LineChart>
       </div>

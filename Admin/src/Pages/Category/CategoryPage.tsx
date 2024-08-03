@@ -164,26 +164,21 @@ export const CategoryPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const categories = initialCategory.map((category) => category.name);
-    dispatch(categoryAdd(categories));
+    initialCategory.forEach((category) => dispatch(categoryAdd(category.name)));
     if (sortOrder.field === "") {
       setInitialCategory(originalData);
     }
   }, [initialCategory, dispatch, sortOrder.field, originalData]);
 
   useEffect(() => {
-    if (initialCategory.length <= 0) {
-      getAllCategories();
-  }
-  }, [initialCategory.length]);
+    getAllCategories();
+  }, []);
 
   const SearchingCategories = async (value: string) => {
-    if (value.length > 0) {
-      const filterCategories = SearchCategory(initialCategory, value);
-      setInitialCategory(filterCategories);
-    } else {
-      getAllCategories();
-    }
+    if (value.length <= 0) return getAllCategories();
+    const filterCategories = SearchCategory(initialCategory, value);
+    if (filterCategories.length <= 0) setInitialCategory([]);
+    setInitialCategory(filterCategories);
   };
 
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
@@ -263,7 +258,10 @@ export const CategoryPage: React.FC = () => {
       <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
         <div className="flex items-center justify-start gap-2 ">
           {" "}
-          <form action="" className="relative sm:w-auto w-[300px] min-w-[200px] ">
+          <form
+            action=""
+            className="relative sm:w-auto w-[300px] min-w-[200px] "
+          >
             <input
               onChange={(event) => debouncingSearch(event.target.value)}
               id="search"
@@ -274,10 +272,14 @@ export const CategoryPage: React.FC = () => {
           </form>
           <div className="h-10  w-[1px] bg-gray-300 "></div>
           <button
+            className="hover:bg-gray-400 rounded-lg duration-150 p-2"
             disabled={bulkSelectedCategory?.length >= 1 ? false : true}
             onClick={() => setIsBulkDeleted(true)}
           >
-            <Trash2 className="size-7" />
+            <Trash2
+              strokeWidth={3}
+              className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
+            />
           </button>
         </div>
         <div>

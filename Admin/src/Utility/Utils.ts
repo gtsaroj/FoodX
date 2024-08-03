@@ -4,12 +4,14 @@ import { Order, Product } from "../models/order.model";
 
 // get fullName from userData to show in order table in customer column
 export const getFullName = async (uid: string) => {
-  const getName = (await getUserData("customers", uid)).fullName;
-  return getName;
+  const getCustomerName = (await getUserData("customer", uid)).fullName;
+  console.log(getCustomerName)
+  if (getCustomerName) return getCustomerName;
+  const getAdminName = (await getUserData("admin", uid)).fullName;
+  if (getAdminName) return getAdminName;
 };
 export const getUserInfo = async (uid: string) => {
-  console.log(uid)
-  const user = await getUserData("customers", uid);
+  const user = await getUserData("customer", uid);
   return user;
 };
 
@@ -36,12 +38,11 @@ export const totalRevenue = (orders: Order[]) => {
 };
 
 export const totalCost = (products: Product[]) => {
-  
   const customerOrderCost = products?.reduce(
     (prodSum, product) => prodSum + product?.price,
     0
   );
-  typeof(customerOrderCost)
+  typeof customerOrderCost;
   return customerOrderCost;
 };
 

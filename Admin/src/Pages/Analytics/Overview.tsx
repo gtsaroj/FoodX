@@ -3,6 +3,10 @@ import Revenue from "../../Components/Analytics/DailyAnalytics";
 import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
 import { PieChartAnalytics } from "../../Components/PieChart/PieChart";
 import { WeekReveneuChart } from "../../Components/LineChart/LineChart";
+import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { DropDown } from "../../Components/Common/DropDown/DropDown";
+import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
+import { Button } from "../../Components/Common/Button/Button";
 
 const Overview = () => {
   return (
@@ -14,10 +18,21 @@ const Overview = () => {
         <div className="w-full h-full lg:max-w-[550px] flex flex-col items-center justify-center border rounded-md px-2 py-5 min-w-[400px] flex-grow">
           <p className="w-full px-5 text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
             Top Products
-            <span className="text-xs  text-[var(--dark-secondary-text)] cursor-pointer flex gap-1 items-center justify-center">
-              <Filter size={15} />
-              Filter
-            </span>
+            <div>
+              <Button
+                parent={
+                  <button
+                    className="flex w-full duration-150 hover:text-[var(--dark-text)] text-[var(--dark-secondary-text)] items-center gap-1.5 p-2 rounded 
+               justify-center"
+                  >
+                    <Filter className="size-5" />
+                    <span className=" text-[17px] tracking-wider ">Filter</span>
+                  </button>
+                }
+                children={["Last month", <DatePickerDemo />]}
+                onSelect={(value) => console.log(value)}
+              />
+            </div>
           </p>
           <MonthlyOrderChart height={400} />
         </div>
@@ -37,6 +52,5 @@ const Overview = () => {
     </div>
   );
 };
-
 
 export default Overview;

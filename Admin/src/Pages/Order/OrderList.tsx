@@ -1,10 +1,4 @@
-import {
-  ChevronUp,
-  Download,
-  Filter,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ChevronUp, Download, Filter, Trash2, X } from "lucide-react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { useCallback, useEffect, useState } from "react";
 import { getOrders } from "../../Services";
@@ -12,9 +6,7 @@ import { Order, OrderModal } from "../../models/order.model";
 import { debounce } from "../../Utility/Debounce";
 import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
-import {
-  convertIsoToReadableDateTime,
-} from "../../Utility/DateUtils";
+import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
 import { OrderTable } from "./OrderTable";
@@ -32,6 +24,7 @@ const OrderList = () => {
       const orders = (await getOrders()) as Order[];
       const aggregateData = orders?.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
+    
         const getDate = convertIsoToReadableDateTime(
           item.orderRequest as string
         );
@@ -56,8 +49,8 @@ const OrderList = () => {
       });
 
       const getaggregateDataPromises = await Promise.all(aggregateData);
-setOriginalData(getaggregateDataPromises);
-      setInitialOrders(getaggregateDataPromises);
+      setOriginalData(getaggregateDataPromises as any);
+      setInitialOrders(getaggregateDataPromises as any);
     } catch (error) {
       setLoading(false);
 

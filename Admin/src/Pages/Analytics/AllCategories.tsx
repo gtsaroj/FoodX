@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import Table from "../../Components/Common/Table/Table";
 import { CategoryTable } from "../Category/CategoryTable";
 import { CategoryType } from "../../models/category.model";
 import { bulkDeleteOfCategory, getCategories } from "../../Services";
@@ -8,7 +7,12 @@ import toast from "react-hot-toast";
 import Delete from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
-import { ArrowDownAZ, ChevronUp, Trash2, X } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Reducer/Store";
+import { categoryAdd } from "../../Reducer/Action";
+import { ChevronUp, X, Trash2 } from "lucide-react";
+import { SearchCategory } from "../../Utility/Search";
+import { debounce } from "../../Utility/Debounce";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
@@ -22,6 +26,7 @@ const AllCategories = () => {
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const dispatch = useDispatch<AppDispatch>();
 
   const getAllCategories = async () => {
     setLoading(true);
@@ -36,6 +41,7 @@ const AllCategories = () => {
         revenue: 15000,
         image: category.image,
       }));
+      categorydata?.forEach((data) => dispatch(categoryAdd(data.name)));
       setOriginalData(categorydata);
       setInitialCategory(categorydata);
     } catch (error) {
@@ -125,6 +131,17 @@ const AllCategories = () => {
     setInitialCategory(sortedCustomers as CategoryType[]);
   };
 
+  const SearchingCategories = async (value: string) => {
+    if (value.length <= 0) return getAllCategories();
+    const filterCategories = SearchCategory(initialCategory, value);
+    if (filterCategories.length <= 0) setInitialCategory([]);
+    setInitialCategory(filterCategories);
+  };
+
+  const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
+    initialCategory,
+  ]);
+
   useEffect(() => {
     getAllCategories();
   }, []);
@@ -138,40 +155,65 @@ const AllCategories = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-col items-start justify-center gap-3">
           <p className="text-xl text-nowrap">Categories</p>
-          <div className="h-5  w-[1px] bg-gray-300 "></div>
-          <button disabled={bulkSelectedCategory.length > 0 ? false : true}>
-            <Trash2
-              onClick={() => {
-                setIsBulkDelete(true);
-              }}
-              className="size-7"
-            />
-          </button>
-          {sortOrder.field && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">
-                  {sortOrder.field.toLowerCase()}
-                </span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder?.order === "desc"
-                      ? "rotate-180"
-                      : sortOrder.order === "asc"
-                      ? ""
-                      : ""
-                  } `}
-                >
-                  <ChevronUp size={20} />
-                </p>
-              </div>
-              <button onClick={() => setSortOrder({ field: "" })} className=" ">
-                <X className="text-[var(--danger-text)] " size={20} />
+
+          <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
+            <div className="flex items-center justify-start gap-2 ">
+              {" "}
+              <form
+                action=""
+                className="relative sm:w-auto w-[300px] min-w-[200px] "
+              >
+                <input
+                  onChange={(event) => debouncingSearch(event.target.value)}
+                  id="search"
+                  type="search"
+                  className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
+                  placeholder="Search"
+                />
+              </form>
+              <div className="h-10  w-[1px] bg-gray-300 "></div>
+              <button
+                className="hover:bg-gray-400 rounded-lg duration-150 p-2"
+                disabled={bulkSelectedCategory?.length >= 1 ? false : true}
+                onClick={() => setIsBulkDelete(true)}
+              >
+                <Trash2
+                  strokeWidth={3}
+                  className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
+                />
               </button>
             </div>
-          )}
+            <div>
+              {sortOrder.field && (
+                <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                  <div className="flex gap-1 items-center justify-center">
+                    <span className="  text-sm ">
+                      {sortOrder.field.toLowerCase()}
+                    </span>
+                    <p
+                      className={` duration-150 ${
+                        sortOrder?.order === "desc"
+                          ? "rotate-180"
+                          : sortOrder.order === "asc"
+                          ? ""
+                          : ""
+                      } `}
+                    >
+                      <ChevronUp size={20} />
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSortOrder({ field: "" })}
+                    className=" "
+                  >
+                    <X className="text-[var(--danger-text)] " size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         <div className="z-[100]">
           <FilterButton

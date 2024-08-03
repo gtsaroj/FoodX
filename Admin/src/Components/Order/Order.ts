@@ -6,9 +6,11 @@ export const getRecentOrders = async () => {
   try {
     //  get total orders data from  server
     const orders = await getOrders();
-    const totalOrders = orders.data as Order[];
+    const totalOrders = orders as Order[];
     const aggregateData = totalOrders?.map(async (item) => {
-      const user = await getUserInfo(item?.uid);
+      const user = await getUserInfo(item.uid);
+      if (!user) throw new Error("User not available")
+       console.log(user)
       if (user) {
         const productNames = item.products?.map(
           (product) =>

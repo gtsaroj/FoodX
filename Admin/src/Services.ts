@@ -306,7 +306,7 @@ export const updateTicket = async (data: TicketType) => {
 };
 
 // categories
-export const addCategory = async (data: CategoryType) => {
+export const addCategory = async (data: {image:string,name:string}) => {
   try {
     const response = await makeRequest({
       method: "post",

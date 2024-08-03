@@ -9,7 +9,6 @@ export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>();
 
-  console.log(recentOrder)
 
   //  scroller check
   // const [scroll, setScroll] = useState<boolean>(false);
@@ -38,7 +37,6 @@ export const RecentOrders = () => {
       if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
     })();
   }, []);
-  console.log(recentOrder)
 
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">

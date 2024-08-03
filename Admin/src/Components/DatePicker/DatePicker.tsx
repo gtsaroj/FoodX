@@ -3,7 +3,7 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon, X } from "lucide-react";
-import { Calendar } from "../Common/components/ui/calendar";
+import { Calendar } from "../calendar";
 export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date | undefined>();
   const [open, setOpen] = React.useState<boolean>(false);
@@ -35,20 +35,8 @@ export function DatePickerDemo() {
         className={`  duration-150 rounded p-1.5 hover:bg-[var(--light-secondary-background)]   flex items-center  justify-start w-full gap-3`}
       >
         <CalendarIcon className="size-4" />
-        {date ? (
-          <span className="flex items-center text-[14px] justify-center gap-2">
-            {format(date, "PPP")}
-            <button
-              onClick={() => setDate(undefined)}
-              className=" bg-[var(--dark-foreground)] rounded-full p-1"
-            >
-              {" "}
-              <X className=" text-[var(--light-text)] text-start size-3" />
-            </button>{" "}
-          </span>
-        ) : (
-          <span className="text-[15px]">Pick a date</span>
-        )}
+
+        <span className="text-[15px]">Pick a date</span>
       </button>
 
       <div
@@ -56,12 +44,7 @@ export function DatePickerDemo() {
           open ? "visible" : "invisible"
         }`}
       >
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
+         <input type="date" />
       </div>
     </div>
   );

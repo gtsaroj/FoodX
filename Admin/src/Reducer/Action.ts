@@ -23,14 +23,14 @@ interface authState {
   success: boolean;
   error: boolean;
   loading: boolean;
-  userInfo: [] | User;
+  userInfo: User;
 }
 
 const authState: authState = {
   success: false,
   error: false,
   loading: true,
-  userInfo: [],
+  userInfo: {},
 };
 
 interface SigninTypes {
@@ -168,7 +168,7 @@ const ProductSlice = createSlice({
       (state.loading = false),
         (state.success = false),
         (state.error = true),
-        (state.products = [null]);
+        (state.products = []);
     });
     //get products
     builder.addCase(getProductAction.pending, (state) => {
@@ -208,7 +208,7 @@ const authSlice = createSlice({
   name: "auth",
   reducers: {
     authLogout: (state) => {
-      state.userInfo = [];
+      state.userInfo = {};
       if (state.success) state.success = false;
       state.loading = true;
     },
@@ -225,7 +225,7 @@ const authSlice = createSlice({
     });
     builder.addCase(singUpAction.rejected, (state) => {
       state.loading = false;
-      (state.success = false), (state.userInfo = []);
+      (state.success = false), (state.userInfo = {});
       state.error = false;
     });
     // action to login existing user
@@ -241,11 +241,12 @@ const authSlice = createSlice({
     builder.addCase(singInAction.rejected, (state) => {
       state.error = true;
       state.loading = false;
-      state.userInfo = [];
+      state.userInfo = {};
     });
     // action to update user
   },
 });
+
 const categoryState = {
   categories: [],
 };
@@ -257,7 +258,7 @@ const categorySlice = createSlice({
       const previousCategory = state.categories?.filter(
         (category) => category !== action.payload
       );
-      if (!previousCategory) state.categories.push(action.payload as never);
+    state.categories = [...previousCategory, action.payload];
     },
   },
 });

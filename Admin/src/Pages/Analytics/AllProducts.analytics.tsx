@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import {
   bulkDeleteOfProduct,
@@ -13,6 +13,8 @@ import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete from "../../Components/Common/Delete/Delete";
 import { ChevronUp, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { debounce } from "../../Utility/Debounce";
+import { SearchProduct } from "../../Utility/Search";
 
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
@@ -137,6 +139,16 @@ const AllProductAnalytics = () => {
     setFetchedProducts(sortedCustomers as ArrangedProduct[]);
   };
 
+  const handleChange = (value: string) => {
+    if (value.length <= 0) return getAllProducts();
+    const filterProducts = SearchProduct(fetchedProducts, value);
+
+    if (filterProducts.length <= 0) return setFetchedProducts([]);
+    setFetchedProducts(filterProducts);
+  };
+
+  const debounceSearch = useCallback(debounce(handleChange, 300), []);
+
   useEffect(() => {
     if (sortOrder?.field === "") {
       setFetchedProducts(originalData);
@@ -216,40 +228,54 @@ const AllProductAnalytics = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-col items-start justify-center gap-3">
           <p className="text-xl text-nowrap">All products</p>
-          <div className="h-5  w-[1px] bg-gray-300 "></div>
-          <div>
-            <Trash2
-              onClick={() => {
-                setIsDelete(true);
-              }}
-              className="size-7"
-            />
-          </div>
-          {sortOrder.field && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">
-                  {sortOrder.field.toLowerCase()}
-                </span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder?.order === "desc"
-                      ? "rotate-180"
-                      : sortOrder.order === "asc"
-                      ? ""
-                      : ""
-                  } `}
+
+          <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
+            {" "}
+            <form action="" className="relative ">
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debounceSearch(event?.target.value)}
+                className=" border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
+                placeholder="Search for products"
+              />
+            </form>
+            <div className="h-9  w-[1px] bg-gray-300  "></div>
+            <button className="hover:bg-gray-400 rounded-lg duration-150 p-2 "
+              disabled={bulkSelectedProduct.length >= 1 ? false : true}
+              onClick={() => setIsDelete(true)}
+            >
+              <Trash2  strokeWidth={3}  className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   " />
+            </button>
+            {sortOrder.field && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">
+                    {sortOrder.field.toLowerCase()}
+                  </span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSortOrder({ field: "" })}
+                  className=" "
                 >
-                  <ChevronUp size={20} />
-                </p>
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
               </div>
-              <button onClick={() => setSortOrder({ field: "" })} className=" ">
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <div className=" z-[1000]">
           <FilterButton

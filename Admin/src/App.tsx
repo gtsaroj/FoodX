@@ -19,7 +19,7 @@ import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState, persistor } from "./Reducer/Store";
+import { RootState } from "./Reducer/Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/Category/CategoryPage";
@@ -62,38 +62,83 @@ const App: React.FC = () => {
           path="login/"
           element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}
         />
-        <Route path="register/" element={<Register />} />
-        <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+        <Route
+          path="register/"
+          element={
+            showContent ? <Navigate to={"/admin"} replace /> : <Register />
+          }
+        />
+        <Route  
+          element={
+            <PrivateRoute  role={[{ role: "admin" }, { role: "chef" }]} />
+          }
+        >
           <Route path="admin/" element={<MainPage />}>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route index element={<Dasboard />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin"]} />}>
+            <Route element={<PrivateRoute role={[{ role: "admin" }]} />}>
               <Route path="analytics" element={<Analytics />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="order-list" element={<OrderList />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="customer-list" element={<CustomerList />} />
             </Route>
 
-            <Route element={<PrivateRoute UserRole={["admin"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="contact/tickets" element={<TicketPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="contact/profile" element={<AdminProfile />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="collection/foodlist" element={<FoodPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="collection/banner" element={<BannerPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="category" element={<CategoryPage />} />
             </Route>
-            <Route element={<PrivateRoute UserRole={["admin", "Chef"]} />}>
+            <Route
+              element={
+                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
+              }
+            >
               <Route path="profile" element={<AdminProfile />} />
             </Route>
           </Route>
