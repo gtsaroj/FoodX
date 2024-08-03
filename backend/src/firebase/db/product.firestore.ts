@@ -37,6 +37,18 @@ const getProductByName = async (name: string, category: Collection["name"]) => {
   }
 };
 
+const getProductById = async (id: string, category: Collection["name"]) => {
+  const productRef = db.collection(category);
+  try {
+    const doc = await productRef.doc(id).get();
+    if (!doc.exists) throw new ApiError(404, "No item found with that ");
+    const data = doc.data() as Product;
+    return { data, doc: id };
+  } catch (error) {
+    throw new ApiError(401, "Unable to get product from database.");
+  }
+};
+
 const getProductByTagFromDatabase = async (
   tag: string,
   category: Collection["name"]
@@ -78,13 +90,13 @@ const getAllProductsFromDatabase = async (category: Collection["name"]) => {
 const updateProductInDatabase = async (
   category: Collection["name"],
   field: keyof Product,
-  name: string,
+  id: string,
   newData: string | number
 ) => {
   const productRef = db.collection(category);
   if (!productRef) throw new ApiError(400, "No collection available.");
   try {
-    const document = await getProductByName(name, category);
+    const document = await getProductById(id, category);
     await productRef.doc(document.doc).update({
       [`${field}`]: newData,
     });
@@ -118,4 +130,5 @@ export {
   getAllProductsFromDatabase,
   updateProductInDatabase,
   bulkDeleteProductsFromDatabase,
+  getProductById,
 };
