@@ -6,12 +6,17 @@ import {
   deleteBannersInBulk,
   getAllBanners,
 } from "../controllers/banner.controller.js";
+import { verifyChef } from "../middlewares/role.middlewares.js";
 
 const bannerRouter = Router();
 
-bannerRouter.route("/get-banners").get(verifyJwt, getAllBanners);
-bannerRouter.route("/add-banner").post(verifyJwt, addNewBanner);
-bannerRouter.route("/delete-banner").delete(verifyJwt, deleteBanner);
-bannerRouter.route("/bulk-delete").delete(verifyJwt, deleteBannersInBulk);
+bannerRouter.route("/get-banners").get(verifyJwt, verifyChef, getAllBanners);
+bannerRouter.route("/add-banner").post(verifyJwt, verifyChef, addNewBanner);
+bannerRouter
+  .route("/delete-banner")
+  .delete(verifyJwt, verifyChef, deleteBanner);
+bannerRouter
+  .route("/bulk-delete")
+  .delete(verifyJwt, verifyChef, deleteBannersInBulk);
 
 export { bannerRouter };

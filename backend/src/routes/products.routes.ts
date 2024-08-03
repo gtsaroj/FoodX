@@ -8,16 +8,21 @@ import {
   getSpecialProducts,
   updateProducts,
 } from "../controllers/products.controller.js";
+import { verifyAdmin, verifyChef } from "../middlewares/role.middlewares.js";
 
 const productRouter = Router();
 
 //secured routes
 productRouter.route("/all").get(verifyJwt, getNormalProducts);
 productRouter.route("/specials").get(verifyJwt, getSpecialProducts);
-productRouter.route("/add-product").post(verifyJwt, addProducts);
+productRouter.route("/add-product").post(verifyJwt, verifyChef, addProducts);
 productRouter.route("/get-product-by-tag").get(verifyJwt, getProductByTag);
-productRouter.route("/update-product").put(verifyJwt, updateProducts);
-productRouter.route("/bulk-delete").delete(verifyJwt, deleteProductsInBulk);
+productRouter
+  .route("/update-product")
+  .put(verifyJwt, verifyChef, updateProducts);
+productRouter
+  .route("/bulk-delete")
+  .delete(verifyJwt, verifyAdmin, deleteProductsInBulk);
 
 // admin-only secured routes
 

@@ -5,11 +5,16 @@ import {
   getLogsBasedOnAction,
   getLogsBasedOnRoles,
 } from "../controllers/logs.controller.js";
+import { verifyAdmin } from "../middlewares/role.middlewares.js";
 
 const logRouter = Router();
 
-logRouter.route("/get-role-logs").get(verifyJwt, getLogsBasedOnRoles);
-logRouter.route("/get-action-logs").get(verifyJwt, getLogsBasedOnAction);
+logRouter
+  .route("/get-role-logs")
+  .get(verifyJwt, verifyAdmin, getLogsBasedOnRoles);
+logRouter
+  .route("/get-action-logs")
+  .get(verifyJwt, verifyAdmin, getLogsBasedOnAction);
 logRouter.route("/add-logs").post(verifyJwt, addLogs);
 
 export { logRouter };

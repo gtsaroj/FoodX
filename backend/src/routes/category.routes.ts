@@ -7,13 +7,24 @@ import {
   getAllCategory,
   updateCategory,
 } from "../controllers/category.controller.js";
+import { verifyChef } from "../middlewares/role.middlewares.js";
 
 const categoryRouter = Router();
 
-categoryRouter.route("/get-category").get(verifyJwt, getAllCategory);
-categoryRouter.route("/add-category").post(verifyJwt, addNewCategory);
-categoryRouter.route("/update-category").put(verifyJwt, updateCategory);
-categoryRouter.route("/delete-category").delete(verifyJwt, deleteCategory);
-categoryRouter.route("/bulk-delete").delete(verifyJwt, deleteCategoriesInBulk);
+categoryRouter
+  .route("/get-category")
+  .get(verifyJwt, verifyChef, getAllCategory);
+categoryRouter
+  .route("/add-category")
+  .post(verifyJwt, verifyChef, addNewCategory);
+categoryRouter
+  .route("/update-category")
+  .put(verifyJwt, verifyChef, updateCategory);
+categoryRouter
+  .route("/delete-category")
+  .delete(verifyJwt, verifyChef, deleteCategory);
+categoryRouter
+  .route("/bulk-delete")
+  .delete(verifyJwt, verifyChef, deleteCategoriesInBulk);
 
 export { categoryRouter };
