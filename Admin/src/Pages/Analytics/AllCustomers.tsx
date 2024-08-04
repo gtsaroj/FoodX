@@ -84,7 +84,7 @@ const AllCustomers = () => {
   };
 
   const handleSelectedDelete = async () => {
-    const toastLoader = toast.loading("Deleting category...");
+    const toastLoader = toast.loading("Deleting customer...");
     try {
       const { customer, admin, chef } = bulkSelectedCustomer.reduce<{
         customer: string[];
@@ -132,6 +132,7 @@ const AllCustomers = () => {
   };
 
   const handleDelete = async (id: string) => {
+    console.log(id)
     if (!id) return toast.error("Customer not found");
     const findCustomer = initialCustomer?.find(
       (customer) => customer.id === id

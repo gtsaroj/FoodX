@@ -14,12 +14,10 @@ import {
   ValidationType,
 } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
-import { Store, } from "./Reducer/Store";
+import { Store } from "./Reducer/Store";
 import { makeRequest } from "./makeRequest";
 
-import {
-  UploadProductType,
-} from "./models/productMode";
+import { UploadProductType } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
 import {
   CategoryType,
@@ -28,6 +26,7 @@ import {
 } from "./models/category.model";
 import { LogCardProps } from "./models/logModel";
 import { authLogout } from "./Reducer/Action";
+import { Axios } from "axios";
 
 export const signIn = async (
   email: string,
@@ -127,6 +126,7 @@ export const bulkDeleteOfCustomer = async (data: {
   try {
     const response = await makeRequest({
       method: "delete",
+      url :"users",
       data: { role: data.role, ids: [...data.ids] },
     });
     return response.data.data;
@@ -505,14 +505,19 @@ export const deleteBanner = async (data: { id: string }) => {
 };
 
 //update role
-export const updateRole = async (data: { id: string; role: string; newRole: string   }) => {
+export const updateRole = async (data: {
+  id: string;
+  role: string;
+  newRole: string;
+}) => {
   try {
     const response = await makeRequest({
       method: "put",
       url: "users/update-role",
       data: {
-        id: data.id, role: data.role,
-        newRole: data.newRole
+        id: data.id,
+        role: data.role,
+        newRole: data.newRole,
       },
     });
     console.log(response);

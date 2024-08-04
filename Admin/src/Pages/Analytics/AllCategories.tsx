@@ -142,9 +142,9 @@ const AllCategories = () => {
     initialCategory,
   ]);
 
-  useEffect(() => {
-    getAllCategories();
-  }, []);
+  // useEffect(() => {
+  //   getAllCategories();
+  // }, []);
 
   useEffect(() => {
     if (sortOrder?.field === "") {
