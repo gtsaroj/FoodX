@@ -8,7 +8,7 @@ import {
 } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { debounce } from "../../Utility/Debounce";
-import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
+import {  DatePicker } from "../../Components/DatePicker/DatePicker";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
@@ -117,7 +117,7 @@ const CustomerList: React.FC = () => {
                   sortingOptions={["Total spent", "Name", "Total order"]}
                   onSelect={handleSelect}
                 />,
-                <DatePickerDemo />,
+                <DatePicker />,
               ]}
               style={{
                 display: "flex",

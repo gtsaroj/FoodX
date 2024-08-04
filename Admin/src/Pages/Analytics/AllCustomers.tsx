@@ -35,7 +35,11 @@ const AllCustomers = () => {
     setLoading(true);
     try {
       const customers = await getCustomerData("customer");
-      const customerList = await aggregateCustomerData(customers);
+      const admins = await getCustomerData("admin");
+      // const chefs = await getCustomerData("chef");
+
+      const AllCustomers = [...customers, ...admins];
+      const customerList = await aggregateCustomerData(AllCustomers);
       setOriginalData(customerList);
       setInitialCustomer(customerList);
     } catch (error) {
@@ -171,14 +175,12 @@ const AllCustomers = () => {
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
-
   const handleChange = async (value: string) => {
-    if(value.length <= 0) return handleCustomerData()
-      const filterCustomer =  SearchCustomer(initialCustomer, value);
-      if (filterCustomer.length <= 0) return setInitialCustomer([]);
-      setInitialCustomer(filterCustomer);
-    };
-  
+    if (value.length <= 0) return handleCustomerData();
+    const filterCustomer = SearchCustomer(initialCustomer, value);
+    if (filterCustomer.length <= 0) return setInitialCustomer([]);
+    setInitialCustomer(filterCustomer);
+  };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
@@ -199,50 +201,53 @@ const AllCustomers = () => {
         <div className="flex flex-col items-start justify-center gap-3">
           <p className="text-xl text-nowrap">All Customer</p>
           <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full">
-        <form action="" className=" w-full sm:w-auto">
-          <input
-            id="search"
-            type="search"
-            onChange={(event) => debouncedHandleChange(event?.target.value)}
-            className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
-            placeholder="Search"
-          />
+            <form action="" className=" w-full sm:w-auto">
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debouncedHandleChange(event?.target.value)}
+                className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
+                placeholder="Search"
+              />
             </form>
             <div className="h-10  w-[1px] bg-gray-300 "></div>
-              <button
-                className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-                disabled={bulkSelectedCustomer?.length >= 1 ? false : true}
-                onClick={() => setIsBulkDelete(true)}
-              >
-                <Trash2
-                  strokeWidth={3}
-                  className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-                />
-              </button>
-        {sortOrder.field && (
-          <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="  text-sm ">
-                {sortOrder.field.toLowerCase()}
-              </span>
-              <p
-                className={` duration-150 ${
-                  sortOrder?.order === "desc"
-                    ? "rotate-180"
-                    : sortOrder.order === "asc"
-                    ? ""
-                    : ""
-                } `}
-              >
-                <ChevronUp size={20} />
-              </p>
-            </div>
-            <button onClick={() => setSortOrder({ field: "" })} className=" ">
-              <X className="text-[var(--danger-text)] " size={20} />
+            <button
+              className="hover:bg-gray-400 rounded-lg duration-150 p-2"
+              disabled={bulkSelectedCustomer?.length >= 1 ? false : true}
+              onClick={() => setIsBulkDelete(true)}
+            >
+              <Trash2
+                strokeWidth={3}
+                className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
+              />
             </button>
+            {sortOrder.field && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">
+                    {sortOrder.field.toLowerCase()}
+                  </span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSortOrder({ field: "" })}
+                  className=" "
+                >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
           </div>
-        )}
-      </div>
         </div>
         <div className="z-[100]">
           <FilterButton

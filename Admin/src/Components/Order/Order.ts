@@ -9,8 +9,8 @@ export const getRecentOrders = async () => {
     const totalOrders = orders as Order[];
     const aggregateData = totalOrders?.map(async (item) => {
       const user = await getUserInfo(item.uid);
+
       if (!user) throw new Error("User not available")
-       console.log(user)
       if (user) {
         const productNames = item.products?.map(
           (product) =>

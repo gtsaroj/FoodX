@@ -8,7 +8,7 @@ import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
 import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import { DatePickerDemo } from "../../Components/DatePicker/DatePicker";
+import { DatePicker } from "../../Components/DatePicker/DatePicker";
 import { OrderTable } from "./OrderTable";
 
 const OrderList = () => {
@@ -22,9 +22,10 @@ const OrderList = () => {
     try {
       //  get total orders data from  server
       const orders = (await getOrders()) as Order[];
+      console.log(orders)
       const aggregateData = orders?.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
-    
+        console.log(getUserName)
         const getDate = convertIsoToReadableDateTime(
           item.orderRequest as string
         );
@@ -155,7 +156,7 @@ const OrderList = () => {
                   sortOrder={sortOrder.order}
                   sortingOptions={["Name", "Status", "Requested"]}
                 />,
-                <DatePickerDemo />,
+                <DatePicker />,
               ]}
               style={{
                 display: "flex",

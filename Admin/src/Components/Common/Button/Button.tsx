@@ -14,19 +14,24 @@ export const Button: React.FC<ButtonProp> = ({
   const [show, setShow] = useState<boolean>(false);
   const [index, setIndex] = useState<number>();
   return (
-    <div className="relative w-[150px]">
-      <div onClick={() => setShow(!show)}>{parent}</div>
+    <div className="relative  w-full">
       <div
-        className={`flex w-full top-12 z-[100] duration-100 absolute ${
+        className="w-[150px] flex justify-end"
+        onClick={() => setShow(!show)}
+      >
+        {parent}
+      </div>
+      <div
+        className={`flex  top-12 z-[100]  duration-100 absolute ${
           show ? "visible translate-x-0 " : "invisible -translate-y-2"
         } flex-col shadow-sm w-full p-2 shadow-[#00000067] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded-lg  `}
       >
         {children?.map((child, key) =>
           typeof child === "string" ? (
             <button
-              className={`
-w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)]
-                    p-1.5 ${index === key ? "bg-slate-300 " : "bg-[#00000000]"} `}
+              className={`w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)] p-1.5 ${
+                index === key ? "bg-slate-300 " : "bg-[#00000000]"
+              } `}
               onClick={() => {
                 setIndex(key as number);
                 if (!onSelect) return;
@@ -36,7 +41,20 @@ w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[v
               {child}
             </button>
           ) : React.isValidElement(child) ? (
-            <div>{child} </div>
+            <button
+              onClick={() => {
+                setIndex(key);
+              }}
+              className={`
+            w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)]
+                                p-1.5 ${
+                                  index === key
+                                    ? "bg-slate-300 "
+                                    : "bg-[#00000000]"
+                                } `}
+            >
+              {child}{" "}
+            </button>
           ) : (
             ""
           )

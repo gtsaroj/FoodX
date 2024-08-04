@@ -1,51 +1,61 @@
-"use client";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css";
 
-import * as React from "react";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon, X } from "lucide-react";
-import { Calendar } from "../calendar";
-export function DatePickerDemo() {
-  const [date, setDate] = React.useState<Date | undefined>();
-  const [open, setOpen] = React.useState<boolean>(false);
+import { useEffect, useRef, useState } from "react";
 
-  const reference = React.useRef<HTMLDivElement>();
+import { DateRange } from "react-date-range";
 
-  React.useEffect(() => {
-    const closeModal = (event: Event) => {
-      if (
-        reference.current &&
-        !reference.current.contains(event.target as any)
-      ) {
-        setOpen(false);
-      } else {
-        setOpen(true);
-      }
+interface DatePickerProp {
+  dateRangeFn: (startDate: Date, endDate: Date) => void;
+}
+
+export const DatePicker: React.FC<DatePickerProp> = ({ dateRangeFn }) => {
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [show, setShow] = useState<boolean>(false);
+
+  const handleChange = (value: any) => {
+    setStartDate(value.selection.startDate);
+    setEndDate(value.selection.endDate);
+
+    if (value.selection.startDate !== value.selection.endDate) {
+      dateRangeFn(value.selection.startDate, value.selection.endDate);
+    }
+  };
+
+  const reference = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (reference.current && !reference.current.contains(event.target as any))
+        setShow(false);
     };
 
-    window.addEventListener("mousedown", closeModal);
-
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      window.removeEventListener("mousedown", closeModal);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  });
 
   return (
-    <div ref={reference as any} className="relative">
-      <button
-        className={`  duration-150 rounded p-1.5 hover:bg-[var(--light-secondary-background)]   flex items-center  justify-start w-full gap-3`}
-      >
-        <CalendarIcon className="size-4" />
-
-        <span className="text-[15px]">Pick a date</span>
-      </button>
-
+    <div className="relative">
+      <span onClick={() => setShow(!show)} className=" text-[15px]">
+        {" "}
+        Pick a date
+      </span>
       <div
-        className={` bg-slate-300 z-[1] top-[-2.8rem] left-[-16.1rem] rounded absolute ${
-          open ? "visible" : "invisible"
-        }`}
+        ref={reference as any}
+        className={` absolute top-[-127px] right-[-42px] bg-slate-400 ${
+          show ? "visible" : "invisible"
+        } `}
       >
-         <input type="date" />
+        <DateRange
+          ranges={[
+            { startDate: startDate, endDate: endDate, key: "selection" },
+          ]}
+          onChange={(value) => handleChange(value)}
+        />
       </div>
     </div>
   );
-}
+};

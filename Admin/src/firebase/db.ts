@@ -92,7 +92,7 @@ export const getUserData = async (
 };
 
 export const getCustomerData = async (
-  docName: "customer"
+  docName: "customer"|"admin"| "chef"
 ): Promise<DbUser[]> => {
   try {
     const customerRef = collection(db, docName);

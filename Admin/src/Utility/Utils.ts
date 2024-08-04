@@ -3,16 +3,29 @@ import { getUserData } from "../firebase/db";
 import { Order, Product } from "../models/order.model";
 
 // get fullName from userData to show in order table in customer column
-export const getFullName = async (uid: string) => {
-  const getCustomerName = (await getUserData("customer", uid)).fullName;
-  console.log(getCustomerName)
-  if (getCustomerName) return getCustomerName;
-  const getAdminName = (await getUserData("admin", uid)).fullName;
-  if (getAdminName) return getAdminName;
+export const getFullName = async (uid: string): Promise<string | null> => {
+  try {
+    const customerData = await getUserData("customer", uid);
+    if (customerData && customerData.fullName) {
+      return customerData.fullName;
+    }
+
+    // If customer name is not found, try to get the admin's full name
+    const adminData = await getUserData("admin", uid);
+    if (adminData && adminData.fullName) {
+      return adminData.fullName;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
 };
 export const getUserInfo = async (uid: string) => {
   const user = await getUserData("customer", uid);
-  return user;
+  if (user) return user;
+  const admin = await getUserData("admin", uid);
+  if (admin) return admin;
 };
 
 export const totalQuantity = (products: Product[]) => {
