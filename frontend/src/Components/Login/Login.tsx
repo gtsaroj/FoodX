@@ -36,7 +36,7 @@ const LoginContainer: React.FC = () => {
 
     try {
       setDataSend(false);
-      await dispatch(singInAction({ email, password }));
+      await dispatch(singInAction({ email, password, userRole: "customer" }));
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);

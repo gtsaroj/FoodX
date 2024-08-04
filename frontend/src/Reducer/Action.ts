@@ -3,11 +3,17 @@ import * as Action from "../Services";
 import { ValidationType } from "../models/Register.model";
 import { UpdateProfileInfo } from "../Pages/UpdateProfile/ProfileSection";
 
+interface SigninTypes {
+  email: string;
+  password: string;
+  userRole : "customer"
+}
+
 export const singInAction = createAsyncThunk(
   "auth/signin",
-  async (data: any, { rejectWithValue }) => {
+  async (data: SigninTypes, { rejectWithValue }) => {
     try {
-      const response = await Action.signIn(data.email, data.password);
+      const response = await Action.signIn(data.email, data.password,data.userRole);
       return response;
     } catch (error: any) {
       if (error.response && error.response.data.message) {
