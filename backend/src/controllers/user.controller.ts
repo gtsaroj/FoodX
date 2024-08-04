@@ -296,7 +296,6 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
   console.log(id, newRole);
   try {
     const user = await getUserFromDatabase(id);
-    console.log(`Prev User : ${JSON.stringify(user)}`)
     if (!user) throw new ApiError(404, "User not found.");
     await deleteUserFromFireStore(id, user.role);
     user.role = newRole;
