@@ -507,12 +507,15 @@ export const deleteBanner = async (data: { id: string }) => {
 };
 
 //update role
-export const updateRole = async (data: { id: string; role: string }) => {
+export const updateRole = async (data: { id: string; role: string; newRole: string   }) => {
   try {
     const response = await makeRequest({
       method: "put",
       url: "users/update-role",
-      data: { id: data.id, newRole: data.role },
+      data: {
+        id: data.id, role: data.role,
+        newRole: data.newRole
+      },
     });
     console.log(response);
     return response.data.data;
