@@ -17,6 +17,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { CustomerType } from "../models/order.model.js";
+import { json } from "express";
 
 //Cookie options
 const options = {
@@ -33,7 +34,6 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   try {
     const user = await getUserDataByEmail(email);
     const userDataFromDatabase = await getUserFromDatabase(user.uid);
-    console.log(userDataFromDatabase)
     const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
@@ -296,6 +296,7 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
   console.log(id, newRole);
   try {
     const user = await getUserFromDatabase(id);
+    console.log(`Prev User : ${JSON.stringify(user)}`)
     if (!user) throw new ApiError(404, "User not found.");
     await deleteUserFromFireStore(id, user.role);
     user.role = newRole;
