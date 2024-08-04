@@ -61,7 +61,8 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
       if (field == "role") {
         const response = await updateRole({
           id: customerInfo.id,
-          role: newData,
+          role: customerInfo.role,
+          newRole: newData,
         });
         console.log(response);
         toast.dismiss(toastLoader);
