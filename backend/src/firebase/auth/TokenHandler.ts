@@ -43,7 +43,7 @@ export const generateAccessAndRefreshToken = async (
   role: RoleType
 ) => {
   try {
-    const user = await getUserFromDatabase(uid);
+    const user = await getUserFromDatabase(uid, role);
     if (!user) throw new ApiError(401, "User doesnt exist.");
 
     const accessToken = await getAccessToken(uid, role);

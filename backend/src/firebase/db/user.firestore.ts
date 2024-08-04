@@ -62,26 +62,43 @@ const updateUserDataInFirestore = async (
   }
 };
 
-const getUserFromDatabase = async (uid: string) => {
-  try {
-    const userRef = db.collection("customer").doc(uid);
-    const adminRef = db.collection("admin").doc(uid);
+// const getUserFromDatabase = async (uid: string) => {
+//   try {
+//     const userRef = db.collection("customer").doc(uid);
+//     const adminRef = db.collection("admin").doc(uid);
 
-    const customerInfo = await userRef.get();
-    const adminInfo = await adminRef.get();
-    if (customerInfo.exists) {
-      const customerData = customerInfo.data() as User;
-      return customerData;
-    } else if (adminInfo.exists) {
-      const adminData = adminInfo.data() as User;
-      return adminData;
-    }
-    throw new ApiError(404, "No user found. Please sign up or login");
+//     const customerInfo = await userRef.get();
+//     const adminInfo = await adminRef.get();
+//     if (customerInfo.exists) {
+//       const customerData = customerInfo.data() as User;
+//       return customerData;
+//     } else if (adminInfo.exists) {
+//       const adminData = adminInfo.data() as User;
+//       return adminData;
+//     }
+//     throw new ApiError(404, "No user found. Please sign up or login");
+//   } catch (error) {
+//     console.error(error);
+//     throw new ApiError(404, "User not found.");
+//   }
+// };
+const getUserFromDatabase = async (
+  uid: string,
+  path: "customer" | "admin" | "chef"
+) => {
+  const userRef = db.collection(`${path}`).doc(uid);
+  try {
+    const userDoc = await userRef.get();
+    if (!userDoc.exists)
+      throw new ApiError(404, "No user found. Please sign up or login.");
+    const userData = userDoc.data() as User;
+    return userData;
   } catch (error) {
     console.error(error);
-    throw new ApiError(404, "User not found.");
+    throw new ApiError(500, "Error getting user from database.");
   }
 };
+
 const bulkDeleteUserFromDatabase = async (
   path: "customer" | "admin" | "chef",
   id: string[]

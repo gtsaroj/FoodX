@@ -24,7 +24,10 @@ export const verifyJwt = asyncHandler(async (req: any, res: any, next: any) => {
       `Access token: \n ${decodedAccessToken.uid} ${decodedAccessToken.role}`
     );
 
-    const user = await getUserFromDatabase(`${decodedAccessToken.uid}`);
+    const user = await getUserFromDatabase(
+      `${decodedAccessToken.uid}`,
+      decodedAccessToken.role
+    );
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
     req.user = user;

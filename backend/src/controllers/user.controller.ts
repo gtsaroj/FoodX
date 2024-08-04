@@ -25,14 +25,17 @@ const options = {
 };
 
 const loginUser = asyncHandler(async (req: any, res: any) => {
-  const { email } = req.body;
+  const {
+    email,
+    userRole,
+  }: { email: string; userRole: "customer" | "admin" | "chef" } = req.body;
   if (!email) {
     throw new ApiError(400, "Email is required");
   }
 
   try {
     const user = await getUserDataByEmail(email);
-    const userDataFromDatabase = await getUserFromDatabase(user.uid);
+    const userDataFromDatabase = await getUserFromDatabase(user.uid, userRole);
     const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
@@ -100,7 +103,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
 const logOutUser = asyncHandler(async (req: any, res: any) => {
   try {
     const user = req.user as User;
-    const userFromDatabase = await getUserFromDatabase(user.uid);
+    const userFromDatabase = await getUserFromDatabase(user.uid, user.role);
     await updateUserDataInFirestore(
       user.uid,
       userFromDatabase.role,
@@ -131,7 +134,10 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
     ) as DecodeToken;
     console.log(`Decoded Token: \n ${decodedToken.uid}`);
 
-    const user = await getUserFromDatabase(decodedToken.uid.trim());
+    const user = await getUserFromDatabase(
+      decodedToken.uid.trim(),
+      decodedToken.role
+    );
     const { role } = user;
     if (!user) throw new ApiError(404, "User not found.");
     console.log(`User refresh token from database: \n${user.refreshToken}`);
@@ -172,7 +178,7 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
 const deleteAccount = asyncHandler(async (req: any, res: any) => {
   try {
     const user = req.user as User;
-    const foundUser = await getUserFromDatabase(user.uid);
+    const foundUser = await getUserFromDatabase(user.uid, user.role);
     if (!foundUser) throw new ApiError(404, "User not found.");
 
     //
@@ -200,7 +206,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
       process.env.ACCESS_TOKEN_SECRET as string
     ) as DecodeToken;
 
-    const user = await getUserFromDatabase(decodedToken.uid);
+    const user = await getUserFromDatabase(decodedToken.uid, decodedToken.role);
 
     if (!fullName && !phoneNumber && !avatar)
       throw new ApiError(400, "No data provided to update.");
@@ -244,12 +250,18 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
 
 const deletAllUser = asyncHandler(async (req: any, res: any) => {
   try {
-    const users = req.body as CustomerType[];
+    const {
+      users,
+      role,
+    }: {
+      users: CustomerType[];
+      role: "customer" | "admin" | "chef";
+    } = req.body;
     if (!users || users.length === 0) {
       throw new ApiError(404, "Users not found.");
     }
     const deletionPromises = users.map(async (user) => {
-      const foundUser = await getUserFromDatabase(user.id);
+      const foundUser = await getUserFromDatabase(user.id, role);
 
       if (!foundUser) {
         throw new ApiError(404, `User with uid ${user.id} not found.`);
@@ -291,10 +303,18 @@ const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
 });
 
 const updateUserRole = asyncHandler(async (req: any, res: any) => {
-  const { id, newRole } = req.body;
+  const {
+    id,
+    role,
+    newRole,
+  }: {
+    id: string;
+    role: "customer" | "admin" | "chef";
+    newRole: "customer" | "admin" | "chef";
+  } = req.body;
   console.log(id, newRole);
   try {
-    const user = await getUserFromDatabase(id);
+    const user = await getUserFromDatabase(id, role);
     if (!user) throw new ApiError(404, "User not found.");
     await deleteUserFromFireStore(id, user.role);
     user.role = newRole;
