@@ -1,6 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie"
 import toast from "react-hot-toast";
+import { Store } from "./Reducer/Store";
+import { authLogout } from "./Reducer/Action";
 
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -24,6 +26,7 @@ makeRequest.interceptors.response.use(
     if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
+        Store.dispatch(authLogout())
         return Promise.reject("You have not access, please login again...");
       }
       Cookies.remove("accessToken");
