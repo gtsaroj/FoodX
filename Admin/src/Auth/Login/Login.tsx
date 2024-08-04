@@ -32,7 +32,7 @@ const LoginContainer: React.FC = () => {
     event.preventDefault();
     try {
       setDataSend(false);
-      await dispatch(singInAction({ email, password }));
+      await dispatch(singInAction({ email, password,userRole :"admin" }));
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);

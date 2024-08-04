@@ -31,13 +31,17 @@ import {
 import { LogCardProps } from "./models/logModel";
 import { updateComponentProp } from "./models/table.model";
 
-export const signIn = async (email: string, password?: string) => {
+export const signIn = async (
+  email: string,
+  password?: string,
+  userRole: string = "admin"
+) => {
   try {
     await signInUser(email, password as string);
     const response = await globalRequest({
       method: "post",
       url: "users/login",
-      data: { email },
+      data: { email, userRole },
     });
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);

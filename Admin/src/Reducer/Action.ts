@@ -36,13 +36,14 @@ const authState: authState = {
 interface SigninTypes {
   email: string;
   password: string;
+  userRole : "admin"| "chef"
 }
 
 export const singInAction = createAsyncThunk(
   "auth/signin",
   async (data: SigninTypes, { rejectWithValue }) => {
     try {
-      const response = await ProductService.signIn(data.email, data.password);
+      const response = await ProductService.signIn(data.email, data.password,data.userRole);
       return response;
     } catch (error: any) {
       if (error.response && error.response.data.message) {

@@ -84,25 +84,32 @@ const AllCustomers = () => {
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting category...");
     try {
-      const { customer, admin } = bulkSelectedCustomer.reduce<{
+      const { customer, admin, chef } = bulkSelectedCustomer.reduce<{
         customer: string[];
         admin: string[];
+        chef: string[];
       }>(
         (acc, customer) => {
-          if (customer.role === "admins") {
+          if (customer.role === "admin") {
             acc.admin.push(customer.id);
-          } else if (customer.role === "customers") {
+          } else if (customer.role === "customer") {
             acc.customer.push(customer.id);
+          }
+          if (customer.role === "chef") {
+            acc.chef.push(customer.id);
           }
           return acc;
         },
-        { customer: [], admin: [] }
+        { customer: [], admin: [], chef: [] }
       );
       if (customer.length > 0) {
-        await bulkDeleteOfCustomer({ role: "customers", ids: [...customer] });
+        await bulkDeleteOfCustomer({ role: "customer", ids: [...customer] });
       }
       if (admin.length > 0) {
-        await bulkDeleteOfCustomer({ role: "admins", ids: [...admin] });
+        await bulkDeleteOfCustomer({ role: "admin", ids: [...admin] });
+      }
+      if (chef.length > 0) {
+        await bulkDeleteOfCustomer({ role: "chef", ids: [...chef] });
       }
       if (!admin && !customer) return toast.error("Please select the customer");
       toast.dismiss(toastLoader);
