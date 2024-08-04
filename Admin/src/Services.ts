@@ -132,7 +132,7 @@ export const bulkDeleteOfCustomer = async (data: {
     throw new Error("Unable to bulk delete" + error);
   }
 };
-export const deleteCustomer = async (data:{role:string,id: string}) => {
+export const deleteCustomer = async (data: { role: string; id: string }) => {
   try {
     return toast.error("No route found");
   } catch (error) {
@@ -306,7 +306,7 @@ export const updateTicket = async (data: TicketType) => {
 };
 
 // categories
-export const addCategory = async (data: CategoryType) => {
+export const addCategory = async (data: { image: string; name: string }) => {
   try {
     const response = await makeRequest({
       method: "post",
@@ -499,5 +499,20 @@ export const deleteBanner = async (data: { id: string }) => {
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to delete banners" + error);
+  }
+};
+
+//update role
+export const updateRole = async (data: { id: string; role: string }) => {
+  try {
+    const response = await makeRequest({
+      method: "put",
+      url: "users/update-role",
+      data: { id: data.id, newRole: data.role },
+    });
+    console.log(response);
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to update user role" + error);
   }
 };

@@ -1,67 +1,131 @@
+/* eslint-disable no-empty */
 import { BarChart } from "@mui/x-charts";
 import { orderChartsOfMonthly } from "../LineChart/D";
-// import { DropDown } from "../Common/DropDown/DropDown";
-// import { getOrders } from "../../Services";
-// import { aggregateBarData } from "../../Utility/DateUtils";
-// import { Order } from "../../models/order.model";
-
-// export const BarChartOfWeeklyOrder: React.FC = () => {
-//   const [weeklyBarData, setWeeklyBarData] = useState<
-//     { [key: string]: string }[]
-//   >([]);
-
-//   useEffect(() => {
-//     getOrders().then((data: any) => {
-//       const barData = aggregateBarData(data.data as Order[]);
-//       setWeeklyBarData(barData);
-//     });
-//   }, []);
-//   const productNames = Array.from(
-//     new Set(
-//       weeklyBarData.flatMap((data) =>
-//         Object.keys(data).filter((key) => key !== "week")
-//       )
-//     )
-//   );
-
-//   console.log(productNames);
-
-//   const valueFormatter = (value: number | null) => value;
-//   return (
-//     <div className="bg-[var(--light-background)] rounded py-2 w-full lg:w-[600px] h-[300px] sm:h-[400px] flex  flex-col items-start px-2 justify-center">
-//       <h2 className="text-xl p-2 text-[var(--primary-color)] ">
-//         Weekly Orders
-//       </h2>
-//       <BarChart
-//         slotProps={{
-//           legend: { hidden: true },
-//         }}
-//         xAxis={[{ scaleType: "band", disableLine: true, dataKey: "week" }]}
-//         dataset={weeklyBarData} // Ensure this is correctly formatted
-//         series={productNames?.map((product) => ({
-//           dataKey: product,
-//           label: product,
-//           valueFormatter: valueFormatter,
-//         }))}
-//         sx={{
-//           width: 100,
-//           strokeWidth: 1,
-//           cursor: "pointer",
-//         }}
-//       ></BarChart>
-//     </div>
-//   );
-// };
+import dayjs, { Dayjs } from "dayjs";
+import { useEffect, useState } from "react";
+import { getOrders } from "../../Services";
+import {
+  barData,
+  filterBarData,
+  filterBarTodayData,
+} from "../../Utility/DateUtils";
 interface MonthlyOrderChartProps {
   height: number;
+  dateRange: { startDate: Dayjs; endDate: Dayjs };
 }
+const foodData = [
+  {
+    samosa: 10,
+    pizza: 5,
+    burger: 8,
+    pasta: 12,
+    fries: 20,
+    time: dayjs("2024-08-01T10:00:00Z").format("YYYY-MM-DD"),
+  },
+  {
+    samosa: 15,
+    pizza: 10,
+    burger: 12,
+    pasta: 10,
+    fries: 25,
+    time: dayjs("2024-08-02T10:00:00Z").format("YYYY-MM-DD"),
+  },
+  {
+    samosa: 7,
+    pizza: 9,
+    burger: 5,
+    pasta: 11,
+    fries: 18,
+    time: dayjs("2024-08-03T10:00:00Z").format("YYYY-MM-DD"),
+  },
+  {
+    samosa: 20,
+    pizza: 12,
+    burger: 15,
+    pasta: 10,
+    fries: 30,
+    time: dayjs("2024-08-04T10:00:00Z").format("YYYY-MM-DD"),
+  },
+  {
+    samosa: 25,
+    pizza: 14,
+    burger: 18,
+    pasta: 13,
+    fries: 22,
+    time: dayjs("2024-08-05T10:00:00Z").format("YYYY-MM-DD"),
+  },
+  {
+    samosa: 10,
+    pizza: 5,
+    burger: 8,
+    pasta: 12,
+    fries: 20,
+    time: dayjs("2024-08-06T10:00:00Z").format("YYYY-MM-DD"),
+  },
+];
 
 export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   height,
-}: {
-  height: number;
+  dateRange,
 }) => {
-  // const valueFormatter = (value: number | null) => value;
+  const [initialData, setInitialData] = useState<{ [key: string]: string }[]>(
+    []
+  );
+  const [dataKey, setDataKey] = useState<string[]>([]);
+  const getAllOrders = async () => {
+    try {
+      const response = await getOrders();
+      const filtersData = await filterBarTodayData(response);
+
+      setInitialData(filtersData);
+      filtersData?.forEach((data) => {
+        const keys = Object.keys(data).filter((key) => key !== "time");
+        const ogDataKey = [...new Set(keys)];
+        setDataKey(ogDataKey);
+      });
+    } catch (error) {
+      throw new Error("Unable to get orders in bar" + error);
+    }
+  };
+
+  useEffect(() => {
+    getAllOrders();
+  }, []);
+
+  useEffect(() => {
+    const filterByDate = async () => {
+      // const startDate = dayjs(dateRange.startDate).format();
+      // const endDate = dayjs(dateRange.endDate);
+      const getOrder = await getOrders();
+      const filteredData = await filterBarData(getOrder, {
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+      });
+      setInitialData(filteredData);
+      filteredData?.forEach((data) => {
+        const keys = Object.keys(data).filter((key) => key !== "time");
+        const ogDataKey = [...new Set(keys)];
+        setDataKey(ogDataKey);
+      });
+    };
+
+    if (
+      dateRange.startDate &&
+      dateRange.endDate &&
+      dateRange.startDate !== dateRange.endDate
+    ) {
+      filterByDate();
+    }
+  }, [dateRange.startDate, dateRange.endDate]);
+
+
+  const series =
+    dataKey &&
+    dataKey.map((key) => ({
+      dataKey: key,
+      label: key,
+    }));
+
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
     <div className={`w-full p-2 h-[${height}px]`}>
@@ -86,37 +150,16 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
             // },
           },
         }}
-        dataset={orderChartsOfMonthly}
+        dataset={initialData}
         borderRadius={6}
         xAxis={[
           {
             scaleType: "band",
-            dataKey: "week",
-            data: ["Week 1", " Week 2", "Week 3", "Week 4"],
+            dataKey: "time",
+            data: initialData?.map((data) => data["time"]),
           },
         ]}
-        series={[
-          {
-            dataKey: "samosa",
-            label: "Samosa",
-            // valueFormatter,
-          },
-          {
-            dataKey: "pizza",
-            label: "Pizza",
-            // valueFormatter,
-          },
-          {
-            dataKey: "cold_drinks",
-            label: "Cold Drinks",
-            // valueFormatter,
-          },
-          {
-            dataKey: "others",
-            label: "Others",
-            // valueFormatter,
-          },
-        ]}
+        series={series as { dataKey: string; label: string }[]}
       />
     </div>
   );

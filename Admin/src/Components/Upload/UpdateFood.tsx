@@ -4,16 +4,12 @@ import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
-import { updateComponentProp } from "../../models/table.model";
-import { updateCategory, updateProduct } from "../../Services";
+import { updateProduct } from "../../Services";
 import { ArrangedProduct } from "../../models/productMode";
+import { Selector } from "../Selector/Selector";
 
-interface UpdateCategoryType {
-  label: string;
-  value: string | number;
-}
 
-const UpdateCategoryOption: UpdateCategoryType[] = [
+const UpdateCategoryOption:{label : string,value:string}[] = [
   { label: "Product Name", value: "name" },
   {
     label: "Image",
@@ -39,11 +35,11 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const [newData, setNewData] = useState<string | number>();
   const [field, setField] = useState<
     "image" | "name" | "price" | "category" | "quantity"
-    >("name");
-    const [show, setShow] = useState<boolean>(false);
-    const [showField, setShowField] = useState<string>();
+  >("name");
+  const [show, setShow] = useState<boolean>(false);
+  const [showField, setShowField] = useState<string>();
   const options = useSelector(
-    (state: RootState) => state.root.category.categories[0]
+    (state: RootState) => state.root.category.categories
   ) as [];
 
   const fileRef = useRef<HTMLImageElement>();
@@ -72,7 +68,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, "category" as any);
+    const imageUrl = await storeImageInFirebase(image, { folder: "products" });
     setNewData(imageUrl);
   };
   return (
@@ -85,42 +81,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
         className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-   <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-          <div
-            onClick={() => setShow(!show)}
-            className="flex items-center  justify-between"
-          >
-            <input
-              type="text"
-              className="w-full py-2  outline-none cursor-pointer "
-              readOnly
-              value={showField}
-              placeholder="Select option"
-            />
-            <ChevronDown />
-          </div>
-          <div
-            className={` bg-[var(--light-foreground)] h-[200px] overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
-              show
-                ? "max-h-64 opacity-100"
-                : "max-h-0 opacity-0 transform -translate-y-2"
-            }`}
-          >
-            {UpdateCategoryOption?.map((option) => (
-              <p
-                onClick={() => {
-                  setField(option.value as any)       
-                  setShowField(option.label);
-                  setShow(false);
-                }}
-                key={option.label}
-                className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
-              >
-                {option.label}
-              </p>
-            ))}
-          </div>
-        </div>
+   <Selector setField={(value)=>setField(value as any)} categoryOption={UpdateCategoryOption} />
 
         {field === "image" ? (
           newData ? (

@@ -15,15 +15,10 @@ export interface User {
   fullName?: string;
   email?: string;
   phoneNumber?: string;
-  role?: string;
+  role?: UserRole;
   refreshToken?: string;
 }
 
-export enum userRole {
-  admin = "admin",
-  chef = "chef",
-  customer = "customer",
-}
 
 export interface UserDeleteType {
   id: string[];
@@ -40,12 +35,8 @@ export interface CustomerType {
   role: string;
 }
 
-export interface TopCustomerType {
-  id?: string;
-  ImageFolders?: string;
-  name: string;
-  email: string;
-  image: string;
-  amountSpent: number;
-  totalOrder: number;
+
+
+export interface UserRole {
+  readonly role: "admin" | "chef" | "customer";
 }

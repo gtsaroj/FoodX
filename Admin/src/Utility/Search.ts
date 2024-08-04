@@ -2,15 +2,17 @@ import { DbUser } from "../models/UserModels";
 import { BannerModel } from "../models/banner.model";
 import { CategoryType } from "../models/category.model";
 import { OrderModal, Product } from "../models/order.model";
+import { ArrangedProduct } from "../models/productMode";
+import { CustomerType } from "../models/user.model";
 
-export const SearchCustomer = (customers: DbUser[], value: string) => {
+export const SearchCustomer = (customers: CustomerType[], value: string) => {
   const searchingCustomer = customers?.filter((customer) => {
-    return customer.fullName.toLowerCase().includes(value);
+    return customer.name.toLowerCase().includes(value);
   });
   return searchingCustomer;
 };
 
-export const SearchProduct = (customers: Product[], value: string) => {
+export const SearchProduct = (customers: ArrangedProduct[], value: string) => {
   const searchingProduct = customers?.filter((order) => {
     return order.name.toLowerCase().includes(value);
   });

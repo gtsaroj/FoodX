@@ -97,7 +97,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
                   if (event.target.files)
                     storeImageInFirebase(
                       event.target.files[0],
-                      "products" as any
+                      {folder:"categories"}
                     ).then((res) => {
                       setImageURL(res);
                     });

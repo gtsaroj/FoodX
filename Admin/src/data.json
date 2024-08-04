@@ -245,6 +245,15 @@
     { "week": "Fri", "revenue": 61000 },
     { "week": "Sat", "revenue": 41800 }
   ],
+  "previousOrderRevenue": [
+    { "week": "Sun", "revenue": 50000 },
+    { "week": "Mon", "revenue": 55000 },
+    { "week": "Tues", "revenue": 65000 },
+    { "week": "Wed", "revenue": 50700 },
+    { "week": "Thur", "revenue": 27100 },
+    { "week": "Fri", "revenue": 61700 },
+    { "week": "Sat", "revenue": 4400 }
+  ],
   "Products": [
     {
       "id": "1",

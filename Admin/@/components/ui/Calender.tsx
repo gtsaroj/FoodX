@@ -4,12 +4,12 @@ import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { DayPicker } from "react-day-picker";
 
-import { cn } from "../../../../../@/lib/Utils";
+import { cn } from "../../lib/Utils";
 import { buttonVariants } from "./button";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-function Calendar({
+function Calenders({
   className,
   classNames,
   showOutsideDays = true,
@@ -67,6 +67,6 @@ function Calendar({
     />
   );
 }
-Calendar.displayName = "Calendar";
+Calenders.displayName = "Calendar";
 
-export { Calendar };
+export { Calenders };

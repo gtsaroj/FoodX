@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { getCustomerData } from "../../firebase/db";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
@@ -14,6 +14,8 @@ import { ChevronUp, Trash2, X } from "lucide-react";
 import Delete from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
+import { debounce } from "../../Utility/Debounce";
+import { SearchCustomer } from "../../Utility/Search";
 
 const AllCustomers = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -32,8 +34,12 @@ const AllCustomers = () => {
   const handleCustomerData = async () => {
     setLoading(true);
     try {
-      const customers = await getCustomerData("customers");
-      const customerList = await aggregateCustomerData(customers);
+      const customers = await getCustomerData("customer");
+      const admins = await getCustomerData("admin");
+      // const chefs = await getCustomerData("chef");
+
+      const AllCustomers = [...customers, ...admins];
+      const customerList = await aggregateCustomerData(AllCustomers);
       setOriginalData(customerList);
       setInitialCustomer(customerList);
     } catch (error) {
@@ -169,6 +175,17 @@ const AllCustomers = () => {
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
+  const handleChange = async (value: string) => {
+    if (value.length <= 0) return handleCustomerData();
+    const filterCustomer = SearchCustomer(initialCustomer, value);
+    if (filterCustomer.length <= 0) return setInitialCustomer([]);
+    setInitialCustomer(filterCustomer);
+  };
+
+  const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
+    initialCustomer,
+  ]);
+
   useEffect(() => {
     if (sortOrder.field === "") {
       setInitialCustomer(originalData);
@@ -181,40 +198,56 @@ const AllCustomers = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-col items-start justify-center gap-3">
           <p className="text-xl text-nowrap">All Customer</p>
-          <div className="h-5  w-[1px] bg-gray-300 "></div>
-          <div>
-            <Trash2
-              onClick={() => {
-                setIsBulkDelete(true);
-              }}
-              className="size-7"
-            />
-          </div>
-          {sortOrder.field && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">
-                  {sortOrder.field.toLowerCase()}
-                </span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder?.order === "desc"
-                      ? "rotate-180"
-                      : sortOrder.order === "asc"
-                      ? ""
-                      : ""
-                  } `}
+          <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full">
+            <form action="" className=" w-full sm:w-auto">
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debouncedHandleChange(event?.target.value)}
+                className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
+                placeholder="Search"
+              />
+            </form>
+            <div className="h-10  w-[1px] bg-gray-300 "></div>
+            <button
+              className="hover:bg-gray-400 rounded-lg duration-150 p-2"
+              disabled={bulkSelectedCustomer?.length >= 1 ? false : true}
+              onClick={() => setIsBulkDelete(true)}
+            >
+              <Trash2
+                strokeWidth={3}
+                className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
+              />
+            </button>
+            {sortOrder.field && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">
+                    {sortOrder.field.toLowerCase()}
+                  </span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button
+                  onClick={() => setSortOrder({ field: "" })}
+                  className=" "
                 >
-                  <ChevronUp size={20} />
-                </p>
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
               </div>
-              <button onClick={() => setSortOrder({ field: "" })} className=" ">
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <div className="z-[100]">
           <FilterButton

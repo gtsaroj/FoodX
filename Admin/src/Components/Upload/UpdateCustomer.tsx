@@ -3,6 +3,8 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
 import { CustomerType } from "../../models/user.model";
+import { Selector } from "../Selector/Selector";
+import { updateRole } from "../../Services";
 
 interface UpdateCategoryType {
   label: string;
@@ -18,6 +20,20 @@ const UpdateCategoryOption: UpdateCategoryType[] = [
   {
     label: "Role",
     value: "role",
+  },
+];
+const roleOptions: UpdateCategoryType[] = [
+  {
+    label: "Admin",
+    value: "admin",
+  },
+  {
+    label: "Customer",
+    value: "customer",
+  },
+  {
+    label: "Chef",
+    value: "chef",
   },
 ];
 
@@ -40,9 +56,22 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!customerInfo.id) return toast.error("Category id not found");
+    const toastLoader = toast.loading("Updating user role...");
     try {
-      console.log("fkldj");
+      if (field == "role") {
+        const response = await updateRole({
+          id: customerInfo.id,
+          role: newData,
+        });
+        console.log(response);
+        toast.dismiss(toastLoader);
+        toast.success("User update successfully");
+        return;
+      }
+      console.log("User will update soon!");
     } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("User not updated");
       throw new Error("Unable to update category" + error);
     }
   };
@@ -58,7 +87,6 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
         Update Customer
       </h3>
       <form
-        
         action=""
         className="flex text-[var(--dark-text)] py-5 sm:px-16 px-5 flex-col items-start justify-start gap-7 w-full"
         onSubmit={(event) => handleSubmit(event)}
@@ -85,10 +113,10 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
             }`}
           >
             {UpdateCategoryOption?.map((option) => (
-              <button
+              <p
                 onClick={() => {
-                  setField(option.value as "image" | "name" | "role")
-                 
+                  setField(option.value as "image" | "name" | "role");
+
                   setShowField(option.label);
                   setShow(false);
                 }}
@@ -96,7 +124,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
                 className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
               >
                 {option.label}
-              </button>
+              </p>
             ))}
           </div>
         </div>
@@ -133,24 +161,18 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
             <input
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
-                type="text"
-                placeholder="Eg. Saroj GT"
+              type="text"
+              placeholder="Eg. Saroj GT"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setNewData(event.target.value)
               }
             />
           </div>
         ) : field === "role" ? (
-          <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-            <input
-              className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
-                  type="text"
-                  placeholder="Eg. admin"
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setNewData(event.target.value)
-              }
-            />
-          </div>
+          <Selector
+            categoryOption={roleOptions}
+            setField={(value) => setNewData(value as string)}
+          />
         ) : (
           ""
         )}

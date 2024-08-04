@@ -3,14 +3,29 @@ import { getUserData } from "../firebase/db";
 import { Order, Product } from "../models/order.model";
 
 // get fullName from userData to show in order table in customer column
-export const getFullName = async (uid: string) => {
-  const getName = (await getUserData("customers", uid)).fullName;
-  return getName;
+export const getFullName = async (uid: string): Promise<string | null> => {
+  try {
+    const customerData = await getUserData("customer", uid);
+    if (customerData && customerData.fullName) {
+      return customerData.fullName;
+    }
+
+    // If customer name is not found, try to get the admin's full name
+    const adminData = await getUserData("admin", uid);
+    if (adminData && adminData.fullName) {
+      return adminData.fullName;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return null;
+  }
 };
 export const getUserInfo = async (uid: string) => {
-  console.log(uid)
-  const user = await getUserData("customers", uid);
-  return user;
+  const user = await getUserData("customer", uid);
+  if (user) return user;
+  const admin = await getUserData("admin", uid);
+  if (admin) return admin;
 };
 
 export const totalQuantity = (products: Product[]) => {
@@ -36,12 +51,11 @@ export const totalRevenue = (orders: Order[]) => {
 };
 
 export const totalCost = (products: Product[]) => {
-  
   const customerOrderCost = products?.reduce(
     (prodSum, product) => prodSum + product?.price,
     0
   );
-  typeof(customerOrderCost)
+  typeof customerOrderCost;
   return customerOrderCost;
 };
 

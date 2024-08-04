@@ -1,4 +1,4 @@
-import { ChevronUp, Filter, Plus, Star, Trash2, X } from "lucide-react";
+import { ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -10,22 +10,18 @@ import {
   getProducts,
   getSpecialProducts,
 } from "../../Services";
-import { deleteProductFromDatabase } from "../../firebase/order";
 import { SearchProduct } from "../../Utility/Search";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { addProducts } from "../../Reducer/Action";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
-import Table from "../../Components/Common/Table/Table";
-import { ColumnProps } from "../../models/table.model";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./FoodTable";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
-  const [userSearch, setUserSearch] = useState<string>("");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
@@ -190,12 +186,9 @@ const FoodPage: React.FC = () => {
 
   useEffect(() => {
     // call getAllProducts
-    if (fetchedProducts?.length <= 0) {
-      (async () => {
-        await getAllProducts();
-      })();
-    }
-  }, [fetchedProducts?.length]);
+
+    getAllProducts();
+  }, []);
 
   // delete products
   const handleDelete = async (id: string) => {
@@ -271,29 +264,6 @@ const FoodPage: React.FC = () => {
   }, [fetchedProducts, dispatch]);
 
   useEffect(() => {
-    (async () => {
-      if (userSearch?.length > 0) {
-        const getAllProducts = await getProducts();
-        const filterProducts = SearchProduct(
-          getAllProducts.data.products,
-          userSearch
-        );
-        const arrangeProducts = filterProducts?.map((product) => ({
-          ID: product.id,
-          Product: product.name,
-          Image: product.image,
-          Quantity: product.quantity,
-          Price: product.price,
-          Category: product.tag,
-        }));
-        setFetchedProducts(arrangeProducts as any);
-      } else {
-        getAllProducts();
-      }
-    })();
-  }, [userSearch]);
-
-  useEffect(() => {
     if (sortOrder.field === "") {
       setFetchedProducts(originalData);
     }
@@ -302,10 +272,14 @@ const FoodPage: React.FC = () => {
   const closeModal = () => setIsModelOpen(true);
 
   const handleChange = (value: string) => {
-    setUserSearch(value);
+    if (value.length <= 0) return getAllProducts();
+    const filterProducts = SearchProduct(fetchedProducts, value);
+
+    if (filterProducts.length <= 0) return setFetchedProducts([]);
+    setFetchedProducts(filterProducts);
   };
 
-  const debounceSearch = useCallback(debounce(handleChange, 300), [userSearch]);
+  const debounceSearch = useCallback(debounce(handleChange, 300), []);
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7 ">
@@ -380,10 +354,14 @@ const FoodPage: React.FC = () => {
           </form>
           <div className="h-10  w-[1px] bg-gray-300 "></div>
           <button
+            className="hover:bg-gray-400 rounded-lg duration-150 p-2"
             disabled={bulkSelectedProduct.length >= 1 ? false : true}
             onClick={() => setIsDelete(true)}
           >
-            <Trash2 className="size-7" />
+            <Trash2
+              strokeWidth={3}
+              className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
+            />
           </button>
         </div>
         <div>
