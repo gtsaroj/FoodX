@@ -34,11 +34,13 @@ const AllCustomers = () => {
   const handleCustomerData = async () => {
     setLoading(true);
     try {
+      let AllCustomers  = []
       const customers = await getCustomerData("customer");
+      if(customers.length > 0) AllCustomers.push(...customers)
       const admins = await getCustomerData("admin");
-      // const chefs = await getCustomerData("chef");
-
-      const AllCustomers = [...customers, ...admins];
+      if(admins.length > 0) AllCustomers.push(...admins)
+      const chefs = await getCustomerData("chef");
+      if(chefs.length > 0) AllCustomers.push(...chefs);
       const customerList = await aggregateCustomerData(AllCustomers);
       setOriginalData(customerList);
       setInitialCustomer(customerList);
