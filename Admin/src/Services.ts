@@ -14,12 +14,10 @@ import {
   ValidationType,
 } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
-import { Store } from "./Reducer/Store";
+import { Store, } from "./Reducer/Store";
 import { makeRequest } from "./makeRequest";
 
 import {
-  ProductBulkDeleteModal,
-  ProductModel,
   UploadProductType,
 } from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
@@ -29,7 +27,7 @@ import {
   UpdateComponentType,
 } from "./models/category.model";
 import { LogCardProps } from "./models/logModel";
-import { updateComponentProp } from "./models/table.model";
+import { authLogout } from "./Reducer/Action";
 
 export const signIn = async (
   email: string,

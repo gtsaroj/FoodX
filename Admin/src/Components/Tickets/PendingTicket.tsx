@@ -2,6 +2,7 @@ import React from "react";
 import TicketCard from "./TicketCard";
 import { TicketType } from "../../models/ticket.model";
 import Skeleton from "react-loading-skeleton";
+import NotFound from "../NotFound/NotFound";
 
 interface PendingProp {
   prop: TicketType[];
@@ -14,7 +15,7 @@ const PendingTicket: React.FC<PendingProp> = ({ prop, loading }) => {
       <Skeleton className="mb-8" height={100} />
       <Skeleton height={70} count={4} />
     </div>
-  ) : (
+  ) :  prop.length > 0 ? (
     <div className="flex flex-col px-2 sm:px-3 py-2 items-start gap-2  justify-center rounded  ">
       <div className="w-full border-b-[1px] pb-5 flex items-center justify-between px-2">
         <h1 className="text-[18px] text-[var(--dark-text)] ">Pending</h1>
@@ -35,7 +36,7 @@ const PendingTicket: React.FC<PendingProp> = ({ prop, loading }) => {
         ))}
       </div>
     </div>
-  );
+  ) :  <NotFound/>
 };
 
 export default PendingTicket;
