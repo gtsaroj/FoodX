@@ -27,6 +27,7 @@ import {
 import { LogCardProps } from "./models/logModel";
 import { authLogout } from "./Reducer/Action";
 import { Axios } from "axios";
+import { da } from "date-fns/locale";
 
 export const signIn = async (
   email: string,
@@ -90,6 +91,18 @@ export const updateUser = async (data: UpdateProfileInfo) => {
     throw new Error("Unable to update user");
   }
 };
+export const deletUser = async (data: { uid: string; role: string }) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "users/delete-user",
+      data: { ...data },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete user" + error);
+  }
+};
 
 export const signOut = async () => {
   try {
@@ -126,7 +139,7 @@ export const bulkDeleteOfCustomer = async (data: {
   try {
     const response = await makeRequest({
       method: "delete",
-      url :"users",
+      url: "users",
       data: { role: data.role, ids: [...data.ids] },
     });
     return response.data.data;
@@ -524,5 +537,22 @@ export const updateRole = async (data: {
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to update user role" + error);
+  }
+};
+
+export const deleteProduct = async (data: {
+  id: string;
+  type: "products" | "specials";
+}) => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "products/delete-product",
+      data: { id: data.id, type: data.type },
+    });
+
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Unable to delete product" + error);
   }
 };
