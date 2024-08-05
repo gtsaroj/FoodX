@@ -5,12 +5,13 @@ import {
   deleteProductFromDatabase,
   getAllProductsFromDatabase,
   getProductByTagFromDatabase,
+  getProductsFromDatabase,
   updateProductInDatabase,
 } from "../firebase/db/product.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { UploadProductType } from "../models/product.model.js";
+import { Product, UploadProductType } from "../models/product.model.js";
 
 const getNormalProducts = asyncHandler(async (_: any, res: any) => {
   try {
@@ -161,6 +162,59 @@ const deleteProduct = asyncHandler(
     }
   }
 );
+
+const fetchProducts = asyncHandler(async (req: any, res: any) => {
+  let {
+    path,
+    pageSize,
+    filter,
+    sort,
+    direction,
+    currentFirstDoc,
+    currentLastDoc,
+    category,
+  }: {
+    path: "products" | "specials";
+    pageSize: number;
+    filter: keyof Product;
+    sort: "asc" | "desc";
+    direction: "prev" | "next";
+    currentFirstDoc: any | null;
+    currentLastDoc: any | null;
+    category?: string;
+  } = req.body;
+
+  try {
+    let { products, firstDoc, lastDoc } = await getProductsFromDatabase(
+      path,
+      pageSize,
+      filter,
+      sort,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
+      direction,
+      category ? category : undefined
+    );
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { products, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          "Successfully fetched products from database",
+          true
+        )
+      );
+  } catch (error) {
+    throw new ApiError(
+      401,
+      "Something went wrong while fetching products from database",
+      null,
+      error as string[]
+    );
+  }
+});
+
 export {
   getNormalProducts,
   getSpecialProducts,
@@ -169,4 +223,5 @@ export {
   getProductByTag,
   deleteProductsInBulk,
   deleteProduct,
+  fetchProducts,
 };

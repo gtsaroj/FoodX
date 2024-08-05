@@ -1,6 +1,7 @@
 import { Collection, Product } from "../../models/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
+import { paginateFnc } from "../utils.js";
 
 const addProductToFirestore = async (
   product: Product,
@@ -135,6 +136,57 @@ const deleteProductFromDatabase = async (
     throw new ApiError(401, "Unable to delete product.");
   }
 };
+
+const getProductsFromDatabase = async (
+  path: "products" | "specials",
+  pageSize: number,
+  filter: keyof Product,
+  sort: "asc" | "desc" = "asc",
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
+  direction?: "prev" | "next",
+  category?: string
+) => {
+  try {
+    const query = paginateFnc(
+      path,
+      filter,
+      startAfterDoc,
+      startAtDoc,
+      pageSize,
+      sort,
+      direction
+    );
+    let productDoc;
+    if (category) {
+      productDoc = await query.where("tag", "==", category).get();
+    }
+    productDoc = await query.get();
+    const products: Product[] = [];
+
+    productDoc.docs.forEach((doc) => {
+      products.push(doc.data() as Product);
+    });
+
+    const firstDoc = productDoc.docs[0]?.data().id || null;
+    const lastDoc =
+      productDoc.docs[productDoc.docs.length - 1]?.data().id || null;
+
+    return {
+      products,
+      firstDoc,
+      lastDoc,
+    };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching products from database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 export {
   addProductToFirestore,
   getProductByName,
@@ -144,4 +196,5 @@ export {
   bulkDeleteProductsFromDatabase,
   getProductById,
   deleteProductFromDatabase,
+  getProductsFromDatabase,
 };

@@ -4,6 +4,7 @@ import {
   addProducts,
   deleteProduct,
   deleteProductsInBulk,
+  fetchProducts,
   getNormalProducts,
   getProductByTag,
   getSpecialProducts,
@@ -27,7 +28,6 @@ productRouter
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, deleteProductsInBulk);
-
-// admin-only secured routes
+productRouter.route("/get-products").get(verifyJwt, verifyChef, fetchProducts);
 
 export { productRouter };
