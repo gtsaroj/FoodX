@@ -20,7 +20,7 @@ export const verifyChef = asyncHandler(async (req: any, _: any, next: any) => {
   try {
     const user = req.user as User;
     if (!user) throw new ApiError(404, "No user found while verifying chef.");
-    if (user.role !== "customer")
+    if (user.role === "customer")
       throw new ApiError(403, "Unauthorized access. Customers cannot access.");
     next();
   } catch (error) {
