@@ -9,9 +9,13 @@ export const getRecentOrders = async () => {
     const totalOrders = orders as Order[];
     const aggregateData = totalOrders?.map(async (item) => {
       const user = await getUserInfo(item.uid);
-
-      if (!user) throw new Error("User not available")
-      if (user) {
+      if (!user) {
+        console.error(
+          `Order ${item.orderId} does not have a valid user (UID: ${item.uid}).`
+        );
+        return null;
+      }
+      if (user && item) {
         const productNames = item.products?.map(
           (product) =>
             (product.name as string) + " × " + product.quantity + ", "
@@ -31,7 +35,12 @@ export const getRecentOrders = async () => {
       }
     });
     const getaggregateDataPromises = await Promise.all(aggregateData);
-    const sortByTime = getaggregateDataPromises.sort((a: any, b: any) => {
+    console.log(getaggregateDataPromises);
+    const filteProducts = getaggregateDataPromises?.filter(
+      (data) => data !== null
+    );
+    console.log(filteProducts);
+    const sortByTime = filteProducts.sort((a: any, b: any) => {
       const dateA = new Date(b.orderRequest);
       const dateB = new Date(a.orderRequest);
       return dateB.getTime() - dateA.getTime();

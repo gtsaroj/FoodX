@@ -7,6 +7,7 @@ import { debounce } from "../../Utility/Debounce";
 import { ArrangedProduct, ProductType } from "../../models/productMode";
 import {
   bulkDeleteOfProduct,
+  deleteProduct,
   getProducts,
   getSpecialProducts,
 } from "../../Services";
@@ -17,12 +18,13 @@ import { addProducts } from "../../Reducer/Action";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
 import UpdateFood from "../../Components/Upload/UpdateFood";
-import Delete from "../../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./FoodTable";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [type, setType] = useState<"specials" | "products">();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [modalData, setModalData] = useState<ArrangedProduct>();
@@ -173,7 +175,7 @@ const FoodPage: React.FC = () => {
       const refreshProducts = fetchedProducts?.filter((product) => {
         return !specials.includes(product.id) && !products.includes(product.id);
       });
-      setIsDelete(false);
+      toast.dismiss(toastLoader);
       setFetchedProducts(refreshProducts);
       toast.success("Successfully deleted");
     } catch (error) {
@@ -191,27 +193,22 @@ const FoodPage: React.FC = () => {
   }, []);
 
   // delete products
-  const handleDelete = async (id: string) => {
-    const toastLoading = toast.loading("Product deleting...");
-    const findProduct = fetchedProducts?.find((product) => product.id === id);
+  const handleDelete = async (id: string, type: "specials" | "products") => {
+    if (!id && !type) return toast.error(`${id} || ${type} not found`);
+    const toastLoader = toast.loading("Deleting product...");
     try {
-      await bulkDeleteOfProduct({
-        category: findProduct?.type as any,
-        ids: [id],
-      });
-
-      toast.dismiss(toastLoading);
-      toast.success("Deleted successfully");
+      await deleteProduct({ id: id, type: type });
+      toast.dismiss(toastLoader);
+      toast.success("Successfully deleted");
       const refreshProducts = fetchedProducts?.filter(
-        (product) => product?.id !== id
+        (product) => product.id !== id
       );
-      setIsDelete(false);
       setFetchedProducts(refreshProducts);
     } catch (error) {
-      setIsDelete(false);
-      toast.dismiss(toastLoading);
-      toast.error("Failed to delete");
-      throw new Error("Unable to delete order");
+      toast.dismiss(toastLoader);
+      toast.error("Error while deleting...");
+
+      throw new Error("Error while deleting product" + error);
     }
   };
   const handleBulkSelected = (id: string, isChecked: boolean) => {
@@ -353,16 +350,10 @@ const FoodPage: React.FC = () => {
             />
           </form>
           <div className="h-10  w-[1px] bg-gray-300 "></div>
-          <button
-            className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-            disabled={bulkSelectedProduct.length >= 1 ? false : true}
-            onClick={() => setIsDelete(true)}
-          >
-            <Trash2
-              strokeWidth={3}
-              className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-            />
-          </button>
+          <DeleteButton
+            dataLength={bulkSelectedProduct.length}
+            deleteFn={() => setIsBulkDelete(true)}
+          />
         </div>
         <div>
           {sortOrder.field && (
@@ -396,6 +387,10 @@ const FoodPage: React.FC = () => {
         products={fetchedProducts}
         actions={{
           delete: (id) => {
+            const findProduct = fetchedProducts?.find(
+              (product) => product.id === id
+            );
+            setType(findProduct?.type);
             setId(id);
             setIsDelete(true);
           },
@@ -426,8 +421,11 @@ const FoodPage: React.FC = () => {
         <Delete
           closeModal={() => setIsDelete(false)}
           id={id as string}
+          type={type}
           isClose={isDelete}
-          setDelete={(id) => handleDelete(id as string)}
+          setDelete={(id: string, type: "specials" | "products") =>
+            handleDelete(id, type)
+          }
         />
       )}
       {isBulkDelete && (

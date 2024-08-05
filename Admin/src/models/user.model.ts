@@ -32,7 +32,7 @@ export interface CustomerType {
   image?: string;
   amountSpent: number;
   totalOrder: number;
-  role: string;
+  role: "customer"|"admin"|"chef";
 }
 
 

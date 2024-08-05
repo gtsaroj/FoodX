@@ -78,10 +78,15 @@ export const signUp = async (data: ValidationType) => {
   }
 };
 
-export const updateUser = async (data: UpdateProfileInfo) => {
+export const updateUser = async (data: {
+  id: string;
+  role: "customer" | "admin" | "chef";
+  field: string;
+  newData: string;
+}) => {
   try {
-    const response = await globalRequest({
-      method: "post",
+    const response = await makeRequest({
+      method: "put",
       url: "/users/update-user",
       data: { ...data },
     });
@@ -147,7 +152,11 @@ export const bulkDeleteOfCustomer = async (data: {
     throw new Error("Unable to bulk delete" + error);
   }
 };
-export const deleteCustomer = async (data: { role: string; id: string }) => {
+export const deleteCustomer = async (data: {
+  role: string;
+  id: string;
+  newData: string;
+}) => {
   try {
     return toast.error("No route found");
   } catch (error) {
