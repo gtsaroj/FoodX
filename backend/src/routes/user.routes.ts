@@ -1,12 +1,13 @@
 import { Router } from "express";
 import {
-  deletAllUser,
   deleteAccount,
+  deleteUser,
   deleteUsersInBulk,
   logOutUser,
   loginUser,
   refreshAccessToken,
   signUpNewUser,
+  updateAccount,
   updateUser,
   updateUserRole,
 } from "../controllers/user.controller.js";
@@ -28,9 +29,11 @@ router.route("/signIn").post(
 router.route("/refresh-token").post(refreshAccessToken);
 
 // secured Routes
-router.route("/delete-user").post(verifyJwt, deleteAccount);
-router.route("/update-user").post(verifyJwt, updateUser);
-router.route("/update-role").put(updateUserRole);
+router.route("/delete-account").delete(verifyJwt, deleteAccount);
+router.route("/delete-user").delete(verifyJwt, verifyAdmin, deleteUser);
+router.route("/update-account").post(verifyJwt, updateAccount);
+router.route("/update-user").put(verifyJwt, verifyAdmin, updateUser);
+router.route("/update-role").put(verifyJwt, verifyAdmin, updateUserRole);
 router.route("/logout").post(verifyJwt, logOutUser);
 router.route("/bulk-delete").delete(verifyJwt, verifyAdmin, deleteUsersInBulk);
 export default router;

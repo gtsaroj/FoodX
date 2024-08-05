@@ -194,7 +194,72 @@ const deleteAccount = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const deleteUser = asyncHandler(async (req: any, res: any) => {
+  try {
+    const { uid, role }: { uid: string; role: "customer" | "chef" | "admin" } =
+      req.body;
+    const foundUser = await getUserFromDatabase(uid, role);
+    if (!foundUser) throw new ApiError(404, "User not found.");
+
+    //
+    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User deleted successfully", true));
+  } catch (error) {
+    throw new ApiError(400, "Error deleting user from firestore.");
+  }
+});
+
 const updateUser = asyncHandler(async (req: any, res: any) => {
+  const { fullName, avatar, phoneNumber } = req.body;
+  try {
+    const user = req.user as User;
+    if (!user)
+      throw new ApiError(401, "User is not logged in. Something went wrong. ");
+    const foundUser = await getUserFromDatabase(user.uid, user.role);
+    if (!foundUser) throw new ApiError(404, "No user found.");
+    if (!fullName && !phoneNumber && !avatar)
+      throw new ApiError(400, "No data provided to update.");
+
+    if (fullName) {
+      await updateUserDataInFirestore(
+        user.uid,
+        user.role,
+        "fullName",
+        fullName
+      );
+    }
+
+    if (phoneNumber) {
+      await updateUserDataInFirestore(
+        user.uid,
+        user.role,
+        "phoneNumber",
+        phoneNumber
+      );
+    }
+
+    if (avatar) {
+      await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
+    }
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { fullName, phoneNumber, avatar },
+          "Successfully updated user data.",
+          true
+        )
+      );
+  } catch (error) {}
+});
+
+const updateAccount = asyncHandler(async (req: any, res: any) => {
   try {
     const { fullName, phoneNumber, avatar } = req.body;
     console.log(fullName, phoneNumber, avatar);
@@ -342,4 +407,6 @@ export {
   deletAllUser,
   deleteUsersInBulk,
   updateUserRole,
+  deleteUser,
+  updateAccount,
 };
