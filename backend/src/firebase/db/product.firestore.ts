@@ -123,6 +123,18 @@ const bulkDeleteProductsFromDatabase = async (
     throw new ApiError(401, "Unable to bulk delete product data.");
   }
 };
+const deleteProductFromDatabase = async (
+  uid: string,
+  category: Collection["name"]
+) => {
+  const productRef = db.collection(category);
+  if (!productRef) throw new ApiError(400, "No collection available");
+  try {
+    await productRef.doc(uid).delete();
+  } catch (error) {
+    throw new ApiError(401, "Unable to delete product.");
+  }
+};
 export {
   addProductToFirestore,
   getProductByName,
@@ -131,4 +143,5 @@ export {
   updateProductInDatabase,
   bulkDeleteProductsFromDatabase,
   getProductById,
+  deleteProductFromDatabase,
 };

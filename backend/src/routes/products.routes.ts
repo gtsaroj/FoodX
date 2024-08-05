@@ -2,6 +2,7 @@ import { Router } from "express";
 import { verifyJwt } from "../middlewares/auth.middlewares.js";
 import {
   addProducts,
+  deleteProduct,
   deleteProductsInBulk,
   getNormalProducts,
   getProductByTag,
@@ -20,6 +21,9 @@ productRouter.route("/get-product-by-tag").get(verifyJwt, getProductByTag);
 productRouter
   .route("/update-product")
   .put(verifyJwt, verifyChef, updateProducts);
+productRouter
+  .route("/delete-product")
+  .delete(verifyJwt, verifyAdmin, deleteProduct);
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, deleteProductsInBulk);
