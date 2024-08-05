@@ -24,7 +24,7 @@ productRouter
   .put(verifyJwt, verifyChef, updateProducts);
 productRouter
   .route("/delete-product")
-  .delete(verifyJwt, verifyAdmin, deleteProduct);
+  .delete(verifyJwt, verifyChef, deleteProduct);
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, deleteProductsInBulk);
