@@ -103,12 +103,12 @@ const addProducts = asyncHandler(
 
 const updateProducts = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const { category, name, field, newData } = req.body;
+    const { category, id, field, newData } = req.body;
     try {
       const updatedProduct = await updateProductInDatabase(
         category,
         field,
-        name,
+        id,
         newData
       );
       return res
