@@ -1,6 +1,8 @@
+import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { User, AccessType } from "../../models/user.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
+import { paginateFnc } from "../utils.js";
 
 const addUserToFirestore = async (
   user: User,
@@ -117,10 +119,88 @@ const bulkDeleteUserFromDatabase = async (
     throw new ApiError(401, "Unable to bulk delete users data.");
   }
 };
+
+// const getUsersFromDatabase = async (
+//   path: "customer" | "admin" | "chef",
+//   lastVisible: QueryDocumentSnapshot | null,
+//   pageSize: number,
+//   filter: keyof User,
+//   sort: "asc" | "desc" = "asc"
+// ) => {
+//   const userRef = db.collection(path);
+//   const query = userRef.orderBy(filter, sort).limit(pageSize);
+//   try {
+//     if (lastVisible) query.startAfter(lastVisible);
+//     const userDoc = await query.get();
+//     if (userDoc.empty) throw new ApiError(404, "No users found.");
+
+//     const users: User[] = [];
+//     userDoc.docs.forEach((doc) => {
+//       users.push(doc.data() as User);
+//     });
+
+//     const lastDoc = userDoc.docs[userDoc.docs.length - 1] || null;
+
+//     return { users, lastDoc };
+//   } catch (error) {
+//     throw new ApiError(
+//       500,
+//       "Error while getting users from database.",
+//       null,
+//       error as string[]
+//     );
+//   }
+// };
+
+const getUsersFromDatabase = async (
+  path: "customer" | "admin" | "chef",
+  pageSize: number,
+  filter: keyof User,
+  sort: "asc" | "desc" = "asc",
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
+  direction?: "prev" | "next"
+) => {
+  try {
+    const query = paginateFnc(
+      path,
+      filter,
+      startAfterDoc,
+      startAtDoc,
+      pageSize,
+      sort,
+      direction
+    );
+    const usersDoc = await query.get();
+    const users: User[] = [];
+
+    usersDoc.docs.forEach((doc) => {
+      users.push(doc.data() as User);
+    });
+
+    const firstDoc = usersDoc.docs[0]?.data().uid || null;
+    const lastDoc = usersDoc.docs[usersDoc.docs.length - 1]?.data().uid || null;
+
+    return {
+      users,
+      firstDoc,
+      lastDoc,
+    };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching users from database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 export {
   addUserToFirestore,
   deleteUserFromFireStore,
   updateUserDataInFirestore,
   getUserFromDatabase,
   bulkDeleteUserFromDatabase,
+  getUsersFromDatabase,
 };

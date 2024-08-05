@@ -9,6 +9,7 @@ import {
   bulkDeleteUserFromDatabase,
   deleteUserFromFireStore,
   getUserFromDatabase,
+  getUsersFromDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
 
@@ -18,6 +19,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { CustomerType } from "../models/order.model.js";
 import { json } from "express";
+import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 
 //Cookie options
 const options = {
@@ -292,42 +294,42 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-const deletAllUser = asyncHandler(async (req: any, res: any) => {
-  try {
-    const {
-      users,
-      role,
-    }: {
-      users: CustomerType[];
-      role: "customer" | "admin" | "chef";
-    } = req.body;
-    if (!users || users.length === 0) {
-      throw new ApiError(404, "Users not found.");
-    }
-    const deletionPromises = users.map(async (user) => {
-      const foundUser = await getUserFromDatabase(user.id, role);
+// const deletAllUser = asyncHandler(async (req: any, res: any) => {
+//   try {
+//     const {
+//       users,
+//       role,
+//     }: {
+//       users: CustomerType[];
+//       role: "customer" | "admin" | "chef";
+//     } = req.body;
+//     if (!users || users.length === 0) {
+//       throw new ApiError(404, "Users not found.");
+//     }
+//     const deletionPromises = users.map(async (user) => {
+//       const foundUser = await getUserFromDatabase(user.id, role);
 
-      if (!foundUser) {
-        throw new ApiError(404, `User with uid ${user.id} not found.`);
-      }
+//       if (!foundUser) {
+//         throw new ApiError(404, `User with uid ${user.id} not found.`);
+//       }
 
-      await deleteUserFromFireStore(foundUser.uid, foundUser.role);
-    });
+//       await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+//     });
 
-    await Promise.all(deletionPromises);
-    return res
-      .status(200)
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
-      .json(new ApiResponse(200, {}, "Users deleted successfully", true));
-  } catch (error) {
-    if (error instanceof ApiError) {
-      throw error; // Re-throw ApiError with custom message
-    } else {
-      throw new ApiError(400, "Error deleting users from firestore.");
-    }
-  }
-});
+//     await Promise.all(deletionPromises);
+//     return res
+//       .status(200)
+//       .clearCookie("accessToken", options)
+//       .clearCookie("refreshToken", options)
+//       .json(new ApiResponse(200, {}, "Users deleted successfully", true));
+//   } catch (error) {
+//     if (error instanceof ApiError) {
+//       throw error; // Re-throw ApiError with custom message
+//     } else {
+//       throw new ApiError(400, "Error deleting users from firestore.");
+//     }
+//   }
+// });
 const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
   const {
     role,
@@ -375,16 +377,66 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const fetchUsers = asyncHandler(async (req: any, res: any) => {
+  let {
+    path,
+    pageSize,
+    filter,
+    sort,
+    direction,
+    currentFirstDoc,
+    currentLastDoc,
+  }: {
+    path: "customer" | "admin" | "chef";
+    pageSize: number;
+    filter: keyof User;
+    sort: "asc" | "desc";
+    direction: "prev" | "next";
+    currentFirstDoc: QueryDocumentSnapshot | null;
+    currentLastDoc: QueryDocumentSnapshot | null;
+  } = req.body;
+
+  try {
+    let { users, firstDoc, lastDoc } = await getUsersFromDatabase(
+      path,
+      pageSize,
+      filter,
+      sort,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
+      direction
+    );
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { users, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          "Successfully fetched users from database",
+          true
+        )
+      );
+  } catch (error) {
+    console.error(error);
+    throw new ApiError(
+      401,
+      "Something went wrong while fetching users from database",
+      null,
+      error as string[]
+    );
+  }
+});
+
 export {
   loginUser,
   logOutUser,
   signUpNewUser,
   refreshAccessToken,
   deleteAccount,
+  updateAccount,
   updateUser,
-  deletAllUser,
-  deleteUsersInBulk,
   updateUserRole,
   deleteUser,
-  updateAccount,
+  deleteUsersInBulk,
+  fetchUsers,
 };
