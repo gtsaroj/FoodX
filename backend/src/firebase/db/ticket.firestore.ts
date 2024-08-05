@@ -1,6 +1,7 @@
 import { Ticket, NewTicket } from "../../models/ticket.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
+import { paginateFnc } from "../utils.js";
 
 const addTicketToFirestore = async (ticket: Ticket) => {
   if (!ticket) throw new ApiError(401, "No data to update the database.");
@@ -72,6 +73,54 @@ const getTicketByStatusFromFirestore = async (
     throw new ApiError(440, "No tickets found.");
   }
 };
+
+const getTicketsFromFirestore = async (
+  pageSize: number = 10,
+  sort: "asc" | "desc" = "desc",
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
+  direction?: "prev" | "next",
+  status?: "Pending" | "Resolved" | "Rejected"
+) => {
+  try {
+    const query = paginateFnc(
+      "ticket",
+      "date",
+      startAfterDoc,
+      startAtDoc,
+      pageSize,
+      sort,
+      direction
+    );
+    let ticketsDoc;
+    if (status) {
+      ticketsDoc = await query.where("status", "==", status).get();
+    }
+    ticketsDoc = await query.get();
+    const tickets: NewTicket[] = [];
+
+    ticketsDoc.docs.forEach((doc) => {
+      tickets.push(doc.data() as NewTicket);
+    });
+
+    const firstDoc = ticketsDoc.docs[0]?.data().id || null;
+    const lastDoc =
+      ticketsDoc.docs[ticketsDoc.docs.length - 1]?.data().id || null;
+    return {
+      tickets,
+      firstDoc,
+      lastDoc,
+    };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching tickets from database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 const updateTicketInFirestore = async (
   id: string,
   newData: "Pending" | "Resolved" | "Rejected"
@@ -109,4 +158,5 @@ export {
   updateTicketInFirestore,
   deleteTicketFromDatabase,
   getTicketByStatusFromFirestore,
+  getTicketsFromFirestore,
 };

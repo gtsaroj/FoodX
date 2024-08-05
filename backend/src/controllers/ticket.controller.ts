@@ -3,8 +3,10 @@ import {
   deleteTicketFromDatabase,
   getAllTicketFromFirestore,
   getTicketByStatusFromFirestore,
+  getTicketsFromFirestore,
   updateTicketInFirestore,
 } from "../firebase/db/ticket.firestore.js";
+import { NewTicket } from "../models/ticket.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -112,10 +114,58 @@ const deleteTicket = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const fetchTickets = asyncHandler(async (req: any, res: any) => {
+  let {
+    pageSize,
+    sort,
+    direction,
+    currentFirstDoc,
+    currentLastDoc,
+    status,
+  }: {
+    pageSize: number;
+    filter: keyof NewTicket;
+    sort: "asc" | "desc";
+    direction: "prev" | "next";
+    currentFirstDoc: any | null;
+    currentLastDoc: any | null;
+    status?: "Pending" | "Resolved" | "Rejected";
+  } = req.body;
+
+  try {
+    let { tickets, firstDoc, lastDoc } = await getTicketsFromFirestore(
+      pageSize,
+      sort,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
+      direction,
+      status ? status : undefined
+    );
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { tickets, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          "Successfully fetched tickets from database",
+          true
+        )
+      );
+  } catch (error) {
+    throw new ApiError(
+      401,
+      "Something went wrong while fetching tickets from database",
+      null,
+      error as string[]
+    );
+  }
+});
+
 export {
   addNewTicket,
   getAllTicket,
   updateTicket,
   deleteTicket,
   getTicketByStatus,
+  fetchTickets,
 };
