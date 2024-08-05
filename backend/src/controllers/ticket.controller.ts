@@ -124,7 +124,6 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
     status,
   }: {
     pageSize: number;
-    filter: keyof NewTicket;
     sort: "asc" | "desc";
     direction: "prev" | "next";
     currentFirstDoc: any | null;
