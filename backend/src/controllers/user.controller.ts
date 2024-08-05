@@ -392,8 +392,8 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
     filter: keyof User;
     sort: "asc" | "desc";
     direction: "prev" | "next";
-    currentFirstDoc: QueryDocumentSnapshot | null;
-    currentLastDoc: QueryDocumentSnapshot | null;
+    currentFirstDoc: any | null;
+    currentLastDoc: any | null;
   } = req.body;
 
   try {
