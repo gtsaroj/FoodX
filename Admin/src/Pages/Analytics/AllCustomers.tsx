@@ -7,11 +7,12 @@ import { CustomerTable } from "../Customers/CustomerTable";
 import {
   bulkDeleteOfCategory,
   bulkDeleteOfCustomer,
+  deletUser,
   deleteCustomer,
 } from "../../Services";
 import toast from "react-hot-toast";
 import { ChevronUp, Trash2, X } from "lucide-react";
-import Delete from "../../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
 import { debounce } from "../../Utility/Debounce";
@@ -34,13 +35,13 @@ const AllCustomers = () => {
   const handleCustomerData = async () => {
     setLoading(true);
     try {
-      let AllCustomers  = []
+      let AllCustomers = [];
       const customers = await getCustomerData("customer");
-      if(customers.length > 0) AllCustomers.push(...customers)
+      if (customers.length > 0) AllCustomers.push(...customers);
       const admins = await getCustomerData("admin");
-      if(admins.length > 0) AllCustomers.push(...admins)
+      if (admins.length > 0) AllCustomers.push(...admins);
       const chefs = await getCustomerData("chef");
-      if(chefs.length > 0) AllCustomers.push(...chefs);
+      if (chefs.length > 0) AllCustomers.push(...chefs);
       const customerList = await aggregateCustomerData(AllCustomers);
       setOriginalData(customerList);
       setInitialCustomer(customerList);
@@ -132,19 +133,23 @@ const AllCustomers = () => {
   };
 
   const handleDelete = async (id: string) => {
-    console.log(id)
+    console.log(id);
     if (!id) return toast.error("Customer not found");
     const findCustomer = initialCustomer?.find(
       (customer) => customer.id === id
     );
     const toastLoader = toast.loading("Deleting customer...");
     try {
-      await deleteCustomer({
+      await deletUser({
         role: findCustomer?.role as string,
-        id: findCustomer?.id as string,
+        uid: findCustomer?.id as string,
       });
+
       toast.dismiss(toastLoader);
       toast.success("Succesfully deleted");
+      const refreshCustomer = initialCustomer?.filter((data) => data.id !== id);
+      setInitialCustomer(refreshCustomer);
+      setIsDelete(true);
     } catch (error) {
       toast.dismiss(toastLoader);
       toast.error("Error while delting user");
@@ -221,16 +226,10 @@ const AllCustomers = () => {
               />
             </form>
             <div className="h-10  w-[1px] bg-gray-300 "></div>
-            <button
-              className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-              disabled={bulkSelectedCustomer?.length >= 1 ? false : true}
-              onClick={() => setIsBulkDelete(true)}
-            >
-              <Trash2
-                strokeWidth={3}
-                className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-              />
-            </button>
+            <DeleteButton
+              dataLength={bulkSelectedCustomer.length}
+              deleteFn={() => setIsBulkDelete(true)}
+            />
             {sortOrder.field && (
               <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
                 <div className="flex gap-1 items-center justify-center">

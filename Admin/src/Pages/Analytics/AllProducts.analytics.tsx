@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import {
   bulkDeleteOfProduct,
+  deleteProduct,
   getProducts,
   getSpecialProducts,
 } from "../../Services";
@@ -10,7 +11,7 @@ import { ArrangedProduct, ProductType } from "../../models/productMode";
 import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
-import Delete from "../../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { ChevronUp, Trash2, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
@@ -25,8 +26,10 @@ const AllProductAnalytics = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
+  const [type,setType] = useState<"specials"|"products">();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
+  const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [modalData, setModalData] = useState<ArrangedProduct>();
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
@@ -193,6 +196,26 @@ const AllProductAnalytics = () => {
       // Handle the error appropriately, e.g., show a notification to the user
     }
   };
+
+  const handleDelete = async (id: string, type: "specials" | "products") => {
+   console.log(id,type)
+    const toastLoader = toast.loading("Deleting product...");
+    try {
+      const response = await deleteProduct({ id: id, type: type });
+      toast.dismiss(toastLoader);
+      toast.success("Successfully deleted");
+      const refreshProducts = fetchedProducts?.filter(
+        (product) => product.id !== id
+      );
+      setFetchedProducts(refreshProducts);
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Error while deleting...");
+
+      throw new Error("Error while deleting product" + error);
+    }
+  };
+
   const handleBulkSelected = (id: string, isChecked: boolean) => {
     const refreshIds = bulkSelectedProduct?.filter(
       (product) => product.id !== id
@@ -243,12 +266,10 @@ const AllProductAnalytics = () => {
               />
             </form>
             <div className="h-9  w-[1px] bg-gray-300  "></div>
-            <button className="hover:bg-gray-400 rounded-lg duration-150 p-2 "
-              disabled={bulkSelectedProduct.length >= 1 ? false : true}
-              onClick={() => setIsDelete(true)}
-            >
-              <Trash2  strokeWidth={3}  className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   " />
-            </button>
+            <DeleteButton
+              dataLength={bulkSelectedProduct.length}
+              deleteFn={() => setIsBulkDelete(true)}
+            />
             {sortOrder.field && (
               <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
                 <div className="flex gap-1 items-center justify-center">
@@ -297,7 +318,9 @@ const AllProductAnalytics = () => {
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
           delete: (id) => {
+            const findProduct = fetchedProducts?.find((product)=>product.id === id);
             setId(id);
+            setType(findProduct?.type)
             setIsDelete(true);
           },
           edit: (id: string) => {
@@ -318,11 +341,11 @@ const AllProductAnalytics = () => {
           closeModal={() => setIsEdit(true)}
         />
       </Modal>
-      {isDelete && (
+      {isBulkDelete && (
         <Delete
           closeModal={() => setIsDelete(false)}
           id={id as string}
-          isClose={isDelete}
+          isClose={isBulkDelete}
           setDelete={() => handleSelectedDelete()}
         />
       )}
@@ -330,8 +353,9 @@ const AllProductAnalytics = () => {
         <Delete
           closeModal={() => setIsDelete(false)}
           id={id as string}
+          type={type}
           isClose={isDelete}
-          setDelete={(id: string) => id}
+          setDelete={(id: string, type: "specials"| "products") => handleDelete(id, type)}
         />
       )}
     </div>

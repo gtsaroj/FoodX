@@ -4,7 +4,7 @@ import { CategoryTable } from "../Category/CategoryTable";
 import { CategoryType } from "../../models/category.model";
 import { bulkDeleteOfCategory, getCategories } from "../../Services";
 import toast from "react-hot-toast";
-import Delete from "../../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import { useDispatch } from "react-redux";
@@ -142,9 +142,9 @@ const AllCategories = () => {
     initialCategory,
   ]);
 
-  // useEffect(() => {
-  //   getAllCategories();
-  // }, []);
+  useEffect(() => {
+    getAllCategories();
+  }, []);
 
   useEffect(() => {
     if (sortOrder?.field === "") {
@@ -174,16 +174,10 @@ const AllCategories = () => {
                 />
               </form>
               <div className="h-10  w-[1px] bg-gray-300 "></div>
-              <button
-                className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-                disabled={bulkSelectedCategory?.length >= 1 ? false : true}
-                onClick={() => setIsBulkDelete(true)}
-              >
-                <Trash2
-                  strokeWidth={3}
-                  className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-                />
-              </button>
+              <DeleteButton
+                deleteFn={() => setIsBulkDelete(true)}
+                dataLength={bulkSelectedCategory.length}
+              />
             </div>
             <div>
               {sortOrder.field && (
