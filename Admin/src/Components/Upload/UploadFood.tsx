@@ -7,8 +7,7 @@ import { addProducts } from "../../Services";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { Selector } from "../Selector/Selector";
-
-
+import { storeImageInFirebase } from "../../firebase/storage";
 
 const UploadFood: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
@@ -23,7 +22,9 @@ const UploadFood: React.FC = () => {
     },
     collection: "products",
   });
-  const categories = useSelector((state:RootState)=>state.root.category.categories)
+  const categories = useSelector(
+    (state: RootState) => state.root.category.categories
+  );
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
@@ -37,7 +38,6 @@ const UploadFood: React.FC = () => {
       return toast.error("Unable to add product");
     }
   };
-
 
   return (
     <React.Fragment>
@@ -105,8 +105,18 @@ const UploadFood: React.FC = () => {
               >
                 Category
               </label>
-          <Selector categoryOption={categories.map((category)=>({label: category,value: category}))} setField={(value)=> setAddFood((prev)=>({...prev, products:{...prev.products,tag: value}}))} />
-             
+              <Selector
+                categoryOption={categories.map((category) => ({
+                  label: category,
+                  value: category,
+                }))}
+                setField={(value) =>
+                  setAddFood((prev) => ({
+                    ...prev,
+                    products: { ...prev.products, tag: value },
+                  }))
+                }
+              />
             </div>
             <div className="w-full flex flex-col items-baseline justify-center gap-0.5">
               <label
@@ -139,7 +149,7 @@ const UploadFood: React.FC = () => {
               {" "}
               <img
                 className="w-full h-[230px] object-fill"
-                src={URL.createObjectURL(addFood?.products.image as any)}
+                src={addFood?.products.image as string}
               />
             </div>
           ) : (
@@ -149,17 +159,20 @@ const UploadFood: React.FC = () => {
             >
               <input
                 ref={fileRef as any}
-                onChange={(event: ChangeEvent<any>) => {
+                onChange={async (event: ChangeEvent<HTMLInputElement>) => {
                   if (!event.target.files) return;
-                  if (event.target.files) {
-                    setAddFood((prev) => ({
-                      ...prev,
-                      products: {
-                        ...prev.products,
-                        image: event.target.files[0] as any,
-                      },
-                    }));
-                  }
+
+                  const imageUrl = await storeImageInFirebase(
+                    event.target.files[0],
+                    { folder: "products" }
+                  );
+                  setAddFood((prev) => ({
+                    ...prev,
+                    products: {
+                      ...prev.products,
+                      image: imageUrl,
+                    },
+                  }));
                 }}
                 type="file"
                 className="hidden"

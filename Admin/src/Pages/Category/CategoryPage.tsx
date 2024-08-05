@@ -1,8 +1,7 @@
-import { ArrowDownAZ, ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
+import { ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
-import { getCategory } from "../../firebase/db";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
@@ -18,7 +17,7 @@ import {
 } from "../../Services";
 import toast from "react-hot-toast";
 import { CategoryType } from "../../models/category.model";
-import Delete from "../../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { CategoryTable } from "./CategoryTable";
 
 export const CategoryPage: React.FC = () => {
@@ -44,22 +43,6 @@ export const CategoryPage: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleAction = async (value: string, type: string) => {
-    console.log(value, type);
-    if (type === "Delete") {
-      const toastLoader = toast.loading("Category deleting...");
-      await deleteCategory(value);
-      toast.dismiss(toastLoader);
-      toast.success("Category deleted successfully");
-      const refreshCategory = categoryData?.filter(
-        (category) => category.id !== value
-      );
-      setCategoryData(refreshCategory);
-    } else if (type === "Edit") {
-      setCategoryId(value);
-      setIsUpdateModelOpen(false);
-    }
-  };
 
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
@@ -271,16 +254,7 @@ export const CategoryPage: React.FC = () => {
             />
           </form>
           <div className="h-10  w-[1px] bg-gray-300 "></div>
-          <button
-            className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-            disabled={bulkSelectedCategory?.length >= 1 ? false : true}
-            onClick={() => setIsBulkDeleted(true)}
-          >
-            <Trash2
-              strokeWidth={3}
-              className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-            />
-          </button>
+            <DeleteButton dataLength={bulkSelectedCategory.length} deleteFn={()=>setIsBulkDeleted(true)} />
         </div>
         <div>
           {sortOrder.field && (

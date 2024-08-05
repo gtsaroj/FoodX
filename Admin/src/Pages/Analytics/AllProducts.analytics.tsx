@@ -26,7 +26,7 @@ const AllProductAnalytics = () => {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
-  const [type,setType] = useState<"specials"|"products">();
+  const [type, setType] = useState<"specials" | "products">();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
@@ -159,8 +159,8 @@ const AllProductAnalytics = () => {
   }, [originalData, sortOrder?.field]);
 
   const handleSelectedDelete = async () => {
+    const toastLoader = toast.loading("Deleting products...");
     try {
-      const toastLoader = toast.loading("Deleting products...");
       // Separate products into specials and normal products
       const { specials, products } = bulkSelectedProduct.reduce<{
         specials: string[];
@@ -188,20 +188,23 @@ const AllProductAnalytics = () => {
       const refreshProducts = fetchedProducts?.filter((product) => {
         return !specials.includes(product.id) && !products.includes(product.id);
       });
-      setIsDelete(false);
+
       setFetchedProducts(refreshProducts);
       toast.success("Successfully deleted");
     } catch (error) {
-      console.error("Error deleting products:", error);
+      toast.dismiss(toastLoader);
+      toast.error("Unable to delete...");
+
+      throw new Error("Error deleting products:" + error);
       // Handle the error appropriately, e.g., show a notification to the user
     }
+    setIsBulkDelete(false);
   };
 
   const handleDelete = async (id: string, type: "specials" | "products") => {
-   console.log(id,type)
     const toastLoader = toast.loading("Deleting product...");
     try {
-      const response = await deleteProduct({ id: id, type: type });
+      await deleteProduct({ id: id, type: type });
       toast.dismiss(toastLoader);
       toast.success("Successfully deleted");
       const refreshProducts = fetchedProducts?.filter(
@@ -214,6 +217,7 @@ const AllProductAnalytics = () => {
 
       throw new Error("Error while deleting product" + error);
     }
+    setIsDelete(false);
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
@@ -318,9 +322,11 @@ const AllProductAnalytics = () => {
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
           delete: (id) => {
-            const findProduct = fetchedProducts?.find((product)=>product.id === id);
+            const findProduct = fetchedProducts?.find(
+              (product) => product.id === id
+            );
             setId(id);
-            setType(findProduct?.type)
+            setType(findProduct?.type);
             setIsDelete(true);
           },
           edit: (id: string) => {
@@ -343,7 +349,7 @@ const AllProductAnalytics = () => {
       </Modal>
       {isBulkDelete && (
         <Delete
-          closeModal={() => setIsDelete(false)}
+          closeModal={() => setIsBulkDelete(false)}
           id={id as string}
           isClose={isBulkDelete}
           setDelete={() => handleSelectedDelete()}
@@ -355,7 +361,9 @@ const AllProductAnalytics = () => {
           id={id as string}
           type={type}
           isClose={isDelete}
-          setDelete={(id: string, type: "specials"| "products") => handleDelete(id, type)}
+          setDelete={(id: string, type: "specials" | "products") =>
+            handleDelete(id, type)
+          }
         />
       )}
     </div>

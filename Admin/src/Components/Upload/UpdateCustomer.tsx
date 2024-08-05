@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
 import { CustomerType } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
-import { updateRole } from "../../Services";
+import { updateRole, updateUser } from "../../Services";
 
 interface UpdateCategoryType {
   label: string;
@@ -52,10 +52,11 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
   const [show, setShow] = useState<boolean>(false);
 
   const fileRef = useRef<HTMLImageElement>();
-
+  console.log(field, newData);
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!customerInfo.id) return toast.error("Category id not found");
+    if (!customerInfo.id && !newData && !field)
+      return toast.error(`All field required`);
     const toastLoader = toast.loading("Updating user role...");
     try {
       if (field == "role") {
@@ -69,7 +70,14 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
         toast.success("User update successfully");
         return;
       }
-      console.log("User will update soon!");
+      await updateUser({
+        id: customerInfo.id as string,
+        role: customerInfo.role,
+        field: field,
+        newData: newData,
+      });
+      toast.dismiss(toastLoader);
+      toast.success("User update successfully");
     } catch (error) {
       toast.dismiss(toastLoader);
       toast.error("User not updated");
@@ -79,7 +87,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, "category" as any);
+    const imageUrl = await storeImageInFirebase(image, { folder: "users" });
     setNewData(imageUrl);
   };
   return (

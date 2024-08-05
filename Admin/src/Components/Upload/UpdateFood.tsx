@@ -68,7 +68,8 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, { folder: "products" });
+    const imageUrl = await storeImageInFirebase(image, { folder: "products" })
+    console.log(imageUrl)
     setNewData(imageUrl);
   };
   return (

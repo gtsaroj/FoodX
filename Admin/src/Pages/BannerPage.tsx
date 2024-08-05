@@ -7,7 +7,7 @@ import Table from "../Components/Common/Table/Table";
 import { BannerModel } from "../models/banner.model";
 import { ColumnProps } from "../models/table.model";
 import UpdateBanner from "../Components/Upload/UpdateBanner";
-import Delete from "../Components/Common/Delete/Delete";
+import Delete, { DeleteButton } from "../Components/Common/Delete/Delete";
 import toast from "react-hot-toast";
 import { bulkDeleteBanner, deleteBanner, getBanners } from "../Services";
 import { debounce } from "../Utility/Debounce";
@@ -198,16 +198,10 @@ const FoodPage: React.FC = () => {
               />
             </form>
             <div className="h-10  w-[1px] bg-gray-300 "></div>
-            <button
-              className="hover:bg-gray-400 rounded-lg duration-150 p-2"
-              disabled={bulkSelectedBanner?.length >= 1 ? false : true}
-              onClick={() => setIsBulkDelete(true)}
-            >
-              <Trash2
-                strokeWidth={3}
-                className="size-7 hover:text-[var(--light-text)] duration-150 text-[var(--dark-secondary-text)]   "
-              />
-            </button>
+            <DeleteButton
+              dataLength={bulkSelectedBanner.length}
+              deleteFn={() => setIsBulkDelete(true)}
+            />
           </div>
         </div>
         <div className="flex items-center justify-center gap-5 ">
