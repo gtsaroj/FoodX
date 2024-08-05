@@ -2,6 +2,7 @@ import { Router } from "express";
 import { verifyJwt } from "../middlewares/auth.middlewares.js";
 import {
   addLogs,
+  fetchLogs,
   getLogsBasedOnAction,
   getLogsBasedOnRoles,
 } from "../controllers/logs.controller.js";
@@ -16,5 +17,6 @@ logRouter
   .route("/get-action-logs")
   .get(verifyJwt, verifyAdmin, getLogsBasedOnAction);
 logRouter.route("/add-logs").post(verifyJwt, addLogs);
+logRouter.route("/get-logs").get(verifyJwt, verifyAdmin, fetchLogs);
 
 export { logRouter };

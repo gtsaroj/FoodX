@@ -1,6 +1,7 @@
 import { logProps } from "../../models/logs.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
+import { paginateFnc } from "../utils.js";
 
 const addLogToFirestore = async (
   logs: logProps,
@@ -92,9 +93,65 @@ const deleteAllLogs = async (
     throw new ApiError(500, "Error deleting logs from database.");
   }
 };
+const getLogsFromDatabase = async (
+  path: "adminsLog" | "chefLogs" | "customerLogs",
+  pageSize: number,
+  filter: keyof logProps,
+  sort: "asc" | "desc" = "asc",
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
+  direction?: "prev" | "next",
+  action?:
+    | "login"
+    | "register"
+    | "logout"
+    | "create"
+    | "update"
+    | "delete"
+    | "checkout"
+) => {
+  try {
+    const query = paginateFnc(
+      path,
+      filter,
+      startAfterDoc,
+      startAtDoc,
+      pageSize,
+      sort,
+      direction
+    );
+    let logsDoc;
+    if (action) {
+      logsDoc = await query.where("action", "==", action).get();
+    }
+    logsDoc = await query.get();
+    const logs: logProps[] = [];
 
+    logsDoc.docs.forEach((doc) => {
+      logs.push(doc.data() as logProps);
+    });
+
+    const firstDoc = logsDoc.docs[0]?.data().id || null;
+    const lastDoc =
+      logsDoc.docs[logsDoc.docs.length - 1]?.data().id || null;
+
+    return {
+      logs,
+      firstDoc,
+      lastDoc,
+    };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching products from database.",
+      null,
+      error as string[]
+    );
+  }
+};
 export {
   addLogToFirestore,
   getLogsOfRolesFromFirestore,
   getLogsBasedOnActionFromFirestore,
+  getLogsFromDatabase,
 };
