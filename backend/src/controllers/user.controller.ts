@@ -214,49 +214,27 @@ const deleteUser = asyncHandler(async (req: any, res: any) => {
 });
 
 const updateUser = asyncHandler(async (req: any, res: any) => {
-  const { fullName, avatar, phoneNumber } = req.body;
+  const { id, role, field, newData } = req.body;
   try {
-    const user = req.user as User;
-    if (!user)
-      throw new ApiError(401, "User is not logged in. Something went wrong. ");
-    const foundUser = await getUserFromDatabase(user.uid, user.role);
-    if (!foundUser) throw new ApiError(404, "No user found.");
-    if (!fullName && !phoneNumber && !avatar)
-      throw new ApiError(400, "No data provided to update.");
-
-    if (fullName) {
-      await updateUserDataInFirestore(
-        user.uid,
-        user.role,
-        "fullName",
-        fullName
-      );
-    }
-
-    if (phoneNumber) {
-      await updateUserDataInFirestore(
-        user.uid,
-        user.role,
-        "phoneNumber",
-        phoneNumber
-      );
-    }
-
-    if (avatar) {
-      await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
-    }
-
+    const updatedUser = await updateUserDataInFirestore(
+      id,
+      role,
+      field,
+      newData
+    );
     res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { fullName, phoneNumber, avatar },
+          { updatedUser },
           "Successfully updated user data.",
           true
         )
       );
-  } catch (error) {}
+  } catch (error) {
+    throw new ApiError(500, "Error while updating user data.");
+  }
 });
 
 const updateAccount = asyncHandler(async (req: any, res: any) => {
