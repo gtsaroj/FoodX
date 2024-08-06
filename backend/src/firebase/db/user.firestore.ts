@@ -180,11 +180,13 @@ const getUsersFromDatabase = async (
 
     const firstDoc = usersDoc.docs[0]?.data().uid || null;
     const lastDoc = usersDoc.docs[usersDoc.docs.length - 1]?.data().uid || null;
+    const length = usersDoc.docs.length;
 
     return {
       users,
       firstDoc,
       lastDoc,
+      length,
     };
   } catch (error) {
     throw new ApiError(

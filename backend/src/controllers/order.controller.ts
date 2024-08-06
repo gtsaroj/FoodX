@@ -113,7 +113,7 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
   } = req.body;
 
   try {
-    let { orders, firstDoc, lastDoc } = await getOrdersFromDatabase(
+    let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       pageSize,
       filter,
       sort,
@@ -128,7 +128,7 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { orders, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          { orders, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
           "Successfully fetched orders from database",
           true
         )

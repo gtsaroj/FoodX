@@ -132,13 +132,13 @@ const getLogsFromDatabase = async (
     });
 
     const firstDoc = logsDoc.docs[0]?.data().id || null;
-    const lastDoc =
-      logsDoc.docs[logsDoc.docs.length - 1]?.data().id || null;
-
+    const lastDoc = logsDoc.docs[logsDoc.docs.length - 1]?.data().id || null;
+    const length = logsDoc.docs.length;
     return {
       logs,
       firstDoc,
       lastDoc,
+      length,
     };
   } catch (error) {
     throw new ApiError(

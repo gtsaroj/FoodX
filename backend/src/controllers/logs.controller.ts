@@ -149,7 +149,7 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
   } = req.body;
 
   try {
-    let { logs, firstDoc, lastDoc } = await getLogsFromDatabase(
+    let { logs, firstDoc, lastDoc, length } = await getLogsFromDatabase(
       path,
       pageSize,
       filter,
@@ -164,7 +164,7 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { logs, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          { logs, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
           "Successfully fetched logs from database",
           true
         )

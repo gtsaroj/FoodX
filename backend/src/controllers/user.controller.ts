@@ -397,7 +397,7 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
   } = req.body;
 
   try {
-    let { users, firstDoc, lastDoc } = await getUsersFromDatabase(
+    let { users, firstDoc, lastDoc, length } = await getUsersFromDatabase(
       path,
       pageSize,
       filter,
@@ -411,7 +411,7 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { users, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          { users, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
           "Successfully fetched users from database",
           true
         )

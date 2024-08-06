@@ -132,7 +132,7 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
   } = req.body;
 
   try {
-    let { tickets, firstDoc, lastDoc } = await getTicketsFromFirestore(
+    let { tickets, firstDoc, lastDoc, length } = await getTicketsFromFirestore(
       pageSize,
       sort,
       direction === "next" ? currentLastDoc : null,
@@ -145,7 +145,7 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { tickets, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          { tickets, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
           "Successfully fetched tickets from database",
           true
         )

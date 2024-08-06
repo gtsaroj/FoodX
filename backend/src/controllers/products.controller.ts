@@ -185,7 +185,7 @@ const fetchProducts = asyncHandler(async (req: any, res: any) => {
   } = req.body;
 
   try {
-    let { products, firstDoc, lastDoc } = await getProductsFromDatabase(
+    let { products, firstDoc, lastDoc, length } = await getProductsFromDatabase(
       path,
       pageSize,
       filter,
@@ -200,7 +200,7 @@ const fetchProducts = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { products, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          { products, currentFirstDoc: firstDoc, currentLastDoc: lastDoc , length},
           "Successfully fetched products from database",
           true
         )
