@@ -3,6 +3,7 @@ import { Order, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 import { Product } from "../../models/product.model.js";
+import { paginateFnc } from "../utils.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
@@ -100,10 +101,67 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
 //   }
 // };
 
+const getOrdersFromDatabase = async (
+  pageSize: number,
+  filter: keyof Order,
+  sort: "asc" | "desc" = "asc",
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
+  direction?: "prev" | "next",
+  status?: string,
+  userId?: string
+) => {
+  try {
+    const query = paginateFnc(
+      "orders",
+      filter,
+      startAfterDoc,
+      startAtDoc,
+      pageSize,
+      sort,
+      direction
+    );
+    let orderDoc;
+    if (status && !userId) {
+      orderDoc = await query.where("status", "==", status).get();
+    } else if (!status && userId) {
+      orderDoc = await query.where("userId", "==", userId).get();
+    } else if (userId && status) {
+      orderDoc = await query
+        .where("userId", "==", userId)
+        .where("status", "==", status)
+        .get();
+    } else {
+      orderDoc = await query.get();
+    }
+    const orders: Order[] = [];
+
+    orderDoc.docs.forEach((doc) => {
+      orders.push(doc.data() as Order);
+    });
+
+    const firstDoc = orderDoc.docs[0]?.data().orderId || null;
+    const lastDoc = orderDoc.docs[orderDoc.docs.length - 1]?.data().orderId || null;
+
+    return {
+      orders,
+      firstDoc,
+      lastDoc,
+    };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching orders from database.",
+      null,
+      error as string[]
+    );
+  }
+};
 export {
   addNewOrderToDatabase,
   getAllOrders,
   getOrders,
   getOrdersByUserId,
   updateOrderStatusInDatabase,
+  getOrdersFromDatabase,
 };

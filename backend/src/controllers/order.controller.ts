@@ -2,8 +2,10 @@ import {
   addNewOrderToDatabase,
   getAllOrders,
   getOrdersByUserId,
+  getOrdersFromDatabase,
   updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
+import { Order } from "../models/order.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -88,10 +90,62 @@ const updateOrder = asyncHandler(
     }
   }
 );
+const fetchOrders = asyncHandler(async (req: any, res: any) => {
+  let {
+    pageSize,
+    filter,
+    sort,
+    direction,
+    currentFirstDoc,
+    currentLastDoc,
+    status,
+    userId,
+  }: {
+    path: "adminsLog" | "chefLogs" | "customerLogs";
+    pageSize: number;
+    filter: keyof Order;
+    sort: "asc" | "desc";
+    currentFirstDoc: any | null;
+    currentLastDoc: any | null;
+    direction?: "prev" | "next";
+    status?: "fullfilled" | "cancelled" | "preparing" | "received";
+    userId?: string;
+  } = req.body;
 
+  try {
+    let { orders, firstDoc, lastDoc } = await getOrdersFromDatabase(
+      pageSize,
+      filter,
+      sort,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
+      direction,
+      status,
+      userId
+    );
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { orders, currentFirstDoc: firstDoc, currentLastDoc: lastDoc },
+          "Successfully fetched orders from database",
+          true
+        )
+      );
+  } catch (error) {
+    throw new ApiError(
+      401,
+      "Something went wrong while fetching orders from database",
+      null,
+      error as string[]
+    );
+  }
+});
 export {
   getAllOrdersFromDatabase,
   getOrderByUserIdFromDatabase,
   addNewOrder,
   updateOrder,
+  fetchOrders,
 };
