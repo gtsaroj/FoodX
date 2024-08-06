@@ -17,6 +17,6 @@ logRouter
   .route("/get-action-logs")
   .get(verifyJwt, verifyAdmin, getLogsBasedOnAction);
 logRouter.route("/add-logs").post(verifyJwt, addLogs);
-logRouter.route("/get-logs").get(verifyJwt, verifyAdmin, fetchLogs);
+logRouter.route("/get-logs").post(verifyJwt, verifyAdmin, fetchLogs);
 
 export { logRouter };

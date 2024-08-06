@@ -16,7 +16,7 @@ const ticketRouter = Router();
 // ticketRouter.route("/all").get(verifyJwt, sendAllProducts);
 // ticketRouter.route("/specials").get(verifyJwt, sendSpecialProducts);
 ticketRouter.route("/get-ticket").get(verifyJwt, getAllTicket);
-ticketRouter.route("/get-tickets").get(verifyJwt, verifyAdmin, fetchTickets);
+ticketRouter.route("/get-tickets").post(verifyJwt, verifyAdmin, fetchTickets);
 ticketRouter.route("/add-ticket").post(verifyJwt, addNewTicket);
 ticketRouter.route("/update-ticket").put(verifyJwt, updateTicket);
 ticketRouter.route("/get-ticket-status").post(verifyJwt, getTicketByStatus);

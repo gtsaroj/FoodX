@@ -30,7 +30,7 @@ router.route("/signIn").post(
 router.route("/refresh-token").post(refreshAccessToken);
 
 // secured Routes
-router.route("/get-users").get(fetchUsers);
+router.route("/get-users").post(verifyJwt, verifyAdmin, fetchUsers);
 router.route("/delete-account").delete(verifyJwt, deleteAccount);
 router.route("/delete-user").delete(verifyJwt, verifyAdmin, deleteUser);
 router.route("/update-account").post(verifyJwt, updateAccount);

@@ -28,6 +28,6 @@ productRouter
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, deleteProductsInBulk);
-productRouter.route("/get-products").get(verifyJwt, verifyChef, fetchProducts);
+productRouter.route("/get-products").post(verifyJwt, verifyChef, fetchProducts);
 
 export { productRouter };
