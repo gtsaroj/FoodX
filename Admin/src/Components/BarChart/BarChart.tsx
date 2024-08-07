@@ -3,7 +3,7 @@ import { BarChart } from "@mui/x-charts";
 import { orderChartsOfMonthly } from "../LineChart/D";
 import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { getOrders } from "../../Services";
+import { getAllOrder } from "../../Services";
 import {
   barData,
   filterBarData,
@@ -74,7 +74,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   const [dataKey, setDataKey] = useState<string[]>([]);
   const getAllOrders = async () => {
     try {
-      const response = await getOrders();
+      const response = await getAllOrder();
       const filtersData = await filterBarTodayData(response);
 
       setInitialData(filtersData);
@@ -96,7 +96,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
     const filterByDate = async () => {
       // const startDate = dayjs(dateRange.startDate).format();
       // const endDate = dayjs(dateRange.endDate);
-      const getOrder = await getOrders();
+      const getOrder = await getAllOrder();
       const filteredData = await filterBarData(getOrder, {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
@@ -117,7 +117,6 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
       filterByDate();
     }
   }, [dateRange.startDate, dateRange.endDate]);
-
 
   const series =
     dataKey &&
