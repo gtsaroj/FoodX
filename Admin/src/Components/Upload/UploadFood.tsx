@@ -34,6 +34,7 @@ const UploadFood: React.FC = () => {
     try {
       const addProduct = await addProducts(data);
       if (addProduct) return toast.success("Succesfully Added");
+      addFood.products.image = "";
     } catch (error) {
       return toast.error("Unable to add product");
     }

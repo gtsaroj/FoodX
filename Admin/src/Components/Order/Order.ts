@@ -1,11 +1,11 @@
-import { getOrders } from "../../Services";
+import { getAllOrder } from "../../Services";
 import { getUserInfo } from "../../Utility/Utils";
 import { Order } from "../../models/order.model";
 
 export const getRecentOrders = async () => {
   try {
     //  get total orders data from  server
-    const orders = await getOrders();
+    const orders = await getAllOrder();
     const totalOrders = orders as Order[];
     const aggregateData = totalOrders?.map(async (item) => {
       const user = await getUserInfo(item.uid);

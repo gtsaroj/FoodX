@@ -3,13 +3,13 @@ import { getCustomerData } from "../firebase/db";
 import { DbUser } from "../models/UserModels";
 import { Order, Product } from "../models/order.model";
 import { CustomerType } from "../models/user.model";
-import { SearchCustomer } from "./Search";
 import { totalCost, totalQuantity } from "./Utils";
 
 // aggregate Customer Data
 export const aggregateCustomerData = async (
   customers: DbUser[]
 ): Promise<CustomerType[]> => {
+  console.log(customers);
   const customerList: CustomerType[] = [];
   const batchSize = 10;
   // Split customers into batches
@@ -62,7 +62,6 @@ export const aggregateCustomerData = async (
     throw new Error("No customers found or processed.");
   }
 };
-
 
 export const getTopCustomers = async () => {
   try {

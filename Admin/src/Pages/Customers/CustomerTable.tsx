@@ -13,6 +13,8 @@ interface CustomerTableProp {
     checkFn: (id: string, isChecked: boolean) => void;
     checkAllFn?: (isChecked: boolean) => void;
   };
+  pagination: { currentPage: number; perPage: number };
+  onPageChange: (page: number) => void;
 }
 
 export const CustomerTable: React.FC<CustomerTableProp> = ({
@@ -20,6 +22,8 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
   loading,
   actions,
   selectedData,
+  onPageChange,
+  pagination,
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -112,8 +116,11 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
         selectedData={selectedData}
         loading={loading}
         bodyHeight={400}
-        pagination={{ currentPage: 1, perPage: 5 }}
-        onPageChange={(pageNumber) => console.log(pageNumber)}
+        pagination={{
+          currentPage: pagination?.currentPage,
+          perPage: pagination?.perPage,
+        }}
+        onPageChange={(pageNumber) => onPageChange(pageNumber)}
         disableNoData={users?.length < 1 ? true : false}
         headStyle={{ width: "100%" }}
       />

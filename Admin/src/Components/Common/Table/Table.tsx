@@ -223,7 +223,7 @@ function Table<T extends { id: string }>({
           <tr>
             <td>
               <Pagination
-                totalData={data.length}
+                totalData={30}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}
                 onChange={handlePageChange}

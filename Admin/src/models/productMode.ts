@@ -29,6 +29,17 @@ export interface ProductModel {
   rank?: number;
   imageurl?: string;
 }
+
+export interface GetProductModal {
+  path: "specials" | "products";
+  pageSize: number;
+  filter?: keyof ProductType;
+  sort?: "asc" | "desc";
+  direction?: "next" | "prev";
+  currentFirstDoc?: string | null;
+  currentLastDoc?: string | null;
+}
+
 export interface ProductBulkDeleteModal {
   id: string;
   category: string;

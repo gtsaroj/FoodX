@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { CardAnalyticsProp } from "../../models/order.model";
-import { getOrders } from "../../Services";
+import { getAllOrder, getOrders } from "../../Services";
 import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 import { MoreVertical } from "lucide-react";
 // import { getOrders } from "../../Services";
@@ -15,7 +15,7 @@ const Revenue: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    getOrders()
+    getAllOrder()
       .then((order) => {
         const currentData = aggregateCurrentDayData(order.data);
         if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
@@ -25,7 +25,7 @@ const Revenue: React.FC = () => {
         // throw new Error("Unable to aggregate current data" + error);
         console.log(error);
       });
-    console.log("step");
+
     setLoading(false);
   }, []);
   // console.log(`Daily Aggregate data: ${totalOrder}`);

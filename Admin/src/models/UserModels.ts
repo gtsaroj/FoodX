@@ -2,11 +2,19 @@ import { User } from "./user.model";
 
 export interface authState {
   loading: boolean;
-  userInfo: any[]  | null | User;
+  userInfo: any[] | null | User;
   error: boolean;
   success: boolean;
 }
-
+export interface GetUserModal {
+  path: "customer" | "admin" | "chef";
+  pageSize: number;
+  filter: keyof User;
+  sort: "asc" | "desc";
+  direction: "prev" | "next";
+  currentFirstDoc?: any | null;
+  currentLastDoc?: any | null;
+}
 export interface ImageFolders {
   folder: "users" | "products" | "banners" | "categories";
 }
@@ -36,6 +44,6 @@ export namespace Table {
     pagination?: {
       perPage: number;
       currentPage: number;
-    },
+    };
   }
 }

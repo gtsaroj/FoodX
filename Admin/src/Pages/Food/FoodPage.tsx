@@ -35,6 +35,14 @@ const FoodPage: React.FC = () => {
       id: string;
     }[]
   >([]);
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 5 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
@@ -48,13 +56,26 @@ const FoodPage: React.FC = () => {
   const getAllProducts = async () => {
     setLoading(true);
     try {
-      const products = await getProducts();
-      const special = await getSpecialProducts();
-      const specialProducts = special.data.products;
-      const normalProducts = products.data.products;
+      const products = await getProducts({
+        path: "products",
+        pageSize: pagination.perPage,
+        direction: "next",
+        filter: "price",
+        sort: "asc",
+      });
+      // const special = await getSpecialProducts();
+      const normalProducts = products.data as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        products: ProductType[];
+      };
+      setCurrentDoc(() => ({
+        currentFirstDoc: normalProducts.currentFirstDoc,
+        currentLastDoc: normalProducts.currentLastDoc,
+      }));
 
-      const arrangeNormalProducts: ArrangedProduct[] = normalProducts?.map(
-        (product: ProductType) => ({
+      const arrangeNormalProducts: ArrangedProduct[] =
+        normalProducts?.products.map((product: ProductType) => ({
           id: product.id,
           name: product.name,
           image: product.image,
@@ -65,25 +86,24 @@ const FoodPage: React.FC = () => {
           rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
           revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
           type: "products",
-        })
-      );
-      const arrangeSpecialProducts: ArrangedProduct[] = specialProducts?.map(
-        (product: ProductType) => ({
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          quantity: product.quantity as number,
-          price: product.price as number,
-          category: product.tag,
-          order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
-          rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
-          revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-          type: "specials",
-        })
-      );
+        }));
+      // const arrangeSpecialProducts: ArrangedProduct[] = specialProducts?.map(
+      //   (product: ProductType) => ({
+      //     id: product.id,
+      //     name: product.name,
+      //     image: product.image,
+      //     quantity: product.quantity as number,
+      //     price: product.price as number,
+      //     category: product.tag,
+      //     order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
+      //     rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+      //     revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+      //     type: "specials",
+      //   })
+      // );
       const getAllProducts = [
         ...arrangeNormalProducts,
-        ...arrangeSpecialProducts,
+        // ...arrangeSpecialProducts,
       ];
       setFetchedProducts(getAllProducts as ArrangedProduct[]);
       setOriginalData(getAllProducts);
@@ -190,7 +210,7 @@ const FoodPage: React.FC = () => {
     // call getAllProducts
 
     getAllProducts();
-  }, []);
+  }, [pagination.perPage]);
 
   // delete products
   const handleDelete = async (id: string, type: "specials" | "products") => {
@@ -265,6 +285,60 @@ const FoodPage: React.FC = () => {
       setFetchedProducts(originalData);
     }
   }, [originalData, sortOrder.field]);
+
+  // fetch next page
+  useEffect(() => {
+    if (
+      pagination.currentPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc.currentFirstDoc.length > 0
+    ) {
+      const fetchNextPage = async () => {
+        setLoading(true);
+        try {
+          const products = await getProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            direction: "next",
+            filter: "name",
+            sort: "asc",
+            currentFirstDoc: currentDoc.currentFirstDoc,
+          });
+
+          const normalProducts = products.data as {
+            currentFirstDoc: string;
+            currentLastDoc: string;
+            products: ProductType[];
+          };
+
+          const newProducts = normalProducts.products?.map((product) => ({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            quantity: product.quantity as number,
+            price: product.price as number,
+            category: product.tag,
+            order: 20,
+            rating: 4.3,
+            revenue: 15000,
+            type: "products",
+          }));
+
+          setFetchedProducts((prev) => [
+            ...prev,
+            ...newProducts.filter(
+              (product) => !prev.some((p) => p.id === product.id)
+            ),
+          ]);
+        } catch (error) {
+          throw new Error(`Error while fetching products: ${error}`);
+        }
+        setLoading(false);
+      };
+
+      fetchNextPage();
+    }
+  }, [pagination.currentPage, currentDoc?.currentFirstDoc, pagination.perPage]);
 
   const closeModal = () => setIsModelOpen(true);
 
@@ -383,6 +457,13 @@ const FoodPage: React.FC = () => {
       </div>
 
       <FoodTable
+        onPageChange={(page: number) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
         selectedData={bulkSelectedProduct}
         products={fetchedProducts}
         actions={{
