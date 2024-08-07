@@ -78,6 +78,7 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
   const {
     action,
     date,
+    detail,
   }: {
     action:
       | "login"
@@ -88,6 +89,7 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
       | "delete"
       | "checkout";
     date: Date;
+    detail?: string;
   } = req.body;
   try {
     const response = await addLogToFirestore(
@@ -98,6 +100,7 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
         action,
         date,
         id: "",
+        detail,
       },
       `${role}Logs`
     );

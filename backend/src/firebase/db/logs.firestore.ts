@@ -17,7 +17,7 @@ const addLogToFirestore = async (
         uid,
         name,
         profile,
-        detail,
+        detail: detail || "",
         date,
         action,
       })
