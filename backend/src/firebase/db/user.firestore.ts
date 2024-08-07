@@ -162,7 +162,7 @@ const getUsersFromDatabase = async (
   direction?: "prev" | "next"
 ) => {
   try {
-    const query = paginateFnc(
+    const { query, totalLength } = await paginateFnc(
       path,
       filter,
       startAfterDoc,
@@ -180,13 +180,12 @@ const getUsersFromDatabase = async (
 
     const firstDoc = usersDoc.docs[0]?.data().uid || null;
     const lastDoc = usersDoc.docs[usersDoc.docs.length - 1]?.data().uid || null;
-    const length = usersDoc.docs.length;
 
     return {
       users,
       firstDoc,
       lastDoc,
-      length,
+      length: totalLength,
     };
   } catch (error) {
     throw new ApiError(

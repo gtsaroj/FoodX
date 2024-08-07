@@ -148,7 +148,7 @@ const getProductsFromDatabase = async (
   category?: string
 ) => {
   try {
-    const query = paginateFnc(
+    const { query, totalLength } = await paginateFnc(
       path,
       filter,
       startAfterDoc,
@@ -172,12 +172,11 @@ const getProductsFromDatabase = async (
     const firstDoc = productDoc.docs[0]?.data().id || null;
     const lastDoc =
       productDoc.docs[productDoc.docs.length - 1]?.data().id || null;
-    const length = productDoc.docs.length;
     return {
       products,
       firstDoc,
       lastDoc,
-      length,
+      length: totalLength,
     };
   } catch (error) {
     throw new ApiError(

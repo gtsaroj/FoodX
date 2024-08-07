@@ -111,7 +111,7 @@ const getLogsFromDatabase = async (
     | "checkout"
 ) => {
   try {
-    const query = paginateFnc(
+    const { query, totalLength } = await paginateFnc(
       path,
       filter,
       startAfterDoc,
@@ -134,12 +134,11 @@ const getLogsFromDatabase = async (
 
     const firstDoc = logsDoc.docs[0]?.data().id || null;
     const lastDoc = logsDoc.docs[logsDoc.docs.length - 1]?.data().id || null;
-    const length = logsDoc.docs.length;
     return {
       logs,
       firstDoc,
       lastDoc,
-      length,
+      length: totalLength,
     };
   } catch (error) {
     throw new ApiError(

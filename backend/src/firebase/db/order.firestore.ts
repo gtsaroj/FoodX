@@ -112,7 +112,7 @@ const getOrdersFromDatabase = async (
   userId?: string
 ) => {
   try {
-    const query = paginateFnc(
+    const {query, totalLength} =await paginateFnc(
       "orders",
       filter,
       startAfterDoc,
@@ -143,12 +143,11 @@ const getOrdersFromDatabase = async (
     const firstDoc = orderDoc.docs[0]?.data().orderId || null;
     const lastDoc =
       orderDoc.docs[orderDoc.docs.length - 1]?.data().orderId || null;
-    const length = orderDoc.docs.length;
     return {
       orders,
       firstDoc,
       lastDoc,
-      length
+      length: totalLength
     };
   } catch (error) {
     throw new ApiError(

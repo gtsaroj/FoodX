@@ -83,7 +83,7 @@ const getTicketsFromFirestore = async (
   status?: "Pending" | "Resolved" | "Rejected"
 ) => {
   try {
-    const query = paginateFnc(
+    const { query, totalLength } = await paginateFnc(
       "ticket",
       "date",
       startAfterDoc,
@@ -107,12 +107,11 @@ const getTicketsFromFirestore = async (
     const firstDoc = ticketsDoc.docs[0]?.data().id || null;
     const lastDoc =
       ticketsDoc.docs[ticketsDoc.docs.length - 1]?.data().id || null;
-    const length = ticketsDoc.docs.length;
     return {
       tickets,
       firstDoc,
       lastDoc,
-      length,
+      length: totalLength,
     };
   } catch (error) {
     throw new ApiError(
