@@ -1,3 +1,4 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import { User } from "./user.model";
 
 export interface authState {
@@ -46,4 +47,11 @@ export namespace Table {
       currentPage: number;
     };
   }
+}
+
+export interface PayloadAction<S, User, M, E> {
+  meta: M;
+  payload: User;
+  type: S;
+  Error: E;
 }

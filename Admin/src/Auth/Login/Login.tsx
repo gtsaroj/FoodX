@@ -9,6 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { singInAction } from "../../Reducer/Action";
+import { addLogs } from "../../Services";
+import { GetUserModal } from "../../models/UserModels";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -25,6 +28,7 @@ const LoginContainer: React.FC = () => {
     setShow((show) => !show);
     setPasswordType(passwordType === "text" ? "password" : "text");
   };
+  const today = new Date().toISOString();
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -32,7 +36,15 @@ const LoginContainer: React.FC = () => {
     event.preventDefault();
     try {
       setDataSend(false);
-      await dispatch(singInAction({ email, password,userRole :"admin" }));
+      await dispatch(singInAction({ email, password, userRole: "admin" }));
+      // await addLogs({
+      //   action: "login",
+      //   date: today,
+      //   name: response.payload.fullName,
+      //   profile: response.payload.avatar,
+      //   uid: response.payload.uid,
+      //   detail: `${response.payload.fullName} is logged in `,
+      // });
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);

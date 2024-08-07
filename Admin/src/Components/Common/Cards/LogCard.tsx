@@ -60,16 +60,15 @@ export const LogCard: React.FC<LogCardProps> = ({
     checkout: "ordered an item.",
   };
 
-  const [openMenu, setOpenMenu] = useState<boolean>(open);
-  useEffect(() => {
-    open ? setOpenMenu(true) : setOpenMenu(false);
-  }, [open]);
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+
   const handleCollapse = () => {
     if (handleClick) {
       handleClick(id);
+      setOpenMenu(!openMenu);
     }
   };
-
+  const newDate = new Date(date);
   return (
     <div>
       <div className="flex items-center justify-between w-full h-full gap-3 p-4 border rounded-md ">
@@ -93,11 +92,11 @@ export const LogCard: React.FC<LogCardProps> = ({
               <span>{titles[`${action}`]}</span>
             </p>
             <p className="text-[var(--dark-secondary-text)] text-xs">
-              {date.toISOString()}
+              {newDate?.toISOString()}
             </p>
           </div>
         </div>
-        <div className="cursor-pointer" onClick={handleCollapse}>
+        <div className="cursor-pointer" onClick={() => handleCollapse()}>
           {openMenu ? <ChevronDown /> : <ChevronRight />}
         </div>
       </div>

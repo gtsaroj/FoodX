@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { addBanner } from "../../Services";
+import { addBanner, addLogs } from "../../Services";
 
 const UploadBanner: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
@@ -34,6 +34,16 @@ const UploadBanner: React.FC = () => {
     if (!image && !name) return toast.error("All files are required");
     try {
       await addBanner({ name: name as string, img: image as string });
+      await addLogs({
+        action: "update",
+        date: new Date(),
+        detail: ` Banner : $${name} `,
+      });
+      await addLogs({
+        action: "create",
+        date: new Date(),
+        detail: `Banner : ${name} `,
+      });
     } catch (error) {
       throw new Error("Unable to add new banner" + error);
     }
@@ -107,7 +117,10 @@ const UploadBanner: React.FC = () => {
               </div>
             )}
           </div>
-          <button type="submit" className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button
+            type="submit"
+            className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+          >
             Save
           </button>
         </form>

@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
 import { CustomerType } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
-import { updateRole, updateUser } from "../../Services";
+import { addLogs, updateRole, updateUser } from "../../Services";
 
 interface UpdateCategoryType {
   label: string;
@@ -60,12 +60,16 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
     const toastLoader = toast.loading("Updating user role...");
     try {
       if (field == "role") {
-        const response = await updateRole({
-          id: customerInfo.id,
+        await updateRole({
+          id: customerInfo.id as string,
           role: customerInfo.role,
           newRole: newData,
         });
-        console.log(response);
+        await addLogs({
+          action: "update",
+          date: new Date(),
+          detail: `${customerInfo.name} was update from ${customerInfo.role} to ${newData} by me. `,
+        });
         toast.dismiss(toastLoader);
         toast.success("User update successfully");
         return;
@@ -75,6 +79,12 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
         role: customerInfo.role,
         field: field,
         newData: newData,
+      });
+
+      await addLogs({
+        action: "update",
+        date: new Date(),
+        detail: `${customerInfo.name} was updated of ${field} : ${newData} by me. `,
       });
       toast.dismiss(toastLoader);
       toast.success("User update successfully");

@@ -1,4 +1,4 @@
-import React, {   useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import collegeLogo from "../../assets/logo/texas.png";
 import {
   LayoutDashboard,
@@ -16,6 +16,7 @@ import {
   Menu,
   User,
   X,
+  Sun,
 } from "lucide-react";
 import Logout from "../Logout/Logout";
 import { signOut } from "../../Services";
@@ -58,7 +59,6 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
   const auth = {
     role: "admin",
   };
-
 
   return (
     <div
@@ -250,6 +250,9 @@ export const MobileSlider: React.FC = () => {
         <button onClick={() => setOpenMenu(!openMenu)}>
           {openMenu ? <X className="size-8" /> : <Menu className="size-8" />}
         </button>
+        <div className="cursor-pointer">
+          <Sun size={25} />
+        </div>
         <div>
           <User />
         </div>

@@ -4,12 +4,12 @@ import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
-import { updateProduct } from "../../Services";
+import { addLogs, updateProduct } from "../../Services";
 import { ArrangedProduct } from "../../models/productMode";
 import { Selector } from "../Selector/Selector";
+import { id } from "date-fns/locale";
 
-
-const UpdateCategoryOption:{label : string,value:string}[] = [
+const UpdateCategoryOption: { label: string; value: string }[] = [
   { label: "Product Name", value: "name" },
   {
     label: "Image",
@@ -36,8 +36,6 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const [field, setField] = useState<
     "image" | "name" | "price" | "category" | "quantity"
   >("name");
-  const [show, setShow] = useState<boolean>(false);
-  const [showField, setShowField] = useState<string>();
   const options = useSelector(
     (state: RootState) => state.root.category.categories
   ) as [];
@@ -55,6 +53,11 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
         id: product.id,
         newData: newData as any,
       });
+      await addLogs({
+        action: "update",
+        date: new Date(),
+        detail: `Product : ${id} `,
+      });
       toast.dismiss(toastLoading);
       toast.success("Successfully updated...");
       closeModal();
@@ -68,8 +71,8 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, { folder: "products" })
-    console.log(imageUrl)
+    const imageUrl = await storeImageInFirebase(image, { folder: "products" });
+    console.log(imageUrl);
     setNewData(imageUrl);
   };
   return (
@@ -82,7 +85,10 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
         className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-   <Selector setField={(value)=>setField(value as any)} categoryOption={UpdateCategoryOption} />
+        <Selector
+          setField={(value) => setField(value as any)}
+          categoryOption={UpdateCategoryOption}
+        />
 
         {field === "image" ? (
           newData ? (
