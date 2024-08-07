@@ -6,6 +6,7 @@ import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { debounce } from "../../Utility/Debounce";
 import { ArrangedProduct, ProductType } from "../../models/productMode";
 import {
+  addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
@@ -191,6 +192,13 @@ const FoodPage: React.FC = () => {
       if (products.length > 0) {
         await bulkDeleteOfProduct({ category: "products", ids: products });
       }
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Delete Product : specials:${JSON.stringify(
+          specials
+        )}, products : ${JSON.stringify(products)} `,
+      });
       toast.dismiss(toastLoader);
       const refreshProducts = fetchedProducts?.filter((product) => {
         return !specials.includes(product.id) && !products.includes(product.id);
@@ -223,6 +231,11 @@ const FoodPage: React.FC = () => {
       const refreshProducts = fetchedProducts?.filter(
         (product) => product.id !== id
       );
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Product : ${id} `,
+      });
       setFetchedProducts(refreshProducts);
     } catch (error) {
       toast.dismiss(toastLoader);
@@ -324,12 +337,14 @@ const FoodPage: React.FC = () => {
             type: "products",
           }));
 
-          setFetchedProducts((prev) => [
-            ...prev,
-            ...newProducts.filter(
-              (product) => !prev.some((p) => p.id === product.id)
-            ),
-          ]);
+          setFetchedProducts((prev) => {
+            return [
+              ...prev,
+              ...newProducts.filter(
+                (product) => !prev.some((p) => p.id === product.id)
+              ),
+            ];
+          });
         } catch (error) {
           throw new Error(`Error while fetching products: ${error}`);
         }

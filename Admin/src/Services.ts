@@ -29,7 +29,7 @@ import {
   UpdateCategoryType,
   UpdateComponentType,
 } from "./models/category.model";
-import { LogCardProps } from "./models/logModel";
+import { GetLogProp, LogCardProps } from "./models/logModel";
 import { authLogout } from "./Reducer/Action";
 import { Axios } from "axios";
 import { da } from "date-fns/locale";
@@ -51,9 +51,7 @@ export const signIn = async (
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
     const role = await getRoleFromAccessToken();
-    console.log(role);
     responseData.user.role = await role;
-    console.log(responseData.user);
     return responseData.user as UserInfo;
   } catch (error) {
     toast.error("Invalid username or password");
@@ -121,7 +119,9 @@ export const signOut = async () => {
       method: "post",
       url: "users/logout",
     });
+    await addLogs({ action: "logout", date: new Date() });
     await signOutUser();
+
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     Store.dispatch(authLogout());
@@ -424,13 +424,14 @@ export const getRoleLogs = async () => {
   }
 };
 
-export const getActionLogs = async () => {
+export const getLogs = async (data: GetLogProp) => {
   try {
     const response = await makeRequest({
-      method: "get",
-      url: "logs/get-action-logs",
+      method: "post",
+      url: "logs/get-logs",
+      data: { ...data },
     });
-    return response.data;
+    return response.data.data;
   } catch (error) {
     throw new Error("Unable to fetch action logs" + error);
   }

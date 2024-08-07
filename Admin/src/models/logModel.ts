@@ -1,8 +1,8 @@
 export interface LogCardProps {
-  id: string;
-  uid: string;
-  name: string;
-  profile: string;
+  id?: string;
+  uid?: string;
+  name?: string;
+  profile?: string;
   action:
     | "login"
     | "register"
@@ -16,4 +16,22 @@ export interface LogCardProps {
   date: Date;
   open?: boolean;
   handleClick?: (id: string) => void;
+}
+
+export interface GetLogProp {
+  path: "adminLogs" | "chefLogs" | "customerLogs";
+  pageSize: number;
+  filter: keyof LogCardProps;
+  sort: "asc" | "desc";
+  currentFirstDoc?: any | null;
+  currentLastDoc?: any | null;
+  direction?: "prev" | "next";
+  action?:
+    | "login"
+    | "register"
+    | "logout"
+    | "create"
+    | "update"
+    | "delete"
+    | "checkout";
 }

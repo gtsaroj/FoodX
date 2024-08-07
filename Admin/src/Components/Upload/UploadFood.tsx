@@ -3,7 +3,7 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { UploadProductType } from "../../models/productMode";
 import { nanoid } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-import { addProducts } from "../../Services";
+import { addLogs, addProducts } from "../../Services";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { Selector } from "../Selector/Selector";
@@ -33,6 +33,11 @@ const UploadFood: React.FC = () => {
     if (!data) return toast.error("Product are unavailable");
     try {
       const addProduct = await addProducts(data);
+      await addLogs({
+        action: "create",
+        detail: ` Product :  ${data.products.id}`,
+        date: new Date(),
+      });
       if (addProduct) return toast.success("Succesfully Added");
       addFood.products.image = "";
     } catch (error) {

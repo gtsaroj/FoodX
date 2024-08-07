@@ -11,6 +11,7 @@ import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
 import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import {
+  addLogs,
   bulkDeleteOfCategory,
   deleteCategory,
   getCategories,
@@ -42,7 +43,6 @@ export const CategoryPage: React.FC = () => {
   >([]);
 
   const dispatch = useDispatch<AppDispatch>();
-
 
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
@@ -138,6 +138,11 @@ export const CategoryPage: React.FC = () => {
       const refreshCategory = initialCategory.filter((category) => {
         return !AllCategoriesId.includes(category.id as string);
       });
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Category bulk delete : ${JSON.stringify(AllCategoriesId)}`,
+      });
       setInitialCategory(refreshCategory);
       toast.success("Successfully deleted");
     } catch (error) {
@@ -175,6 +180,11 @@ export const CategoryPage: React.FC = () => {
       toast.dismiss(toastLoader);
       await deleteCategory(id);
       toast.success("Successfully deleted");
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `category : ${id} `,
+      });
       const refreshCategory = initialCategory?.filter(
         (category) => category.id !== id
       );
@@ -254,7 +264,10 @@ export const CategoryPage: React.FC = () => {
             />
           </form>
           <div className="h-10  w-[1px] bg-gray-300 "></div>
-            <DeleteButton dataLength={bulkSelectedCategory.length} deleteFn={()=>setIsBulkDeleted(true)} />
+          <DeleteButton
+            dataLength={bulkSelectedCategory.length}
+            deleteFn={() => setIsBulkDeleted(true)}
+          />
         </div>
         <div>
           {sortOrder.field && (

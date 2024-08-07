@@ -2,82 +2,92 @@ import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { useEffect, useState } from "react";
 import { LogCardProps } from "../../models/logModel";
 import { LogCard } from "../../Components/Common/Cards/LogCard";
-import { addLogs, getActionLogs, getRoleLogs } from "../../Services";
-import { log } from "console";
-
-const LogData = [
-  {
-    action: "checkout",
-    name: "Aayush Lamichhane",
-    profile:
-      "https://firebasestorage.googleapis.com/v0/b/foodx-nepal.appspot.com/o/users%2F254-2549458_circle-png-download-transparent-revenue-logo-png-download.png?alt=media&token=1d8de06d-5e7e-455c-b300-b3af5c0fad7d",
-    date: new Date(),
-    detail: "This is detailed log action",
-    open: false,
-  },
-  {
-    id: "ssdadad",
-    uid: "sadiawnolncls",
-    action: "delete",
-    name: "Aayush Lamichhane",
-    profile:
-      "https://firebasestorage.googleapis.com/v0/b/foodx-nepal.appspot.com/o/users%2F254-2549458_circle-png-download-transparent-revenue-logo-png-download.png?alt=media&token=1d8de06d-5e7e-455c-b300-b3af5c0fad7d",
-    date: new Date(),
-    detail: "This is detailed log action",
-    open: false,
-  },
-  {
-    id: "cscsaca",
-    uid: "sadiawnolncls",
-    action: "login",
-    name: "Aayush Lamichhane",
-    profile:
-      "https://firebasestorage.googleapis.com/v0/b/foodx-nepal.appspot.com/o/users%2F254-2549458_circle-png-download-transparent-revenue-logo-png-download.png?alt=media&token=1d8de06d-5e7e-455c-b300-b3af5c0fad7d",
-    date: new Date(),
-    detail: "This is detailed log action",
-    open: false,
-  },
-  {
-    id: "ewwedasca",
-    uid: "sadiawnolncls",
-    action: "create",
-    name: "Aayush Lamichhane",
-    profile:
-      "https://firebasestorage.googleapis.com/v0/b/foodx-nepal.appspot.com/o/users%2F254-2549458_circle-png-download-transparent-revenue-logo-png-download.png?alt=media&token=1d8de06d-5e7e-455c-b300-b3af5c0fad7d",
-    date: new Date(),
-    detail: "This is detailed log action",
-    open: false,
-  },
-];
+import { getLogs } from "../../Services";
 
 const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
-  useEffect(() => {
-    setItems(LogData);
-  }, []);
-  const handleCollapseFn = (logId: string) => {
-    const logItems = LogData?.map((item) => {
-      if (item.id === logId) {
-        console.log(item);
 
+  const handleCollapseFn = (logId: string) => {
+    const logItems = items?.map((item) => {
+      if (item.id === logId) {
         return { ...item, open: !item.open };
       }
+
       return { ...item, open: false };
     });
-    setItems(logItems);
+    console.log(logItems);
   };
   const getAllRoleLogs = async () => {
     try {
-      const logs = await addLogs(LogData[0]);
-      console.log(logs);
+      const adminLogs = (await getLogs({
+        path: "adminLogs",
+        filter: "name",
+        sort: "asc",
+        pageSize: 5,
+        direction: "next",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        logs: LogCardProps[];
+      };
+      setItems(adminLogs.logs);
+
+      const chefLogs = await getLogs({
+        path: "chefLogs",
+        filter: "name",
+        sort: "asc",
+        pageSize: 5,
+      });
+      const customerLogs = await getLogs({
+        path: "customerLogs",
+        filter: "name",
+        pageSize: 5,
+        sort: "asc",
+      });
     } catch (error) {
       throw new Error("Unable to get role logs" + error);
     }
   };
+  const handleSelect = async (
+    value: "Admin logs" | "Customer Logs" | "Chef Logs"
+  ) => {
+    if (value === "Admin logs") {
+      const adminLogs = (await getLogs({
+        path: "adminLogs",
+        filter: "name",
+        sort: "asc",
+        pageSize: 5,
+        direction: "next",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        logs: LogCardProps[];
+      };
+      setItems(adminLogs.logs);
+    }
+    if (value === "Chef Logs") {
+      const chefLogs = await getLogs({
+        path: "chefLogs",
+        filter: "name",
+        sort: "asc",
+        pageSize: 5,
+      });
+      setItems(chefLogs.logs);
+    }
+    if (value === "Customer Logs") {
+      const customerLogs = await getLogs({
+        path: "chefLogs",
+        filter: "name",
+        sort: "asc",
+        pageSize: 5,
+      });
+      setItems(customerLogs.logs);
+    }
+  };
 
   useEffect(() => {
-    getAllRoleLogs()
-  },[])
+    getAllRoleLogs();
+  }, []);
 
   return (
     <div className="items-start justify-start w-full h-full p-2">
@@ -88,9 +98,9 @@ const Logs = () => {
           </p>
           <div>
             <FilterButton
-              onSelect={() => {}}
+              onSelect={(value) => handleSelect(value)}
               sortOrder=""
-              sortingOptions={[""]}
+              sortingOptions={["Admin logs", "Customer Logs", "Chef Logs"]}
             />
           </div>
         </div>
@@ -100,9 +110,10 @@ const Logs = () => {
             {items ? (
               items.map((item) => (
                 <LogCard
+                  open
                   key={item.id}
                   {...item}
-                  handleClick={() => handleCollapseFn(item.id)}
+                  handleClick={() => handleCollapseFn(item.id as string)}
                 />
               ))
             ) : (

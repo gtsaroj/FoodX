@@ -2,7 +2,7 @@ import { UploadIcon } from "lucide-react";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { addCategory } from "../../Services";
+import { addCategory, addLogs } from "../../Services";
 
 interface CategoryModal {
   closeModal: () => void;
@@ -32,6 +32,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
         name: categoryName,
         image: imageURL,
       });
+      await addLogs({action:"create",date: new Date(),detail:`Category : ${categoryName} ` })
       toast.dismiss(toastLoader);
       toast.success("Successfully updated");
     } catch (error) {

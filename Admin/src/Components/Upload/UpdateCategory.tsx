@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { updateCategory } from "../../Services";
+import { addLogs, updateCategory } from "../../Services";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { ChevronDown, UploadIcon } from "lucide-react";
@@ -12,7 +12,7 @@ interface UpdateCategoryType {
 }
 
 const UpdateCategoryOption: UpdateCategoryType[] = [
-  { label: "Name", value: "name", placeholder :"Eg. Pizza" },
+  { label: "Name", value: "name", placeholder: "Eg. Pizza" },
   {
     label: "Image",
     value: "image",
@@ -23,7 +23,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   const [newData, setNewData] = useState<string>("");
   const [field, setField] = useState<"image" | "name">("name");
   const [show, setShow] = useState<boolean>(false);
-    const [showField, setShowField] = useState<string>();
+  const [showField, setShowField] = useState<string>();
   const fileRef = useRef<HTMLImageElement>();
 
   const handleSubmit = async (event: FormEvent) => {
@@ -36,6 +36,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
         field: field as string,
         newData: newData,
       });
+      addLogs({ action: "update", date: new Date(), detail: `${id}` });
       toast.dismiss(toastLoader);
       toast.success("Successfully updated");
     } catch (error) {
@@ -47,7 +48,9 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
-    const imageUrl = await storeImageInFirebase(image, {folder: "categories"});
+    const imageUrl = await storeImageInFirebase(image, {
+      folder: "categories",
+    });
     setNewData(imageUrl);
   };
   return (
@@ -60,7 +63,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
         className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-   <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+        <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
           <div
             onClick={() => setShow(!show)}
             className="flex items-center  justify-between"
@@ -84,7 +87,7 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
             {UpdateCategoryOption?.map((option) => (
               <p
                 onClick={() => {
-                  setField(option.value as any)       
+                  setField(option.value as any);
                   setShowField(option.label);
                   setShow(false);
                 }}
@@ -127,8 +130,8 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
           )
         ) : field === "name" ? (
           <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-              <input
-                placeholder="Eg. Pizza"
+            <input
+              placeholder="Eg. Pizza"
               className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>

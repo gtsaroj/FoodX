@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { updateComponentProp } from "../../models/table.model";
-import { updateOrderStatus } from "../../Services";
+import { addLogs, updateOrderStatus } from "../../Services";
 
 interface UpdateCategoryType {
   label: string;
@@ -46,6 +46,11 @@ const UpdateOrder: React.FC<updateComponentProp> = ({
       await updateOrderStatus({
         id: id,
         status: status as string,
+      });
+      await addLogs({
+        action: "update",
+        date: new Date(),
+        detail: ` update order status ${id} `,
       });
       toast.dismiss(toastLoader);
       toast.success("Successfully updated");

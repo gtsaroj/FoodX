@@ -4,12 +4,13 @@ import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { CustomerTable } from "../Customers/CustomerTable";
 import {
+  addLogs,
   bulkDeleteOfCustomer,
   deletUser,
   getUser,
 } from "../../Services";
 import toast from "react-hot-toast";
-import { ChevronUp, X } from "lucide-react";
+import { AArrowDown, ChevronUp, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
@@ -158,6 +159,13 @@ const AllCustomers = () => {
       if (chef.length > 0) {
         await bulkDeleteOfCustomer({ role: "chef", ids: [...chef] });
       }
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `bulk delete : customer :  ${JSON.stringify(
+          customer
+        )}, chef : ${JSON.stringify(chef)}, admin: ${JSON.stringify(admin)} `,
+      });
       if (!admin && !customer) return toast.error("Please select the customer");
       toast.dismiss(toastLoader);
       const refreshCategory = initialCustomer.filter((customer) => {
@@ -166,6 +174,7 @@ const AllCustomers = () => {
           !admin.includes(customer.id as string)
         );
       });
+
       setInitialCustomer(refreshCategory);
       toast.success("Successfully deleted");
     } catch (error) {

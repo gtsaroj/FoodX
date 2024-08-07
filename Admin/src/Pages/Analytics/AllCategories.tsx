@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CategoryTable } from "../Category/CategoryTable";
 import { CategoryType } from "../../models/category.model";
-import { bulkDeleteOfCategory, getCategories } from "../../Services";
+import { addLogs, bulkDeleteOfCategory, deleteCategory, getCategories } from "../../Services";
 import toast from "react-hot-toast";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -87,6 +87,11 @@ const AllCategories = () => {
         (category) => category.id
       );
       await bulkDeleteOfCategory(AllCategoriesId);
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Category bulk delete : ${JSON.stringify(AllCategoriesId)}`,
+      });
       toast.dismiss(toastLoader);
       const refreshCategory = initialCategory.filter((category) => {
         return !AllCategoriesId.includes(category.id as string);
@@ -141,6 +146,25 @@ const AllCategories = () => {
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     initialCategory,
   ]);
+
+  const handleDelete = async (id: string) => {
+    if (!id) return toast.error("Category not exist");
+    const toastLoader = toast.loading("Deleting category...");
+    try {
+      toast.dismiss(toastLoader);
+      await deleteCategory(id);
+      toast.success("Successfully deleted");
+      await addLogs({action:"delete",date: new Date(),detail:`category : ${id} ` })
+      const refreshCategory = initialCategory?.filter(
+        (category) => category.id !== id
+      );
+      setInitialCategory(refreshCategory);
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      return toast.error("Failed to delete");
+    }
+    setIsDelete(false);
+  };
 
   useEffect(() => {
     getAllCategories();
@@ -239,7 +263,7 @@ const AllCategories = () => {
           closeModal={() => setIsDelete(false)}
           id={id as string}
           isClose={isDelete}
-          setDelete={(id) => console.log(id)}
+          setDelete={(id) => handleDelete(id)}
         />
       )}
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>

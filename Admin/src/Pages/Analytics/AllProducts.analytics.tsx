@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import {
+  addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
@@ -250,6 +251,13 @@ const AllProductAnalytics = () => {
         await bulkDeleteOfProduct({ category: "products", ids: products });
       }
       toast.dismiss(toastLoader);
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Delete Product : specials:${JSON.stringify(
+          specials
+        )}, products : ${JSON.stringify(products)} `,
+      });
       const refreshProducts = fetchedProducts?.filter((product) => {
         return !specials.includes(product.id) && !products.includes(product.id);
       });
@@ -272,6 +280,11 @@ const AllProductAnalytics = () => {
       await deleteProduct({ id: id, type: type });
       toast.dismiss(toastLoader);
       toast.success("Successfully deleted");
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `Product : ${id} `,
+      });
       const refreshProducts = fetchedProducts?.filter(
         (product) => product.id !== id
       );
