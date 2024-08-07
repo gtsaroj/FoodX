@@ -8,7 +8,14 @@ import { RecentOrderType } from "../../models/order.model";
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>();
-
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 3 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
 
   //  scroller check
   // const [scroll, setScroll] = useState<boolean>(false);

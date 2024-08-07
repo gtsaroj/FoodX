@@ -16,19 +16,42 @@ const OrderList = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [originalData, setOriginalData] = useState<OrderModal[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 3 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
 
   const getAllOrders = async () => {
     setLoading(true);
     try {
       //  get total orders data from  server
-      const orders = (await getOrders()) as Order[];
-      console.log(orders)
-      const aggregateData = orders?.map(async (item) => {
+      const orders = (await getOrders({
+        path: "customerLogs",
+        pageSize: pagination.perPage,
+        filter: "orderId",
+        sort: "asc",
+        direction: "next",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        orders: Order[];
+      };
+
+      setCurrentDoc((prev) => ({
+        ...prev,
+        currentFirstDoc: orders.currentFirstDoc,
+        currentLastDoc: orders.currentLastDoc,
+      }));
+      const aggregateData = orders?.orders.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
-        console.log(getUserName)
         const getDate = convertIsoToReadableDateTime(
           item.orderRequest as string
         );
+
         if (!getUserName) getUserName = "Student";
         const productNames = item.products?.map(
           (product) =>
@@ -208,7 +231,17 @@ const OrderList = () => {
           </div>
         )}
       </div>
-      <OrderTable orders={initialOrders} loading={loading} />
+      <OrderTable
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
+        onPageChange={(page) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
+        orders={initialOrders}
+        loading={loading}
+      />
     </div>
   );
 };

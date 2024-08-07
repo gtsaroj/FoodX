@@ -1,3 +1,4 @@
+import { GetOrderModal } from "./../../backend/src/models/order.model";
 import { UserInfo } from "firebase/auth";
 import { globalRequest } from "./GlobalRequest";
 import {
@@ -17,7 +18,11 @@ import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
 import { Store } from "./Reducer/Store";
 import { makeRequest } from "./makeRequest";
 
-import { UploadProductType } from "./models/productMode";
+import {
+  GetProductModal,
+  ProductType,
+  UploadProductType,
+} from "./models/productMode";
 import { TicketType } from "./models/ticket.model";
 import {
   CategoryType,
@@ -28,6 +33,7 @@ import { LogCardProps } from "./models/logModel";
 import { authLogout } from "./Reducer/Action";
 import { Axios } from "axios";
 import { da } from "date-fns/locale";
+import { GetUserModal } from "./models/UserModels";
 
 export const signIn = async (
   email: string,
@@ -125,7 +131,20 @@ export const signOut = async () => {
   }
 };
 
-export const getOrders = async () => {
+export const getOrders = async (data: GetOrderModal) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "orders/get-orders",
+      data: { ...data },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error(`Error while getting orders : ${error}`);
+  }
+};
+
+export const getAllOrder = async () => {
   try {
     const response = await makeRequest({
       method: "get",
@@ -133,7 +152,7 @@ export const getOrders = async () => {
     });
     return response.data.data;
   } catch (error) {
-    throw new Error(`Error while getting revenueperday : ${error}`);
+    throw new Error(`Error while getting orders : ${error}`);
   }
 };
 
@@ -188,11 +207,13 @@ export const postBanners = async (data: any) => {
     console.log(`Error while adding banners : ${error}`);
   }
 };
-export const getProducts = async () => {
+export const getProducts = async (data: GetProductModal) => {
+  console.log(data);
   try {
     const response = await makeRequest({
-      method: "get",
-      url: "products/all",
+      method: "post",
+      url: "products/get-products",
+      data: { ...data },
     });
     return response.data;
   } catch (error) {
@@ -563,5 +584,19 @@ export const deleteProduct = async (data: {
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to delete product" + error);
+  }
+};
+
+//get Customer
+export const getUser = async (data: GetUserModal) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "users/get-users",
+      data: { ...data },
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Error while getting users" + error);
   }
 };

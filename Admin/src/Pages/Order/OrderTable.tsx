@@ -1,18 +1,24 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { OrderModal } from "../../models/order.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
-import { stat } from "fs";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../Services";
 
 interface orderTableProp {
   orders: OrderModal[];
   loading?: boolean;
+  pagination: { currentPage: number; perPage: number };
+  onPageChange: (page: number) => void;
 }
 
-export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
+export const OrderTable: React.FC<orderTableProp> = ({
+  orders,
+  loading,
+  onPageChange,
+  pagination,
+}) => {
   const [selectedProducts, setSelectedProducts] = useState<string[] | string>(
     []
   );
@@ -163,14 +169,17 @@ export const OrderTable: React.FC<orderTableProp> = ({ orders, loading }) => {
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
-        data={orders}
+        data={orders as any}
         columns={Columns}
         actionIconColor="red"
         disableActions={false}
         loading={loading}
         bodyHeight={400}
-        pagination={{ currentPage: 1, perPage: 5 }}
-        onPageChange={(pageNumber: number) => console.log(pageNumber)}
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
+        onPageChange={(pageNumber: number) => onPageChange(pageNumber)}
         disableNoData={false}
         headStyle={{ width: "100%" }}
       />

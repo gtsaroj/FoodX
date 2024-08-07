@@ -13,6 +13,8 @@ interface FoodTableProp {
     edit: (id: string) => void;
     checkFn: (id: string, isChecked: boolean) => void;
   };
+  pagination: { currentPage: number; perPage: number };
+  onPageChange: (page: number) => void;
 }
 
 export const FoodTable: React.FC<FoodTableProp> = ({
@@ -20,6 +22,8 @@ export const FoodTable: React.FC<FoodTableProp> = ({
   loading,
   actions,
   selectedData,
+  pagination,
+  onPageChange,
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -105,8 +109,11 @@ export const FoodTable: React.FC<FoodTableProp> = ({
       loading={loading}
       selectedData={selectedData}
       bodyHeight={400}
-      pagination={{ currentPage: 1, perPage: 5 }}
-      onPageChange={(pageNumber) => console.log(pageNumber)}
+      pagination={{
+        currentPage: pagination.currentPage,
+        perPage: pagination.perPage,
+      }}
+      onPageChange={(pageNumber) => onPageChange(pageNumber)}
       disableNoData={products?.length < 1 ? true : false}
       headStyle={{ width: "100%" }}
     />

@@ -1,35 +1,78 @@
 import { ChevronUp, Download, Filter, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
-import { getCustomerData } from "../../firebase/db";
-import {
-  aggregateCustomerData,
-  aggregateCustomerSearchData,
-} from "../../Utility/CustomerUtils";
+import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { debounce } from "../../Utility/Debounce";
-import {  DatePicker } from "../../Components/DatePicker/DatePicker";
+import { DatePicker } from "../../Components/DatePicker/DatePicker";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
 import { SearchCustomer } from "../../Utility/Search";
+import { getUser } from "../../Services";
+import { DbUser } from "../../models/UserModels";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [originalData, setOriginalData] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [loading, setLoading] = useState<boolean>(false);
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 3 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
 
   const handleCustomerData = async () => {
     setLoading(true);
     try {
-      let AllCustomers  = []
-      const customers = await getCustomerData("customer");
-      if(customers.length > 0) AllCustomers.push(...customers)
-      const admins = await getCustomerData("admin");
-      if(admins.length > 0) AllCustomers.push(...admins)
-      const chefs = await getCustomerData("chef");
-      if(chefs.length > 0) AllCustomers.push(...chefs);
+      let AllCustomers = [];
+      const customers = (await getUser({
+        path: "customer",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+
+      setCurrentDoc((prev) => ({
+        ...prev,
+        currentFirstDoc: customers.currentFirstDoc,
+        currentLastDoc: customers.currentLastDoc,
+      }));
+
+      if (customers.users.length > 0) AllCustomers.push(...customers.users);
+      const admins = (await getUser({
+        path: "admin",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+      if (admins.users.length > 0) AllCustomers.push(...admins.users);
+      const chefs = (await getUser({
+        path: "chef",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+      if (chefs.users.length > 0) AllCustomers.push(...chefs.users);
       const customerList = await aggregateCustomerData(AllCustomers);
       setInitialCustomer(customerList);
       setOriginalData(customerList);
@@ -85,7 +128,44 @@ const CustomerList: React.FC = () => {
 
   useEffect(() => {
     handleCustomerData();
-  }, []);
+  }, [pagination.perPage]);
+
+  useEffect(() => {
+    if (
+      pagination.currentPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc?.currentFirstDoc.length > 1
+    ) {
+      (async () => {
+        const customers = (await getUser({
+          path: "customer",
+          pageSize: pagination.perPage,
+          direction: "next",
+          filter: "fullName",
+          sort: "asc",
+          currentFirstDoc: currentDoc.currentFirstDoc,
+        })) as {
+          currentFirstDoc: string;
+          currentLastDoc: string;
+          users: DbUser[];
+        };
+        setCurrentDoc((prev) => ({
+          ...prev,
+          currentFirstDoc: customers.currentFirstDoc,
+          currentLastDoc: customers.currentLastDoc,
+        }));
+        const aggregateCustomer = await aggregateCustomerData(customers.users);
+        setInitialCustomer((customer) => {
+          return [
+            ...customer,
+            ...aggregateCustomer.filter(
+              (user) => !customer.some((cust) => user.id === cust.id)
+            ),
+          ];
+        });
+      })();
+    }
+  }, [currentDoc?.currentFirstDoc, pagination.currentPage, pagination.perPage]);
 
   useEffect(() => {
     if (sortOrder.field === "") {
@@ -175,7 +255,17 @@ const CustomerList: React.FC = () => {
           </div>
         )}
       </div>
-      <CustomerTable loading={loading} users={initialCustomer} />
+      <CustomerTable
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
+        onPageChange={(page: number) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
+        loading={loading}
+        users={initialCustomer}
+      />
     </div>
   );
 };

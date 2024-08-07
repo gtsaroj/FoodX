@@ -1,22 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import { getCustomerData } from "../../firebase/db";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { CustomerTable } from "../Customers/CustomerTable";
 import {
-  bulkDeleteOfCategory,
   bulkDeleteOfCustomer,
   deletUser,
-  deleteCustomer,
+  getUser,
 } from "../../Services";
 import toast from "react-hot-toast";
-import { ChevronUp, Trash2, X } from "lucide-react";
+import { ChevronUp, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
 import { debounce } from "../../Utility/Debounce";
 import { SearchCustomer } from "../../Utility/Search";
+import { DbUser } from "../../models/UserModels";
 
 const AllCustomers = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -31,17 +30,62 @@ const AllCustomers = () => {
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [customerModal, setCustomerModal] = useState<CustomerType>();
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 2 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
 
   const handleCustomerData = async () => {
     setLoading(true);
     try {
       let AllCustomers = [];
-      const customers = await getCustomerData("customer");
-      if (customers.length > 0) AllCustomers.push(...customers);
-      const admins = await getCustomerData("admin");
-      if (admins.length > 0) AllCustomers.push(...admins);
-      const chefs = await getCustomerData("chef");
-      if (chefs.length > 0) AllCustomers.push(...chefs);
+      const customers = (await getUser({
+        path: "customer",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+
+      setCurrentDoc((prev) => ({
+        ...prev,
+        currentFirstDoc: customers.currentFirstDoc,
+        currentLastDoc: customers.currentLastDoc,
+      }));
+
+      if (customers.users.length > 0) AllCustomers.push(...customers.users);
+      const admins = (await getUser({
+        path: "admin",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+      if (admins.users.length > 0) AllCustomers.push(...admins.users);
+      const chefs = (await getUser({
+        path: "chef",
+        pageSize: pagination.perPage,
+        filter: "fullName",
+        direction: "next",
+        sort: "asc",
+      })) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        users: DbUser[];
+      };
+      if (chefs.users.length > 0) AllCustomers.push(...chefs.users);
       const customerList = await aggregateCustomerData(AllCustomers);
       setOriginalData(customerList);
       setInitialCustomer(customerList);
@@ -209,7 +253,45 @@ const AllCustomers = () => {
 
   useEffect(() => {
     handleCustomerData();
-  }, []);
+  }, [pagination.perPage]);
+
+  useEffect(() => {
+    if (
+      pagination.currentPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc?.currentFirstDoc.length > 1
+    ) {
+      (async () => {
+        const customers = (await getUser({
+          path: "customer",
+          pageSize: pagination.perPage,
+          direction: "next",
+          filter: "fullName",
+          sort: "asc",
+          currentFirstDoc: currentDoc.currentFirstDoc,
+        })) as {
+          currentFirstDoc: string;
+          currentLastDoc: string;
+          users: DbUser[];
+        };
+        setCurrentDoc((prev) => ({
+          ...prev,
+          currentFirstDoc: customers.currentFirstDoc,
+          currentLastDoc: customers.currentLastDoc,
+        }));
+        const aggregateCustomer = await aggregateCustomerData(customers.users);
+        setInitialCustomer((customer) => {
+          return [
+            ...customer,
+            ...aggregateCustomer.filter(
+              (user) => !customer.some((cust) => user.id === cust.id)
+            ),
+          ];
+        });
+      })();
+    }
+  }, [currentDoc?.currentFirstDoc, pagination.currentPage, pagination.perPage]);
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
@@ -267,6 +349,13 @@ const AllCustomers = () => {
         </div>
       </div>
       <CustomerTable
+        onPageChange={(page) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
         selectedData={bulkSelectedCustomer}
         users={initialCustomer as CustomerType[]}
         loading={loading}

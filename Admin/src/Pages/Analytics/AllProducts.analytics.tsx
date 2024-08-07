@@ -12,7 +12,7 @@ import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { ChevronUp, Trash2, X } from "lucide-react";
+import { ChevronUp, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
@@ -31,6 +31,14 @@ const AllProductAnalytics = () => {
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [modalData, setModalData] = useState<ArrangedProduct>();
+  const [pagination, setPagination] = useState<{
+    currentPage: number;
+    perPage: number;
+  }>({ currentPage: 1, perPage: 5 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
       category: "specials" | "products";
@@ -42,13 +50,34 @@ const AllProductAnalytics = () => {
   const getAllProducts = async () => {
     setLoading(true);
     try {
-      const products = await getProducts();
-      const special = await getSpecialProducts();
-      const specialProducts = special.data.products;
-      const normalProducts = products.data.products;
+      const products = await getProducts({
+        path: "products",
+        pageSize: pagination.perPage,
+        direction: "next",
+        filter: "price",
+        sort: "asc",
+      });
+      // const special = await getSpecialProducts();
 
-      const arrangeNormalProducts: ArrangedProduct[] = normalProducts?.map(
-        (product: ProductType) => ({
+      const specialProducts = products.data as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        products: ProductType[];
+      };
+      setCurrentDoc((prev) => {
+        return prev
+          ? {
+              ...prev,
+              currentFirstDoc: specialProducts.currentFirstDoc,
+              currentLastDoc: specialProducts.currentLastDoc,
+            }
+          : {
+              currentFirstDoc: specialProducts.currentFirstDoc,
+              currentLastDoc: specialProducts.currentLastDoc,
+            };
+      });
+      const arrangeNormalProducts: ArrangedProduct[] =
+        specialProducts.products?.map((product: ProductType) => ({
           id: product.id,
           name: product.name,
           image: product.image,
@@ -59,28 +88,10 @@ const AllProductAnalytics = () => {
           rating: 4.3,
           revenue: 15000,
           type: "products",
-        })
-      );
-      const arrangeSpecialProducts: ArrangedProduct[] = specialProducts?.map(
-        (product: ProductType) => ({
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          quantity: product.quantity as number,
-          price: product.price as number,
-          category: product.tag,
-          order: 20,
-          rating: 4.3,
-          revenue: 15000,
-          type: "specials",
-        })
-      );
-      const getAllProducts = [
-        ...arrangeNormalProducts,
-        ...arrangeSpecialProducts,
-      ];
-      setOriginalData(getAllProducts);
-      setFetchedProducts(getAllProducts as ArrangedProduct[]);
+        }));
+
+      setOriginalData(arrangeNormalProducts);
+      setFetchedProducts(arrangeNormalProducts as ArrangedProduct[]);
     } catch (error) {
       throw new Error(`Error while fetching products` + error);
     }
@@ -90,7 +101,61 @@ const AllProductAnalytics = () => {
   useEffect(() => {
     // call getAllProducts
     getAllProducts();
-  }, []);
+  }, [pagination.perPage]);
+
+  // fetch next page
+  useEffect(() => {
+    if (
+      pagination.currentPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc.currentFirstDoc.length > 0
+    ) {
+      const fetchNextPage = async () => {
+        setLoading(true);
+        try {
+          const products = await getProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            direction: "next",
+            filter: "name",
+            sort: "asc",
+            currentFirstDoc: currentDoc.currentFirstDoc,
+          });
+
+          const normalProducts = products.data as {
+            currentFirstDoc: string;
+            currentLastDoc: string;
+            products: ProductType[];
+          };
+
+          const newProducts = normalProducts.products?.map((product) => ({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            quantity: product.quantity as number,
+            price: product.price as number,
+            category: product.tag,
+            order: 20,
+            rating: 4.3,
+            revenue: 15000,
+            type: "products",
+          }));
+
+          setFetchedProducts((prev) => [
+            ...prev,
+            ...newProducts.filter(
+              (product) => !prev.some((p) => p.id === product.id)
+            ),
+          ]);
+        } catch (error) {
+          throw new Error(`Error while fetching products: ${error}`);
+        }
+        setLoading(false);
+      };
+
+      fetchNextPage();
+    }
+  }, [pagination.currentPage, currentDoc?.currentFirstDoc, pagination.perPage]);
 
   //Sorting
   const handleSelect = async (value: string) => {
@@ -318,6 +383,13 @@ const AllProductAnalytics = () => {
         </div>
       </div>
       <FoodTable
+        pagination={{
+          currentPage: pagination.currentPage,
+          perPage: pagination.perPage,
+        }}
+        onPageChange={(page: number) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
         selectedData={bulkSelectedProduct}
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
