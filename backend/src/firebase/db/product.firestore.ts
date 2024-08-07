@@ -160,8 +160,9 @@ const getProductsFromDatabase = async (
     let productDoc;
     if (category) {
       productDoc = await query.where("tag", "==", category).get();
+    } else {
+      productDoc = await query.get();
     }
-    productDoc = await query.get();
     const products: Product[] = [];
 
     productDoc.docs.forEach((doc) => {
@@ -176,7 +177,7 @@ const getProductsFromDatabase = async (
       products,
       firstDoc,
       lastDoc,
-      length
+      length,
     };
   } catch (error) {
     throw new ApiError(

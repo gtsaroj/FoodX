@@ -101,7 +101,6 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     status,
     userId,
   }: {
-    path: "adminsLog" | "chefLogs" | "customerLogs";
     pageSize: number;
     filter: keyof Order;
     sort: "asc" | "desc";

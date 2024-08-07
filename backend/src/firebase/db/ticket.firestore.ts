@@ -95,8 +95,9 @@ const getTicketsFromFirestore = async (
     let ticketsDoc;
     if (status) {
       ticketsDoc = await query.where("status", "==", status).get();
+    } else {
+      ticketsDoc = await query.get();
     }
-    ticketsDoc = await query.get();
     const tickets: NewTicket[] = [];
 
     ticketsDoc.docs.forEach((doc) => {

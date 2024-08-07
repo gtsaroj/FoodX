@@ -123,8 +123,9 @@ const getLogsFromDatabase = async (
     let logsDoc;
     if (action) {
       logsDoc = await query.where("action", "==", action).get();
+    } else {
+      logsDoc = await query.get();
     }
-    logsDoc = await query.get();
     const logs: logProps[] = [];
 
     logsDoc.docs.forEach((doc) => {
