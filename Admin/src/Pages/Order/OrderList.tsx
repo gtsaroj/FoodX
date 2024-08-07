@@ -30,7 +30,6 @@ const OrderList = () => {
     try {
       //  get total orders data from  server
       const orders = (await getOrders({
-        path: "customerLogs",
         pageSize: pagination.perPage,
         filter: "orderId",
         sort: "asc",
@@ -143,6 +142,73 @@ const OrderList = () => {
       getAllOrders();
     })();
   }, []);
+
+  useEffect(() => {
+    if (
+      pagination.perPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc?.currentFirstDoc.length > 0
+    ) {
+      const fetchNextPage = async () => {
+        const getAllOrder = (await getOrders({
+          filter: "orderId",
+          pageSize: pagination.perPage,
+          sort: "asc",
+          currentFirstDoc: currentDoc.currentFirstDoc,
+        })) as {
+          currentFirstDoc: string;
+          currentLastDoc: string;
+          orders: Order[];
+        };
+
+        setCurrentDoc((prev) => ({
+          ...prev,
+          currentFirstDoc: getAllOrder.currentFirstDoc,
+          currentLastDoc: getAllOrder.currentLastDoc,
+        }));
+
+        const aggregateData = getAllOrder?.orders.map(async (item) => {
+          let getUserName = await getFullName(item?.uid);
+          const getDate = convertIsoToReadableDateTime(
+            item.orderRequest as string
+          );
+
+          if (!getUserName) getUserName = "Student";
+          const productNames = item.products?.map(
+            (product) =>
+              (product.name as string) + " × " + product.quantity + ", "
+          );
+          return {
+            id: item.orderId as string,
+            name: getUserName,
+            products: productNames,
+            rank: 3,
+            orderRequest: {
+              fulldate: getDate.date.substring(5, getDate.date.length),
+              time: getDate.time,
+            },
+
+            delivered: item.orderFullFilled,
+            status: item.status,
+          };
+        });
+
+        const getaggregateDataPromises = await Promise.all(aggregateData);
+        setInitialOrders((prev) => {
+          return [
+            ...prev,
+            ...getaggregateDataPromises.filter(
+              (order) => !prev.some((data) => data.id === order.id)
+            ),
+          ];
+        });
+
+        setOriginalData(getaggregateDataPromises as any);
+      };
+
+      fetchNextPage();
+    }
+  }, [pagination.perPage, pagination.currentPage, currentDoc?.currentFirstDoc]);
 
   useEffect(() => {
     if (sortOrder.field === "") {
