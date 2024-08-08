@@ -1,20 +1,21 @@
-import { ArrowDownAZ, ArrowUp } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowDownAZ, ArrowUp, Key } from "lucide-react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface SortValue {
   parent?: React.ReactNode;
-  border?: boolean;
-  onSelect: (value: string) => void;
-  sortingOptions: string[];
+  bodyStyle?: React.CSSProperties;
+  onSelect?: (value: string) => void;
   sortOrder?: string;
+  children?: { label: string | ReactNode; value: string }[];
 }
 
 export const FilterButton: React.FC<SortValue> = ({
   onSelect,
-  sortingOptions,
+  data,
   sortOrder,
-  border,
+  bodyStyle,
   parent,
+  children,
 }) => {
   const [openChild, setOpenChild] = useState<boolean>(false);
   const [index, setIndex] = useState<number>();
@@ -39,37 +40,33 @@ export const FilterButton: React.FC<SortValue> = ({
       window.removeEventListener("mousedown", closeModal);
     };
   }, []);
-
+ console.log(index)
   return (
     <div ref={reference as any} className="relative w-full ">
       {parent ? (
         parent
       ) : (
-        <div
-          className={`  flex ${
-            border ? "border" : ""
-          } w-full p-1.5 hover:bg-[var(--light-secondary-background)] items-center rounded justify-start gap-2`}
-        >
-          <ArrowDownAZ className="size-4" />
-          <span className=" text-[15px]">Sort By</span>
+        <div className={` flex py-1.5 px-2  items-center justify-start gap-2 `}>
+          <ArrowDownAZ className="size-5" />
+          <span className=" text-[17px] tracking-wide">Sort By</span>
         </div>
       )}
       {openChild && (
         <div
-          className={` ${
-            sortOrder ? "w-[200px] left-[-12.8rem] " : "w-[150px] left-[-9.5rem] "
-          } bg-[var(--light-background)]  p-0.5 rounded gap-1 flex flex-col items-start justify-center absolute  top-0 border shadow-[#00000015] shadow-sm`}
+          style={bodyStyle}
+          className={`  bg-[var(--light-foreground)] p-1 rounded gap-1 flex flex-col items-start justify-center absolute  top-0 border shadow-[#00000009] shadow-sm`}
         >
-          {sortingOptions?.map((option, key) => (
+          {children?.map((option, key) => (
             <button
               onClick={() => {
-                onSelect(option);
+                if (!onSelect) return;
+                onSelect(option.value);
                 setIndex(key);
               }}
-              className=" text-start cursor-pointer flex items-center justify-between hover:bg-[var(--light-secondary-background)] w-full p-2 tracking-wide text-[16px] "
+              className={`text-start ${key ===index ?"ring-1 ring-[var(--orange-bg)] bg-yellow-50 ":""} duration-150 cursor-pointer flex items-center justify-between hover:bg-gray-100  w-full rounded py-1.5 px-2  tracking-wide text-[16px]`}
               key={key}
             >
-              {option}
+              {option.label}
               {sortOrder && (
                 <span>
                   <ArrowUp

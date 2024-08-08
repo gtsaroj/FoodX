@@ -1,5 +1,4 @@
-import { ChevronUp, Download, Filter, Trash2, X } from "lucide-react";
-import { DropDown } from "../../Components/Common/DropDown/DropDown";
+import { ChevronUp, Download, Filter, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { getOrders } from "../../Services";
 import { Order, OrderModal } from "../../models/order.model";
@@ -8,13 +7,16 @@ import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
 import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import { DatePicker } from "../../Components/DatePicker/DatePicker";
 import { OrderTable } from "./OrderTable";
+import { Button } from "../../Components/Common/Button/Button";
+import { BiCategory } from "react-icons/bi";
+import { GetOrderModal } from "../../../../backend/src/models/order.model";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [originalData, setOriginalData] = useState<OrderModal[]>([]);
+  const [totalData, setTotalData] = useState<number>();
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
   const [pagination, setPagination] = useState<{
     currentPage: number;
@@ -24,22 +26,24 @@ const OrderList = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
+  const [isFilter, setIsFiltered] = useState<string | undefined>();
 
-  const getAllOrders = async () => {
+  const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
     try {
       //  get total orders data from  server
       const orders = (await getOrders({
-        pageSize: pagination.perPage,
-        filter: "orderId",
-        sort: "asc",
-        direction: "next",
+        pageSize: data.pageSize,
+        filter: data.filter,
+        sort: data.sort,
+        direction: data.direction,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         orders: Order[];
+        length: number;
       };
-
+      setTotalData(orders.length);
       setCurrentDoc((prev) => ({
         ...prev,
         currentFirstDoc: orders.currentFirstDoc,
@@ -84,35 +88,42 @@ const OrderList = () => {
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
-    let sortedCustomers;
-    // if (value === "Requested") {
-    //   sortedCustomers = [...initialOrders].sort((a: OrderModal, b: any) => {
-    //     const dateA = parseDateString(a.orderRequest.);
-    //     const dateB = parseDateString(b.Requested);
-    //     return newOrder === "desc"
-    //       ? dateB.getTime() - dateA.getTime()
-    //       : dateA.getTime() - dateB.getTime();
-    //   });
-    // }
-    if (value === "Name") {
-      sortedCustomers = [...initialOrders].sort(
-        (a: OrderModal, b: OrderModal) =>
-          newOrder === "desc"
-            ? b.name.localeCompare(a.name)
-            : a.name.localeCompare(b.name)
-      );
+    if (value === "Rank") {
+      newOrder === "asc"
+        ? await getAllOrders({
+            filter: "orderId",
+            pageSize: pagination.perPage,
+            sort: "asc",
+            direction: "next",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          })
+        : await getAllOrders({
+            filter: "orderId",
+            pageSize: pagination.perPage,
+            sort: "desc",
+            direction: "next",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          });
     }
     if (value === "Status") {
-      sortedCustomers = [...initialOrders].sort(
-        (a: OrderModal, b: OrderModal) =>
-          newOrder === "desc"
-            ? b.status.localeCompare(a.status)
-            : a.status.localeCompare(b.status)
-      );
+      newOrder === "asc"
+        ? await getAllOrders({
+            filter: "status",
+            pageSize: pagination.perPage,
+            sort: "asc",
+            direction: "next",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          })
+        : await getAllOrders({
+            filter: "status",
+            pageSize: pagination.perPage,
+            sort: "desc",
+            direction: "next",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          });
     }
 
     setSortOrder({ field: value, order: newOrder });
-    setInitialOrders(sortedCustomers as OrderModal[]);
   };
 
   const handleChange = (value: string) => {
@@ -138,10 +149,20 @@ const OrderList = () => {
   ]);
 
   useEffect(() => {
-    (async () => {
-      getAllOrders();
-    })();
-  }, []);
+    if (
+      initialOrders.length < 0 ||
+      !isFilter?.length ||
+      !sortOrder.field.length
+    ) {
+      getAllOrders({
+        filter: "orderId",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        direction: "next",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+      });
+    }
+  }, [initialOrders.length, isFilter?.length, sortOrder.field.length]);
 
   useEffect(() => {
     if (
@@ -210,11 +231,59 @@ const OrderList = () => {
     }
   }, [pagination.perPage, pagination.currentPage, currentDoc?.currentFirstDoc]);
 
-  useEffect(() => {
-    if (sortOrder.field === "") {
-      setInitialOrders(originalData);
+  async function handleOrderFilter(orderStatus: string) {
+    setIsFiltered(orderStatus);
+    if (orderStatus === "Recieved") {
+      await getOrders({
+        filter: "uid",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        // status: "Received",
+      });
     }
-  }, [sortOrder.field, originalData]);
+    if (orderStatus === "Pending") {
+      await getOrders({
+        filter: "uid",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        // status: "Pending",
+      });
+    }
+    if (orderStatus === "Delivered") {
+      await getOrders({
+        filter: "uid",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        // status: "Delivered",
+      });
+    }
+    if (orderStatus === "Preparing") {
+      await getOrders({
+        filter: "uid",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        // status: "Preparing",
+      });
+    }
+    if (orderStatus === "Canceled") {
+      await getOrders({
+        filter: "uid",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        // status: "Canceled",
+      });
+    }
+  }
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -230,35 +299,104 @@ const OrderList = () => {
               <Download className="size-4" />
               <p className="text-[15px]">Export</p>
             </button>
-            <DropDown
-              children={
-                <>
-                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
-                  <span className="text-[var(--dark-secondary-text)]">
+            <Button
+              bodyStyle={{
+                width: "150px",
+                top: "3.5rem",
+                left: "-2.7rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
                     Filter
                   </span>
-                </>
+                </div>
               }
-              options={[
+              children={[
                 <FilterButton
-                  onSelect={handleSelect}
+                  bodyStyle={{
+                    width: "150px",
+                    top: "-0.3rem",
+                    left: "-10rem",
+                  }}
                   sortOrder={sortOrder.order}
-                  sortingOptions={["Name", "Status", "Requested"]}
+                  onSelect={handleSelect}
+                  children={[
+                    { label: "Status", value: "Status" },
+                    { label: "Rank", value: "Rank" },
+                  ]}
                 />,
-                <DatePicker />,
+                <FilterButton
+                  bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
+                  children={[
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="w-2 h-2 bg-[var(--green-bg)] rounded-full "></span>
+                          <span className="text-[17px] tracking-wide ">
+                            Recieved
+                          </span>
+                        </div>
+                      ),
+                      value: "Recieved",
+                    },
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="w-2 h-2 bg-[var(--primary-light)] rounded-full "></span>
+                          <span className="text-[17px] tracking-wide ">
+                            Pending
+                          </span>
+                        </div>
+                      ),
+                      value: "Pending",
+                    },
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="w-2 h-2 bg-[var(--primary-dark)] rounded-full "></span>
+                          <span className="text-[17px] tracking-wide ">
+                            Preparing
+                          </span>
+                        </div>
+                      ),
+                      value: "Preparing",
+                    },
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="w-2 h-2 bg-[var(--primary-color)] rounded-full "></span>
+                          <span className="text-[17px] tracking-wide ">
+                            Delivered
+                          </span>
+                        </div>
+                      ),
+                      value: "Delivered",
+                    },
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <span className="w-2 h-2 bg-[var(--danger-bg)] rounded-full "></span>
+                          <span className="text-[17px] tracking-wide ">
+                            Canceled
+                          </span>
+                        </div>
+                      ),
+                      value: "Canceled",
+                    },
+                  ]}
+                  parent={
+                    <div className="flex py-1.5 px-2 items-center justify-start gap-2">
+                      <BiCategory className="size-5  " />
+                      <span className="tracking-wide text-[17px] ">
+                        Category
+                      </span>
+                    </div>
+                  }
+                  onSelect={(value) => handleOrderFilter(value as string)}
+                />,
               ]}
-              style={{
-                display: "flex",
-                fontSize: "15px",
-                borderRadius: "4px",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                color: "var(--dark-text)",
-                border: "1px solid var(--light-secondary-text)  ",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                background: "",
-              }}
             />
           </div>
         </div>
@@ -291,13 +429,38 @@ const OrderList = () => {
                 <ChevronUp size={20} />
               </p>
             </div>
-            <button onClick={() => setSortOrder({ field: "" })} className=" ">
+            <button
+              onClick={() => setSortOrder({ field: "" })}
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {isFilter && (
+          <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+              <p
+                className={` duration-150 ${
+                  sortOrder?.order === "desc"
+                    ? "rotate-180"
+                    : sortOrder.order === "asc"
+                    ? ""
+                    : ""
+                } `}
+              >
+                <ChevronUp size={20} />
+              </p>
+            </div>
+            <button onClick={() => setIsFiltered(undefined)} className=" ">
               <X className="text-[var(--danger-text)] " size={20} />
             </button>
           </div>
         )}
       </div>
       <OrderTable
+        totalData={totalData as number}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

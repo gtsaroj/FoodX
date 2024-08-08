@@ -13,6 +13,7 @@ interface CustomerTableProp {
     checkFn: (id: string, isChecked: boolean) => void;
     checkAllFn?: (isChecked: boolean) => void;
   };
+  totalData?: number;
   pagination: { currentPage: number; perPage: number };
   onPageChange: (page: number) => void;
 }
@@ -24,6 +25,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
   selectedData,
   onPageChange,
   pagination,
+  totalData
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -93,6 +95,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
   return (
     <div className="w-full">
       <Table
+        totalData={totalData as number}
         data={users}
         columns={Columns}
         actionIconColor="red"

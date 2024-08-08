@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import {
   addLogs,
@@ -8,16 +8,23 @@ import {
   getProducts,
   getSpecialProducts,
 } from "../../Services";
-import { ArrangedProduct, ProductType } from "../../models/productMode";
+import {
+  ArrangedProduct,
+  GetProductModal,
+  ProductType,
+} from "../../models/productMode";
 import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { ChevronUp, X } from "lucide-react";
+import { AlignLeft, ChevronUp, Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
-
+import { Button } from "../../Components/Common/Button/Button";
+import { BiCategory } from "react-icons/bi";
+import { FaRegStar } from "react-icons/fa";
+import path from "path";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
@@ -28,6 +35,9 @@ const AllProductAnalytics = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [type, setType] = useState<"specials" | "products">();
+  const [isFilter, setIsFiltered] = useState<
+    "products" | "specials" | undefined
+  >();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
@@ -40,23 +50,23 @@ const AllProductAnalytics = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
+  const [totalData, setTotalData] = useState<number>();
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
       category: "specials" | "products";
       id: string;
     }[]
   >([]);
-
   // get all products
-  const getAllProducts = async () => {
+  const getAllProducts = async (data: GetProductModal) => {
     setLoading(true);
     try {
       const products = await getProducts({
-        path: "products",
-        pageSize: pagination.perPage,
-        direction: "next",
-        filter: "price",
-        sort: "asc",
+        path: data.path,
+        pageSize: data.pageSize,
+        direction: data.direction,
+        filter: data.filter,
+        sort: data.sort,
       });
       // const special = await getSpecialProducts();
 
@@ -64,6 +74,7 @@ const AllProductAnalytics = () => {
         currentFirstDoc: string;
         currentLastDoc: string;
         products: ProductType[];
+        length: number;
       };
       setCurrentDoc((prev) => {
         return prev
@@ -88,9 +99,10 @@ const AllProductAnalytics = () => {
           order: 20,
           rating: 4.3,
           revenue: 15000,
-          type: "products",
+          type: data.path,
         }));
-
+      console.log(arrangeNormalProducts);
+      setTotalData(specialProducts.length);
       setOriginalData(arrangeNormalProducts);
       setFetchedProducts(arrangeNormalProducts as ArrangedProduct[]);
     } catch (error) {
@@ -101,8 +113,22 @@ const AllProductAnalytics = () => {
 
   useEffect(() => {
     // call getAllProducts
-    getAllProducts();
-  }, [pagination.perPage]);
+    if (fetchedProducts?.length < 0 || !isFilter?.length) {
+      getAllProducts({
+        path: "products",
+        pageSize: pagination.perPage,
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        filter: "name",
+        sort: "asc",
+      });
+    }
+  }, [
+    pagination.perPage,
+    currentDoc?.currentFirstDoc,
+    fetchedProducts.length,
+    isFilter?.length,
+  ]);
 
   // fetch next page
   useEffect(() => {
@@ -142,12 +168,14 @@ const AllProductAnalytics = () => {
             type: "products",
           }));
 
-          setFetchedProducts((prev) => [
-            ...prev,
-            ...newProducts.filter(
-              (product) => !prev.some((p) => p.id === product.id)
-            ),
-          ]);
+          setFetchedProducts((prev) => {
+            return [
+              ...prev,
+              ...newProducts.filter(
+                (product) => !prev.some((p) => p.id === product.id)
+              ),
+            ];
+          });
         } catch (error) {
           throw new Error(`Error while fetching products: ${error}`);
         }
@@ -162,50 +190,84 @@ const AllProductAnalytics = () => {
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
-    let sortedCustomers;
-    if (value === "Name") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc"
-            ? b.name.localeCompare(a.name)
-            : a.name.localeCompare(b.name)
-      );
-    }
-    if (value === "Quantity") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc"
-            ? b.quantity - a.quantity
-            : a.quantity - b.quantity
-      );
-    }
     if (value === "Price") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.price - a.price : a.price - b.price
-      );
+      newOrder === "desc"
+        ? await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "price",
+            sort: "desc",
+          })
+        : await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "price",
+            sort: "asc",
+          });
     }
     if (value === "Revenue") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.revenue - a.revenue : a.revenue - b.revenue
-      );
+      newOrder === "desc"
+        ? await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "quantity",
+            sort: "desc",
+          })
+        : await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "quantity",
+            sort: "asc",
+          });
     }
     if (value === "Orders") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.order - a.order : a.order - b.order
-      );
+      newOrder === "desc"
+        ? await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "tag",
+            sort: "desc",
+          })
+        : await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "tag",
+            sort: "asc",
+          });
     }
     if (value === "Rating") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
-      );
+      newOrder === "desc"
+        ? await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "id",
+            sort: "desc",
+          })
+        : await getAllProducts({
+            path: "products",
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            direction: "next",
+            filter: "id",
+            sort: "asc",
+          });
     }
 
     setSortOrder({ field: value, order: newOrder });
-    setFetchedProducts(sortedCustomers as ArrangedProduct[]);
   };
 
   const handleChange = (value: string) => {
@@ -330,6 +392,21 @@ const AllProductAnalytics = () => {
     }
   };
 
+  async function handleChangeCategory(value: "specials" | "products") {
+    setIsFiltered(value);
+    try {
+      await getAllProducts({
+        path: value,
+        pageSize: pagination.perPage,
+        direction: "next",
+        filter: "price",
+        sort: "asc",
+      });
+    } catch (error) {
+      throw new Error("Unable to get by " + value + " : " + error);
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
@@ -371,9 +448,30 @@ const AllProductAnalytics = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setSortOrder({ field: "" })}
+                  onClick={() => setSortOrder({ field: undefined })}
                   className=" "
                 >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
+            {isFilter && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button onClick={() => setIsFiltered(undefined)} className=" ">
                   <X className="text-[var(--danger-text)] " size={20} />
                 </button>
               </div>
@@ -381,21 +479,73 @@ const AllProductAnalytics = () => {
           </div>
         </div>
         <div className=" z-[1000]">
-          <FilterButton
-            sortOrder={sortOrder.order}
-            onSelect={handleSelect}
-            sortingOptions={[
-              "Name",
-              "Quantity",
-              "Price",
-              "Orders",
-              "Revenue",
-              "Rating",
+          <Button
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                  Filter
+                </span>
+              </div>
+            }
+            children={[
+              <FilterButton
+                bodyStyle={{
+                  width: "150px",
+                  top: "-0.3rem",
+                  left: "-10rem",
+                }}
+                sortOrder={sortOrder.order}
+                onSelect={handleSelect}
+                children={[
+                  { label: "Price", value: "Price" },
+                  { label: "Orders", value: "Orders" },
+                  { label: "Revenue", value: "Revenue" },
+                  { label: "Rating", value: "Rating" },
+                ]}
+              />,
+              <FilterButton
+                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
+                children={[
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <FaRegStar className="size-5" />
+                        <span className="text-[17px] tracking-wide ">
+                          Special
+                        </span>
+                      </div>
+                    ),
+                    value: "specials",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <AlignLeft className="size-5" />
+                        <span className="text-[17px] tracking-wide ">
+                          Normal
+                        </span>
+                      </div>
+                    ),
+                    value: "products",
+                  },
+                ]}
+                parent={
+                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
+                    <BiCategory className="size-5  " />
+                    <span className="tracking-wide text-[17px] ">Category</span>
+                  </div>
+                }
+                onSelect={(value) =>
+                  handleChangeCategory(value as "specials" | "products")
+                }
+              />,
             ]}
           />
         </div>
       </div>
       <FoodTable
+        totalData={totalData as number}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

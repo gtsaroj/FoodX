@@ -1,16 +1,20 @@
-import { ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
+import { AlignLeft, ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { debounce } from "../../Utility/Debounce";
-import { ArrangedProduct, ProductType } from "../../models/productMode";
+import {
+  ArrangedProduct,
+  GetProductModal,
+  ProductType,
+} from "../../models/productMode";
 import {
   addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
-  getSpecialProducts,
+  
 } from "../../Services";
 import { SearchProduct } from "../../Utility/Search";
 import { useDispatch } from "react-redux";
@@ -21,6 +25,9 @@ import toast from "react-hot-toast";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./FoodTable";
+import { FaRegStar } from "react-icons/fa";
+import { Button } from "../../Components/Common/Button/Button";
+import { BiCategory } from "react-icons/bi";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -51,29 +58,35 @@ const FoodPage: React.FC = () => {
     field: "",
     order: "desc",
   });
+  const [isFilter, setIsFiltered] = useState<
+    "products" | "specials" | undefined
+  >();
   const [loading, setLoading] = useState<boolean>(false);
+  const [totalData, setTotalData] = useState<number>();
 
   // get all products
-  const getAllProducts = async () => {
+  const getAllProducts = async (data: GetProductModal) => {
     setLoading(true);
     try {
       const products = await getProducts({
-        path: "products",
-        pageSize: pagination.perPage,
-        direction: "next",
-        filter: "price",
-        sort: "asc",
+        path: data.path,
+        pageSize: data.pageSize,
+        direction: data.direction,
+        filter: data.filter,
+        sort: data.sort,
       });
       // const special = await getSpecialProducts();
       const normalProducts = products.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
         products: ProductType[];
+        length: number;
       };
       setCurrentDoc(() => ({
         currentFirstDoc: normalProducts.currentFirstDoc,
         currentLastDoc: normalProducts.currentLastDoc,
       }));
+      setTotalData(normalProducts.length);
 
       const arrangeNormalProducts: ArrangedProduct[] =
         normalProducts?.products.map((product: ProductType) => ({
@@ -216,9 +229,22 @@ const FoodPage: React.FC = () => {
 
   useEffect(() => {
     // call getAllProducts
-
-    getAllProducts();
-  }, [pagination.perPage]);
+    if (fetchedProducts?.length < 0 || !isFilter?.length) {
+      getAllProducts({
+        path: "products",
+        pageSize: pagination.perPage,
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        direction: "next",
+        filter: "name",
+        sort: "asc",
+      });
+    }
+  }, [
+    pagination.perPage,
+    currentDoc?.currentFirstDoc,
+    fetchedProducts.length,
+    isFilter?.length,
+  ]);
 
   // delete products
   const handleDelete = async (id: string, type: "specials" | "products") => {
@@ -298,6 +324,21 @@ const FoodPage: React.FC = () => {
       setFetchedProducts(originalData);
     }
   }, [originalData, sortOrder.field]);
+
+  async function handleChangeCategory(value: "specials" | "products") {
+    setIsFiltered(value);
+    try {
+      await getAllProducts({
+        path: value,
+        pageSize: pagination.perPage,
+        direction: "next",
+        filter: "price",
+        sort: "asc",
+      });
+    } catch (error) {
+      throw new Error("Unable to get by " + value + " : " + error);
+    }
+  }
 
   // fetch next page
   useEffect(() => {
@@ -387,41 +428,75 @@ const FoodPage: React.FC = () => {
               <Plus className="size-4" />
               <p className="text-[15px]">Item</p>
             </button>
-            <DropDown
-              children={
-                <>
-                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
-                  <span className="text-[var(--dark-secondary-text)]">
+            <Button
+              bodyStyle={{
+                width: "150px",
+                top:"3.5rem",
+                 left:"-2.7rem"
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
                     Filter
                   </span>
-                </>
+                </div>
               }
-              options={[
+              children={[
                 <FilterButton
+                  bodyStyle={{
+                    width: "150px",
+                    top: "-0.3rem",
+                    left: "-10rem",
+                  }}
                   sortOrder={sortOrder.order}
                   onSelect={handleSelect}
-                  sortingOptions={[
-                    "Name",
-                    "Quantity",
-                    "Price",
-                    "Orders",
-                    "Revenue",
-                    "Rating",
+                  children={[
+                    { label: "Price", value: "Price" },
+                    { label: "Orders", value: "Orders" },
+                    { label: "Revenue", value: "Revenue" },
+                    { label: "Rating", value: "Rating" },
                   ]}
                 />,
+                <FilterButton
+                  bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
+                  children={[
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <FaRegStar className="size-5" />
+                          <span className="text-[17px] tracking-wide ">
+                            Special
+                          </span>
+                        </div>
+                      ),
+                      value: "specials",
+                    },
+                    {
+                      label: (
+                        <div className="flex items-center justify-start gap-2">
+                          <AlignLeft className="size-5" />
+                          <span className="text-[17px] tracking-wide ">
+                            Normal
+                          </span>
+                        </div>
+                      ),
+                      value: "products",
+                    },
+                  ]}
+                  parent={
+                    <div className="flex py-1.5 px-2 items-center justify-start gap-2">
+                      <BiCategory className="size-5  " />
+                      <span className="tracking-wide text-[17px] ">
+                        Category
+                      </span>
+                    </div>
+                  }
+                  onSelect={(value) =>
+                    handleChangeCategory(value as "specials" | "products")
+                  }
+                />,
               ]}
-              style={{
-                display: "flex",
-                fontSize: "15px",
-                borderRadius: "4px",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                color: "var(--dark-text)",
-                border: "1px solid var(--light-secondary-text)  ",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                background: "",
-              }}
             />
           </div>
         </div>
@@ -444,7 +519,7 @@ const FoodPage: React.FC = () => {
             deleteFn={() => setIsBulkDelete(true)}
           />
         </div>
-        <div>
+        <div className="flex items-center justify-start gap-2">
           {sortOrder.field && (
             <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
               <div className="flex gap-1 items-center justify-center">
@@ -463,7 +538,31 @@ const FoodPage: React.FC = () => {
                   <ChevronUp size={20} />
                 </p>
               </div>
-              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+              <button
+                onClick={() => setSortOrder({ field: undefined })}
+                className=" "
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+          {isFilter && (
+            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+                <p
+                  className={` duration-150 ${
+                    sortOrder?.order === "desc"
+                      ? "rotate-180"
+                      : sortOrder.order === "asc"
+                      ? ""
+                      : ""
+                  } `}
+                >
+                  <ChevronUp size={20} />
+                </p>
+              </div>
+              <button onClick={() => setIsFiltered(undefined)} className=" ">
                 <X className="text-[var(--danger-text)] " size={20} />
               </button>
             </div>
@@ -472,6 +571,7 @@ const FoodPage: React.FC = () => {
       </div>
 
       <FoodTable
+        totalData={totalData as number}
         onPageChange={(page: number) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }

@@ -108,7 +108,7 @@ const AllCategories = () => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
     let sortedCustomers;
-    if (value === "Items") {
+    if (value === "item") {
       sortedCustomers = [...initialCategory].sort(
         (a: CategoryType, b: CategoryType) =>
           newOrder === "desc"
@@ -116,24 +116,24 @@ const AllCategories = () => {
             : (((a.item as number) - b.item) as number)
       );
     }
-    if (value === "Orders") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.order = a.order) : a.order - b.order
-      );
-    }
-    if (value === "Revenue") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
-      );
-    }
-    if (value === "Rank") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
-      );
-    }
-
+    // if (value === "Orders") {
+    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
+    //     newOrder == "desc" ? (b.order = a.order) : a.order - b.order
+    //   );
+    // }
+    // if (value === "Revenue") {
+    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
+    //     newOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
+    //   );
+    // }
+    // if (value === "Rank") {
+    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
+    //     newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
+    //   );
+    // }
+setInitialCategory(sortedCustomers as CategoryType[])
     setSortOrder({ field: value, order: newOrder });
-    setInitialCategory(sortedCustomers as CategoryType[]);
+    
   };
 
   const SearchingCategories = async (value: string) => {
@@ -235,9 +235,18 @@ const AllCategories = () => {
         </div>
         <div className="z-[100]">
           <FilterButton
+            
+            bodyStyle={
+              {
+
+                bottom : "0",
+                width: "150px",
+                left: "-9rem"
+              }
+            }
             onSelect={handleSelect}
             sortOrder={sortOrder.order}
-            sortingOptions={["Items", "Orders", "Revenue", "Rank"]}
+            children={[{label :"item",value:"item"}]}
           />
         </div>
       </div>

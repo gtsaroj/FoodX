@@ -208,7 +208,6 @@ export const postBanners = async (data: any) => {
   }
 };
 export const getProducts = async (data: GetProductModal) => {
-  console.log(data);
   try {
     const response = await makeRequest({
       method: "post",

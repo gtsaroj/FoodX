@@ -31,6 +31,7 @@ export interface ProductModel {
 }
 
 export interface GetProductModal {
+  page?: number
   path: "specials" | "products";
   pageSize: number;
   filter?: keyof ProductType;

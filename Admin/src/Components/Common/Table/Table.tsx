@@ -8,6 +8,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export declare namespace Table {
   interface TableModalProps<T> {
     data: Array<T>;
+    totalData: number,
     selectedData?: Array<T>;
     columns: ColumnProps[];
     actions?: TableActions;
@@ -48,6 +49,7 @@ function Table<T extends { id: string }>({
   loading,
   onPageChange,
   selectedData,
+  totalData,
   pagination = { perPage: 2, currentPage: 1 },
 }: Table.TableModalProps<T>): React.ReactElement {
 
@@ -223,7 +225,7 @@ function Table<T extends { id: string }>({
           <tr>
             <td>
               <Pagination
-                totalData={30}
+                totalData={totalData}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}
                 onChange={handlePageChange}
