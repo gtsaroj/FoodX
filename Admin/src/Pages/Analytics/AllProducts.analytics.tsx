@@ -1,12 +1,10 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React, { useCallback, useEffect, useState } from "react";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { useCallback, useEffect, useState } from "react";
 import {
   addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
-  getSpecialProducts,
 } from "../../Services";
 import {
   ArrangedProduct,
@@ -17,14 +15,11 @@ import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { AlignLeft, ChevronUp, Filter, X } from "lucide-react";
+import { ChevronUp, Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
 import { Button } from "../../Components/Common/Button/Button";
-import { BiCategory } from "react-icons/bi";
-import { FaRegStar } from "react-icons/fa";
-import path from "path";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
@@ -187,87 +182,59 @@ const AllProductAnalytics = () => {
   }, [pagination.currentPage, currentDoc?.currentFirstDoc, pagination.perPage]);
 
   //Sorting
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    if (value === "Price") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "price",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "price",
-            sort: "asc",
-          });
+  const handleSelect = async (
+    isChecked: boolean,
+    value: "specials" | "products" | "price" | "orders" | "revenue"
+  ) => {
+    if (!isChecked) return;
+    try {
+      if (value === "specials") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "products") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "products",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "orders") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "revenue") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+    } catch (error) {
+      throw new Error("Unable to filter data" + error);
     }
-    if (value === "Revenue") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "quantity",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "quantity",
-            sort: "asc",
-          });
-    }
-    if (value === "Orders") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "tag",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "tag",
-            sort: "asc",
-          });
-    }
-    if (value === "Rating") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "id",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "id",
-            sort: "asc",
-          });
-    }
-
-    setSortOrder({ field: value, order: newOrder });
   };
 
   const handleChange = (value: string) => {
@@ -479,69 +446,34 @@ const AllProductAnalytics = () => {
           </div>
         </div>
         <div className=" z-[1000]">
-          <Button
-            parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
-                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
-                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
-                  Filter
-                </span>
-              </div>
-            }
-            children={[
-              <FilterButton
-                bodyStyle={{
-                  width: "150px",
-                  top: "-0.3rem",
-                  left: "-10rem",
-                }}
-                sortOrder={sortOrder.order}
-                onSelect={handleSelect}
-                children={[
-                  { label: "Price", value: "Price" },
-                  { label: "Orders", value: "Orders" },
-                  { label: "Revenue", value: "Revenue" },
-                  { label: "Rating", value: "Rating" },
-                ]}
-              />,
-              <FilterButton
-                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                children={[
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <FaRegStar className="size-5" />
-                        <span className="text-[17px] tracking-wide ">
-                          Special
-                        </span>
-                      </div>
-                    ),
-                    value: "specials",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <AlignLeft className="size-5" />
-                        <span className="text-[17px] tracking-wide ">
-                          Normal
-                        </span>
-                      </div>
-                    ),
-                    value: "products",
-                  },
-                ]}
-                parent={
-                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                    <BiCategory className="size-5  " />
-                    <span className="tracking-wide text-[17px] ">Category</span>
-                  </div>
-                }
-                onSelect={(value) =>
-                  handleChangeCategory(value as "specials" | "products")
-                }
-              />,
-            ]}
-          />
+        <Button
+              sortFn={(value) => setSortOrder(value)}
+              bodyStyle={{
+                width: "400px",
+                top: "3.5rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                    Filter
+                  </span>
+                </div>
+              }
+              types={[
+                { label: "Specials", value: "specials", id: "fklsdjf" },
+                { label: "products", value: "products", id: "fkjdls" },
+              ]}
+              sort={[
+                { label: "Price", value: "price", id: "jfhkdj" },
+                { label: "Orders", value: "orders", id: "fkdsj" },
+                { label: "Revenue", value: "revenue", id: "flkjdsf" },
+              ]}
+              checkFn={(isChecked: boolean, value: any) =>
+                handleSelect(isChecked, value)
+              }
+            />
         </div>
       </div>
       <FoodTable

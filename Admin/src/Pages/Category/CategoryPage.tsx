@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { CategoryType } from "../../models/category.model";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { CategoryTable } from "./CategoryTable";
+import { Button } from "../../Components/Common/Button/Button";
 
 export const CategoryPage: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
@@ -27,13 +28,14 @@ export const CategoryPage: React.FC = () => {
   const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDeleted] = useState<boolean>(false);
+  const [isFilter, setIsFilter] = useState<string>();
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
       category: "specials" | "products";
       id: string;
     }[]
   >([]);
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("asc");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [originalData, setOriginalData] = useState<CategoryType[]>([]);
@@ -153,10 +155,9 @@ export const CategoryPage: React.FC = () => {
 
   useEffect(() => {
     initialCategory.forEach((category) => dispatch(categoryAdd(category.name)));
-    if (sortOrder.field === "") {
-      setInitialCategory(originalData);
-    }
-  }, [initialCategory, dispatch, sortOrder.field, originalData]);
+
+    setInitialCategory(originalData);
+  }, [initialCategory, dispatch, originalData]);
 
   useEffect(() => {
     getAllCategories();
@@ -216,34 +217,33 @@ export const CategoryPage: React.FC = () => {
               <Plus className="size-4" />
               <p className="text-[15px]">Item</p>
             </button>
-            <DropDown
-              children={
-                <>
-                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
-                  <span className="text-[var(--dark-secondary-text)]">
+            <Button
+              sortFn={(value) => setSortOrder(value)}
+              bodyStyle={{
+                width: "400px",
+                top: "3.5rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
                     Filter
                   </span>
-                </>
+                </div>
               }
-              options={[
-                <FilterButton
-                  onSelect={handleSelect}
-                  sortOrder={sortOrder.order}
-                  sortingOptions={["Items", "Orders", "Revenue", "Rank"]}
-                />,
+              sort={[
+                { label: "Rank", value: "rank", id: "fkdsj" },
+                { label: "Revenue", value: "revenue", id: "flksdj" },
+                {
+                  label: "Orders",
+                  value: "orders",
+                  id: "kfljsf",
+                },
               ]}
-              style={{
-                display: "flex",
-                fontSize: "15px",
-                borderRadius: "4px",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                color: "var(--dark-text)",
-                border: "1px solid var(--light-secondary-text)  ",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                background: "",
-              }}
+              checkFn={(isChecked: boolean, value: any) =>
+                handleSelect(isChecked, value)
+              }
             />
           </div>
         </div>
@@ -270,17 +270,15 @@ export const CategoryPage: React.FC = () => {
           />
         </div>
         <div>
-          {sortOrder.field && (
+          {isFilter && (
             <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
               <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">
-                  {sortOrder.field.toLowerCase()}
-                </span>
+                <span className="  text-sm ">{isFilter.toLowerCase()}</span>
                 <p
                   className={` duration-150 ${
-                    sortOrder?.order === "desc"
+                    sortOrder === "desc"
                       ? "rotate-180"
-                      : sortOrder.order === "asc"
+                      : sortOrder === "asc"
                       ? ""
                       : ""
                   } `}
@@ -288,7 +286,7 @@ export const CategoryPage: React.FC = () => {
                   <ChevronUp size={20} />
                 </p>
               </div>
-              <button onClick={() => setSortOrder({ field: "" })} className=" ">
+              <button onClick={() => setIsFilter(undefined)} className=" ">
                 <X className="text-[var(--danger-text)] " size={20} />
               </button>
             </div>

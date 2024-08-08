@@ -1,11 +1,8 @@
-import { ChevronUp, Download, Filter, UserCheck, X } from "lucide-react";
+import { ChevronUp, Download, Filter, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { debounce } from "../../Utility/Debounce";
-import { DatePicker } from "../../Components/DatePicker/DatePicker";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
 import { SearchCustomer } from "../../Utility/Search";
@@ -82,75 +79,83 @@ const CustomerList: React.FC = () => {
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    let sortedCustomers;
-    if (value === "Total spent") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.amountSpent - a.amountSpent
-            : a.amountSpent - b.amountSpent
-      );
+  const handleSelect = async (
+    isChecked: boolean,
+    value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
+  ) => {
+    // if (!isChecked) return toast.error("Error");
+    try {
+      if (value === "orders" && isChecked) {
+        await handleCustomerData({
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          path: "admin",
+          sort: "asc",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+        });
+      }
+      
+      // if (value === "amount" && isChecked) {
+      //   await handleCustomerData({
+      //     direction: "next",
+      //     filter: "fullName",
+      //     pageSize: pagination.perPage,
+      //     path: "admin",
+      //     sort: "asc",
+      //     currentFirstDoc: currentDoc?.currentFirstDoc,
+      //   });
+      // }
+      if (value === "admin" && isChecked) {
+        await handleCustomerData({
+          path: "admin",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      if (value === "customer" && isChecked) {
+        await handleCustomerData({
+          path: "customer",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      if (value === "chef" && isChecked) {
+        await handleCustomerData({
+          path: "chef",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      // if (value === "order") {
+      //   await handleCustomerData({
+      //     path: "customer",
+      //     direction: "next",
+      //     filter: "fullName",
+      //     pageSize: pagination.perPage,
+      //     currentFirstDoc: currentDoc?.currentFirstDoc,
+      //     currentLastDoc: currentDoc?.currentLastDoc,
+      //     sort: "asc",
+      //   });
+      // }
+    } catch (error) {
+      throw new Error("Unable to show data" + error);
     }
-    if (value === "Name") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.name.localeCompare(a.name)
-            : a.name.localeCompare(b.name)
-      );
-    }
-    if (value === "Total order") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.totalOrder - a.totalOrder
-            : a.totalOrder - b.totalOrder
-      );
-    }
-
-    setSortOrder({ field: value, order: newOrder });
-    setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
-  const handleChangeUser = (value: "customer" | "admin" | "chef") => {
-    setIsFilter(value);
-    if (value === "admin") {
-      handleCustomerData({
-        path: "admin",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-    if (value === "chef") {
-      handleCustomerData({
-        path: "chef",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-    if (value === "customer") {
-      handleCustomerData({
-        path: "customer",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-  };
+
 
   useEffect(() => {
     handleCustomerData({
@@ -219,12 +224,11 @@ const CustomerList: React.FC = () => {
               <Download className="size-4" />
               <p className="text-[15px]">Export</p>
             </button>
-
             <Button
-            bodyStyle={{
-              width: "150px",
+              bodyStyle={{
+              width : "400px",
               top: "3.5rem",
-              left: "-2.7rem",
+              left: "-18rem",
             }}
             parent={
               <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
@@ -234,63 +238,20 @@ const CustomerList: React.FC = () => {
                 </span>
               </div>
             }
-            children={[
-              <FilterButton
-                bodyStyle={{
-                  width: "150px",
-                  top: "-0.3rem",
-                  left: "-10rem",
-                }}
-                sortOrder={sortOrder.order}
-                onSelect={handleSelect}
-                children={[
-                  { label: "Amount", value: "amount" },
-                  { label: "Order", value: "order" },
-                ]}
-              />,
-              <FilterButton
-                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                children={[
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">
-                          Customer
-                        </span>
-                      </div>
-                    ),
-                    value: "customer",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">
-                          Admin
-                        </span>
-                      </div>
-                    ),
-                    value: "admin",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">Chef</span>
-                      </div>
-                    ),
-                    value: "chef",
-                  },
-                ]}
-                parent={
-                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                    <UserCheck className="size-5  " />
-                    <span className="tracking-wide text-[17px] ">Category</span>
-                  </div>
-                }
-                onSelect={(value) =>
-                  handleChangeUser(value as "customer" | "admin" | "chef")
-                }
-              />,
+            checkFn={(isChecked: boolean, value: string) => {
+                  handleSelect(isChecked, value)
+            }}
+            types={[
+              { label: "Admin", value: "admin", id: "sfksdjlk" },
+              { label: "Customer", value: "customer", id: "fkldsjfks" },
+              { label: "Chef", value: "chef", id: "fkldjs" },
             ]}
+            sort={[
+              { label: "Orders", value: "orders", id: "flksjd" },
+              { label: "Amount", value: "amount", id: "lfkjds" },
+              { label: "Role", value: "role", id: "fldkjs" },
+            ]}
+            sortFn={(type: "asc" | "desc") => setSortOrder(type)}
           />
           </div>
         </div>

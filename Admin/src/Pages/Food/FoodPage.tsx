@@ -14,7 +14,6 @@ import {
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
-  
 } from "../../Services";
 import { SearchProduct } from "../../Utility/Search";
 import { useDispatch } from "react-redux";
@@ -54,10 +53,7 @@ const FoodPage: React.FC = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
-  const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
-    field: "",
-    order: "desc",
-  });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
   const [isFilter, setIsFiltered] = useState<
     "products" | "specials" | undefined
   >();
@@ -130,53 +126,59 @@ const FoodPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   //Sorting
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    let sortedCustomers;
-    if (value === "Name") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc"
-            ? b.name.localeCompare(a.name)
-            : a.name.localeCompare(b.name)
-      );
+  const handleSelect = async (
+    isChecked: boolean,
+    value: "specials" | "products" | "price" | "orders" | "revenue"
+  ) => {
+    if (!isChecked) return;
+    try {
+      if (value === "specials") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "products") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "products",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "orders") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "revenue") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+    } catch (error) {
+      throw new Error("Unable to filter data" + error);
     }
-    if (value === "Quantity") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc"
-            ? b.quantity - a.quantity
-            : a.quantity - b.quantity
-      );
-    }
-    if (value === "Price") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.price - a.price : a.price - b.price
-      );
-    }
-    if (value === "Revenue") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.revenue - a.revenue : a.revenue - b.revenue
-      );
-    }
-    if (value === "Orders") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.order - a.order : a.order - b.order
-      );
-    }
-    if (value === "Rating") {
-      sortedCustomers = [...fetchedProducts].sort(
-        (a: ArrangedProduct, b: ArrangedProduct) =>
-          newOrder === "desc" ? b.rating - a.rating : a.rating - b.rating
-      );
-    }
-
-    setSortOrder({ field: value, order: newOrder });
-    setFetchedProducts(sortedCustomers as ArrangedProduct[]);
   };
 
   const handleSelectedDelete = async () => {
@@ -319,27 +321,6 @@ const FoodPage: React.FC = () => {
     }
   }, [fetchedProducts, dispatch]);
 
-  useEffect(() => {
-    if (sortOrder.field === "") {
-      setFetchedProducts(originalData);
-    }
-  }, [originalData, sortOrder.field]);
-
-  async function handleChangeCategory(value: "specials" | "products") {
-    setIsFiltered(value);
-    try {
-      await getAllProducts({
-        path: value,
-        pageSize: pagination.perPage,
-        direction: "next",
-        filter: "price",
-        sort: "asc",
-      });
-    } catch (error) {
-      throw new Error("Unable to get by " + value + " : " + error);
-    }
-  }
-
   // fetch next page
   useEffect(() => {
     if (
@@ -429,10 +410,11 @@ const FoodPage: React.FC = () => {
               <p className="text-[15px]">Item</p>
             </button>
             <Button
+              sortFn={(value) => setSortOrder(value)}
               bodyStyle={{
-                width: "150px",
-                top:"3.5rem",
-                 left:"-2.7rem"
+                width: "400px",
+                top: "3.5rem",
+                left: "-18rem",
               }}
               parent={
                 <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
@@ -442,61 +424,18 @@ const FoodPage: React.FC = () => {
                   </span>
                 </div>
               }
-              children={[
-                <FilterButton
-                  bodyStyle={{
-                    width: "150px",
-                    top: "-0.3rem",
-                    left: "-10rem",
-                  }}
-                  sortOrder={sortOrder.order}
-                  onSelect={handleSelect}
-                  children={[
-                    { label: "Price", value: "Price" },
-                    { label: "Orders", value: "Orders" },
-                    { label: "Revenue", value: "Revenue" },
-                    { label: "Rating", value: "Rating" },
-                  ]}
-                />,
-                <FilterButton
-                  bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                  children={[
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <FaRegStar className="size-5" />
-                          <span className="text-[17px] tracking-wide ">
-                            Special
-                          </span>
-                        </div>
-                      ),
-                      value: "specials",
-                    },
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <AlignLeft className="size-5" />
-                          <span className="text-[17px] tracking-wide ">
-                            Normal
-                          </span>
-                        </div>
-                      ),
-                      value: "products",
-                    },
-                  ]}
-                  parent={
-                    <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                      <BiCategory className="size-5  " />
-                      <span className="tracking-wide text-[17px] ">
-                        Category
-                      </span>
-                    </div>
-                  }
-                  onSelect={(value) =>
-                    handleChangeCategory(value as "specials" | "products")
-                  }
-                />,
+              types={[
+                { label: "Specials", value: "specials", id: "fklsdjf" },
+                { label: "products", value: "products", id: "fkjdls" },
               ]}
+              sort={[
+                { label: "Price", value: "price", id: "jfhkdj" },
+                { label: "Orders", value: "orders", id: "fkdsj" },
+                { label: "Revenue", value: "revenue", id: "flkjdsf" },
+              ]}
+              checkFn={(isChecked: boolean, value: any) =>
+                handleSelect(isChecked, value)
+              }
             />
           </div>
         </div>
@@ -520,41 +459,15 @@ const FoodPage: React.FC = () => {
           />
         </div>
         <div className="flex items-center justify-start gap-2">
-          {sortOrder.field && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">
-                  {sortOrder.field.toLowerCase()}
-                </span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder?.order === "desc"
-                      ? "rotate-180"
-                      : sortOrder.order === "asc"
-                      ? ""
-                      : ""
-                  } `}
-                >
-                  <ChevronUp size={20} />
-                </p>
-              </div>
-              <button
-                onClick={() => setSortOrder({ field: undefined })}
-                className=" "
-              >
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
           {isFilter && (
             <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
               <div className="flex gap-1 items-center justify-center">
                 <span className="  text-sm ">{isFilter.toLowerCase()}</span>
                 <p
                   className={` duration-150 ${
-                    sortOrder?.order === "desc"
+                    sortOrder === "desc"
                       ? "rotate-180"
-                      : sortOrder.order === "asc"
+                      : sortOrder === "asc"
                       ? ""
                       : ""
                   } `}

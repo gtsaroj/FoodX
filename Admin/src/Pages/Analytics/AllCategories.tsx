@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CategoryTable } from "../Category/CategoryTable";
 import { CategoryType } from "../../models/category.model";
-import { addLogs, bulkDeleteOfCategory, deleteCategory, getCategories } from "../../Services";
+import {
+  addLogs,
+  bulkDeleteOfCategory,
+  deleteCategory,
+  getCategories,
+} from "../../Services";
 import toast from "react-hot-toast";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -10,9 +15,10 @@ import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
-import { ChevronUp, X, Trash2 } from "lucide-react";
+import { ChevronUp, Filter, X } from "lucide-react";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
+import { Button } from "../../Components/Common/Button/Button";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
@@ -25,7 +31,7 @@ const AllCategories = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const dispatch = useDispatch<AppDispatch>();
 
   const getAllCategories = async () => {
@@ -104,8 +110,8 @@ const AllCategories = () => {
     }
   };
 
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
+  const handleSelect = async (isChecked: boolean, value: string) => {
+    const newOrder = sortOrder === "asc" ? "desc" : "asc";
 
     let sortedCustomers;
     if (value === "item") {
@@ -131,9 +137,7 @@ const AllCategories = () => {
     //     newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
     //   );
     // }
-setInitialCategory(sortedCustomers as CategoryType[])
-    setSortOrder({ field: value, order: newOrder });
-    
+    setInitialCategory(sortedCustomers as CategoryType[]);
   };
 
   const SearchingCategories = async (value: string) => {
@@ -154,7 +158,11 @@ setInitialCategory(sortedCustomers as CategoryType[])
       toast.dismiss(toastLoader);
       await deleteCategory(id);
       toast.success("Successfully deleted");
-      await addLogs({action:"delete",date: new Date(),detail:`category : ${id} ` })
+      await addLogs({
+        action: "delete",
+        date: new Date(),
+        detail: `category : ${id} `,
+      });
       const refreshCategory = initialCategory?.filter(
         (category) => category.id !== id
       );
@@ -170,11 +178,11 @@ setInitialCategory(sortedCustomers as CategoryType[])
     getAllCategories();
   }, []);
 
-  useEffect(() => {
-    if (sortOrder?.field === "") {
-      setInitialCategory(originalData);
-    }
-  }, [originalData, sortOrder?.field]);
+  // useEffect(() => {
+  //   if (sortOrder? === "") {
+  //     setInitialCategory(originalData);
+  //   }
+  // }, [originalData, sortOrder?.field]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
@@ -204,17 +212,17 @@ setInitialCategory(sortedCustomers as CategoryType[])
               />
             </div>
             <div>
-              {sortOrder.field && (
+              {sortOrder && (
                 <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
                   <div className="flex gap-1 items-center justify-center">
                     <span className="  text-sm ">
-                      {sortOrder.field.toLowerCase()}
+                      {sortOrder.toLowerCase()}
                     </span>
                     <p
                       className={` duration-150 ${
-                        sortOrder?.order === "desc"
+                        sortOrder === "desc"
                           ? "rotate-180"
-                          : sortOrder.order === "asc"
+                          : sortOrder === "asc"
                           ? ""
                           : ""
                       } `}
@@ -222,10 +230,7 @@ setInitialCategory(sortedCustomers as CategoryType[])
                       <ChevronUp size={20} />
                     </p>
                   </div>
-                  <button
-                    onClick={() => setSortOrder({ field: "" })}
-                    className=" "
-                  >
+                  <button onClick={() => setSortOrder(undefined)} className=" ">
                     <X className="text-[var(--danger-text)] " size={20} />
                   </button>
                 </div>
@@ -234,19 +239,33 @@ setInitialCategory(sortedCustomers as CategoryType[])
           </div>
         </div>
         <div className="z-[100]">
-          <FilterButton
-            
-            bodyStyle={
-              {
-
-                bottom : "0",
-                width: "150px",
-                left: "-9rem"
-              }
+          <Button
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3.5rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                  Filter
+                </span>
+              </div>
             }
-            onSelect={handleSelect}
-            sortOrder={sortOrder.order}
-            children={[{label :"item",value:"item"}]}
+            sort={[
+              { label: "Rank", value: "rank", id: "fkdsj" },
+              { label: "Revenue", value: "revenue", id: "flksdj" },
+              {
+                label: "Orders",
+                value: "orders",
+                id: "kfljsf",
+              },
+            ]}
+            checkFn={(isChecked: boolean, value: any) =>
+              handleSelect(isChecked, value)
+            }
           />
         </div>
       </div>

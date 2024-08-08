@@ -1,5 +1,5 @@
-import { Filter, Plus, Trash2 } from "lucide-react";
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { Filter, Plus } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../Components/Common/Popup/Popup";
 import UploadBanner from "../Components/Upload/UploadBanner";
 import { DropDown } from "../Components/Common/DropDown/DropDown";
@@ -11,7 +11,8 @@ import Delete, { DeleteButton } from "../Components/Common/Delete/Delete";
 import toast from "react-hot-toast";
 import { bulkDeleteBanner, deleteBanner, getBanners } from "../Services";
 import { debounce } from "../Utility/Debounce";
-import { SearchBanner, SearchCategory } from "../Utility/Search";
+import { SearchBanner } from "../Utility/Search";
+import { Button } from "../Components/Common/Button/Button";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -22,7 +23,9 @@ const FoodPage: React.FC = () => {
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
     { id: string }[]
-  >([]);
+    >([]);
+  const [isFilter, setIsFilter] = useState<string>();
+  const [sortOrder, setSortOrder] = useState<"asc" |"desc">("asc");
 
   const closeModal = () => setIsModelOpen(true);
 
@@ -163,6 +166,10 @@ const FoodPage: React.FC = () => {
     setInitialBanner(filterCategory);
   };
 
+  const handleSelect = () => {
+    
+  }
+
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     initialBanner,
   ]);
@@ -213,33 +220,39 @@ const FoodPage: React.FC = () => {
               <Plus className="size-4" />
               <p className="text-[15px]">Item</p>
             </button>
-            <DropDown
-              children={
-                <>
-                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
-                  <span className="text-[var(--dark-secondary-text)]">
+            <Button
+              sortFn={(value) => setSortOrder(value)}
+              bodyStyle={{
+                width: "400px",
+                top: "3.5rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
                     Filter
                   </span>
-                </>
+                </div>
               }
-              options={[]}
-              style={{
-                display: "flex",
-                fontSize: "15px",
-                borderRadius: "4px",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                color: "var(--dark-text)",
-                border: "1px solid var(--light-secondary-text)  ",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                background: "",
-              }}
+              types={[
+                { label: "Specials", value: "specials", id: "fklsdjf" },
+                { label: "products", value: "products", id: "fkjdls" },
+              ]}
+              sort={[
+                { label: "Price", value: "price", id: "jfhkdj" },
+                { label: "Orders", value: "orders", id: "fkdsj" },
+                { label: "Revenue", value: "revenue", id: "flkjdsf" },
+              ]}
+              checkFn={(isChecked: boolean, value: any) =>
+                handleSelect(isChecked, value)
+              }
             />
           </div>
         </div>
       </div>
       <Table
+         totalData={4}
         selectedData={bulkSelectedBanner}
         columns={columns}
         data={initialBanner}

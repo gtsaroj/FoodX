@@ -17,7 +17,7 @@ const OrderList = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [originalData, setOriginalData] = useState<OrderModal[]>([]);
   const [totalData, setTotalData] = useState<number>();
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
@@ -85,45 +85,25 @@ const OrderList = () => {
     }
     setLoading(false);
   };
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    if (value === "Rank") {
-      newOrder === "asc"
-        ? await getAllOrders({
-            filter: "orderId",
-            pageSize: pagination.perPage,
-            sort: "asc",
-            direction: "next",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          })
-        : await getAllOrders({
-            filter: "orderId",
-            pageSize: pagination.perPage,
-            sort: "desc",
-            direction: "next",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          });
+  const handleSelect = async (isChecked: boolean, value: string) => {
+    if (value === "rank" && isChecked) {
+      await getAllOrders({
+        filter: "orderId",
+        pageSize: pagination.perPage,
+        sort: sortOrder as "asc" | "desc",
+        direction: "next",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+      });
     }
-    if (value === "Status") {
-      newOrder === "asc"
-        ? await getAllOrders({
-            filter: "status",
-            pageSize: pagination.perPage,
-            sort: "asc",
-            direction: "next",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          })
-        : await getAllOrders({
-            filter: "status",
-            pageSize: pagination.perPage,
-            sort: "desc",
-            direction: "next",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          });
+    if (value === "status" && isChecked) {
+      await getAllOrders({
+        filter: "orderId",
+        pageSize: pagination.perPage,
+        sort: sortOrder as "asc" | "desc",
+        direction: "next",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+      });
     }
-
-    setSortOrder({ field: value, order: newOrder });
   };
 
   const handleChange = (value: string) => {
@@ -151,8 +131,7 @@ const OrderList = () => {
   useEffect(() => {
     if (
       initialOrders.length < 0 ||
-      !isFilter?.length ||
-      !sortOrder.field.length
+      !isFilter?.length 
     ) {
       getAllOrders({
         filter: "orderId",
@@ -162,7 +141,7 @@ const OrderList = () => {
         currentFirstDoc: currentDoc?.currentFirstDoc,
       });
     }
-  }, [initialOrders.length, isFilter?.length, sortOrder.field.length]);
+  }, [initialOrders.length, isFilter?.length, currentDoc?.currentFirstDoc, pagination.perPage]);
 
   useEffect(() => {
     if (
@@ -300,10 +279,11 @@ const OrderList = () => {
               <p className="text-[15px]">Export</p>
             </button>
             <Button
+              sortFn={(value) => setSortOrder(value)}
               bodyStyle={{
-                width: "150px",
+                width: "400px",
                 top: "3.5rem",
-                left: "-2.7rem",
+                left: "-18rem",
               }}
               parent={
                 <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
@@ -313,90 +293,13 @@ const OrderList = () => {
                   </span>
                 </div>
               }
-              children={[
-                <FilterButton
-                  bodyStyle={{
-                    width: "150px",
-                    top: "-0.3rem",
-                    left: "-10rem",
-                  }}
-                  sortOrder={sortOrder.order}
-                  onSelect={handleSelect}
-                  children={[
-                    { label: "Status", value: "Status" },
-                    { label: "Rank", value: "Rank" },
-                  ]}
-                />,
-                <FilterButton
-                  bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                  children={[
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="w-2 h-2 bg-[var(--green-bg)] rounded-full "></span>
-                          <span className="text-[17px] tracking-wide ">
-                            Recieved
-                          </span>
-                        </div>
-                      ),
-                      value: "Recieved",
-                    },
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="w-2 h-2 bg-[var(--primary-light)] rounded-full "></span>
-                          <span className="text-[17px] tracking-wide ">
-                            Pending
-                          </span>
-                        </div>
-                      ),
-                      value: "Pending",
-                    },
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="w-2 h-2 bg-[var(--primary-dark)] rounded-full "></span>
-                          <span className="text-[17px] tracking-wide ">
-                            Preparing
-                          </span>
-                        </div>
-                      ),
-                      value: "Preparing",
-                    },
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="w-2 h-2 bg-[var(--primary-color)] rounded-full "></span>
-                          <span className="text-[17px] tracking-wide ">
-                            Delivered
-                          </span>
-                        </div>
-                      ),
-                      value: "Delivered",
-                    },
-                    {
-                      label: (
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="w-2 h-2 bg-[var(--danger-bg)] rounded-full "></span>
-                          <span className="text-[17px] tracking-wide ">
-                            Canceled
-                          </span>
-                        </div>
-                      ),
-                      value: "Canceled",
-                    },
-                  ]}
-                  parent={
-                    <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                      <BiCategory className="size-5  " />
-                      <span className="tracking-wide text-[17px] ">
-                        Category
-                      </span>
-                    </div>
-                  }
-                  onSelect={(value) => handleOrderFilter(value as string)}
-                />,
+              sort={[
+                { label: "Status", value: "status", id: "jfhkdj" },
+                { label: "Rank", value: "rank", id: "fkdsj" },
               ]}
+              checkFn={(isChecked: boolean, value: any) =>
+                handleSelect(isChecked, value)
+              }
             />
           </div>
         </div>
@@ -411,41 +314,15 @@ const OrderList = () => {
             placeholder="Search"
           />
         </form>
-        {sortOrder.field && (
-          <div className="flex w-[120px]  items-center rounded-lg border  justify-between p-2">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="  text-sm ">
-                {sortOrder.field.toLowerCase()}
-              </span>
-              <p
-                className={` duration-150 ${
-                  sortOrder?.order === "desc"
-                    ? "rotate-180"
-                    : sortOrder.order === "asc"
-                    ? ""
-                    : ""
-                } `}
-              >
-                <ChevronUp size={20} />
-              </p>
-            </div>
-            <button
-              onClick={() => setSortOrder({ field: "" })}
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
         {isFilter && (
           <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
             <div className="flex gap-1 items-center justify-center">
               <span className="  text-sm ">{isFilter.toLowerCase()}</span>
               <p
                 className={` duration-150 ${
-                  sortOrder?.order === "desc"
+                  sortOrder === "desc"
                     ? "rotate-180"
-                    : sortOrder.order === "asc"
+                    : sortOrder === "asc"
                     ? ""
                     : ""
                 } `}

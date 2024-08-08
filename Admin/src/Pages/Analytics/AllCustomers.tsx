@@ -30,6 +30,8 @@ import { User } from "firebase/auth";
 import { BiCategory } from "react-icons/bi";
 import { FaRegStar } from "react-icons/fa";
 import { Button } from "../../Components/Common/Button/Button";
+import { is } from "date-fns/locale";
+import { nanoid } from "@reduxjs/toolkit";
 
 const AllCustomers = () => {
   const [totalData, setTotalData] = useState<number>();
@@ -37,7 +39,7 @@ const AllCustomers = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [originalData, setOriginalData] = useState<CustomerType[]>([]);
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>("asc");
   const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
     { id: string; role: string }[]
   >([]);
@@ -210,49 +212,80 @@ const AllCustomers = () => {
     }
   };
 
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    if (value === "order") {
-      newOrder === "asc"
-        ? await handleCustomerData({
-            direction: "next",
-            filter: "fullName",
-            pageSize: pagination.perPage,
-            path: "admin",
-            sort: "asc",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          })
-        : await handleCustomerData({
-            direction: "next",
-            filter: "fullName",
-            pageSize: pagination.perPage,
-            path: "admin",
-            sort: "desc",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          });
+  const handleSelect = async (
+    isChecked: boolean,
+    value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
+  ) => {
+    // if (!isChecked) return toast.error("Error");
+    try {
+      if (value === "orders" && isChecked) {
+        await handleCustomerData({
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          path: "admin",
+          sort: "asc",
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+        });
+      }
+      
+      // if (value === "amount" && isChecked) {
+      //   await handleCustomerData({
+      //     direction: "next",
+      //     filter: "fullName",
+      //     pageSize: pagination.perPage,
+      //     path: "admin",
+      //     sort: "asc",
+      //     currentFirstDoc: currentDoc?.currentFirstDoc,
+      //   });
+      // }
+      if (value === "admin" && isChecked) {
+        await handleCustomerData({
+          path: "admin",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      if (value === "customer" && isChecked) {
+        await handleCustomerData({
+          path: "customer",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      if (value === "chef" && isChecked) {
+        await handleCustomerData({
+          path: "chef",
+          direction: "next",
+          filter: "fullName",
+          pageSize: pagination.perPage,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+          sort: "asc",
+        });
+      }
+      // if (value === "order") {
+      //   await handleCustomerData({
+      //     path: "customer",
+      //     direction: "next",
+      //     filter: "fullName",
+      //     pageSize: pagination.perPage,
+      //     currentFirstDoc: currentDoc?.currentFirstDoc,
+      //     currentLastDoc: currentDoc?.currentLastDoc,
+      //     sort: "asc",
+      //   });
+      // }
+    } catch (error) {
+      throw new Error("Unable to show data" + error);
     }
-    if (value === "amount") {
-      newOrder === "asc"
-        ? await handleCustomerData({
-            direction: "next",
-            filter: "fullName",
-            pageSize: pagination.perPage,
-            path: "admin",
-            sort: "asc",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          })
-        : await handleCustomerData({
-            direction: "next",
-            filter: "fullName",
-            pageSize: pagination.perPage,
-            path: "admin",
-            sort: "desc",
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-          });
-    }
-
-    setSortOrder({ field: value, order: newOrder });
   };
 
   const handleChange = async (value: string) => {
@@ -304,17 +337,7 @@ const AllCustomers = () => {
   };
 
   useEffect(() => {
-    if (sortOrder.field === "") {
-      setInitialCustomer(originalData);
-    }
-  }, [sortOrder.field, originalData]);
-
-  useEffect(() => {
-    if (
-      initialCustomer.length <= 0 ||
-      !isFilter?.length ||
-      !sortOrder.field.length
-    ) {
+    if (initialCustomer.length <= 0 || !isFilter?.length || !sortOrder) {
       handleCustomerData({
         path: "customer",
         direction: "next",
@@ -331,7 +354,7 @@ const AllCustomers = () => {
     currentDoc?.currentLastDoc,
     pagination.perPage,
     isFilter?.length,
-    sortOrder.field.length,
+    sortOrder?.length,
   ]);
 
   useEffect(() => {
@@ -391,17 +414,15 @@ const AllCustomers = () => {
               dataLength={bulkSelectedCustomer.length}
               deleteFn={() => setIsBulkDelete(true)}
             />
-            {sortOrder.field && (
+            {isFilter && (
               <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
                 <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">
-                    {sortOrder.field.toLowerCase()}
-                  </span>
+                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
                   <p
                     className={` duration-150 ${
-                      sortOrder?.order === "desc"
+                      sortOrder === "desc"
                         ? "rotate-180"
-                        : sortOrder.order === "asc"
+                        : sortOrder === "asc"
                         ? ""
                         : ""
                     } `}
@@ -409,10 +430,7 @@ const AllCustomers = () => {
                     <ChevronUp size={20} />
                   </p>
                 </div>
-                <button
-                  onClick={() => setSortOrder({ field: "" })}
-                  className=" "
-                >
+                <button onClick={() => setSortOrder(undefined)} className=" ">
                   <X className="text-[var(--danger-text)] " size={20} />
                 </button>
               </div>
@@ -423,9 +441,9 @@ const AllCustomers = () => {
                   <span className="  text-sm ">{isFilter.toLowerCase()}</span>
                   <p
                     className={` duration-150 ${
-                      sortOrder?.order === "desc"
+                      sortOrder === "desc"
                         ? "rotate-180"
-                        : sortOrder.order === "asc"
+                        : sortOrder === "asc"
                         ? ""
                         : ""
                     } `}
@@ -442,11 +460,11 @@ const AllCustomers = () => {
         </div>
         <div className="z-[100]">
           <Button
-            bodyStyle={{
-              width: "150px",
-              top: "3.5rem",
-              left: "-2.7rem",
-            }}
+              bodyStyle={{
+                width : "400px",
+                top: "3.5rem",
+                left: "-18rem",
+              }}
             parent={
               <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
                 <Filter className="size-5 text-[var(--dark-secondary-text)]" />
@@ -455,68 +473,25 @@ const AllCustomers = () => {
                 </span>
               </div>
             }
-            children={[
-              <FilterButton
-                bodyStyle={{
-                  width: "150px",
-                  top: "-0.3rem",
-                  left: "-10rem",
-                }}
-                sortOrder={sortOrder.order}
-                onSelect={handleSelect}
-                children={[
-                  { label: "Amount", value: "amount" },
-                  { label: "Order", value: "order" },
-                ]}
-              />,
-              <FilterButton
-                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                children={[
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">
-                          Customer
-                        </span>
-                      </div>
-                    ),
-                    value: "customer",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">
-                          Admin
-                        </span>
-                      </div>
-                    ),
-                    value: "admin",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <span className="text-[17px] tracking-wide ">Chef</span>
-                      </div>
-                    ),
-                    value: "chef",
-                  },
-                ]}
-                parent={
-                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                    <UserCheck className="size-5  " />
-                    <span className="tracking-wide text-[17px] ">Category</span>
-                  </div>
-                }
-                onSelect={(value) =>
-                  handleChangeUser(value as "customer" | "admin" | "chef")
-                }
-              />,
+            checkFn={(isChecked: boolean, value: string) => {
+                  handleSelect(isChecked, value)
+            }}
+            types={[
+              { label: "Admin", value: "admin", id: "sfksdjlk" },
+              { label: "Customer", value: "customer", id: "fkldsjfks" },
+              { label: "Chef", value: "chef", id: "fkldjs" },
             ]}
+            sort={[
+              { label: "Orders", value: "orders", id: "flksjd" },
+              { label: "Amount", value: "amount", id: "lfkjds" },
+              { label: "Role", value: "role", id: "fldkjs" },
+            ]}
+            sortFn={(type: "asc" | "desc") => setSortOrder(type)}
           />
         </div>
       </div>
       <CustomerTable
-        totalData={3}
+        totalData={totalData}
         onPageChange={(page) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }
