@@ -316,24 +316,6 @@ const AllCustomers = () => {
       !sortOrder.field.length
     ) {
       handleCustomerData({
-        path: "admin",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-      handleCustomerData({
-        path: "chef",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-      handleCustomerData({
         path: "customer",
         direction: "next",
         filter: "fullName",

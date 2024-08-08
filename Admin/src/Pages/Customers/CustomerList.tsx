@@ -1,4 +1,4 @@
-import { ChevronUp, Download, Filter, X } from "lucide-react";
+import { ChevronUp, Download, Filter, UserCheck, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
@@ -10,7 +10,8 @@ import { CustomerTable } from "./CustomerTable";
 import "../../index.css";
 import { SearchCustomer } from "../../Utility/Search";
 import { getUser } from "../../Services";
-import { DbUser } from "../../models/UserModels";
+import { DbUser, GetUserModal } from "../../models/UserModels";
+import { Button } from "../../Components/Common/Button/Button";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
@@ -25,55 +26,43 @@ const CustomerList: React.FC = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
+  const [isFilter, setIsFilter] = useState<string>();
+  const [totalData, setTotalData] = useState<number>();
 
-  const handleCustomerData = async () => {
+  const handleCustomerData = async ({
+    direction,
+    filter,
+    pageSize,
+    path,
+    sort,
+    currentFirstDoc,
+    currentLastDoc,
+  }: GetUserModal) => {
     setLoading(true);
     try {
-      let AllCustomers = [];
-      const customers = (await getUser({
-        path: "customer",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
+      const user = (await getUser({
+        path: path,
+        pageSize: pageSize,
+        filter: filter,
+        direction: direction,
+        sort: sort,
+        currentFirstDoc: currentFirstDoc || null,
+        currentLastDoc: currentLastDoc || null,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         users: DbUser[];
+        length: number;
       };
 
       setCurrentDoc((prev) => ({
         ...prev,
-        currentFirstDoc: customers.currentFirstDoc,
-        currentLastDoc: customers.currentLastDoc,
+        currentFirstDoc: user.currentFirstDoc,
+        currentLastDoc: user.currentLastDoc,
       }));
+      setTotalData(user.length);
 
-      if (customers.users.length > 0) AllCustomers.push(...customers.users);
-      const admins = (await getUser({
-        path: "admin",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        users: DbUser[];
-      };
-      if (admins.users.length > 0) AllCustomers.push(...admins.users);
-      const chefs = (await getUser({
-        path: "chef",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        users: DbUser[];
-      };
-      if (chefs.users.length > 0) AllCustomers.push(...chefs.users);
-      const customerList = await aggregateCustomerData(AllCustomers);
+      const customerList = await aggregateCustomerData(user.users);
       setInitialCustomer(customerList);
       setOriginalData(customerList);
     } catch (error) {
@@ -126,8 +115,51 @@ const CustomerList: React.FC = () => {
     setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
+  const handleChangeUser = (value: "customer" | "admin" | "chef") => {
+    setIsFilter(value);
+    if (value === "admin") {
+      handleCustomerData({
+        path: "admin",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+    if (value === "chef") {
+      handleCustomerData({
+        path: "chef",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+    if (value === "customer") {
+      handleCustomerData({
+        path: "customer",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+  };
+
   useEffect(() => {
-    handleCustomerData();
+    handleCustomerData({
+      path: "customer",
+      filter: "fullName",
+      pageSize: pagination.perPage,
+      sort: "asc",
+      direction: "next",
+    });
   }, [pagination.perPage]);
 
   useEffect(() => {
@@ -188,36 +220,78 @@ const CustomerList: React.FC = () => {
               <p className="text-[15px]">Export</p>
             </button>
 
-            <DropDown
-              children={
-                <>
-                  <Filter className="size-4 text-[var(--dark-secondary-text)]" />
-                  <span className="text-[var(--dark-secondary-text)]">
-                    Filter
-                  </span>
-                </>
-              }
-              options={[
-                <FilterButton
-                  sortOrder={sortOrder.order}
-                  sortingOptions={["Total spent", "Name", "Total order"]}
-                  onSelect={handleSelect}
-                />,
-                <DatePicker />,
-              ]}
-              style={{
-                display: "flex",
-                fontSize: "15px",
-                borderRadius: "4px",
-                padding: "0.5rem 1rem 0.5rem 1rem",
-                color: "var(--dark-text)",
-                border: "1px solid var(--light-secondary-text)  ",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                background: "",
-              }}
-            />
+            <Button
+            bodyStyle={{
+              width: "150px",
+              top: "3.5rem",
+              left: "-2.7rem",
+            }}
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                  Filter
+                </span>
+              </div>
+            }
+            children={[
+              <FilterButton
+                bodyStyle={{
+                  width: "150px",
+                  top: "-0.3rem",
+                  left: "-10rem",
+                }}
+                sortOrder={sortOrder.order}
+                onSelect={handleSelect}
+                children={[
+                  { label: "Amount", value: "amount" },
+                  { label: "Order", value: "order" },
+                ]}
+              />,
+              <FilterButton
+                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
+                children={[
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">
+                          Customer
+                        </span>
+                      </div>
+                    ),
+                    value: "customer",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">
+                          Admin
+                        </span>
+                      </div>
+                    ),
+                    value: "admin",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">Chef</span>
+                      </div>
+                    ),
+                    value: "chef",
+                  },
+                ]}
+                parent={
+                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
+                    <UserCheck className="size-5  " />
+                    <span className="tracking-wide text-[17px] ">Category</span>
+                  </div>
+                }
+                onSelect={(value) =>
+                  handleChangeUser(value as "customer" | "admin" | "chef")
+                }
+              />,
+            ]}
+          />
           </div>
         </div>
       </div>
@@ -254,9 +328,30 @@ const CustomerList: React.FC = () => {
             </button>
           </div>
         )}
+                    {isFilter && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button onClick={() => setIsFilter(undefined)} className=" ">
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
       </div>
       <CustomerTable
-        totalData={5}
+        totalData={totalData}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

@@ -1,3 +1,5 @@
+import { UserRole } from "./user.model";
+
 export interface LogCardProps {
   id?: string;
   uid?: string;
@@ -15,6 +17,8 @@ export interface LogCardProps {
   detail?: string;
   date: Date;
   open?: boolean;
+  userId?: string,
+  userRole?: string | UserRole
   handleClick?: (id: string) => void;
 }
 

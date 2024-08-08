@@ -37,14 +37,6 @@ const LoginContainer: React.FC = () => {
     try {
       setDataSend(false);
       await dispatch(singInAction({ email, password, userRole: "admin" }));
-      // await addLogs({
-      //   action: "login",
-      //   date: today,
-      //   name: response.payload.fullName,
-      //   profile: response.payload.avatar,
-      //   uid: response.payload.uid,
-      //   detail: `${response.payload.fullName} is logged in `,
-      // });
     } catch (error) {
       console.error(`Error occuring while sending form : ${error}`);
       setDataSend(true);
