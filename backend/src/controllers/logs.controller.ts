@@ -4,6 +4,7 @@ import {
   getLogsFromDatabase,
   getLogsOfRolesFromFirestore,
 } from "../firebase/db/logs.firestore.js";
+import { getUserFromDatabase } from "../firebase/db/user.firestore.js";
 import { logProps } from "../models/logs.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -74,11 +75,12 @@ const getLogsBasedOnAction = asyncHandler(async (req: any, res: any) => {
 });
 
 const addLogs = asyncHandler(async (req: any, res: any) => {
-  const { uid, avatar, role, fullName } = req.user as User;
   const {
     action,
     date,
     detail,
+    userId,
+    userRole,
   }: {
     action:
       | "login"
@@ -90,8 +92,19 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
       | "checkout";
     date: Date;
     detail?: string;
+    userId?: string;
+    userRole?: "customer" | "admin" | "chef";
   } = req.body;
+
   try {
+    if (userId && userRole && (action === "login" || action === "register")) {
+      var { uid, avatar, role, fullName } = await getUserFromDatabase(
+        userId,
+        userRole
+      );
+    } else {
+      var { uid, avatar, role, fullName } = req.user as User;
+    }
     const response = await addLogToFirestore(
       {
         uid,
