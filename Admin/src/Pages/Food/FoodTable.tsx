@@ -15,6 +15,7 @@ interface FoodTableProp {
   };
   pagination: { currentPage: number; perPage: number };
   onPageChange: (page: number) => void;
+  totalData: number
 }
 
 export const FoodTable: React.FC<FoodTableProp> = ({
@@ -24,6 +25,7 @@ export const FoodTable: React.FC<FoodTableProp> = ({
   selectedData,
   pagination,
   onPageChange,
+  totalData
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -87,6 +89,7 @@ export const FoodTable: React.FC<FoodTableProp> = ({
   ];
   return (
     <Table
+      totalData={totalData}
       data={products}
       columns={Columns as any}
       actionIconColor="red"

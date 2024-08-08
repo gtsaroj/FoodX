@@ -3,9 +3,9 @@ import React from "react";
 
 interface DeleteProp {
   id: string;
-  type?: "specials"|"products"
+  type?: "specials" | "products";
   isClose: boolean;
-  setDelete: (id: string, type:"specials"| "products") => void;
+  setDelete: (id: string, type: "specials" | "products") => void;
   closeModal: () => void;
 }
 
@@ -38,7 +38,7 @@ const Delete: React.FC<DeleteProp> = ({
             Cancel
           </button>
           <button
-            onClick={() => setDelete(id,type as "specials"|"products")}
+            onClick={() => setDelete(id, type as "specials" | "products")}
             className="text-[var(--light-text)] border-[var(--danger-text)] hover:bg-[var(--danger-text)] duration-150 text-[17px] tracking-wide px-7 py-2 rounded-lg bg-[var(--danger-bg)] "
           >
             Delete
@@ -60,6 +60,7 @@ export const DeleteButton: React.FC<DeleteButtonProp> = ({
 }) => {
   return (
     <button
+      disabled={dataLength < 1}
       className={`hover:bg-gray-100 ${
         dataLength > 0 ? "cursor-pointer" : "cursor-not-allowed"
       } rounded-lg duration-150 p-2`}

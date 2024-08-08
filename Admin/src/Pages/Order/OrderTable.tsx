@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../Services";
 
 interface orderTableProp {
+  totalData: number
   orders: OrderModal[];
   loading?: boolean;
   pagination: { currentPage: number; perPage: number };
@@ -14,6 +15,7 @@ interface orderTableProp {
 }
 
 export const OrderTable: React.FC<orderTableProp> = ({
+  totalData,
   orders,
   loading,
   onPageChange,
@@ -169,6 +171,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
+        totalData={totalData}
         data={orders as any}
         columns={Columns}
         actionIconColor="red"

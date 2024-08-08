@@ -256,6 +256,7 @@ const CustomerList: React.FC = () => {
         )}
       </div>
       <CustomerTable
+        totalData={5}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

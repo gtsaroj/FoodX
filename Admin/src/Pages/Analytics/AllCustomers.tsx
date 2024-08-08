@@ -10,15 +10,30 @@ import {
   getUser,
 } from "../../Services";
 import toast from "react-hot-toast";
-import { AArrowDown, ChevronUp, X } from "lucide-react";
+import {
+  AlignLeft,
+  ChevronUp,
+  Filter,
+  User2,
+  UserCheck,
+  UserCircle2Icon,
+  UserCircleIcon,
+  X,
+} from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
 import { debounce } from "../../Utility/Debounce";
 import { SearchCustomer } from "../../Utility/Search";
-import { DbUser } from "../../models/UserModels";
+import { DbUser, GetUserModal } from "../../models/UserModels";
+import { User } from "firebase/auth";
+import { BiCategory } from "react-icons/bi";
+import { FaRegStar } from "react-icons/fa";
+import { Button } from "../../Components/Common/Button/Button";
 
 const AllCustomers = () => {
+  const [totalData, setTotalData] = useState<number>();
+  const [isFilter, setIsFilter] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [originalData, setOriginalData] = useState<CustomerType[]>([]);
@@ -40,56 +55,41 @@ const AllCustomers = () => {
     currentLastDoc: string;
   }>();
 
-  const handleCustomerData = async () => {
+  const handleCustomerData = async (data: GetUserModal) => {
     setLoading(true);
     try {
-      let AllCustomers = [];
-      const customers = (await getUser({
-        path: "customer",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
+      const AllCustomers = (await getUser({
+        path: data.path,
+        filter: data.filter,
+        pageSize: data.pageSize,
+        direction: data.direction,
+        sort: data.sort,
+        currentFirstDoc: data.currentFirstDoc,
+        currentLastDoc: data.currentLastDoc,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         users: DbUser[];
+        length: number;
       };
-
-      setCurrentDoc((prev) => ({
-        ...prev,
-        currentFirstDoc: customers.currentFirstDoc,
-        currentLastDoc: customers.currentLastDoc,
-      }));
-
-      if (customers.users.length > 0) AllCustomers.push(...customers.users);
-      const admins = (await getUser({
-        path: "admin",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        users: DbUser[];
-      };
-      if (admins.users.length > 0) AllCustomers.push(...admins.users);
-      const chefs = (await getUser({
-        path: "chef",
-        pageSize: pagination.perPage,
-        filter: "fullName",
-        direction: "next",
-        sort: "asc",
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        users: DbUser[];
-      };
-      if (chefs.users.length > 0) AllCustomers.push(...chefs.users);
-      const customerList = await aggregateCustomerData(AllCustomers);
-      setOriginalData(customerList);
-      setInitialCustomer(customerList);
+      const customerList = await aggregateCustomerData(AllCustomers.users);
+      setOriginalData((prev) => {
+        return [
+          ...prev,
+          ...customerList.filter(
+            (data) => !prev.some((user) => user.id === data.id)
+          ),
+        ];
+      });
+      setInitialCustomer((prev) => {
+        return [
+          ...prev,
+          ...customerList.filter(
+            (data) => !prev.some((user) => user.id === data.id)
+          ),
+        ];
+      });
+      setTotalData(AllCustomers.length);
     } catch (error) {
       setLoading(false);
       return console.log(`Error while getting customers : ${error}`);
@@ -213,34 +213,46 @@ const AllCustomers = () => {
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
-    let sortedCustomers;
-    if (value === "Total spent") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.amountSpent - a.amountSpent
-            : a.amountSpent - b.amountSpent
-      );
+    if (value === "order") {
+      newOrder === "asc"
+        ? await handleCustomerData({
+            direction: "next",
+            filter: "fullName",
+            pageSize: pagination.perPage,
+            path: "admin",
+            sort: "asc",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          })
+        : await handleCustomerData({
+            direction: "next",
+            filter: "fullName",
+            pageSize: pagination.perPage,
+            path: "admin",
+            sort: "desc",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          });
     }
-    if (value === "Name") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.name.localeCompare(a.name)
-            : a.name.localeCompare(b.name)
-      );
-    }
-    if (value === "Total order") {
-      sortedCustomers = [...initialCustomer].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? b.totalOrder - a.totalOrder
-            : a.totalOrder - b.totalOrder
-      );
+    if (value === "amount") {
+      newOrder === "asc"
+        ? await handleCustomerData({
+            direction: "next",
+            filter: "fullName",
+            pageSize: pagination.perPage,
+            path: "admin",
+            sort: "asc",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          })
+        : await handleCustomerData({
+            direction: "next",
+            filter: "fullName",
+            pageSize: pagination.perPage,
+            path: "admin",
+            sort: "desc",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+          });
     }
 
     setSortOrder({ field: value, order: newOrder });
-    setInitialCustomer(sortedCustomers as CustomerType[]);
   };
 
   const handleChange = async (value: string) => {
@@ -254,6 +266,43 @@ const AllCustomers = () => {
     initialCustomer,
   ]);
 
+  const handleChangeUser = (value: "customer" | "admin" | "chef") => {
+    setIsFilter(value);
+    if (value === "admin") {
+      handleCustomerData({
+        path: "admin",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+    if (value === "chef") {
+      handleCustomerData({
+        path: "chef",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+    if (value === "customer") {
+      handleCustomerData({
+        path: "customer",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+  };
+
   useEffect(() => {
     if (sortOrder.field === "") {
       setInitialCustomer(originalData);
@@ -261,8 +310,47 @@ const AllCustomers = () => {
   }, [sortOrder.field, originalData]);
 
   useEffect(() => {
-    handleCustomerData();
-  }, [pagination.perPage]);
+    if (
+      initialCustomer.length <= 0 ||
+      !isFilter?.length ||
+      !sortOrder.field.length
+    ) {
+      handleCustomerData({
+        path: "admin",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+      handleCustomerData({
+        path: "chef",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+      handleCustomerData({
+        path: "customer",
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+  }, [
+    initialCustomer.length,
+    currentDoc?.currentFirstDoc,
+    currentDoc?.currentLastDoc,
+    pagination.perPage,
+    isFilter?.length,
+    sortOrder.field.length,
+  ]);
 
   useEffect(() => {
     if (
@@ -347,17 +435,106 @@ const AllCustomers = () => {
                 </button>
               </div>
             )}
+            {isFilter && (
+              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+                  <p
+                    className={` duration-150 ${
+                      sortOrder?.order === "desc"
+                        ? "rotate-180"
+                        : sortOrder.order === "asc"
+                        ? ""
+                        : ""
+                    } `}
+                  >
+                    <ChevronUp size={20} />
+                  </p>
+                </div>
+                <button onClick={() => setIsFilter(undefined)} className=" ">
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="z-[100]">
-          <FilterButton
-            sortOrder={sortOrder.order}
-            sortingOptions={["Total spent", "Name", "Total order"]}
-            onSelect={handleSelect}
+          <Button
+            bodyStyle={{
+              width: "150px",
+              top: "3.5rem",
+              left: "-2.7rem",
+            }}
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                  Filter
+                </span>
+              </div>
+            }
+            children={[
+              <FilterButton
+                bodyStyle={{
+                  width: "150px",
+                  top: "-0.3rem",
+                  left: "-10rem",
+                }}
+                sortOrder={sortOrder.order}
+                onSelect={handleSelect}
+                children={[
+                  { label: "Amount", value: "amount" },
+                  { label: "Order", value: "order" },
+                ]}
+              />,
+              <FilterButton
+                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
+                children={[
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">
+                          Customer
+                        </span>
+                      </div>
+                    ),
+                    value: "customer",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">
+                          Admin
+                        </span>
+                      </div>
+                    ),
+                    value: "admin",
+                  },
+                  {
+                    label: (
+                      <div className="flex items-center justify-start gap-2">
+                        <span className="text-[17px] tracking-wide ">Chef</span>
+                      </div>
+                    ),
+                    value: "chef",
+                  },
+                ]}
+                parent={
+                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
+                    <UserCheck className="size-5  " />
+                    <span className="tracking-wide text-[17px] ">Category</span>
+                  </div>
+                }
+                onSelect={(value) =>
+                  handleChangeUser(value as "customer" | "admin" | "chef")
+                }
+              />,
+            ]}
           />
         </div>
       </div>
       <CustomerTable
+        totalData={3}
         onPageChange={(page) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }

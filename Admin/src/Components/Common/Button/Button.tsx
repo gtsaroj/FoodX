@@ -1,37 +1,41 @@
 import React, { useState } from "react";
 
 interface ButtonProp {
+  parentStyle?: React.CSSProperties;
+  bodyStyle?: React.CSSProperties;
   parent: React.ReactNode;
   children: React.ReactNode[] | string[];
-  onSelect: (value: string) => void;
+  onSelect?: (value: string) => void;
 }
 
 export const Button: React.FC<ButtonProp> = ({
   children,
   onSelect,
   parent,
+  bodyStyle,
 }) => {
   const [show, setShow] = useState<boolean>(false);
   const [index, setIndex] = useState<number>();
   return (
     <div className="relative  w-full">
       <div
-        className="w-[150px] flex justify-end"
+        className=" cursor-pointer flex justify-end"
         onClick={() => setShow(!show)}
       >
         {parent}
       </div>
       <div
-        className={`flex  top-12 z-[100]  duration-100 absolute ${
-          show ? "visible translate-x-0 " : "invisible -translate-y-2"
-        } flex-col shadow-sm w-full p-2 shadow-[#00000067] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded-lg  `}
+        style={bodyStyle}
+        className={`flex  p-1  z-[100]  duration-100 absolute ${
+          show
+            ? "visible translate-y-0 opacity-100 "
+            : "invisible -translate-y-2 opacity-0 "
+        } flex-col shadow-sm w-full  shadow-[#0000002c] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded `}
       >
         {children?.map((child, key) =>
           typeof child === "string" ? (
             <button
-              className={`w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)] p-1.5 ${
-                index === key ? "bg-slate-300 " : "bg-[#00000000]"
-              } `}
+              className={`w-full 150 hover:bg-gray-100 rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)] `}
               onClick={() => {
                 setIndex(key as number);
                 if (!onSelect) return;
@@ -46,12 +50,8 @@ export const Button: React.FC<ButtonProp> = ({
                 setIndex(key);
               }}
               className={`
-            w-full rounded tracking-wider text-[16px] hover:text-black  duration-150 text-[var(--dark-text)]
-                                p-1.5 ${
-                                  index === key
-                                    ? "bg-slate-300 "
-                                    : "bg-[#00000000]"
-                                } `}
+            w-full rounded duration-150 hover:bg-gray-100 tracking-wider text-[16px] hover:text-black   text-[var(--dark-text)]
+                                 `}
             >
               {child}{" "}
             </button>
