@@ -3,10 +3,12 @@ import { SpecialCards } from "../Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
 import { getCategory } from "../../firebase/db";
+import { getAllCategory } from "../../Services";
 
 interface categoriesTagOption {
-  tag: string;
-  photoUrl: string;
+  name: string;
+  id?: string;
+  image: string;
 }
 
 export const MenuType: React.FC = () => {
@@ -22,36 +24,18 @@ export const MenuType: React.FC = () => {
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
 
   const handleEvent = (tag: string) => {
+    console.log(tag)
     const filteredData = initialData?.filter(
       (singleProduct) => singleProduct.tag === tag
     );
     setCategorizedData(filteredData);
   };
 
-  const collectionOfTags = new Set();
-  initialData?.forEach((singleProduct) => {
-    collectionOfTags.add(singleProduct.tag);
-  });
-
-  const TagsArray = getCategory("bnw");
-
   useEffect(() => {
     const CategoriesData = async () => {
       try {
-        const res = await TagsArray;
-        const categoryTags = await Promise.all(
-          Object.keys(res.icons).map(async (singleCategory) => {
-            const categoryImg = await getCategory("bnw");
-            return {
-              tag: singleCategory,
-              photoUrl:
-                categoryImg.icons[
-                  singleCategory as keyof typeof categoryImg.icons
-                ],
-            };
-          })
-        );
-        setCategoriesTag(categoryTags);
+        const response = await getAllCategory();
+        setCategoriesTag(response);
       } catch (error) {
         console.error("Error fetching tags:", error);
       }
@@ -63,7 +47,7 @@ export const MenuType: React.FC = () => {
   useEffect(() => {
     if (initialData) {
       const defaultData = initialData?.filter(
-        (singleProduct) => singleProduct.tag === "momo"
+        (singleProduct) => singleProduct.tag === "Burger"
       );
       setCategorizedData(defaultData);
     }
@@ -74,15 +58,15 @@ export const MenuType: React.FC = () => {
       <div className="flex flex-wrap h-full gap-3 px-3 justify-evenly ">
         {categoriesTag?.map((items: categoriesTagOption, index) => (
           <div
-            onClick={() => handleEvent(items.tag.split("_").join(" "))}
+            onClick={() => handleEvent(items.name as string)}
             key={index}
             className=" py-3 sm:h-full  sm:rounded-md cursor-pointer flex flex-col gap-2 text-sm sm:text-[15px] flex-wrap  items-center justify-center "
           >
             <div className=" bg-[#dbd9e462]  hover:bg-[#8a84953a]  p-3 rounded-md">
-              <img className=" w-[40px] h-[40px] " src={items.photoUrl} />
+              <img className=" w-[40px] h-[40px] " src={items.image} />
             </div>
             <p className="sm:text-[16px]  text-[12px]">
-              {items.tag.split("_").join(" ")}
+              {items.name}
             </p>
           </div>
         ))}

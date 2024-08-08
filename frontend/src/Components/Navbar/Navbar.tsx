@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../logo/texas.png";
 import {
   ChevronDown,
+  Heart,
   MenuIcon,
   Phone,
   Search,
@@ -135,6 +136,7 @@ export const Navbar: React.FC = () => {
           <div className="hidden lg:flex" ref={FilterRef}>
             <DesktopSearch />
           </div>
+          <Heart className="size-7"/>
           {userImage?.avatar ? (
             <div
               onClick={() => setOpenProfile(!openProfile)}
@@ -225,6 +227,7 @@ export const Navbar: React.FC = () => {
           openProfile ? "flex" : "hidden"
         }`}
       >
+       
         {userImage && <Profile user={userImage} />}
       </div>
     </nav>

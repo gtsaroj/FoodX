@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import { Order } from "./models/order.model";
 import { makeRequest } from "./makeRequest";
+import { waitForPendingWrites } from "firebase/firestore";
 
 interface userInfo {
   uid: string;
@@ -17,13 +18,17 @@ interface userInfo {
   role: string;
 }
 
-export const signIn = async (email: string, password?: string,  userRole = "customer") => {
+export const signIn = async (
+  email: string,
+  password?: string,
+  userRole = "customer"
+) => {
   try {
     await signInUser(email, password as string);
     const response = await globalRequest({
       method: "post",
       url: "users/login",
-      data: { email,userRole },
+      data: { email, userRole },
     });
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);
@@ -103,10 +108,22 @@ export const order = async (data: Order) => {
       url: "/orders/add-order",
       data: { ...data },
     });
-    console.log(response.statusText)
+    console.log(response.statusText);
     return response.data.data;
   } catch (error) {
     toast.error("Unable to update user");
     throw new Error("Unable to update user");
+  }
+};
+
+export const getAllCategory = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "categories/get-category",
+    });
+  return response.data.data
+  } catch (error) {
+    throw new Error("Error while fetching data" + error);
   }
 };
