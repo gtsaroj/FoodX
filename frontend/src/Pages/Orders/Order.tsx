@@ -35,129 +35,115 @@ const order1: Order = {
 };
 
 export const OrderComponent = () => {
-  const { order, currentpage, orderPerPage } = useSelector(
-    (state: RootState) => state.root.Products.order
-  );
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [lastVisibleOrder, setLastVisibleOrder] = useState<any>();
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [nextDisabled, setNextDisabled] = useState<boolean>(false);
-  const user = useSelector((state: RootState) => state.root.auth.userInfo);
-  const fetchData = async (next?: boolean) => {
-    try {
-      if (!user) throw new Error("Please Login first.");
-      const data = await getOrderByUser(user?.uid, lastVisibleOrder, next);
-      console.log(data);
-      const serializeData = data?.map((order: Order) => ({
-        ...order,
-        orderRequest: {
-          seconds: order.orderRequest?.seconds,
-          nanoseconds: order.orderRequest?.nanoseconds,
-        },
-        orderFullFilled: {
-          seconds: order.orderFullFilled?.seconds,
-          nanoseconds: order.orderFullFilled?.nanoseconds,
-        },
-      }));
-      Store.dispatch(addToList([...serializeData]));
+  // const { order, currentpage, orderPerPage } = useSelector(
+  //   (state: RootState) => state.root.Products.order
+  // );
+  // const [orders, setOrders] = useState<Order[]>([]);
+  // const [lastVisibleOrder, setLastVisibleOrder] = useState<any>();
+  // const [currentPage, setCurrentPage] = useState<number>(1);
+  // const [nextDisabled, setNextDisabled] = useState<boolean>(false);
+  // const user = useSelector((state: RootState) => state.root.auth.userInfo);
+  // const fetchData = async (next?: boolean) => {
+  //   try {
+  //     if (!user) throw new Error("Please Login first.");
+  //     const data = await getOrderByUser(user?.uid, lastVisibleOrder, next);
+  //     console.log(data);
+  //     const serializeData = data?.map((order: Order) => ({
+  //       ...order,
+  //       orderRequest: {
+  //         seconds: order.orderRequest?.seconds,
+  //         nanoseconds: order.orderRequest?.nanoseconds,
+  //       },
+  //       orderFullFilled: {
+  //         seconds: order.orderFullFilled?.seconds,
+  //         nanoseconds: order.orderFullFilled?.nanoseconds,
+  //       },
+  //     }));
+  //     Store.dispatch(addToList([...serializeData]));
 
-      if (data.length < 5) {
-        setNextDisabled(true);
-      } else {
-        setNextDisabled(false);
-      }
+  //     if (data.length < 5) {
+  //       setNextDisabled(true);
+  //     } else {
+  //       setNextDisabled(false);
+  //     }
 
-      if (next) {
-        setOrders((prev) => [...prev, ...data]);
-      } else {
-        5;
-        setOrders(data);
-      }
+  //     if (next) {
+  //       setOrders((prev) => [...prev, ...data]);
+  //     } else {
+  //       5;
+  //       setOrders(data);
+  //     }
 
-      if (order.length > 0) {
-        setLastVisibleOrder(data[data.length - 1].orderRequest);
-      }
-      setOrders(data);
-    } catch (error) {
-      console.error(error);
-      throw new Error("Fetch data failed");
-    } finally {
-    }
-  };
-  const handleNextPage = () => {
-    setCurrentPage((prev) => prev + 1);
-    Store.dispatch(onNavigateNextPage());
-    fetchData(true);
-  };
+  //     if (order.length > 0) {
+  //       setLastVisibleOrder(data[data.length - 1].orderRequest);
+  //     }
+  //     setOrders(data);
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new Error("Fetch data failed");
+  //   } finally {
+  //   }
+  // };
+  // const handleNextPage = () => {
+  //   setCurrentPage((prev) => prev + 1);
+  //   Store.dispatch(onNavigateNextPage());
+  //   fetchData(true);
+  // };
 
-  const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-    Store.dispatch(onNavigatePrevPage());
-    fetchData(false);
-  };
+  // const handlePrevPage = () => {
+  //   setCurrentPage((prev) => Math.max(prev - 1, 1));
+  //   Store.dispatch(onNavigatePrevPage());
+  //   fetchData(false);
+  // };
 
+  // const totalOrder = order.length - 1;
 
-  const totalOrder = order.length - 1;
-  
-  const totalOrderPerPage = currentPage * totalOrder
+  // const totalOrderPerPage = currentPage * totalOrder;
+
+  // // useEffect(() => {
+  // //   fetchData();
+  // // }, [currentPage]);
 
   // useEffect(() => {
   //   fetchData();
-  // }, [currentPage]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // }, []);
 
   return (
-    <div className="flex items-center justify-center w-full h-full p-3">
-      <div className="max-w-[800px] py-3 px-5 flex-grow flex flex-col gap-5">
-        <div className="text-xl font-bold text-[var(--dark-text)] text-center tracking-wide">
-          <p>Order History</p>
+    <div className="flex  flex-col items-start gap-10 py-5 justify-center w-full h-full ">
+      <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
+        <h1 className="text-[23px] tracking-wider ">Recent Orders</h1>
+        <div className="flex items-center w-full  gap-5 overflow-x-auto ">
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
         </div>
-        <div className="flex flex-col gap-2 max-h-[400px] overflow-y-scroll">
-          <div className="flex flex-col flex-grow-0 gap-2 py-2">
-            {orders.map((item: Order) => (
-              <OrderCard key={item.orderId} item={item} />
-            ))}
+      </div>
+      <div className="w-full">
+        <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
+          <h1 className="text-[23px] tracking-wider ">Recent Orders</h1>
+          <div className="flex flex-col items-center w-full  gap-5  ">
+            <div className="h-[60px] w-full bg-slate-200 "></div>
+            <div className="h-[60px] w-full bg-slate-200 "></div>
+            <div className="h-[60px] w-full bg-slate-200 "></div>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-2 text-xs">
-          <button
-            className={
-              currentPage === 1
-                ? "cursor-not-allowed  hover:bg-[var(--light-secondary-text)] py-1 pr-2 pl-1 group rounded flex items-center bg-[var(--light-border)] text-[var(--dark-text)]"
-                : "hover:bg-[var(--light-secondary-text)] py-1 pr-2 pl-1 group rounded flex items-center bg-[var(--light-border)] cursor-pointer text-[var(--dark-text)] "
-            }
-            onClick={handlePrevPage}
-            disabled={currentPage === 1}
-          >
-            <span>
-              <ChevronsLeft
-                size={15}
-                className="group-hover:text-[var(--secondary-color)]"
-              />
-            </span>
-            <span>Prev</span>
-          </button>
-          <p className="px-2 py-1 font-medium">{currentPage}</p>
-          <button
-            className={
-              nextDisabled
-                ? " cursor-not-allowed  hover:bg-[var(--light-secondary-text)] py-1 pl-2 pr-1 group rounded flex items-center bg-[var(--light-border)] text-[var(--dark-text)]  "
-                : " cursor-pointer  hover:bg-[var(--light-secondary-text)] py-1 pl-2 pr-1 group rounded flex items-center bg-[var(--light-border)]  text-[var(--dark-text)]  "
-            }
-            onClick={handleNextPage}
-            disabled={nextDisabled}
-          >
-            <span>Next</span>
-            <span>
-              <ChevronsRight
-                size={15}
-                className="group-hover:text-[var(--secondary-color)]"
-              />
-            </span>
-          </button>
+      </div>{" "}
+      <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
+        <h1 className="text-[23px] tracking-wider ">Popular products</h1>
+        <div className="flex items-center w-full  gap-5 overflow-x-auto ">
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
+          <OrderCard />
         </div>
       </div>
     </div>
@@ -166,43 +152,8 @@ export const OrderComponent = () => {
 
 export const OrderCard = (props: { item: Order }) => {
   return (
-    <div className="w-full h-[110px] bg-[var(--light-foreground)] py-2 px-3 overflow-hidden rounded shadow-sm select-none">
-      <div className="flex flex-col w-full h-full gap-3 text-sm">
-        <div className="flex items-center justify-between gap-3 text-sm font-medium text-[var(--dark-text)] group">
-          <p className="text-xs cursor-pointer">7th April, 2024</p>
-          <div className="flex items-center gap-1 text-xs cursor-pointer ">
-            <p>
-              {props.item.products.map((product) => (
-                <span>{product.price * product.quantity}</span>
-              ))}
-            </p>
-            <ChevronRight
-              className="group-hover:text-[var(--secondary-color)] text-[var(--dark-secondary-text)]"
-              size={20}
-            />
-          </div>
-        </div>
-        {props.item.products.map((product) => (
-          <div className="flex items-center justify-between gap-3 text-[var(--dark-secondary-text)]">
-            <div className="flex flex-col gap-2 text-xs">
-              <p className="flex items-center gap-[6px]">
-                <span className="w-[5px] h-[5px] rounded-full bg-[var(--primary-color)]"></span>
-                {product.name}
-              </p>
-              <p className="flex items-center gap-[6px]">
-                <span className="w-[5px] h-[5px] rounded-full bg-[var(--secondary-color)]"></span>
-                Rs {product.price} ({product.quantity})
-              </p>
-            </div>
-            <div>
-              <img
-                src={product.image}
-                className="w-[50px] rounded-full h-[50px] object-cover object-center"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="w-full">
+      <div className="w-[300px] h-[200px] bg-slate-100 rounded-sm "></div>
     </div>
   );
 };
