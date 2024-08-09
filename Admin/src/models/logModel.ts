@@ -5,7 +5,7 @@ export interface LogCardProps {
   uid?: string;
   name?: string;
   profile?: string;
-  action:
+  action?:
     | "login"
     | "register"
     | "logout"

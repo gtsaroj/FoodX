@@ -15,14 +15,14 @@ import UpdateCategory from "../../Components/Upload/UpdateCategory";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
-import { ChevronUp, Filter, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
 import { Button } from "../../Components/Common/Button/Button";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
-  const [originalData, setOriginalData] = useState<CategoryType[]>([]);
+  const [isFilter, setIsFilter] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
     { id: string }[]
@@ -212,25 +212,14 @@ const AllCategories = () => {
               />
             </div>
             <div>
-              {sortOrder && (
-                <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              {isFilter && (
+                <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                   <div className="flex gap-1 items-center justify-center">
-                    <span className="  text-sm ">
-                      {sortOrder.toLowerCase()}
+                    <span className="  text-[15px] text-[var(--dark-secondary-text)]">
+                      {isFilter.toLowerCase()}
                     </span>
-                    <p
-                      className={` duration-150 ${
-                        sortOrder === "desc"
-                          ? "rotate-180"
-                          : sortOrder === "asc"
-                          ? ""
-                          : ""
-                      } `}
-                    >
-                      <ChevronUp size={20} />
-                    </p>
                   </div>
-                  <button onClick={() => setSortOrder(undefined)} className=" ">
+                  <button onClick={() => setIsFilter("")} className=" ">
                     <X className="text-[var(--danger-text)] " size={20} />
                   </button>
                 </div>
@@ -243,7 +232,7 @@ const AllCategories = () => {
             sortFn={(value) => setSortOrder(value)}
             bodyStyle={{
               width: "400px",
-              top: "3.5rem",
+              top: "3rem",
               left: "-18rem",
             }}
             parent={

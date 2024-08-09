@@ -13,7 +13,7 @@ import { Button } from "../../Components/Common/Button/Button";
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [originalData, setOriginalData] = useState<CustomerType[]>([]);
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<{
     currentPage: number;
@@ -52,11 +52,10 @@ const CustomerList: React.FC = () => {
         length: number;
       };
 
-      setCurrentDoc((prev) => ({
-        ...prev,
+      setCurrentDoc({
         currentFirstDoc: user.currentFirstDoc,
         currentLastDoc: user.currentLastDoc,
-      }));
+      });
       setTotalData(user.length);
 
       const customerList = await aggregateCustomerData(user.users);
@@ -83,7 +82,8 @@ const CustomerList: React.FC = () => {
     isChecked: boolean,
     value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
   ) => {
-    // if (!isChecked) return toast.error("Error");
+    if (!isChecked) return setIsFilter("");
+    setIsFilter(value);
     try {
       if (value === "orders" && isChecked) {
         await handleCustomerData({
@@ -95,7 +95,7 @@ const CustomerList: React.FC = () => {
           currentFirstDoc: currentDoc?.currentFirstDoc,
         });
       }
-      
+
       // if (value === "amount" && isChecked) {
       //   await handleCustomerData({
       //     direction: "next",
@@ -155,17 +155,25 @@ const CustomerList: React.FC = () => {
     }
   };
 
-
-
   useEffect(() => {
-    handleCustomerData({
-      path: "customer",
-      filter: "fullName",
-      pageSize: pagination.perPage,
-      sort: "asc",
-      direction: "next",
-    });
-  }, [pagination.perPage]);
+    if (initialCustomer.length <= 0 || isFilter?.length <= 0 ) {
+      handleCustomerData({
+        path: "customer",         
+        direction: "next",
+        filter: "fullName",
+        pageSize: pagination.perPage,
+        sort: "asc",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+      });
+    }
+  }, [
+    isFilter?.length,
+    initialCustomer.length,
+    currentDoc?.currentFirstDoc,
+    currentDoc?.currentLastDoc,
+    pagination.perPage,
+  ]);
 
   useEffect(() => {
     if (
@@ -208,7 +216,7 @@ const CustomerList: React.FC = () => {
     if (sortOrder.field === "") {
       setInitialCustomer(originalData);
     }
-  }, [sortOrder.field, originalData]);
+  }, [sortOrder, originalData]);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
@@ -226,33 +234,35 @@ const CustomerList: React.FC = () => {
             </button>
             <Button
               bodyStyle={{
-              width : "400px",
-              top: "3.5rem",
-              left: "-18rem",
-            }}
-            parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
-                <Filter className="size-5 text-[var(--dark-secondary-text)]" />
-                <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
-                  Filter
-                </span>
-              </div>
-            }
-            checkFn={(isChecked: boolean, value: string) => {
-                  handleSelect(isChecked, value)
-            }}
-            types={[
-              { label: "Admin", value: "admin", id: "sfksdjlk" },
-              { label: "Customer", value: "customer", id: "fkldsjfks" },
-              { label: "Chef", value: "chef", id: "fkldjs" },
-            ]}
-            sort={[
-              { label: "Orders", value: "orders", id: "flksjd" },
-              { label: "Amount", value: "amount", id: "lfkjds" },
-              { label: "Role", value: "role", id: "fldkjs" },
-            ]}
-            sortFn={(type: "asc" | "desc") => setSortOrder(type)}
-          />
+                width: "400px",
+                top: "3.5rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                    Filter
+                  </span>
+                </div>
+              }
+              checkFn={(isChecked: boolean, value: string) => {
+                handleSelect(isChecked, value as any);
+              }}
+              types={[
+                { label: "Admin", value: "admin", id: "sfksdjlk" },
+                { label: "Customer", value: "customer", id: "fkldsjfks" },
+                { label: "Chef", value: "chef", id: "fkldjs" },
+              ]}
+              sort={[
+                { label: "Orders", value: "orders", id: "flksjd" },
+                { label: "Amount", value: "amount", id: "lfkjds" },
+                { label: "Role", value: "role", id: "fldkjs" },
+              ]}
+              sortFn={(type: "asc" | "desc") =>
+                setSortOrder(type as "asc" | "desc")
+              }
+            />
           </div>
         </div>
       </div>
@@ -266,50 +276,16 @@ const CustomerList: React.FC = () => {
             placeholder="Search"
           />
         </form>
-        {sortOrder.field && (
+        {isFilter && (
           <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
             <div className="flex gap-1 items-center justify-center">
-              <span className="  text-sm ">
-                {sortOrder.field.toLowerCase()}
-              </span>
-              <p
-                className={` duration-150 ${
-                  sortOrder?.order === "desc"
-                    ? "rotate-180"
-                    : sortOrder.order === "asc"
-                    ? ""
-                    : ""
-                } `}
-              >
-                <ChevronUp size={20} />
-              </p>
+              <span className="  text-sm ">{isFilter.toLowerCase()}</span>
             </div>
-            <button onClick={() => setSortOrder({ field: "" })} className=" ">
+            <button onClick={() => setIsFilter("")} className=" ">
               <X className="text-[var(--danger-text)] " size={20} />
             </button>
           </div>
         )}
-                    {isFilter && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
-                  <p
-                    className={` duration-150 ${
-                      sortOrder?.order === "desc"
-                        ? "rotate-180"
-                        : sortOrder.order === "asc"
-                        ? ""
-                        : ""
-                    } `}
-                  >
-                    <ChevronUp size={20} />
-                  </p>
-                </div>
-                <button onClick={() => setIsFilter(undefined)} className=" ">
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
-              </div>
-            )}
       </div>
       <CustomerTable
         totalData={totalData}

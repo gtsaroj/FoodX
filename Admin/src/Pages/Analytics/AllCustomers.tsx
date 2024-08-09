@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
 import { CustomerType } from "../../models/user.model";
 import { CustomerTable } from "../Customers/CustomerTable";
@@ -10,35 +9,20 @@ import {
   getUser,
 } from "../../Services";
 import toast from "react-hot-toast";
-import {
-  AlignLeft,
-  ChevronUp,
-  Filter,
-  User2,
-  UserCheck,
-  UserCircle2Icon,
-  UserCircleIcon,
-  X,
-} from "lucide-react";
+import { ChevronUp, Filter, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/UpdateCustomer";
 import { debounce } from "../../Utility/Debounce";
 import { SearchCustomer } from "../../Utility/Search";
 import { DbUser, GetUserModal } from "../../models/UserModels";
-import { User } from "firebase/auth";
-import { BiCategory } from "react-icons/bi";
-import { FaRegStar } from "react-icons/fa";
 import { Button } from "../../Components/Common/Button/Button";
-import { is } from "date-fns/locale";
-import { nanoid } from "@reduxjs/toolkit";
 
 const AllCustomers = () => {
   const [totalData, setTotalData] = useState<number>();
   const [isFilter, setIsFilter] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
-  const [originalData, setOriginalData] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>("asc");
   const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
     { id: string; role: string }[]
@@ -75,22 +59,7 @@ const AllCustomers = () => {
         length: number;
       };
       const customerList = await aggregateCustomerData(AllCustomers.users);
-      setOriginalData((prev) => {
-        return [
-          ...prev,
-          ...customerList.filter(
-            (data) => !prev.some((user) => user.id === data.id)
-          ),
-        ];
-      });
-      setInitialCustomer((prev) => {
-        return [
-          ...prev,
-          ...customerList.filter(
-            (data) => !prev.some((user) => user.id === data.id)
-          ),
-        ];
-      });
+      setInitialCustomer(customerList);
       setTotalData(AllCustomers.length);
     } catch (error) {
       setLoading(false);
@@ -216,7 +185,9 @@ const AllCustomers = () => {
     isChecked: boolean,
     value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
   ) => {
-    // if (!isChecked) return toast.error("Error");
+    if (!isChecked) return setIsFilter("");
+    console.log(value);
+    setIsFilter(value);
     try {
       if (value === "orders" && isChecked) {
         await handleCustomerData({
@@ -228,7 +199,7 @@ const AllCustomers = () => {
           currentFirstDoc: currentDoc?.currentFirstDoc,
         });
       }
-      
+
       // if (value === "amount" && isChecked) {
       //   await handleCustomerData({
       //     direction: "next",
@@ -299,45 +270,8 @@ const AllCustomers = () => {
     initialCustomer,
   ]);
 
-  const handleChangeUser = (value: "customer" | "admin" | "chef") => {
-    setIsFilter(value);
-    if (value === "admin") {
-      handleCustomerData({
-        path: "admin",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-    if (value === "chef") {
-      handleCustomerData({
-        path: "chef",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-    if (value === "customer") {
-      handleCustomerData({
-        path: "customer",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
-  };
-
   useEffect(() => {
-    if (initialCustomer.length <= 0 || !isFilter?.length || !sortOrder) {
+    if (initialCustomer.length <= 0 ||  isFilter?.length <= 0) {
       handleCustomerData({
         path: "customer",
         direction: "next",
@@ -349,13 +283,26 @@ const AllCustomers = () => {
       });
     }
   }, [
+    isFilter?.length,
     initialCustomer.length,
     currentDoc?.currentFirstDoc,
     currentDoc?.currentLastDoc,
     pagination.perPage,
-    isFilter?.length,
-    sortOrder?.length,
   ]);
+
+  // useEffect(() => {
+  //   if (isFilter?.length) {
+  //     handleCustomerData({
+  //       path: "customer",
+  //       direction: "next",
+  //       filter: "fullName",
+  //       pageSize: pagination.perPage,
+  //       sort: "asc",
+  //       currentFirstDoc: currentDoc?.currentFirstDoc || null,
+  //       currentLastDoc: currentDoc?.currentLastDoc || null,
+  //     });
+  //   }
+  // },[currentDoc?.currentFirstDoc,currentDoc?.currentLastDoc,isFilter,pagination.perPage]);
 
   useEffect(() => {
     if (
@@ -415,43 +362,13 @@ const AllCustomers = () => {
               deleteFn={() => setIsBulkDelete(true)}
             />
             {isFilter && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
-                  <p
-                    className={` duration-150 ${
-                      sortOrder === "desc"
-                        ? "rotate-180"
-                        : sortOrder === "asc"
-                        ? ""
-                        : ""
-                    } `}
-                  >
-                    <ChevronUp size={20} />
-                  </p>
+                  <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                    {isFilter.toLowerCase()}
+                  </span>
                 </div>
-                <button onClick={() => setSortOrder(undefined)} className=" ">
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
-              </div>
-            )}
-            {isFilter && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">{isFilter.toLowerCase()}</span>
-                  <p
-                    className={` duration-150 ${
-                      sortOrder === "desc"
-                        ? "rotate-180"
-                        : sortOrder === "asc"
-                        ? ""
-                        : ""
-                    } `}
-                  >
-                    <ChevronUp size={20} />
-                  </p>
-                </div>
-                <button onClick={() => setIsFilter(undefined)} className=" ">
+                <button onClick={() => setIsFilter("")} className=" ">
                   <X className="text-[var(--danger-text)] " size={20} />
                 </button>
               </div>
@@ -460,11 +377,11 @@ const AllCustomers = () => {
         </div>
         <div className="z-[100]">
           <Button
-              bodyStyle={{
-                width : "400px",
-                top: "3.5rem",
-                left: "-18rem",
-              }}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
             parent={
               <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
                 <Filter className="size-5 text-[var(--dark-secondary-text)]" />
@@ -474,7 +391,7 @@ const AllCustomers = () => {
               </div>
             }
             checkFn={(isChecked: boolean, value: string) => {
-                  handleSelect(isChecked, value)
+              handleSelect(isChecked, value as any);
             }}
             types={[
               { label: "Admin", value: "admin", id: "sfksdjlk" },

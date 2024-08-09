@@ -6,16 +6,13 @@ import { debounce } from "../../Utility/Debounce";
 import { SearchOrder } from "../../Utility/Search";
 import { getFullName } from "../../Utility/Utils";
 import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { OrderTable } from "./OrderTable";
 import { Button } from "../../Components/Common/Button/Button";
-import { BiCategory } from "react-icons/bi";
 import { GetOrderModal } from "../../../../backend/src/models/order.model";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [originalData, setOriginalData] = useState<OrderModal[]>([]);
   const [totalData, setTotalData] = useState<number>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
   const [pagination, setPagination] = useState<{
@@ -26,7 +23,7 @@ const OrderList = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
-  const [isFilter, setIsFiltered] = useState<string | undefined>();
+  const [isFilter, setIsFiltered] = useState<string>();
 
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
@@ -37,6 +34,8 @@ const OrderList = () => {
         filter: data.filter,
         sort: data.sort,
         direction: data.direction,
+        currentFirstDoc: data.currentFirstDoc,
+        currentLastDoc: data.currentLastDoc,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
@@ -44,11 +43,10 @@ const OrderList = () => {
         length: number;
       };
       setTotalData(orders.length);
-      setCurrentDoc((prev) => ({
-        ...prev,
+      setCurrentDoc({
         currentFirstDoc: orders.currentFirstDoc,
         currentLastDoc: orders.currentLastDoc,
-      }));
+      });
       const aggregateData = orders?.orders.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
         const getDate = convertIsoToReadableDateTime(
@@ -76,16 +74,16 @@ const OrderList = () => {
       });
 
       const getaggregateDataPromises = await Promise.all(aggregateData);
-      setOriginalData(getaggregateDataPromises as any);
       setInitialOrders(getaggregateDataPromises as any);
     } catch (error) {
       setLoading(false);
-
       throw new Error("Unable to display orders data" + error);
     }
     setLoading(false);
   };
   const handleSelect = async (isChecked: boolean, value: string) => {
+    if (!isChecked) return setIsFiltered("");
+    setIsFiltered(value);
     if (value === "rank" && isChecked) {
       await getAllOrders({
         filter: "orderId",
@@ -129,25 +127,28 @@ const OrderList = () => {
   ]);
 
   useEffect(() => {
-    if (
-      initialOrders.length < 0 ||
-      !isFilter?.length 
-    ) {
+    if (initialOrders.length <= 0) {
       getAllOrders({
-        filter: "orderId",
+        filter: "uid",
         pageSize: pagination.perPage,
         sort: "asc",
         direction: "next",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentFirstDoc:null,
+        currentLastDoc:null,
       });
     }
-  }, [initialOrders.length, isFilter?.length, currentDoc?.currentFirstDoc, pagination.perPage]);
+  }, [
+    initialOrders.length,
+    pagination.perPage,
+    currentDoc?.currentFirstDoc,
+    currentDoc?.currentLastDoc,
+  ]);
 
   useEffect(() => {
     if (
-      pagination.perPage > 1 &&
+      pagination.currentPage > 1 &&
       currentDoc?.currentFirstDoc &&
-      currentDoc?.currentFirstDoc.length > 0
+      currentDoc.currentLastDoc
     ) {
       const fetchNextPage = async () => {
         const getAllOrder = (await getOrders({
@@ -161,11 +162,10 @@ const OrderList = () => {
           orders: Order[];
         };
 
-        setCurrentDoc((prev) => ({
-          ...prev,
+        setCurrentDoc({
           currentFirstDoc: getAllOrder.currentFirstDoc,
           currentLastDoc: getAllOrder.currentLastDoc,
-        }));
+        });
 
         const aggregateData = getAllOrder?.orders.map(async (item) => {
           let getUserName = await getFullName(item?.uid);
@@ -201,68 +201,12 @@ const OrderList = () => {
               (order) => !prev.some((data) => data.id === order.id)
             ),
           ];
-        });
-
-        setOriginalData(getaggregateDataPromises as any);
+        })
       };
 
       fetchNextPage();
     }
-  }, [pagination.perPage, pagination.currentPage, currentDoc?.currentFirstDoc]);
-
-  async function handleOrderFilter(orderStatus: string) {
-    setIsFiltered(orderStatus);
-    if (orderStatus === "Recieved") {
-      await getOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        direction: "next",
-        // status: "Received",
-      });
-    }
-    if (orderStatus === "Pending") {
-      await getOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        direction: "next",
-        // status: "Pending",
-      });
-    }
-    if (orderStatus === "Delivered") {
-      await getOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        direction: "next",
-        // status: "Delivered",
-      });
-    }
-    if (orderStatus === "Preparing") {
-      await getOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        direction: "next",
-        // status: "Preparing",
-      });
-    }
-    if (orderStatus === "Canceled") {
-      await getOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        direction: "next",
-        // status: "Canceled",
-      });
-    }
-  }
+  },[currentDoc?.currentFirstDoc,currentDoc?.currentLastDoc,pagination.currentPage,pagination.perPage])
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -282,7 +226,7 @@ const OrderList = () => {
               sortFn={(value) => setSortOrder(value)}
               bodyStyle={{
                 width: "400px",
-                top: "3.5rem",
+                top: "3rem",
                 left: "-18rem",
               }}
               parent={
@@ -330,7 +274,7 @@ const OrderList = () => {
                 <ChevronUp size={20} />
               </p>
             </div>
-            <button onClick={() => setIsFiltered(undefined)} className=" ">
+            <button onClick={() => setIsFiltered("")} className=" ">
               <X className="text-[var(--danger-text)] " size={20} />
             </button>
           </div>

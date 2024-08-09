@@ -1,11 +1,21 @@
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { useEffect, useState } from "react";
-import { LogCardProps } from "../../models/logModel";
+import { GetLogProp, LogCardProps } from "../../models/logModel";
 import { LogCard } from "../../Components/Common/Cards/LogCard";
 import { getLogs } from "../../Services";
+import { Button } from "../../Components/Common/Button/Button";
+import { Filter } from "lucide-react";
 
 const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
+  const [pagination, setPagination] = useState<{
+    perPage: number;
+    currentPage: number;
+  }>({ perPage: 5, currentPage: 1 });
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirst: string;
+    currentLastDoc: string;
+  }>();
 
   const handleCollapseFn = (logId: string) => {
     const logItems = items?.map((item) => {
@@ -17,41 +27,41 @@ const Logs = () => {
     });
     console.log(logItems);
   };
-  const getAllRoleLogs = async () => {
+  const getAllRoleLogs = async ({
+    path,
+    pageSize,
+    filter,
+    sort,
+    action,
+    currentFirstDoc,
+    currentLastDoc,
+    direction,
+  }: GetLogProp) => {
     try {
       const adminLogs = (await getLogs({
-        path: "adminLogs",
-        filter: "name",
-        sort: "asc",
-        pageSize: 5,
-        direction: "next",
+        path: path,
+        filter: filter,
+        sort: sort,
+        pageSize: pageSize,
+        direction: direction,
+        currentFirstDoc: currentFirstDoc || null,
+        currentLastDoc: currentLastDoc || null,
+        action: action,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         logs: LogCardProps[];
       };
       setItems(adminLogs.logs);
-
-      const chefLogs = await getLogs({
-        path: "chefLogs",
-        filter: "name",
-        sort: "asc",
-        pageSize: 5,
-      });
-      const customerLogs = await getLogs({
-        path: "customerLogs",
-        filter: "name",
-        pageSize: 5,
-        sort: "asc",
-      });
     } catch (error) {
       throw new Error("Unable to get role logs" + error);
     }
   };
   const handleSelect = async (
-    value: "Admin logs" | "Customer Logs" | "Chef Logs"
+    isChecked: boolean,
+    value: "adminlogs" | "customerlogs" | "cheflogs"
   ) => {
-    if (value === "Admin logs") {
+    if (value === "adminlogs" && isChecked) {
       const adminLogs = (await getLogs({
         path: "adminLogs",
         filter: "name",
@@ -65,7 +75,7 @@ const Logs = () => {
       };
       setItems(adminLogs.logs);
     }
-    if (value === "Chef Logs") {
+    if (value === "cheflogs" && isChecked) {
       const chefLogs = await getLogs({
         path: "chefLogs",
         filter: "name",
@@ -74,7 +84,7 @@ const Logs = () => {
       });
       setItems(chefLogs.logs);
     }
-    if (value === "Customer Logs") {
+    if (value === "customerlogs" && isChecked) {
       const customerLogs = await getLogs({
         path: "chefLogs",
         filter: "name",
@@ -86,8 +96,19 @@ const Logs = () => {
   };
 
   useEffect(() => {
-    getAllRoleLogs();
-  }, []);
+    getAllRoleLogs({
+      path: "adminLogs",
+      filter: "id",
+      pageSize: pagination.perPage,
+      sort: "asc",
+      currentFirstDoc: currentDoc?.currentFirst,
+      currentLastDoc: currentDoc?.currentLastDoc,
+    });
+  }, [
+    currentDoc?.currentFirst,
+    currentDoc?.currentLastDoc,
+    pagination.perPage,
+  ]);
 
   return (
     <div className="items-start justify-start w-full h-full p-2">
@@ -97,10 +118,32 @@ const Logs = () => {
             Audit Logs
           </p>
           <div>
-            <FilterButton
-              onSelect={(value) => handleSelect(value)}
-              sortOrder=""
-              sortingOptions={["Admin logs", "Customer Logs", "Chef Logs"]}
+            <Button
+              bodyStyle={{
+                width: "400px",
+                top: "3rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
+                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                    Filter
+                  </span>
+                </div>
+              }
+              types={[
+                { label: "Admin Logs", value: "adminlogs", id: "fskfjs" },
+                {
+                  label: "Chef Logs",
+                  value: "cheflogs",
+                  id: "fkldsj",
+                },
+                { label: "Customer Logs", id: "fls", value: "customerlogs" },
+              ]}
+              sortFn={(isChecked: boolean, value: string) =>
+                handleSelect(isChecked, value)
+              }
             />
           </div>
         </div>

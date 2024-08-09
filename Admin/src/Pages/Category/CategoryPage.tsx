@@ -1,11 +1,9 @@
-import { ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
+import { ChevronUp, Filter, Plus, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/UploadCategory";
 import { SearchCategory } from "../../Utility/Search";
 import { debounce } from "../../Utility/Debounce";
-import { DropDown } from "../../Components/Common/DropDown/DropDown";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { categoryAdd } from "../../Reducer/Action";
@@ -46,35 +44,34 @@ export const CategoryPage: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
+  const handleSelect = async (isChecked: boolean, value: string) => {
+    if (!isChecked) return setIsFilter("")
+    setIsFilter(value)
     let sortedCustomers;
     if (value === "Items") {
       sortedCustomers = [...initialCategory].sort(
         (a: CategoryType, b: CategoryType) =>
-          newOrder === "desc"
+          sortOrder === "desc"
             ? (((b.item as number) - a.item) as number)
             : (((a.item as number) - b.item) as number)
       );
     }
-    if (value === "Orders") {
+    if (value === "orders") {
       sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.order = a.order) : a.order - b.order
+        sortOrder == "desc" ? (b.order = a.order) : a.order - b.order
       );
     }
-    if (value === "Revenue") {
+    if (value === "revenue") {
       sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
+        sortOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
       );
     }
-    if (value === "Rank") {
+    if (value === "rank") {
       sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
+        sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
       );
     }
 
-    setSortOrder({ field: value, order: newOrder });
     setInitialCategory(sortedCustomers as CategoryType[]);
   };
 
@@ -156,8 +153,10 @@ export const CategoryPage: React.FC = () => {
   useEffect(() => {
     initialCategory.forEach((category) => dispatch(categoryAdd(category.name)));
 
-    setInitialCategory(originalData);
-  }, [initialCategory, dispatch, originalData]);
+    if (isFilter?.length <= 0) {
+      setInitialCategory(originalData);
+    }
+  }, [initialCategory, dispatch, originalData, isFilter?.length]);
 
   useEffect(() => {
     getAllCategories();
@@ -286,7 +285,7 @@ export const CategoryPage: React.FC = () => {
                   <ChevronUp size={20} />
                 </p>
               </div>
-              <button onClick={() => setIsFilter(undefined)} className=" ">
+              <button onClick={() => setIsFilter("")} className=" ">
                 <X className="text-[var(--danger-text)] " size={20} />
               </button>
             </div>
