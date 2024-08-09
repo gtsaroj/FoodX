@@ -11,7 +11,9 @@ import { getRoleFromAccessToken } from "./Utility/JWTUtility";
 import toast from "react-hot-toast";
 import {
   CustomerType,
+  User,
   UserDeleteType,
+  UserRole,
   ValidationType,
 } from "./models/user.model";
 import { UpdateProfileInfo } from "./Pages/Admin/AdminProfile";
@@ -52,7 +54,15 @@ export const signIn = async (
     Cookies.set("refreshToken", responseData.refreshToken);
     const role = await getRoleFromAccessToken();
     responseData.user.role = await role;
-    return responseData.user as UserInfo;
+    const user = responseData.user as User;
+    await addLogs({
+      action: "login",
+      date: new Date(),
+      detail: `${user.fullName} was logged in ${new Date()} `,
+      userId: user.uid,
+      userRole: user.role as UserRole,
+    });
+    return user;
   } catch (error) {
     toast.error("Invalid username or password");
     throw new Error("Invalid username or password");
@@ -71,6 +81,15 @@ export const signUp = async (data: ValidationType) => {
       method: "post",
       url: "users/signIn",
       data: { ...data },
+    });
+    await addLogs({
+      action: "create",
+      date: new Date(),
+      detail: `${
+        response.data.userInfo.fullName
+      } created new Account at ${new Date()} `,
+      userId: response.data.userInfo.uid,
+      userRole: "admin",
     });
     await signIn(data.email, data.password);
     return response.data.data.userInfo;

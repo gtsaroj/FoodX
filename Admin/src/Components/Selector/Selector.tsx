@@ -22,7 +22,7 @@ export const Selector: React.FC<SelectorPop> = ({
       >
         <input
           type="text"
-          className="w-full py-2  outline-none cursor-pointer "
+          className="w-full py-1  outline-none cursor-pointer "
           readOnly
           value={showField}
           placeholder="Select option"

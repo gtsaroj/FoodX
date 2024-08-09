@@ -18,10 +18,20 @@ const slides: SlideProp[] = [
 const Banner: React.FC = () => {
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="lg:h-[600px] lg:w-[1000px] min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[700px] md:h-[450px] duration-500 xl:w-[1200px] flex-grow">
+      <div className="lg:h-[600px] lg:w-[800px] min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[500px] md:h-[450px] duration-500 xl:w-[1000px] flex-grow">
         <Carousel slides={slides} />
       </div>
     </div>
+  );
+};
+
+export const Sponsor: React.FC = () => {
+  return (
+    <div className="flex items-center justify-center w-full h-full">
+      <div className="lg:h-[540px]  h-[300px] w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
+      <img src={slides[0].url} className="w-full rounded-xl h-full" alt="" />
+    </div>
+     </div>
   );
 };
 

@@ -1,12 +1,10 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React, { useCallback, useEffect, useState } from "react";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { useCallback, useEffect, useState } from "react";
 import {
   addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
-  getSpecialProducts,
 } from "../../Services";
 import {
   ArrangedProduct,
@@ -17,21 +15,14 @@ import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { AlignLeft, ChevronUp, Filter, X } from "lucide-react";
+import { ChevronUp, Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
 import { Button } from "../../Components/Common/Button/Button";
-import { BiCategory } from "react-icons/bi";
-import { FaRegStar } from "react-icons/fa";
-import path from "path";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
-  const [originalData, setOriginalData] = useState<ArrangedProduct[]>([]);
-  const [sortOrder, setSortOrder] = useState<{ field: string; order: string }>({
-    field: "",
-    order: "desc",
-  });
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [type, setType] = useState<"specials" | "products">();
@@ -67,8 +58,9 @@ const AllProductAnalytics = () => {
         direction: data.direction,
         filter: data.filter,
         sort: data.sort,
+        currentFirstDoc: data?.currentFirstDoc || null,
+        currentLastDoc: data?.currentLastDoc || null,
       });
-      // const special = await getSpecialProducts();
 
       const specialProducts = products.data as {
         currentFirstDoc: string;
@@ -76,17 +68,9 @@ const AllProductAnalytics = () => {
         products: ProductType[];
         length: number;
       };
-      setCurrentDoc((prev) => {
-        return prev
-          ? {
-              ...prev,
-              currentFirstDoc: specialProducts.currentFirstDoc,
-              currentLastDoc: specialProducts.currentLastDoc,
-            }
-          : {
-              currentFirstDoc: specialProducts.currentFirstDoc,
-              currentLastDoc: specialProducts.currentLastDoc,
-            };
+      setCurrentDoc({
+        currentFirstDoc: specialProducts.currentFirstDoc,
+        currentLastDoc: specialProducts.currentLastDoc,
       });
       const arrangeNormalProducts: ArrangedProduct[] =
         specialProducts.products?.map((product: ProductType) => ({
@@ -101,9 +85,7 @@ const AllProductAnalytics = () => {
           revenue: 15000,
           type: data.path,
         }));
-      console.log(arrangeNormalProducts);
       setTotalData(specialProducts.length);
-      setOriginalData(arrangeNormalProducts);
       setFetchedProducts(arrangeNormalProducts as ArrangedProduct[]);
     } catch (error) {
       throw new Error(`Error while fetching products` + error);
@@ -111,13 +93,17 @@ const AllProductAnalytics = () => {
     setLoading(false);
   };
 
+  console.log(fetchedProducts, currentDoc);
+
   useEffect(() => {
     // call getAllProducts
-    if (fetchedProducts?.length < 0 || !isFilter?.length) {
+    if (fetchedProducts?.length <= 0) {
+      // setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
       getAllProducts({
         path: "products",
         pageSize: pagination.perPage,
-        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentFirstDoc: currentDoc?.currentFirstDoc || null,
+        currentLastDoc: currentDoc?.currentLastDoc || null,
         direction: "next",
         filter: "name",
         sort: "asc",
@@ -126,11 +112,11 @@ const AllProductAnalytics = () => {
   }, [
     pagination.perPage,
     currentDoc?.currentFirstDoc,
+    currentDoc?.currentLastDoc,
     fetchedProducts.length,
     isFilter?.length,
   ]);
 
-  // fetch next page
   useEffect(() => {
     if (
       pagination.currentPage > 1 &&
@@ -141,12 +127,16 @@ const AllProductAnalytics = () => {
         setLoading(true);
         try {
           const products = await getProducts({
-            path: "products",
+            path:
+              isFilter === "products" || isFilter === "specials"
+                ? isFilter
+                : "products",
             pageSize: pagination.perPage,
             direction: "next",
             filter: "name",
-            sort: "asc",
+            sort: sortOrder,
             currentFirstDoc: currentDoc.currentFirstDoc,
+            currentLastDoc: currentDoc.currentLastDoc,
           });
 
           const normalProducts = products.data as {
@@ -165,9 +155,12 @@ const AllProductAnalytics = () => {
             order: 20,
             rating: 4.3,
             revenue: 15000,
-            type: "products",
+            type: isFilter,
           }));
-
+          setCurrentDoc({
+            currentFirstDoc: normalProducts.currentFirstDoc,
+            currentLastDoc: normalProducts.currentLastDoc,
+          });
           setFetchedProducts((prev) => {
             return [
               ...prev,
@@ -177,97 +170,77 @@ const AllProductAnalytics = () => {
             ];
           });
         } catch (error) {
-          throw new Error(`Error while fetching products: ${error}`);
+          throw new Error("Error fetching next page:" + error);
         }
         setLoading(false);
       };
 
       fetchNextPage();
     }
-  }, [pagination.currentPage, currentDoc?.currentFirstDoc, pagination.perPage]);
+  }, [
+    pagination.currentPage,
+    currentDoc?.currentFirstDoc,
+    pagination.perPage,
+    isFilter,
+    sortOrder,
+  ]);
 
   //Sorting
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
-    if (value === "Price") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "price",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "price",
-            sort: "asc",
-          });
+  const handleSelect = async (
+    isChecked: boolean,
+    value: "specials" | "products" | "price" | "orders" | "revenue"
+  ) => {
+    setIsFiltered(value as any);
+    if (!isChecked) setIsFiltered(undefined);
+    try {
+      if (value === "specials") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: null,
+          currentLastDoc: null,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "products") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "products",
+          currentFirstDoc: null,
+          currentLastDoc: null,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "orders") {
+        setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: currentDoc?.currentFirstDoc || null,
+          currentLastDoc: currentDoc?.currentLastDoc || null,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+      if (value === "revenue") {
+        await getAllProducts({
+          pageSize: pagination.perPage,
+          path: "specials",
+          currentFirstDoc: null,
+          currentLastDoc: null,
+          direction: "next",
+          filter: "name",
+          sort: "asc",
+        });
+      }
+    } catch (error) {
+      throw new Error("Unable to filter data" + error);
     }
-    if (value === "Revenue") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "quantity",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "quantity",
-            sort: "asc",
-          });
-    }
-    if (value === "Orders") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "tag",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "tag",
-            sort: "asc",
-          });
-    }
-    if (value === "Rating") {
-      newOrder === "desc"
-        ? await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "id",
-            sort: "desc",
-          })
-        : await getAllProducts({
-            path: "products",
-            pageSize: pagination.perPage,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            direction: "next",
-            filter: "id",
-            sort: "asc",
-          });
-    }
-
-    setSortOrder({ field: value, order: newOrder });
   };
 
   const handleChange = (value: string) => {
@@ -279,12 +252,6 @@ const AllProductAnalytics = () => {
   };
 
   const debounceSearch = useCallback(debounce(handleChange, 300), []);
-
-  useEffect(() => {
-    if (sortOrder?.field === "") {
-      setFetchedProducts(originalData);
-    }
-  }, [originalData, sortOrder?.field]);
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");
@@ -392,30 +359,15 @@ const AllProductAnalytics = () => {
     }
   };
 
-  async function handleChangeCategory(value: "specials" | "products") {
-    setIsFiltered(value);
-    try {
-      await getAllProducts({
-        path: value,
-        pageSize: pagination.perPage,
-        direction: "next",
-        filter: "price",
-        sort: "asc",
-      });
-    } catch (error) {
-      throw new Error("Unable to get by " + value + " : " + error);
-    }
-  }
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex flex-col items-start justify-center gap-3">
+      <div className="flex sm:items-center justify-between  sm:flex-row flex-col items-start flex-grow w-full gap-5 px-3 pb-6">
+        <div className="flex flex-col w-full items-start justify-center gap-3">
           <p className="text-xl text-nowrap">All products</p>
 
           <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
             {" "}
-            <form action="" className="relative ">
+            <form action="" className="relative w-full ">
               <input
                 id="search"
                 type="search"
@@ -429,32 +381,6 @@ const AllProductAnalytics = () => {
               dataLength={bulkSelectedProduct.length}
               deleteFn={() => setIsBulkDelete(true)}
             />
-            {sortOrder.field && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">
-                    {sortOrder.field.toLowerCase()}
-                  </span>
-                  <p
-                    className={` duration-150 ${
-                      sortOrder?.order === "desc"
-                        ? "rotate-180"
-                        : sortOrder.order === "asc"
-                        ? ""
-                        : ""
-                    } `}
-                  >
-                    <ChevronUp size={20} />
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSortOrder({ field: undefined })}
-                  className=" "
-                >
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
-              </div>
-            )}
             {isFilter && (
               <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
                 <div className="flex gap-1 items-center justify-center">
@@ -480,6 +406,12 @@ const AllProductAnalytics = () => {
         </div>
         <div className=" z-[1000]">
           <Button
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
             parent={
               <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
                 <Filter className="size-5 text-[var(--dark-secondary-text)]" />
@@ -488,59 +420,18 @@ const AllProductAnalytics = () => {
                 </span>
               </div>
             }
-            children={[
-              <FilterButton
-                bodyStyle={{
-                  width: "150px",
-                  top: "-0.3rem",
-                  left: "-10rem",
-                }}
-                sortOrder={sortOrder.order}
-                onSelect={handleSelect}
-                children={[
-                  { label: "Price", value: "Price" },
-                  { label: "Orders", value: "Orders" },
-                  { label: "Revenue", value: "Revenue" },
-                  { label: "Rating", value: "Rating" },
-                ]}
-              />,
-              <FilterButton
-                bodyStyle={{ width: "150px", top: "-2.9rem", left: "-10rem" }}
-                children={[
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <FaRegStar className="size-5" />
-                        <span className="text-[17px] tracking-wide ">
-                          Special
-                        </span>
-                      </div>
-                    ),
-                    value: "specials",
-                  },
-                  {
-                    label: (
-                      <div className="flex items-center justify-start gap-2">
-                        <AlignLeft className="size-5" />
-                        <span className="text-[17px] tracking-wide ">
-                          Normal
-                        </span>
-                      </div>
-                    ),
-                    value: "products",
-                  },
-                ]}
-                parent={
-                  <div className="flex py-1.5 px-2 items-center justify-start gap-2">
-                    <BiCategory className="size-5  " />
-                    <span className="tracking-wide text-[17px] ">Category</span>
-                  </div>
-                }
-                onSelect={(value) =>
-                  handleChangeCategory(value as "specials" | "products")
-                }
-              />,
+            types={[
+              { label: "Specials", value: "specials", id: "fklsdjf" },
+              { label: "products", value: "products", id: "fkjdls" },
             ]}
+            sort={[
+              { label: "Price", value: "price", id: "jfhkdj" },
+              { label: "Orders", value: "orders", id: "fkdsj" },
+              { label: "Revenue", value: "revenue", id: "flkjdsf" },
+            ]}
+            checkFn={(isChecked: boolean, value: any) =>
+              handleSelect(isChecked, value)
+            }
           />
         </div>
       </div>
