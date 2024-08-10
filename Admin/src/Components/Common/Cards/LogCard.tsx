@@ -12,6 +12,7 @@ import {
   UserCheck2Icon,
   UserPlus2,
 } from "lucide-react";
+import dayjs from "dayjs";
 
 export const LogCard: React.FC<LogCardProps> = ({
   id,
@@ -68,7 +69,7 @@ export const LogCard: React.FC<LogCardProps> = ({
       setOpenMenu(!openMenu);
     }
   };
-  const newDate = new Date(date);
+  const newDate = dayjs(date).format("dddd, MMMM D, YYYY h:mm A")
   return (
     <div>
       <div className="flex items-center justify-between w-full h-full gap-3 p-4 border rounded-md ">
@@ -92,7 +93,7 @@ export const LogCard: React.FC<LogCardProps> = ({
               <span>{titles[`${action}`]}</span>
             </p>
             <p className="text-[var(--dark-secondary-text)] text-xs">
-              {newDate?.toISOString()}
+              {newDate}
             </p>
           </div>
         </div>

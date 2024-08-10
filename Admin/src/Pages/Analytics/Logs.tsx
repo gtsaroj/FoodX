@@ -1,13 +1,19 @@
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { useEffect, useState } from "react";
-import { GetLogProp, LogCardProps } from "../../models/logModel";
+import {
+  GetLogProp,
+  LogActionModal,
+  LogCardProps,
+} from "../../models/logModel";
 import { LogCard } from "../../Components/Common/Cards/LogCard";
 import { getLogs } from "../../Services";
 import { Button } from "../../Components/Common/Button/Button";
-import { Filter } from "lucide-react";
+import { Filter, X } from "lucide-react";
+import Skeleton from "react-loading-skeleton";
 
 const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<{
     perPage: number;
     currentPage: number;
@@ -16,6 +22,12 @@ const Logs = () => {
     currentFirst: string;
     currentLastDoc: string;
   }>();
+  const [isFilter, setIsFilter] = useState<{
+    typeFilter?: "adminLogs" | "chefLogs" | "customerLogs" | string;
+    sortFilter?: string;
+    actionFilter?: keyof LogActionModal | string;
+  }>();
+  const [sort, setSort] = useState<"asc" | "desc">("asc");
 
   const handleCollapseFn = (logId: string) => {
     const logItems = items?.map((item) => {
@@ -37,6 +49,7 @@ const Logs = () => {
     currentLastDoc,
     direction,
   }: GetLogProp) => {
+    setLoading(true);
     try {
       const adminLogs = (await getLogs({
         path: path,
@@ -46,16 +59,21 @@ const Logs = () => {
         direction: direction,
         currentFirstDoc: currentFirstDoc || null,
         currentLastDoc: currentLastDoc || null,
-        action: action,
+        action: action || undefined,
       })) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         logs: LogCardProps[];
       };
       setItems(adminLogs.logs);
+      setCurrentDoc({
+        currentFirst: adminLogs.currentFirstDoc,
+        currentLastDoc: adminLogs.currentLastDoc,
+      });
     } catch (error) {
       throw new Error("Unable to get role logs" + error);
     }
+    setLoading(false);
   };
   const handleSelect = async (
     isChecked: boolean,
@@ -97,26 +115,89 @@ const Logs = () => {
 
   useEffect(() => {
     getAllRoleLogs({
-      path: "adminLogs",
-      filter: "id",
+      path:
+        (isFilter?.typeFilter as "adminLogs" | "chefLogs" | "customerLogs") ||
+        "adminLogs",
+      filter: (isFilter?.sortFilter as keyof LogCardProps) || "id",
       pageSize: pagination.perPage,
-      sort: "asc",
-      currentFirstDoc: currentDoc?.currentFirst,
-      currentLastDoc: currentDoc?.currentLastDoc,
+      sort: (sort as "asc" | "desc") || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+      action:
+        (isFilter?.actionFilter as
+          | "login"
+          | "update"
+          | "delete"
+          | "register"
+          | "logout") || undefined,
     });
   }, [
-    currentDoc?.currentFirst,
-    currentDoc?.currentLastDoc,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
     pagination.perPage,
+    sort,
+    isFilter,
   ]);
 
   return (
     <div className="items-start justify-start w-full h-full p-2">
       <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-2 md:max-w-[800px]">
         <div className="flex items-center justify-between w-full gap-5 px-3 pb-5 ">
-          <p className="text-lg font-semibold tracking-wide text-nowrap">
-            Audit Logs
-          </p>
+          <div className="flex items-center justify-start gap-2">
+            <p className="text-lg font-semibold tracking-wide text-nowrap">
+              Audit Logs
+            </p>
+            <div className="flex items-center justify-start gap-2">
+              {isFilter?.sortFilter && (
+                <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                  <div className="flex gap-1 items-center justify-center">
+                    <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                      {isFilter.sortFilter.toLowerCase()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() =>
+                      setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                    }
+                  >
+                    <X className="text-[var(--danger-text)] " size={20} />
+                  </button>
+                </div>
+              )}
+              {isFilter?.typeFilter && (
+                <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                  <div className="flex gap-1 items-center justify-center">
+                    <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                      {isFilter.typeFilter.toLowerCase()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() =>
+                      setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                    }
+                  >
+                    <X className="text-[var(--danger-text)] " size={20} />
+                  </button>
+                </div>
+              )}
+              {isFilter?.actionFilter && (
+                <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                  <div className="flex gap-1 items-center justify-center">
+                    <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                      {isFilter.actionFilter.toLowerCase()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() =>
+                      setIsFilter((prev) => ({ ...prev, actionFilter: "" }))
+                    }
+                  >
+                    <X className="text-[var(--danger-text)] " size={20} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
           <div>
             <Button
               bodyStyle={{
@@ -133,34 +214,87 @@ const Logs = () => {
                 </div>
               }
               types={[
-                { label: "Admin Logs", value: "adminlogs", id: "fskfjs" },
+                { label: "Admin ", value: "adminLogs", id: "fskfjs" },
                 {
-                  label: "Chef Logs",
-                  value: "cheflogs",
+                  label: "Chef ",
+                  value: "chefLogs",
                   id: "fkldsj",
                 },
-                { label: "Customer Logs", id: "fls", value: "customerlogs" },
+                { label: "Customer ", id: "fls", value: "customerLogs" },
               ]}
-              sortFn={(isChecked: boolean, value: string) =>
-                handleSelect(isChecked, value)
-              }
+              sort={[{ label: "Date", value: "date", id: "aforapple" }]}
+              action={[
+                { label: "Create", value: "create", id: "dflkjsklkfkls" },
+                { label: "Register", value: "register", id: "dlalksslk" },
+                {
+                  label: "Delete",
+                  value: "delete",
+                  id: "dflkfseweejsklk",
+                },
+                {
+                  label: "Update",
+                  value: "update",
+                  id: "dflkjskfdsflk",
+                },
+                {
+                  label: "Logout",
+                  value: "logout",
+                  id: "flkjdsljfoie",
+                },
+              ]}
+              sortFn={(value) => setSort(value)}
+              checkFn={{
+                checkTypeFn: (isChecked, type) => {
+                  if (!isChecked) {
+                    setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+                  }
+                  if (isChecked) {
+                    setIsFilter((prev) => ({ ...prev, typeFilter: type }));
+                  }
+                },
+                checkSortFn: (isChecked, value) => {
+                  if (!isChecked) {
+                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+                  }
+                  if (isChecked) {
+                    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+                  }
+                },
+                checkActionFn: (isChecked, action) => {
+                  if (!isChecked) {
+                    return setIsFilter((prev) => ({
+                      ...prev,
+                      actionFilter: "",
+                    }));
+                  }
+                  if (isChecked) {
+                    setIsFilter((prev) => ({ ...prev, actionFilter: action }));
+                  }
+                },
+              }}
             />
           </div>
         </div>
 
         <div className="flex items-start justify-start flex-grow w-full">
           <div className="flex flex-col justify-start w-full gap-3 md:max-w-[800px]">
-            {items ? (
-              items.map((item) => (
-                <LogCard
-                  open
-                  key={item.id}
-                  {...item}
-                  handleClick={() => handleCollapseFn(item.id as string)}
-                />
-              ))
+            {!loading ? (
+              items ? (
+                items.map((item) => (
+                  <LogCard
+                    open
+                    key={item.id}
+                    {...item}
+                    handleClick={() => handleCollapseFn(item.id as string)}
+                  />
+                ))
+              ) : (
+                <div>No data to show.</div>
+              )
             ) : (
-              <div>No data to show.</div>
+              <div className="w-full ">
+                <Skeleton height={70} count={5} />
+              </div>
             )}
           </div>
         </div>

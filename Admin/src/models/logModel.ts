@@ -12,14 +12,25 @@ export interface LogCardProps {
     | "create"
     | "update"
     | "delete"
-    | "checkout";
+    | "checkout" |undefined
 
   detail?: string;
   date: Date;
   open?: boolean;
-  userId?: string,
-  userRole?: string | UserRole
+  userId?: string;
+  userRole?: string | UserRole;
   handleClick?: (id: string) => void;
+}
+
+export interface LogActionModal {
+  action:
+    | "login"
+    | "register"
+    | "logout"
+    | "create"
+    | "update"
+    | "delete"
+    | "checkout";
 }
 
 export interface GetLogProp {
@@ -30,12 +41,12 @@ export interface GetLogProp {
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
   direction?: "prev" | "next";
-  action?:
+  action:
     | "login"
     | "register"
     | "logout"
     | "create"
     | "update"
     | "delete"
-    | "checkout";
+    | "checkout"
 }
