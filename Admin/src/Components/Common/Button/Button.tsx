@@ -197,18 +197,18 @@ export const Button: React.FC<ButtonProp> = ({
         </div>
         <div
           className={`flex ${
-            types && types?.length > 0 ? "visible" : "hidden"
+            action && action?.length > 0 ? "visible" : "hidden"
           } flex-col w-full items-start justify-center  gap-4`}
         >
           <h1 className="text-[18px] tracking-wider ">Actions</h1>
-          <div className="w-full overflow-x-auto  flex items-center justify-around gap-5">
+          <div className="w-full flex-wrap flex-row  flex items-center justify-start gap-5">
             {action?.map(
               (data) =>
                 checkFn?.checkActionFn &&
                 data.value && (
                   <div
                     key={data.id}
-                    className="w-full   flex items-center justify-start gap-2 cursor-pointer"
+                    className="   flex items-center justify-start gap-2 cursor-pointer"
                   >
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) => {

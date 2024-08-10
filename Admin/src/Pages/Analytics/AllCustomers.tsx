@@ -454,7 +454,6 @@ const AllCustomers = () => {
             sort={[
               { label: "Orders", value: "orders", id: "flksjd" },
               { label: "Amount", value: "amount", id: "lfkjds" },
-              { label: "Role", value: "role", id: "fldkjs" },
             ]}
             sortFn={(type: "asc" | "desc") => setSortOrder(type)}
           />

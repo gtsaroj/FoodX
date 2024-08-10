@@ -1,3 +1,4 @@
+import { getTicketByStatus } from './Services';
 import { GetOrderModal } from "./../../backend/src/models/order.model";
 import { UserInfo } from "firebase/auth";
 import { globalRequest } from "./GlobalRequest";
@@ -25,7 +26,7 @@ import {
   ProductType,
   UploadProductType,
 } from "./models/productMode";
-import { TicketType } from "./models/ticket.model";
+import { GetTicketModal, TicketType } from "./models/ticket.model";
 import {
   CategoryType,
   UpdateCategoryType,
@@ -325,7 +326,23 @@ export const createTicket = async (data: TicketType) => {
   }
 };
 
-export const getTicketByStatus = async (status: string) => {
+export const getTickets = async (data : GetTicketModal) => {
+  let request = 5;
+  console.log(request);
+  if (request < 0) return console.log("Time finished");
+  try {
+    request = -1;
+    const response = await makeRequest({
+      method: "post",
+      url: "tickets/get-tickets",
+      data: {...data},
+    });
+    return response.data.data;
+  } catch (error) {
+    return console.log(`Error while creating ticket` + error);
+  }
+};
+export const getTicket = async (ticketState: string) => {
   let request = 5;
   console.log(request);
   if (request < 0) return console.log("Time finished");
@@ -334,7 +351,7 @@ export const getTicketByStatus = async (status: string) => {
     const response = await makeRequest({
       method: "post",
       url: "tickets/get-ticket-status",
-      data: { status: status },
+      data: {status : ticketState},
     });
     return response.data.data;
   } catch (error) {

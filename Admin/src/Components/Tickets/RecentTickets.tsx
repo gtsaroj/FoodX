@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import TicketCard from "./TicketCard";
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
-import { getTicketByStatus } from "../../Services";
+import { getTicket } from "../../Services";
 import toast from "react-hot-toast";
 import { TicketType } from "../../models/ticket.model";
 import { getTimeDifference } from "../../Utility/DateUtils";
@@ -15,7 +15,7 @@ export const RecentTickets = () => {
 
   const fetchTickets = async () => {
     try {
-      const tickets = (await getTicketByStatus("Pending")) as TicketType[];
+      const tickets = (await getTicket("Pending")) as TicketType[];
       const sortingTicket = tickets?.sort((a, b) => {
         const timeLeft = getTimeDifference(a.date as any) as any;
         const timeLeft1 = getTimeDifference(b.date as any) as any;

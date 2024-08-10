@@ -119,15 +119,15 @@ export const OrderTable: React.FC<orderTableProp> = ({
           <div
             className={`w-2 h-2 rounded-full ${
               item.status === "Received"
-                ? "bg-[var(--green-bg)] "
-                : item?.status === "Canceled"
-                ? "bg-[var(--danger-bg)] "
-                : item.status === "Preparing"
-                ? "bg-[var(--orange-bg)] "
-                : item.status === "Delivered"
                 ? "bg-[var(--primary-color)] "
+                : item.status === "Delivered"
+                ? "bg-[var(--green-bg)] "
                 : item.status === "Pending"
                 ? "bg-[var(--primary-light)] "
+                : item.status === "Canceled"
+                ? "bg-[var(--danger-bg)]"
+                : item.status === "Preparing"
+                ? "bg-[var(--orange-bg)] "
                 : ""
             } `}
           ></div>
@@ -206,7 +206,7 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
   const [showModal, setShowModal] = useState(true);
 
   const reference = useRef<HTMLDivElement>();
-  const Status = ["Preparing", "Received", "Delivered", "Canceled", "Pending"];
+  const Status = ["Preparing", "Received", "Delivered", "Canceled"];
   const updateStatus = Status.filter((sts) => sts !== status);
 
   useEffect(() => {
@@ -241,15 +241,15 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
           <span
             className={` w-2 rounded-full h-2 ${
               status === "Received"
-                ? "bg-green-500"
-                : status === "Delivered"
                 ? "bg-[var(--primary-color)] "
+                : status === "Delivered"
+                ? "bg-[var(--green-bg)] "
                 : status === "Pending"
                 ? "bg-[var(--primary-light)] "
                 : status === "Canceled"
                 ? "bg-[var(--danger-bg)]"
                 : status === "Preparing"
-                ? "bg-[var(--primary-light)] "
+                ? "bg-[var(--orange-bg)] "
                 : ""
             }`}
           ></span>
