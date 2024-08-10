@@ -6,8 +6,15 @@ import CancelTicket from "../../Components/Tickets/CancelTicket";
 import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/CreateTicket";
-import { getTicketByStatus } from "../../Services";
+import { getTickets } from "../../Services";
 import toast from "react-hot-toast";
+import {
+  GetTicketModal,
+  TicketState,
+  TicketType,
+} from "../../models/ticket.model";
+import InfiniteScroll from "react-infinite-scroll-component";
+import Skeleton from "react-loading-skeleton";
 
 // interface ButtonProp {
 //   title: string[];
@@ -15,18 +22,55 @@ import toast from "react-hot-toast";
 // }
 
 const TicketPage: React.FC = () => {
-  const [ticketState, setTicketState] = useState<string>("Pending");
-
+  const [ticketState, setTicketState] = useState<TicketState>("Pending");
+  const [pagination, setPagination] = useState<{
+    perPage: number;
+    currentPage: number;
+  }>({ currentPage: 1, perPage: 4 });
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [totalData, setTotalData] = useState<number>(0);
   const [closeModal, setCloseModal] = useState<boolean>(true);
-  const [tickets, setTickets] = useState<any>([]);
+  const [tickets, setTickets] = useState<TicketType[]>([]);
+  const [currentDoc, setCurrentDoc] = useState<{
+    currentFirstDoc: string;
+    currentLastDoc: string;
+  }>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchTickets = async () => {
-    if (!ticketState) return;
+  const fetchTickets = async (data: GetTicketModal) => {
     setLoading(true);
     try {
-      const tickets = await getTicketByStatus(ticketState as string);
-      setTickets(tickets);
+      const tickets = (await getTickets({
+        pageSize: data.pageSize,
+        direction: data.direction,
+        sort: data.sort,
+        currentFirstDoc: data.currentFirstDoc || null,
+        currentLastDoc: data.currentLastDoc || null,
+      })) as {
+        tickets: TicketType[];
+        currentFirstDoc: string;
+        currentLastDoc: string;
+        length: number;
+      };
+      setCurrentDoc({
+        currentFirstDoc: tickets.currentFirstDoc,
+        currentLastDoc: tickets.currentLastDoc,
+      });
+
+      if (tickets.tickets.length < data.pageSize) {
+        setHasMore(false); // If fewer logs are returned than requested, stop infinite scrolling.
+      }
+
+      setTotalData((prev) => prev + tickets.tickets.length);
+
+      setTickets((prev) => {
+        return [
+          ...prev,
+          ...tickets.tickets.filter(
+            (data) => !prev.some((ticket) => ticket.id === data.id)
+          ),
+        ];
+      });
     } catch (error) {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
@@ -35,8 +79,14 @@ const TicketPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchTickets();
-  }, [ticketState]);  // Adding ticketState as a dependency
+    fetchTickets({
+      direction: "next",
+      pageSize: pagination?.perPage,
+      sort: "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
+  },[pagination.perPage])
 
   const TicketComponents = {
     Pending: <PendingTicket prop={tickets} loading={loading} />,
@@ -44,9 +94,7 @@ const TicketPage: React.FC = () => {
     Resolved: <ResolveTicket prop={tickets} loading={loading} />,
     Rejected: <CancelTicket prop={tickets} loading={loading} />,
   };
-
-  const ticketStateLower = ticketState;
-  const component = ticketStateLower && TicketComponents[ticketStateLower];
+  const component = ticketState && TicketComponents[ticketState];
 
   return (
     <div className="flex flex-col items-start justify-center px-4 py-5 gap-7">
@@ -68,13 +116,6 @@ const TicketPage: React.FC = () => {
         />
       </div>
       <div className="grid w-full grid-cols-4 gap-2 px-5 pt-10 sm:gap-6">
-        {/* /
-           className={`${ item === "Pending" ? "bg-[var(--primary-light)]" : item === "Progress" ? "bg-[var(--orange-bg)]" : item === "Resolve" ? "bg-[var(--green-bg)] " : item === "Cancel" ? "bg-[var(--danger-bg)]":'' } ${initialIndex === index ? "shadow-inner shadow-black  duration-200" : ""}`}
-          //   onClick={() => setTicketState(item, index)}
-          //   key={index}
-          // >
-          //   {item}
-          // </button> */}
         <button
           onClick={() => setTicketState("Pending")}
           className={`${
@@ -117,23 +158,36 @@ const TicketPage: React.FC = () => {
         </button>
       </div>
       {/* Employee Card */}
-      <div className="w-full">{component ? component : ""}</div>
-      {/* <div className="flex flex-col items-start justify-center w-full gap-9">
-        <h1 className="text-3xl contrast-125 ">
-          <span className="text-[#c79d2a] brightness-100 contrast-100 font-[570]">
-            32
-          </span>{" "}
-          <span className="text-2xl brightness-100 contrast-100 font-[570] ">
-            Employee
-          </span>
-        </h1>
-        <div className="grid w-full grid-cols-1 sm:grid-cols-2 sm:gap-x-6 place-items-center lg:grid-cols-3 gap-y-6 ">
-          <EmployeeCard />
-          <EmployeeCard />
-          <EmployeeCard />
-          <EmployeeCard />
+      <div id="ticketScrollable" className="w-full py-6 h-full overflow-auto">
+        <div className="w-full h-[400px] ">
+          <InfiniteScroll
+            endMessage={
+              <div className="w-full flex items-center justify-center py-3 text-[18px] tracking-wider ">
+                No data to load
+              </div>
+            }
+            scrollableTarget={"ticketScrollable"}
+            loader={
+              <div className="w-full ">
+                <Skeleton height={70} count={7} />
+              </div>
+            } // Updated to show a loading indicator
+            hasMore={hasMore}
+            next={() => {
+              fetchTickets({
+                direction: "next",
+                pageSize: pagination?.perPage,
+                sort: "asc",
+                currentFirstDoc: null || currentDoc?.currentFirstDoc,
+                currentLastDoc: null || currentDoc?.currentLastDoc,
+              });
+            }}
+            dataLength={totalData}
+          >
+            {component}
+          </InfiniteScroll>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
