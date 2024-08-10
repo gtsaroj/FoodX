@@ -8,6 +8,7 @@ import React, {
 import { IoMdArrowDropdown } from "react-icons/io";
 
 interface ButtonProp {
+  action?: { label: string; value: string; id: string }[];
   parentStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
   parent: React.ReactNode;
@@ -17,6 +18,7 @@ interface ButtonProp {
   checkFn?: {
     checkTypeFn?: (isChecked: boolean, type: any) => void;
     checkSortFn?: (isChecked: boolean, type: any) => void;
+    checkActionFn?: (isChecked: boolean, type: any) => void;
   };
 }
 
@@ -27,6 +29,7 @@ export const Button: React.FC<ButtonProp> = ({
   types,
   checkFn,
   sortFn,
+  action,
 }) => {
   const [show, setShow] = useState<boolean>(false);
   const [index, setIndex] = useState<string>();
@@ -35,6 +38,9 @@ export const Button: React.FC<ButtonProp> = ({
     [key: string]: boolean;
   }>({});
   const [checkedSortState, setCheckedSortState] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [checkActionState, setCheckActionState] = useState<{
     [key: string]: boolean;
   }>({});
 
@@ -57,6 +63,12 @@ export const Button: React.FC<ButtonProp> = ({
     setCheckedSortState({ [id]: isChecked });
     if (checkFn?.checkSortFn) {
       checkFn.checkSortFn(isChecked, value);
+    }
+  };
+  const handleActionBox = (id: string, value: string, isChecked: boolean) => {
+    setCheckActionState({ [id]: isChecked });
+    if (checkFn?.checkActionFn) {
+      checkFn.checkActionFn(isChecked, value);
     }
   };
 
@@ -170,6 +182,46 @@ export const Button: React.FC<ButtonProp> = ({
                       checked={checkedSortState[data.id] || false}
                       type="checkbox"
                       className="w-4 h-4 cursor-pointer accent-slate-950  "
+                    />
+                    <label
+                      htmlFor={data.id}
+                      className=" text-[17px] cursor-pointer tracking-wide "
+                    >
+                      {" "}
+                      {data.label}
+                    </label>
+                  </div>
+                )
+            )}
+          </div>
+        </div>
+        <div
+          className={`flex ${
+            types && types?.length > 0 ? "visible" : "hidden"
+          } flex-col w-full items-start justify-center  gap-4`}
+        >
+          <h1 className="text-[18px] tracking-wider ">Actions</h1>
+          <div className="w-full overflow-x-auto  flex items-center justify-around gap-5">
+            {action?.map(
+              (data) =>
+                checkFn?.checkActionFn &&
+                data.value && (
+                  <div
+                    key={data.id}
+                    className="w-full   flex items-center justify-start gap-2 cursor-pointer"
+                  >
+                    <input
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        handleActionBox(
+                          data.id,
+                          data.value,
+                          event.target.checked
+                        );
+                      }}
+                      id={data.id}
+                      checked={checkActionState[data.id] || false}
+                      type="checkbox"
+                      className="w-4 h-4 cursor-pointer accent-black"
                     />
                     <label
                       htmlFor={data.id}
