@@ -16,7 +16,7 @@ const roles = role?.map((eachRole)=> eachRole.role)
   useEffect(() => {}, [auth.success, auth?.userInfo]);
 
   return auth.success ? (
-    roles.includes(auth.userInfo.role as UserRole) ? (
+    roles.includes(auth.userInfo.role as unknown as "admin"| "chef") ? (
       <Outlet />
     ) : (
       <div>Unauthorized Access</div>
