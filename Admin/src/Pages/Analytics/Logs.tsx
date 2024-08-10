@@ -1,4 +1,4 @@
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useState } from "react";
 import {
   GetLogProp,
@@ -13,11 +13,12 @@ import Skeleton from "react-loading-skeleton";
 
 const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [pagination, setPagination] = useState<{
-    perPage: number;
-    currentPage: number;
-  }>({ perPage: 5, currentPage: 1 });
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [pagination, setPagination] = useState({
+    perPage: 8,
+    currentPage: 1,
+  });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirst: string;
     currentLastDoc: string;
@@ -30,15 +31,14 @@ const Logs = () => {
   const [sort, setSort] = useState<"asc" | "desc">("asc");
 
   const handleCollapseFn = (logId: string) => {
-    const logItems = items?.map((item) => {
-      if (item.id === logId) {
-        return { ...item, open: !item.open };
-      }
-
-      return { ...item, open: false };
-    });
-    console.log(logItems);
+    const logItems = items.map((item) =>
+      item.id === logId
+        ? { ...item, open: !item.open }
+        : { ...item, open: false }
+    );
+    setItems(logItems);
   };
+
   const getAllRoleLogs = async ({
     path,
     pageSize,
@@ -49,14 +49,13 @@ const Logs = () => {
     currentLastDoc,
     direction,
   }: GetLogProp) => {
-    setLoading(true);
     try {
       const adminLogs = (await getLogs({
-        path: path,
-        filter: filter,
-        sort: sort,
-        pageSize: pageSize,
-        direction: direction,
+        path,
+        filter,
+        sort,
+        pageSize,
+        direction,
         currentFirstDoc: currentFirstDoc || null,
         currentLastDoc: currentLastDoc || null,
         action: action || undefined,
@@ -64,79 +63,58 @@ const Logs = () => {
         currentFirstDoc: string;
         currentLastDoc: string;
         logs: LogCardProps[];
+        length: number;
       };
-      setItems(adminLogs.logs);
+
+      setTotalData((prevTotal) => prevTotal + adminLogs.logs.length);
+
+      if (adminLogs.logs.length < pageSize) {
+        setHasMore(false); // If fewer logs are returned than requested, stop infinite scrolling.
+      }
+
+      setItems((prev) => {
+        return [
+          ...prev,
+          ...adminLogs.logs.filter(
+            (log) => !prev.some((data) => data.id === log.id)
+          ),
+        ];
+      });
       setCurrentDoc({
         currentFirst: adminLogs.currentFirstDoc,
         currentLastDoc: adminLogs.currentLastDoc,
       });
     } catch (error) {
-      throw new Error("Unable to get role logs" + error);
-    }
-    setLoading(false);
-  };
-  const handleSelect = async (
-    isChecked: boolean,
-    value: "adminlogs" | "customerlogs" | "cheflogs"
-  ) => {
-    if (value === "adminlogs" && isChecked) {
-      const adminLogs = (await getLogs({
-        path: "adminLogs",
-        filter: "name",
-        sort: "asc",
-        pageSize: 5,
-        direction: "next",
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        logs: LogCardProps[];
-      };
-      setItems(adminLogs.logs);
-    }
-    if (value === "cheflogs" && isChecked) {
-      const chefLogs = await getLogs({
-        path: "chefLogs",
-        filter: "name",
-        sort: "asc",
-        pageSize: 5,
-      });
-      setItems(chefLogs.logs);
-    }
-    if (value === "customerlogs" && isChecked) {
-      const customerLogs = await getLogs({
-        path: "chefLogs",
-        filter: "name",
-        sort: "asc",
-        pageSize: 5,
-      });
-      setItems(customerLogs.logs);
+      console.error("Unable to get role logs:", error);
     }
   };
 
   useEffect(() => {
+    // Reset data when filters are changed
+    setItems([]);
+    setTotalData(0);
+    setCurrentDoc(undefined);
+    setHasMore(true);
+
+    // Fetch logs with the new filters applied
     getAllRoleLogs({
       path:
-        (isFilter?.typeFilter as "adminLogs" | "chefLogs" | "customerLogs") ||
+        (isFilter?.typeFilter as "customerLogs" | "adminLogs" | "chefLogs") ||
         "adminLogs",
-      filter: (isFilter?.sortFilter as keyof LogCardProps) || "id",
+      filter: (isFilter?.sortFilter as keyof LogCardProps) || "name",
       pageSize: pagination.perPage,
-      sort: (sort as "asc" | "desc") || "asc",
+      sort,
       currentFirstDoc: null,
       currentLastDoc: null,
-      action:
-        (isFilter?.actionFilter as
-          | "login"
-          | "update"
-          | "delete"
-          | "register"
-          | "logout") || undefined,
+      direction: "next",
+      action: isFilter?.actionFilter,
     });
   }, [
-    isFilter?.sortFilter,
     isFilter?.typeFilter,
-    pagination.perPage,
+    isFilter?.actionFilter,
+    isFilter?.sortFilter,
     sort,
-    isFilter,
+    pagination.perPage,
   ]);
 
   return (
@@ -276,26 +254,58 @@ const Logs = () => {
           </div>
         </div>
 
-        <div className="flex items-start justify-start flex-grow w-full">
-          <div className="flex flex-col justify-start w-full gap-3 md:max-w-[800px]">
-            {!loading ? (
-              items ? (
-                items.map((item) => (
-                  <LogCard
-                    open
-                    key={item.id}
-                    {...item}
-                    handleClick={() => handleCollapseFn(item.id as string)}
-                  />
-                ))
+        <div
+          id="scrollableDiv"
+          className="flex items-start  overflow-auto justify-start flex-grow w-full"
+        >
+          <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
+            <InfiniteScroll
+              endMessage={
+                <div className="w-full flex items-center justify-center py-3 text-[18px] tracking-wider ">
+                  No data to load
+                </div>
+              }
+              scrollableTarget={"scrollableDiv"}
+              dataLength={totalData ? totalData : 0}
+              hasMore={hasMore}
+              next={() =>
+                getAllRoleLogs({
+                  path:
+                    (isFilter?.typeFilter as
+                      | "customerLogs"
+                      | "adminLogs"
+                      | "chefLogs") || "adminLogs",
+                  filter:
+                    (isFilter?.sortFilter as keyof LogCardProps) || "name",
+                  pageSize: pagination.perPage,
+                  sort,
+                  currentFirstDoc: currentDoc?.currentFirst,
+                  currentLastDoc: currentDoc?.currentLastDoc,
+                  direction: "next",
+                  action: isFilter?.actionFilter,
+                })
+              }
+              loader={
+                <div className="w-full ">
+                  <Skeleton height={70} count={5} />
+                </div>
+              }
+            >
+              {items ? (
+                <div className="flex flex-col justify-center gap-5 w-full">
+                  {items.map((item) => (
+                    <LogCard
+                      open
+                      key={item.id}
+                      {...item}
+                      handleClick={() => handleCollapseFn(item.id as string)}
+                    />
+                  ))}
+                </div>
               ) : (
                 <div>No data to show.</div>
-              )
-            ) : (
-              <div className="w-full ">
-                <Skeleton height={70} count={5} />
-              </div>
-            )}
+              )}
+            </InfiniteScroll>
           </div>
         </div>
       </div>
