@@ -34,56 +34,65 @@ export const FilterButton: React.FC<SortValue> = ({
       }
     };
 
-    window.addEventListener("mousedown", closeModal);
+    if (openChild) {
+      window.addEventListener("mousedown", closeModal);
+    }
 
     return () => {
       window.removeEventListener("mousedown", closeModal);
     };
-  }, []);
- console.log(index)
+  }, [openChild]);
   return (
     <div ref={reference as any} className="relative w-full ">
       {parent ? (
         parent
       ) : (
-        <div className={` flex py-1.5 px-2  items-center justify-start gap-2 `}>
+        <div
+          onClick={() => setOpenChild(!openChild)}
+          className={` flex py-1.5 px-2  border rounded cursor-pointer items-center justify-start gap-2 `}
+        >
           <ArrowDownAZ className="size-5" />
           <span className=" text-[17px] tracking-wide">Sort By</span>
         </div>
       )}
-      {openChild && (
-        <div
-          style={bodyStyle}
-          className={`  bg-[var(--light-foreground)] p-1 rounded gap-1 flex flex-col items-start justify-center absolute  top-0 border shadow-[#00000009] shadow-sm`}
-        >
-          {children?.map((option, key) => (
-            <button
-              onClick={() => {
-                if (!onSelect) return;
-                onSelect(option.value);
-                setIndex(key);
-              }}
-              className={`text-start ${key ===index ?"ring-1 ring-[var(--orange-bg)] bg-yellow-50 ":""} duration-150 cursor-pointer flex items-center justify-between hover:bg-gray-100  w-full rounded py-1.5 px-2  tracking-wide text-[16px]`}
-              key={key}
-            >
-              {option.label}
-              {sortOrder && (
-                <span>
-                  <ArrowUp
-                    className={` size-4 gap-3 duration-150 ${
-                      sortOrder === "desc" && index === key
-                        ? "rotate-180"
-                        : sortOrder === "asc" && index === key
-                        ? ""
-                        : "invisible"
-                    } `}
-                  />
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
+
+      <div
+        style={bodyStyle}
+        className={` duration-150  ${
+          openChild ? "visible opacity-100 " : "invisible opacity-0 "
+        }  bg-[var(--light-foreground)] p-1 rounded gap-1 flex flex-col items-start justify-center absolute  top-0 border shadow-[#00000009] shadow-sm`}
+      >
+        {children?.map((option, key) => (
+          <button
+            onClick={() => {
+              if (!onSelect) return;
+              onSelect(option.value);
+              setIndex(key);
+            }}
+            className={`text-start ${
+              key === index
+                ? "ring-1 ring-[var(--orange-bg)] bg-yellow-50 "
+                : ""
+            } duration-150 cursor-pointer flex items-center justify-between hover:bg-gray-100  w-full rounded py-1.5 px-2  tracking-wide text-[16px]`}
+            key={key}
+          >
+            {option.label}
+            {sortOrder && (
+              <span>
+                <ArrowUp
+                  className={` size-4 gap-3 duration-150 ${
+                    sortOrder === "desc" && index === key
+                      ? "rotate-180"
+                      : sortOrder === "asc" && index === key
+                      ? ""
+                      : "invisible"
+                  } `}
+                />
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

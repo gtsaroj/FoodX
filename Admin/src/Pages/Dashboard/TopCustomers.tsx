@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
 import { CustomerCard } from "../../Components/Common/Cards/CustomerCard";
-import { CustomerType, TopCustomerType } from "../../models/user.model";
+import { CustomerType } from "../../models/user.model";
 import { getTopCustomers } from "../../Utility/CustomerUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
-import { CategoryType } from "../../models/category.model";
+import Skeleton from "react-loading-skeleton";
 
 export const TopCustomers = () => {
-  const [TopCustomer, setTopCustomer] = useState<TopCustomerType[]>();
+  const [TopCustomer, setTopCustomer] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
 
   const handleSelect = async (value: string) => {
     const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
 
     let sortedCustomers;
-    if (value === "Total order") {
+    if (value === "totalOrders") {
       sortedCustomers = [...(TopCustomer as CustomerType[])].sort(
         (a: CustomerType, b: CustomerType) =>
           newOrder === "desc"
@@ -21,7 +21,7 @@ export const TopCustomers = () => {
             : (((a.totalOrder as number) - b.totalOrder) as number)
       );
     }
-    if (value === "Total spent") {
+    if (value === "totalSpent") {
       sortedCustomers = [...(TopCustomer as CustomerType[])].sort(
         (a: CustomerType, b: CustomerType) =>
           newOrder === "desc"
@@ -49,17 +49,32 @@ export const TopCustomers = () => {
         <div>
           {" "}
           <FilterButton
-            border = {true}
             onSelect={handleSelect}
             sortOrder={sortOrder.order}
-            sortingOptions={["Total order", "Total spent"]}
+            children={[
+              { label: "Total order", value: "totalOrders" },
+              { label: "Total spent", value: "totalSpent" },
+            ]}
+            bodyStyle={
+              {
+                width: "150px",
+                left: "-9.5rem"
+              }
+            }
           />
         </div>
       </div>
       <div className="flex flex-col gap-3 max-h-[350px] flex-grow overflow-y-scroll">
-        {TopCustomer?.map((customer, index) => (
-          <CustomerCard key={customer.id} prop={customer} index={index} />
-        ))}
+        {TopCustomer?.length > 0 ? (
+          TopCustomer?.map((customer, index) => (
+            <CustomerCard key={customer.id} prop={customer} index={index} />
+          ))
+        ) : (
+          <div className="w-full ">
+            <Skeleton className="mb-1" height={100} />
+            <Skeleton height={70} count={4} />
+          </div>
+        )}
       </div>
     </div>
   );
