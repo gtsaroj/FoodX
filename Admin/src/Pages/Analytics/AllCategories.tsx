@@ -47,12 +47,11 @@ const AllCategories = () => {
         revenue: 15000,
         image: category.image,
       }));
-      categorydata?.forEach((data) => dispatch(categoryAdd(data.name)));
-      setOriginalData(categorydata);
       setInitialCategory(categorydata);
+      categorydata?.forEach((data) => dispatch(categoryAdd(data.name)));
     } catch (error) {
       setLoading(false);
-      return console.log(`Error found while fetching category` + error);
+      throw new Error(`Error found while fetching category` + error);
     }
     setLoading(false);
   };
@@ -110,36 +109,6 @@ const AllCategories = () => {
     }
   };
 
-  const handleSelect = async (isChecked: boolean, value: string) => {
-    const newOrder = sortOrder === "asc" ? "desc" : "asc";
-
-    let sortedCustomers;
-    if (value === "item") {
-      sortedCustomers = [...initialCategory].sort(
-        (a: CategoryType, b: CategoryType) =>
-          newOrder === "desc"
-            ? (((b.item as number) - a.item) as number)
-            : (((a.item as number) - b.item) as number)
-      );
-    }
-    // if (value === "Orders") {
-    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
-    //     newOrder == "desc" ? (b.order = a.order) : a.order - b.order
-    //   );
-    // }
-    // if (value === "Revenue") {
-    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
-    //     newOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
-    //   );
-    // }
-    // if (value === "Rank") {
-    //   sortedCustomers = [...initialCategory]?.sort((a, b) =>
-    //     newOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
-    //   );
-    // }
-    setInitialCategory(sortedCustomers as CategoryType[]);
-  };
-
   const SearchingCategories = async (value: string) => {
     if (value.length <= 0) return getAllCategories();
     const filterCategories = SearchCategory(initialCategory, value);
@@ -175,14 +144,46 @@ const AllCategories = () => {
   };
 
   useEffect(() => {
-    getAllCategories();
-  }, []);
+    if (initialCategory?.length <= 0 || undefined) {
+      getAllCategories();
+    }
+  }, [initialCategory?.length]);
 
-  // useEffect(() => {
-  //   if (sortOrder? === "") {
-  //     setInitialCategory(originalData);
-  //   }
-  // }, [originalData, sortOrder?.field]);
+  console.log(initialCategory);
+
+  useEffect(() => {
+    const handleSelect = async (value: string) => {
+      let sortedCustomers;
+      if (value === "item") {
+        sortedCustomers = [...initialCategory].sort(
+          (a: CategoryType, b: CategoryType) =>
+            sortOrder === "desc"
+              ? (((b.item as number) - a.item) as number)
+              : (((a.item as number) - b.item) as number)
+        );
+      }
+      if (value === "orders") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.order = a.order) : a.order - b.order
+        );
+      }
+      if (value === "revenue") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
+        );
+      }
+      if (value === "rank") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
+        );
+      }
+      if (value.length <= 0 || undefined) {
+        getAllCategories();
+      }
+      setInitialCategory(sortedCustomers as CategoryType[]);
+    };
+    handleSelect(isFilter as string);
+  }, [isFilter, sortOrder]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
@@ -244,7 +245,7 @@ const AllCategories = () => {
               </div>
             }
             sort={[
-              { label: "Rank", value: "rank", id: "fkdsj" },
+              { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
               { label: "Revenue", value: "revenue", id: "flksdj" },
               {
                 label: "Orders",
@@ -252,13 +253,21 @@ const AllCategories = () => {
                 id: "kfljsf",
               },
             ]}
-            checkFn={(isChecked: boolean, value: any) =>
-              handleSelect(isChecked, value)
-            }
+            checkFn={{
+              checkSortFn: (isChecked, value) => {
+                if (!isChecked) {
+                  return setIsFilter("");
+                }
+                if (isChecked) {
+                  setIsFilter(value);
+                }
+              },
+            }}
           />
         </div>
       </div>
       <CategoryTable
+        totalData={initialCategory?.length}
         selectedData={bulkSelectedCategory}
         loading={loading}
         category={initialCategory}

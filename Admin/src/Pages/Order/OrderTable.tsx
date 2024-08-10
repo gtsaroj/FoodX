@@ -54,7 +54,8 @@ export const OrderTable: React.FC<orderTableProp> = ({
       render: (item: OrderModal) => (
         <div className=" !p-0 w-[100px]   relative cursor-pointer group/id text-center ">
           #{item.id?.substring(0, 8)}
-          <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
+          <div className=" top-[-27px]  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
+           rounded shadow ">
             {item.id}
           </div>
         </div>
@@ -138,7 +139,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
           >
             {item.status}
           </button>
-          <div className="absolute z-[1000]">
+          <div className="absolute lg:left-[45rem] md:left-[30rem] left-[15rem] sm:left-[30rem] z-[1000]">
             {" "}
             {isChangeStatus && id === item.id && (
               <StatusChanger

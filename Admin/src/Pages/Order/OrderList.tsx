@@ -9,6 +9,7 @@ import { convertIsoToReadableDateTime } from "../../Utility/DateUtils";
 import { OrderTable } from "./OrderTable";
 import { Button } from "../../Components/Common/Button/Button";
 import { GetOrderModal } from "../../../../backend/src/models/order.model";
+import { order } from "../../../../frontend/src/Services";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
@@ -23,31 +24,38 @@ const OrderList = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
-  const [isFilter, setIsFiltered] = useState<string>();
+  const [isFilter, setIsFilter] = useState<{
+    dateFilter?: any;
+    sortFilter?: string;
+  }>();
 
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
     try {
       //  get total orders data from  server
-      const orders = (await getOrders({
-        pageSize: data.pageSize,
-        filter: data.filter,
-        sort: data.sort,
-        direction: data.direction,
-        currentFirstDoc: data.currentFirstDoc,
-        currentLastDoc: data.currentLastDoc,
-      })) as {
+      let orders;
+      if (pagination.currentPage === 1) {
+        orders = await getOrders({
+          pageSize: data.pageSize,
+          filter: data.filter,
+          sort: data.sort,
+          direction: data.direction,
+          currentFirstDoc: data.currentFirstDoc || null,
+          currentLastDoc: data.currentLastDoc || null,
+        });
+      }
+      const allOrder = (await orders.data) as {
         currentFirstDoc: string;
         currentLastDoc: string;
         orders: Order[];
         length: number;
       };
-      setTotalData(orders.length);
+      setTotalData(allOrder.length);
       setCurrentDoc({
-        currentFirstDoc: orders.currentFirstDoc,
-        currentLastDoc: orders.currentLastDoc,
+        currentFirstDoc: allOrder.currentFirstDoc,
+        currentLastDoc: allOrder.currentLastDoc,
       });
-      const aggregateData = orders?.orders.map(async (item) => {
+      const aggregateData = allOrder?.orders.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
         const getDate = convertIsoToReadableDateTime(
           item.orderRequest as string
@@ -81,28 +89,6 @@ const OrderList = () => {
     }
     setLoading(false);
   };
-  const handleSelect = async (isChecked: boolean, value: string) => {
-    if (!isChecked) return setIsFiltered("");
-    setIsFiltered(value);
-    if (value === "rank" && isChecked) {
-      await getAllOrders({
-        filter: "orderId",
-        pageSize: pagination.perPage,
-        sort: sortOrder as "asc" | "desc",
-        direction: "next",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-      });
-    }
-    if (value === "status" && isChecked) {
-      await getAllOrders({
-        filter: "orderId",
-        pageSize: pagination.perPage,
-        sort: sortOrder as "asc" | "desc",
-        direction: "next",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-      });
-    }
-  };
 
   const handleChange = (value: string) => {
     const filterOrder = SearchOrder(initialOrders, value);
@@ -127,45 +113,47 @@ const OrderList = () => {
   ]);
 
   useEffect(() => {
-    if (initialOrders.length <= 0) {
-      getAllOrders({
-        filter: "uid",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        direction: "next",
-        currentFirstDoc:null,
-        currentLastDoc:null,
-      });
-    }
-  }, [
-    initialOrders.length,
-    pagination.perPage,
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
-  ]);
+    getAllOrders({
+      filter: (isFilter?.sortFilter as keyof Order) || "uid",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      direction: "next",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
+  }, [pagination.perPage, sortOrder, isFilter?.sortFilter]);
 
   useEffect(() => {
     if (
       pagination.currentPage > 1 &&
       currentDoc?.currentFirstDoc &&
-      currentDoc.currentLastDoc
+      currentDoc?.currentLastDoc
     ) {
+      console.log(
+        pagination.currentPage,
+        currentDoc.currentFirstDoc,
+        currentDoc.currentLastDoc
+      );
       const fetchNextPage = async () => {
-        const getAllOrder = (await getOrders({
-          filter: "orderId",
+        const orders = await getOrders({
+          filter: (isFilter?.sortFilter as keyof Order) || "uid",
           pageSize: pagination.perPage,
-          sort: "asc",
+          sort: sortOrder || "asc",
           currentFirstDoc: currentDoc.currentFirstDoc,
-        })) as {
+          currentLastDoc: currentDoc.currentLastDoc,
+          direction: "next",
+        });
+        const getAllOrder = orders.data as {
           currentFirstDoc: string;
           currentLastDoc: string;
           orders: Order[];
+          length: number;
         };
-
         setCurrentDoc({
           currentFirstDoc: getAllOrder.currentFirstDoc,
           currentLastDoc: getAllOrder.currentLastDoc,
         });
+        setTotalData(getAllOrder.length);
 
         const aggregateData = getAllOrder?.orders.map(async (item) => {
           let getUserName = await getFullName(item?.uid);
@@ -201,12 +189,18 @@ const OrderList = () => {
               (order) => !prev.some((data) => data.id === order.id)
             ),
           ];
-        })
+        });
       };
-
       fetchNextPage();
     }
-  },[currentDoc?.currentFirstDoc,currentDoc?.currentLastDoc,pagination.currentPage,pagination.perPage])
+  }, [
+    isFilter?.sortFilter,
+    sortOrder,
+    currentDoc?.currentFirstDoc,
+    currentDoc?.currentLastDoc,
+    pagination.currentPage,
+    pagination.perPage,
+  ]);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -238,12 +232,24 @@ const OrderList = () => {
                 </div>
               }
               sort={[
-                { label: "Status", value: "status", id: "jfhkdj" },
-                { label: "Rank", value: "rank", id: "fkdsj" },
+                { label: "Requested", value: "orderRequest", id: "jfhkdj" },
+                { label: "Name", value: "uid", id: "fkdsj" },
+                {
+                  label: "Rank",
+                  value: "status",
+                  id: "kfljdsfsdf",
+                },
               ]}
-              checkFn={(isChecked: boolean, value: any) =>
-                handleSelect(isChecked, value)
-              }
+              checkFn={{
+                checkSortFn: (isChecked, value) => {
+                  if (!isChecked) {
+                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+                  }
+                  if (isChecked) {
+                    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+                  }
+                },
+              }}
             />
           </div>
         </div>
@@ -258,23 +264,19 @@ const OrderList = () => {
             placeholder="Search"
           />
         </form>
-        {isFilter && (
+        {isFilter?.sortFilter && (
           <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
             <div className="flex gap-1 items-center justify-center">
-              <span className="  text-sm ">{isFilter.toLowerCase()}</span>
-              <p
-                className={` duration-150 ${
-                  sortOrder === "desc"
-                    ? "rotate-180"
-                    : sortOrder === "asc"
-                    ? ""
-                    : ""
-                } `}
-              >
-                <ChevronUp size={20} />
-              </p>
+              <span className="  text-sm ">
+                {isFilter.sortFilter && isFilter.sortFilter}
+              </span>
             </div>
-            <button onClick={() => setIsFiltered("")} className=" ">
+            <button
+              onClick={() =>
+                setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+              }
+              className=" "
+            >
               <X className="text-[var(--danger-text)] " size={20} />
             </button>
           </div>

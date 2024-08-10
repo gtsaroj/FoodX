@@ -4,6 +4,7 @@ import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 
 interface CustomerTableProp {
+  totalData? : number;
   selectedData?: Array<T>;
   category: CategoryType[];
   loading?: boolean;
@@ -20,6 +21,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
   loading,
   actions,
   selectedData,
+  totalData
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -89,6 +91,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
   ];
   return (
     <Table
+      totalData={ totalData}
       selectedData={selectedData}
       data={category}
       columns={Columns}
