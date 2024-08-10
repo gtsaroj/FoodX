@@ -15,7 +15,7 @@ import { FoodTable } from "../Food/FoodTable";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { ChevronUp, Filter, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
@@ -52,16 +52,31 @@ const AllProductAnalytics = () => {
   // get all products
   const getAllProducts = async (data: GetProductModal) => {
     setLoading(true);
+
     try {
-      const products = await getProducts({
-        path: data.path,
-        pageSize: data.pageSize,
-        direction: data.direction,
-        filter: data.filter,
-        sort: data.sort,
-        currentFirstDoc: data?.currentFirstDoc || null,
-        currentLastDoc: data?.currentLastDoc || null,
-      });
+      let products;
+      if (pagination.currentPage > 1) {
+        products = await getProducts({
+          path: data.path,
+          pageSize: data.pageSize,
+          direction: data.direction,
+          filter: data.filter,
+          sort: data.sort,
+          currentFirstDoc: currentDoc?.currentFirstDoc,
+          currentLastDoc: currentDoc?.currentLastDoc,
+        });
+      }
+      if (pagination.currentPage === 1) {
+        products = await getProducts({
+          path: data.path,
+          pageSize: data.pageSize,
+          direction: data.direction,
+          filter: data.filter,
+          sort: data.sort,
+          currentFirstDoc: data?.currentFirstDoc || null,
+          currentLastDoc: data?.currentLastDoc || null,
+        });
+      }
 
       const specialProducts = products.data as {
         currentFirstDoc: string;
@@ -96,27 +111,22 @@ const AllProductAnalytics = () => {
 
   useEffect(() => {
     // call getAllProducts
-    if (
-      fetchedProducts?.length <= 0
-    ) {
-      // setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-      getAllProducts({
-        path: isFilter?.typeFilter || "products",
-        pageSize: pagination.perPage,
-        currentFirstDoc: currentDoc?.currentFirstDoc || null,
-        currentLastDoc: currentDoc?.currentLastDoc || null,
-        direction: "next",
-        filter: isFilter?.sortFilter || "name",
-        sort: "asc",
-      });
-    }
+    // setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
+    getAllProducts({
+      path: isFilter?.typeFilter || "products",
+      pageSize: pagination.perPage,
+      currentFirstDoc: null,
+      currentLastDoc: null,
+      direction: "next",
+      filter:
+        (isFilter && isFilter.sortFilter) || ("name" as keyof ProductType),
+      sort: sortOrder,
+    });
   }, [
     isFilter?.typeFilter,
     isFilter?.sortFilter,
     pagination.perPage,
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
-    fetchedProducts.length,
+    sortOrder,
   ]);
 
   useEffect(() => {
@@ -130,15 +140,13 @@ const AllProductAnalytics = () => {
         try {
           const products = await getProducts({
             path:
-              isFilter === "products" || isFilter === "specials"
-                ? isFilter
-                : "products",
+              (isFilter?.typeFilter as "products" | "specials") || "products",
             pageSize: pagination.perPage,
             direction: "next",
-            filter: "name",
+            filter: (isFilter?.sortFilter as keyof ProductType) || "name",
             sort: sortOrder,
-            currentFirstDoc: currentDoc.currentFirstDoc,
-            currentLastDoc: currentDoc.currentLastDoc,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            currentLastDoc: currentDoc?.currentLastDoc,
           });
 
           const normalProducts = products.data as {
@@ -195,32 +203,6 @@ const AllProductAnalytics = () => {
   ) => {
     if (!isChecked) return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
     setIsFilter((prev) => ({ ...prev, typeFilter: value }));
-    try {
-      if (value === "specials") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "specials",
-          currentFirstDoc: null || currentDoc?.currentFirstDoc,
-          currentLastDoc: null || currentDoc?.currentLastDoc,
-          direction: "next",
-          filter: "name",
-          sort: sortOrder,
-        });
-      }
-      if (value === "products") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "products",
-          currentFirstDoc: null || currentDoc?.currentFirstDoc,
-          currentLastDoc: null || currentDoc?.currentFirstDoc,
-          direction: "next",
-          filter: "name",
-          sort: sortOrder,
-        });
-      }
-    } catch (error) {
-      throw new Error("Unable to filter data" + error);
-    }
   };
 
   const handleSortCheck = async (
@@ -229,42 +211,6 @@ const AllProductAnalytics = () => {
   ) => {
     if (!isChecked) return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
     setIsFilter((prev) => ({ ...prev, sortFilter: value }));
-    if (value === "price") {
-      console.log(sortOrder);
-      setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-      await getAllProducts({
-        pageSize: pagination.perPage,
-        path: isFilter?.typeFilter ? isFilter.typeFilter : "products",
-        currentFirstDoc: currentDoc?.currentFirstDoc || null,
-        currentLastDoc: currentDoc?.currentLastDoc || null,
-        direction: "next",
-        filter: "price",
-        sort: sortOrder,
-      });
-    }
-    if (value === "orders") {
-      setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-      await getAllProducts({
-        pageSize: pagination.perPage,
-        path: isFilter?.typeFilter ? isFilter.typeFilter : "products",
-        currentFirstDoc: currentDoc?.currentFirstDoc || null,
-        currentLastDoc: currentDoc?.currentLastDoc || null,
-        direction: "next",
-        filter: "name",
-        sort: sortOrder,
-      });
-    }
-    if (value === "revenue") {
-      await getAllProducts({
-        pageSize: pagination.perPage,
-        path: isFilter?.typeFilter ? isFilter.typeFilter : "products",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-        direction: "next",
-        filter: "name",
-        sort: sortOrder,
-      });
-    }
   };
 
   const handleChange = (value: string) => {
@@ -406,9 +352,9 @@ const AllProductAnalytics = () => {
               deleteFn={() => setIsBulkDelete(true)}
             />
             {isFilter?.sortFilter && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">
+                  <span className=" text-[15px] text-[var(--dark-secondary-text)]">
                     {isFilter.sortFilter && isFilter.sortFilter.toLowerCase()}
                   </span>
                 </div>
@@ -423,9 +369,9 @@ const AllProductAnalytics = () => {
               </div>
             )}
             {isFilter?.typeFilter && (
-              <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-sm ">
+                  <span className="    text-[15px] text-[var(--dark-secondary-text)]">
                     {isFilter.typeFilter && isFilter.typeFilter.toLowerCase()}
                   </span>
                 </div>

@@ -157,7 +157,7 @@ export const getOrders = async (data: GetOrderModal) => {
       url: "orders/get-orders",
       data: { ...data },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw new Error(`Error while getting orders : ${error}`);
   }
@@ -614,7 +614,7 @@ export const getUser = async (data: GetUserModal) => {
       url: "users/get-users",
       data: { ...data },
     });
-    return response.data.data;
+    return response.data;
   } catch (error) {
     throw new Error("Error while getting users" + error);
   }

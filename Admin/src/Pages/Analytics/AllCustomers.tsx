@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { aggregateCustomerData } from "../../Utility/CustomerUtils";
-import { CustomerType } from "../../models/user.model";
+import { CustomerType, User } from "../../models/user.model";
 import { CustomerTable } from "../Customers/CustomerTable";
 import {
   addLogs,
@@ -17,10 +17,14 @@ import { debounce } from "../../Utility/Debounce";
 import { SearchCustomer } from "../../Utility/Search";
 import { DbUser, GetUserModal } from "../../models/UserModels";
 import { Button } from "../../Components/Common/Button/Button";
+import { Value } from "@radix-ui/react-select";
 
 const AllCustomers = () => {
   const [totalData, setTotalData] = useState<number>();
-  const [isFilter, setIsFilter] = useState<string>();
+  const [isFilter, setIsFilter] = useState<{
+    typeFilter?: "customer" | "admin" | "chef" | string;
+    sortFilter?: string;
+  }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<CustomerType[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | undefined>("asc");
@@ -44,23 +48,27 @@ const AllCustomers = () => {
   const handleCustomerData = async (data: GetUserModal) => {
     setLoading(true);
     try {
-      const AllCustomers = (await getUser({
-        path: data.path,
-        filter: data.filter,
-        pageSize: data.pageSize,
-        direction: data.direction,
-        sort: data.sort,
-        currentFirstDoc: data.currentFirstDoc,
-        currentLastDoc: data.currentLastDoc,
-      })) as {
+      let AllCustomers;
+      if (pagination.currentPage === 1) {
+        AllCustomers = await getUser({
+          path: data.path,
+          filter: data.filter,
+          pageSize: data.pageSize,
+          direction: data.direction,
+          sort: data.sort,
+          currentFirstDoc: data.currentFirstDoc || null,
+          currentLastDoc: data.currentLastDoc || null,
+        });
+      }
+      const users = AllCustomers.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
         users: DbUser[];
         length: number;
       };
-      const customerList = await aggregateCustomerData(AllCustomers.users);
+      const customerList = await aggregateCustomerData(users.users);
       setInitialCustomer(customerList);
-      setTotalData(AllCustomers.length);
+      setTotalData(users.length);
     } catch (error) {
       setLoading(false);
       return console.log(`Error while getting customers : ${error}`);
@@ -181,83 +189,83 @@ const AllCustomers = () => {
     }
   };
 
-  const handleSelect = async (
-    isChecked: boolean,
-    value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
-  ) => {
-    if (!isChecked) return setIsFilter("");
-    console.log(value);
-    setIsFilter(value);
-    try {
-      if (value === "orders" && isChecked) {
-        await handleCustomerData({
-          direction: "next",
-          filter: "fullName",
-          pageSize: pagination.perPage,
-          path: "admin",
-          sort: "asc",
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-        });
-      }
+  // const handleSelect = async (
+  //   isChecked: boolean,
+  //   value: "customer" | "admin" | "chef" | "orders" | "amount" | "role"
+  // ) => {
+  //   if (!isChecked) return setIsFilter("");
+  //   console.log(value);
+  //   setIsFilter(value);
+  //   try {
+  //     if (value === "orders" && isChecked) {
+  //       await handleCustomerData({
+  //         direction: "next",
+  //         filter: "fullName",
+  //         pageSize: pagination.perPage,
+  //         path: "admin",
+  //         sort: "asc",
+  //         currentFirstDoc: currentDoc?.currentFirstDoc,
+  //       });
+  //     }
 
-      // if (value === "amount" && isChecked) {
-      //   await handleCustomerData({
-      //     direction: "next",
-      //     filter: "fullName",
-      //     pageSize: pagination.perPage,
-      //     path: "admin",
-      //     sort: "asc",
-      //     currentFirstDoc: currentDoc?.currentFirstDoc,
-      //   });
-      // }
-      if (value === "admin" && isChecked) {
-        await handleCustomerData({
-          path: "admin",
-          direction: "next",
-          filter: "fullName",
-          pageSize: pagination.perPage,
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          sort: "asc",
-        });
-      }
-      if (value === "customer" && isChecked) {
-        await handleCustomerData({
-          path: "customer",
-          direction: "next",
-          filter: "fullName",
-          pageSize: pagination.perPage,
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          sort: "asc",
-        });
-      }
-      if (value === "chef" && isChecked) {
-        await handleCustomerData({
-          path: "chef",
-          direction: "next",
-          filter: "fullName",
-          pageSize: pagination.perPage,
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          sort: "asc",
-        });
-      }
-      // if (value === "order") {
-      //   await handleCustomerData({
-      //     path: "customer",
-      //     direction: "next",
-      //     filter: "fullName",
-      //     pageSize: pagination.perPage,
-      //     currentFirstDoc: currentDoc?.currentFirstDoc,
-      //     currentLastDoc: currentDoc?.currentLastDoc,
-      //     sort: "asc",
-      //   });
-      // }
-    } catch (error) {
-      throw new Error("Unable to show data" + error);
-    }
-  };
+  //     // if (value === "amount" && isChecked) {
+  //     //   await handleCustomerData({
+  //     //     direction: "next",
+  //     //     filter: "fullName",
+  //     //     pageSize: pagination.perPage,
+  //     //     path: "admin",
+  //     //     sort: "asc",
+  //     //     currentFirstDoc: currentDoc?.currentFirstDoc,
+  //     //   });
+  //     // }
+  //     if (value === "admin" && isChecked) {
+  //       await handleCustomerData({
+  //         path: "admin",
+  //         direction: "next",
+  //         filter: "fullName",
+  //         pageSize: pagination.perPage,
+  //         currentFirstDoc: currentDoc?.currentFirstDoc,
+  //         currentLastDoc: currentDoc?.currentLastDoc,
+  //         sort: "asc",
+  //       });
+  //     }
+  //     if (value === "customer" && isChecked) {
+  //       await handleCustomerData({
+  //         path: "customer",
+  //         direction: "next",
+  //         filter: "fullName",
+  //         pageSize: pagination.perPage,
+  //         currentFirstDoc: currentDoc?.currentFirstDoc,
+  //         currentLastDoc: currentDoc?.currentLastDoc,
+  //         sort: "asc",
+  //       });
+  //     }
+  //     if (value === "chef" && isChecked) {
+  //       await handleCustomerData({
+  //         path: "chef",
+  //         direction: "next",
+  //         filter: "fullName",
+  //         pageSize: pagination.perPage,
+  //         currentFirstDoc: currentDoc?.currentFirstDoc,
+  //         currentLastDoc: currentDoc?.currentLastDoc,
+  //         sort: "asc",
+  //       });
+  //     }
+  //     // if (value === "order") {
+  //     //   await handleCustomerData({
+  //     //     path: "customer",
+  //     //     direction: "next",
+  //     //     filter: "fullName",
+  //     //     pageSize: pagination.perPage,
+  //     //     currentFirstDoc: currentDoc?.currentFirstDoc,
+  //     //     currentLastDoc: currentDoc?.currentLastDoc,
+  //     //     sort: "asc",
+  //     //   });
+  //     // }
+  //   } catch (error) {
+  //     throw new Error("Unable to show data" + error);
+  //   }
+  // };
 
   const handleChange = async (value: string) => {
     if (value.length <= 0) return handleCustomerData();
@@ -271,22 +279,20 @@ const AllCustomers = () => {
   ]);
 
   useEffect(() => {
-    if (initialCustomer.length <= 0 ||  isFilter?.length <= 0) {
-      handleCustomerData({
-        path: "customer",
-        direction: "next",
-        filter: "fullName",
-        pageSize: pagination.perPage,
-        sort: "asc",
-        currentFirstDoc: currentDoc?.currentFirstDoc,
-        currentLastDoc: currentDoc?.currentLastDoc,
-      });
-    }
+    handleCustomerData({
+      path:
+        (isFilter?.typeFilter as "customer" | "admin" | "chef") || "customer",
+      direction: "next",
+      filter: (isFilter?.sortFilter as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder as "asc" | "desc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
-    isFilter?.length,
-    initialCustomer.length,
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
+    sortOrder,
     pagination.perPage,
   ]);
 
@@ -308,26 +314,30 @@ const AllCustomers = () => {
     if (
       pagination.currentPage > 1 &&
       currentDoc?.currentFirstDoc &&
-      currentDoc?.currentFirstDoc.length > 1
+      currentDoc?.currentLastDoc
     ) {
       (async () => {
         const customers = (await getUser({
-          path: "customer",
+          path:
+            (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
+            "customer",
           pageSize: pagination.perPage,
           direction: "next",
-          filter: "fullName",
-          sort: "asc",
+          filter: (isFilter?.sortFilter as keyof User) || "fullName",
+          sort: sortOrder as "asc" | "desc",
           currentFirstDoc: currentDoc.currentFirstDoc,
+          currentLastDoc: currentDoc.currentLastDoc,
         })) as {
           currentFirstDoc: string;
           currentLastDoc: string;
           users: DbUser[];
+          length: number;
         };
-        setCurrentDoc((prev) => ({
-          ...prev,
+        setCurrentDoc({
           currentFirstDoc: customers.currentFirstDoc,
           currentLastDoc: customers.currentLastDoc,
-        }));
+        });
+        setTotalData(customers.length);
         const aggregateCustomer = await aggregateCustomerData(customers.users);
         setInitialCustomer((customer) => {
           return [
@@ -339,7 +349,15 @@ const AllCustomers = () => {
         });
       })();
     }
-  }, [currentDoc?.currentFirstDoc, pagination.currentPage, pagination.perPage]);
+  }, [
+    currentDoc?.currentFirstDoc,
+    pagination.currentPage,
+    pagination.perPage,
+    currentDoc?.currentLastDoc,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
+    sortOrder,
+  ]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
@@ -361,14 +379,34 @@ const AllCustomers = () => {
               dataLength={bulkSelectedCustomer.length}
               deleteFn={() => setIsBulkDelete(true)}
             />
-            {isFilter && (
+            {isFilter?.sortFilter && (
+              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                    {isFilter.sortFilter.toLowerCase()}
+                  </span>
+                </div>
+                <button
+                  onClick={() =>
+                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                  }
+                >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
+            {isFilter?.typeFilter && (
               <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {isFilter.toLowerCase()}
+                    {isFilter.typeFilter.toLowerCase()}
                   </span>
                 </div>
-                <button onClick={() => setIsFilter("")} className=" ">
+                <button
+                  onClick={() =>
+                    setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                  }
+                >
                   <X className="text-[var(--danger-text)] " size={20} />
                 </button>
               </div>
@@ -390,8 +428,23 @@ const AllCustomers = () => {
                 </span>
               </div>
             }
-            checkFn={(isChecked: boolean, value: string) => {
-              handleSelect(isChecked, value as any);
+            checkFn={{
+              checkSortFn: (isChecked, value) => {
+                if (!isChecked) {
+                  return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+                }
+                if (isChecked) {
+                  setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+                }
+              },
+              checkTypeFn: (isChecked, value) => {
+                if (!isChecked) {
+                  return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+                }
+                if (isChecked) {
+                  setIsFilter((prev) => ({ ...prev, typeFilter: value }));
+                }
+              },
             }}
             types={[
               { label: "Admin", value: "admin", id: "sfksdjlk" },

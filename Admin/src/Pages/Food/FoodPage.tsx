@@ -1,8 +1,7 @@
-import { AlignLeft, ChevronUp, Filter, Plus, Trash2, X } from "lucide-react";
+import { Filter, Plus, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/UploadFood";
 import Modal from "../../Components/Common/Popup/Popup";
-import { DropDown } from "../../Components/Common/DropDown/DropDown";
 import { debounce } from "../../Utility/Debounce";
 import {
   ArrangedProduct,
@@ -16,17 +15,11 @@ import {
   getProducts,
 } from "../../Services";
 import { SearchProduct } from "../../Utility/Search";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
-import { addProducts } from "../../Reducer/Action";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import toast from "react-hot-toast";
 import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./FoodTable";
-import { FaRegStar } from "react-icons/fa";
 import { Button } from "../../Components/Common/Button/Button";
-import { BiCategory } from "react-icons/bi";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -53,7 +46,10 @@ const FoodPage: React.FC = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
-  const [isFilter, setIsFiltered] = useState<string>();
+  const [isFilter, setIsFilter] = useState<{
+    typeFilter?: "products" | "specials" | string;
+    sortFilter?: string;
+  }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>();
 
@@ -61,13 +57,18 @@ const FoodPage: React.FC = () => {
   const getAllProducts = async (data: GetProductModal) => {
     setLoading(true);
     try {
-      const products = await getProducts({
-        path: data.path,
-        pageSize: data.pageSize,
-        direction: data.direction,
-        filter: data.filter,
-        sort: data.sort,
-      });
+      let products;
+      if (pagination.currentPage === 1) {
+        products = await getProducts({
+          path: data.path,
+          pageSize: data.pageSize,
+          direction: data.direction,
+          filter: data.filter,
+          sort: data.sort,
+          currentFirstDoc: data.currentFirstDoc || null,
+          currentLastDoc: data.currentLastDoc || null,
+        });
+      }
       // const special = await getSpecialProducts();
       const normalProducts = products.data as {
         currentFirstDoc: string;
@@ -103,62 +104,6 @@ const FoodPage: React.FC = () => {
       throw new Error(`Error while fetching products` + error);
     }
     setLoading(false);
-  };
-
-  //Sorting
-  const handleSelect = async (
-    isChecked: boolean,
-    value: "specials" | "products" | "price" | "orders" | "revenue"
-  ) => {
-    if (!isChecked) setIsFiltered("");
-    try {
-      if (value === "specials") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "specials",
-          currentFirstDoc: currentDoc?.currentFirstDoc || null,
-          currentLastDoc: currentDoc?.currentLastDoc || null,
-          direction: "next",
-          filter: "name",
-          sort: "asc",
-        });
-      }
-      if (value === "products") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "products",
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          direction: "next",
-          filter: "name",
-          sort: "asc",
-        });
-      }
-      if (value === "orders") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "specials",
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          direction: "next",
-          filter: "name",
-          sort: "asc",
-        });
-      }
-      if (value === "revenue") {
-        await getAllProducts({
-          pageSize: pagination.perPage,
-          path: "specials",
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-          direction: "next",
-          filter: "name",
-          sort: "asc",
-        });
-      }
-    } catch (error) {
-      throw new Error("Unable to filter data" + error);
-    }
   };
 
   const handleSelectedDelete = async () => {
@@ -209,19 +154,39 @@ const FoodPage: React.FC = () => {
     setIsBulkDelete(false);
   };
 
+  //Sorting
+  const handleTypeCheck = async (
+    isChecked: boolean,
+    value: "specials" | "products"
+  ) => {
+    if (!isChecked) return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+    setIsFilter((prev) => ({ ...prev, typeFilter: value }));
+  };
+
+  const handleSortCheck = async (
+    isChecked: boolean,
+    value: "price" | "orders" | "revenue"
+  ) => {
+    if (!isChecked) return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+  };
+
   useEffect(() => {
     // call getAllProducts
-    if (fetchedProducts?.length <= 0) {
-      getAllProducts({
-        path: "products",
-        pageSize: pagination.perPage,
-        currentLastDoc: currentDoc?.currentLastDoc || null,
-        direction: "next",
-        filter: "name",
-        sort: "asc",
-      });
-    }
-  }, [pagination.perPage, currentDoc?.currentLastDoc, fetchedProducts.length]);
+    getAllProducts({
+      path: (isFilter?.typeFilter as "products" | "specials") || "products",
+      pageSize: pagination.perPage,
+      currentLastDoc: null,
+      direction: "next",
+      filter: (isFilter?.sortFilter as keyof ProductType) || "name",
+      sort: sortOrder || "asc",
+    });
+  }, [
+    pagination.perPage,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
+    sortOrder,
+  ]);
 
   // delete products
   const handleDelete = async (id: string, type: "specials" | "products") => {
@@ -284,20 +249,18 @@ const FoodPage: React.FC = () => {
     if (
       pagination.currentPage > 1 &&
       currentDoc?.currentLastDoc &&
-      currentDoc.currentLastDoc.length > 0
+      currentDoc.currentLastDoc
     ) {
       const fetchNextPage = async () => {
         setLoading(true);
         try {
           const products = await getProducts({
             path:
-              isFilter === "products" || isFilter === "specials"
-                ? isFilter
-                : "products",
+              (isFilter?.typeFilter as "products" | "specials") || "products",
             pageSize: pagination.perPage,
             direction: "next",
-            filter: "name",
-            sort: sortOrder,
+            filter: (isFilter?.sortFilter as keyof ProductType) || "price",
+            sort: sortOrder || "asc",
             currentLastDoc: currentDoc.currentLastDoc,
           });
 
@@ -313,6 +276,7 @@ const FoodPage: React.FC = () => {
             currentFirstDoc: normalProducts.currentFirstDoc,
             currentLastDoc: normalProducts.currentLastDoc,
           });
+          setTotalData(normalProducts.length);
 
           const newProducts = normalProducts.products?.map((product) => ({
             id: product.id,
@@ -348,7 +312,8 @@ const FoodPage: React.FC = () => {
     currentDoc?.currentLastDoc,
     pagination.perPage,
     currentDoc?.currentFirstDoc,
-    isFilter,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
     sortOrder,
   ]);
 
@@ -408,9 +373,12 @@ const FoodPage: React.FC = () => {
                 { label: "Orders", value: "orders", id: "fkdsj" },
                 { label: "Revenue", value: "revenue", id: "flkjdsf" },
               ]}
-              checkFn={(isChecked: boolean, value: any) =>
-                handleSelect(isChecked, value)
-              }
+              checkFn={{
+                checkSortFn: (isChecked, value) =>
+                  handleSortCheck(isChecked, value),
+                checkTypeFn: (isChecked, type) =>
+                  handleTypeCheck(isChecked, type),
+              }}
             />
           </div>
         </div>
@@ -434,23 +402,36 @@ const FoodPage: React.FC = () => {
           />
         </div>
         <div className="flex items-center justify-start gap-2">
-          {isFilter && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+          {isFilter?.sortFilter && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
               <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">{isFilter.toLowerCase()}</span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder === "desc"
-                      ? "rotate-180"
-                      : sortOrder === "asc"
-                      ? ""
-                      : ""
-                  } `}
-                >
-                  <ChevronUp size={20} />
-                </p>
+                <span className="text-[15px] text-[var(--dark-secondary-text)] ">
+                  {isFilter.sortFilter && isFilter.sortFilter.toLowerCase()}
+                </span>
               </div>
-              <button onClick={() => setIsFiltered(undefined)} className=" ">
+              <button
+                onClick={() =>
+                  setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                }
+                className=" "
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+          {isFilter?.typeFilter && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                  {isFilter.typeFilter && isFilter.typeFilter.toLowerCase()}
+                </span>
+              </div>
+              <button
+                onClick={() =>
+                  setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                }
+                className=" "
+              >
                 <X className="text-[var(--danger-text)] " size={20} />
               </button>
             </div>

@@ -15,8 +15,8 @@ interface ButtonProp {
   types?: { label: ReactNode | string; value: string; id: string }[];
   sortFn: (type: "asc" | "desc") => void;
   checkFn?: {
-    checkTypeFn: (isChecked: boolean, type: any) => void;
-    checkSortFn: (isChecked: boolean, type: any) => void;
+    checkTypeFn?: (isChecked: boolean, type: any) => void;
+    checkSortFn?: (isChecked: boolean, type: any) => void;
   };
 }
 
@@ -92,7 +92,7 @@ export const Button: React.FC<ButtonProp> = ({
         className={`flex border    flex-col items-start gap-5  px-4 py-3  z-[100]  duration-100 absolute ${
           show
             ? "visible translate-y-0 opacity-100 "
-            : "invisible -translate-y-2 opacity-0 "
+            : "invisible z-[-100] -translate-y-2 opacity-0 "
         } flex-col shadow-sm w-full  shadow-[#0000000e] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded `}
       >
         <div
@@ -118,14 +118,14 @@ export const Button: React.FC<ButtonProp> = ({
                           event.target.checked
                         );
                       }}
-                      id={data.value}
+                      id={data.id}
                       checked={checkedTypeState[data.id] || false}
                       type="checkbox"
                       className="w-4 h-4 cursor-pointer accent-black"
                       ref={reference as any}
                     />
                     <label
-                      htmlFor={data.value}
+                      htmlFor={data.id}
                       className=" text-[17px] cursor-pointer tracking-wide "
                     >
                       {" "}
@@ -166,13 +166,13 @@ export const Button: React.FC<ButtonProp> = ({
                           event.target.checked
                         );
                       }}
-                      id={data.value}
+                      id={data.id}
                       checked={checkedSortState[data.id] || false}
                       type="checkbox"
                       className="w-4 h-4 cursor-pointer accent-slate-950  "
                     />
                     <label
-                      htmlFor={data.value}
+                      htmlFor={data.id}
                       className=" text-[17px] cursor-pointer tracking-wide "
                     >
                       {" "}
