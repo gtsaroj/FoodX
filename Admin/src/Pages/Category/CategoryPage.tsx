@@ -27,12 +27,7 @@ export const CategoryPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDeleted] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<string>();
-  const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
-    {
-      category: "specials" | "products";
-      id: string;
-    }[]
-  >([]);
+
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("asc");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -43,37 +38,6 @@ export const CategoryPage: React.FC = () => {
   >([]);
 
   const dispatch = useDispatch<AppDispatch>();
-
-  const handleSelect = async (isChecked: boolean, value: string) => {
-    if (!isChecked) return setIsFilter("")
-    setIsFilter(value)
-    let sortedCustomers;
-    if (value === "Items") {
-      sortedCustomers = [...initialCategory].sort(
-        (a: CategoryType, b: CategoryType) =>
-          sortOrder === "desc"
-            ? (((b.item as number) - a.item) as number)
-            : (((a.item as number) - b.item) as number)
-      );
-    }
-    if (value === "orders") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        sortOrder == "desc" ? (b.order = a.order) : a.order - b.order
-      );
-    }
-    if (value === "revenue") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        sortOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
-      );
-    }
-    if (value === "rank") {
-      sortedCustomers = [...initialCategory]?.sort((a, b) =>
-        sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
-      );
-    }
-
-    setInitialCategory(sortedCustomers as CategoryType[]);
-  };
 
   const getAllCategories = async () => {
     setLoading(true);
@@ -151,16 +115,48 @@ export const CategoryPage: React.FC = () => {
   };
 
   useEffect(() => {
-    initialCategory.forEach((category) => dispatch(categoryAdd(category.name)));
-
-    if (isFilter?.length <= 0) {
-      setInitialCategory(originalData);
-    }
+    initialCategory?.forEach((category) =>
+      dispatch(categoryAdd(category.name))
+    );
   }, [initialCategory, dispatch, originalData, isFilter?.length]);
 
   useEffect(() => {
     getAllCategories();
   }, []);
+
+  useEffect(() => {
+    const handleSelect = async (value: string) => {
+      let sortedCustomers;
+      if (value === "Items") {
+        sortedCustomers = [...initialCategory].sort(
+          (a: CategoryType, b: CategoryType) =>
+            sortOrder === "desc"
+              ? (((b.item as number) - a.item) as number)
+              : (((a.item as number) - b.item) as number)
+        );
+      }
+      if (value === "orders") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.order = a.order) : a.order - b.order
+        );
+      }
+      if (value === "revenue") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.revenue = a.revenue) : a.revenue - b.revenue
+        );
+      }
+      if (value === "rank") {
+        sortedCustomers = [...initialCategory]?.sort((a, b) =>
+          sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
+        );
+      }
+      if (value.length <= 0) {
+        getAllCategories();
+      }
+      setInitialCategory(sortedCustomers as CategoryType[]);
+    };
+    handleSelect(isFilter as string);
+  }, [isFilter, sortOrder]);
 
   const SearchingCategories = async (value: string) => {
     if (value.length <= 0) return getAllCategories();
@@ -232,17 +228,24 @@ export const CategoryPage: React.FC = () => {
                 </div>
               }
               sort={[
-                { label: "Rank", value: "rank", id: "fkdsj" },
-                { label: "Revenue", value: "revenue", id: "flksdj" },
+                { label: "Rank", value: "rank", id: "fkkfjsoadsj" },
+                { label: "Revenue", value: "revenue", id: "flfdshskfjksdj" },
                 {
                   label: "Orders",
                   value: "orders",
                   id: "kfljsf",
                 },
               ]}
-              checkFn={(isChecked: boolean, value: any) =>
-                handleSelect(isChecked, value)
-              }
+              checkFn={{
+                checkSortFn: (isChecked, value) => {
+                  if (!isChecked) {
+                    return setIsFilter("");
+                  }
+                  if (isChecked) {
+                    setIsFilter(value);
+                  }
+                },
+              }}
             />
           </div>
         </div>
@@ -270,9 +273,11 @@ export const CategoryPage: React.FC = () => {
         </div>
         <div>
           {isFilter && (
-            <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
+            <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
               <div className="flex gap-1 items-center justify-center">
-                <span className="  text-sm ">{isFilter.toLowerCase()}</span>
+                <span className="  text-[15px] text-[var(--dark-secondary-text)]">
+                  {isFilter.toLowerCase()}
+                </span>
                 <p
                   className={` duration-150 ${
                     sortOrder === "desc"
