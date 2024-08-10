@@ -6,6 +6,7 @@ import { getTicketByStatus } from "../../Services";
 import toast from "react-hot-toast";
 import { TicketType } from "../../models/ticket.model";
 import { getTimeDifference } from "../../Utility/DateUtils";
+import Skeleton from "react-loading-skeleton";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
@@ -67,16 +68,23 @@ export const RecentTickets = () => {
         className={`max-h-[550px] overflow-y-scroll`}
       >
         <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
-          {tickets?.map((ticket) => (
-            <TicketCard
-              category={ticket.category}
-              date={ticket.date as any}
-              description={ticket.description}
-              title={ticket.title}
-              id={ticket.id}
-              key={ticket.id}
-            />
-          ))}
+          {tickets.length > 0 ? (
+            tickets?.map((ticket) => (
+              <TicketCard
+                category={ticket.category}
+                date={ticket.date as any}
+                description={ticket.description}
+                title={ticket.title}
+                id={`#${ticket.id}`}
+                key={ticket.id}
+              />
+            ))
+          ) : (
+            <div className="w-full ">
+              <Skeleton className="mb-1" height={100} />
+              <Skeleton height={70} count={4} />
+            </div>
+          )}
         </div>
       </div>
       {url && <Loader url={url} />}

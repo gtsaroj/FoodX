@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import { getRecentOrders } from "./Order";
 import { RecentOrderType } from "../../models/order.model";
+import Skeleton from "react-loading-skeleton";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
-  const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>();
+  const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>([]);
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
@@ -39,7 +40,6 @@ export const RecentOrders = () => {
   useEffect(() => {
     (async () => {
       const recentOrders = await getRecentOrders();
-  
 
       if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
     })();
@@ -61,17 +61,24 @@ export const RecentOrders = () => {
          `}
       >
         <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
-          {recentOrder?.map((order, index) => (
-            <OrderCard
-              image={order.image}
-              orderId={order.orderId}
-              price={order.price}
-              orderRequest={order.orderRequest}
-              products={order.products}
-              status={order.status}
-              key={index}
-            />
-          ))}
+          {recentOrder?.length > 0 ? (
+            recentOrder?.map((order, index) => (
+              <OrderCard
+                image={order.image}
+                orderId={order.orderId}
+                price={order.price}
+                orderRequest={order.orderRequest}
+                products={order.products}
+                status={order.status}
+                key={index}
+              />
+            ))
+          ) : (
+            <div className="w-full ">
+              <Skeleton className="mb-1" height={100} />
+              <Skeleton height={70} count={4} />
+            </div>
+          )}
         </div>
       </div>
       {url && <Loader url={`${url}/`} />}
