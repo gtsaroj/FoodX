@@ -147,7 +147,7 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
     currentLastDoc,
     action,
   }: {
-    path: "adminsLog" | "chefLogs" | "customerLogs";
+    path: "adminLogs" | "chefLogs" | "customerLogs";
     pageSize: number;
     filter: keyof logProps;
     sort: "asc" | "desc";
