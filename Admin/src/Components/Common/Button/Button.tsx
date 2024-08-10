@@ -13,10 +13,11 @@ interface ButtonProp {
   parent: React.ReactNode;
   sort?: { label: ReactNode | string; value: string; id: string }[];
   types?: { label: ReactNode | string; value: string; id: string }[];
-  children?: React.ReactNode[] | string[];
-  onSelect?: (value: string) => void;
   sortFn: (type: "asc" | "desc") => void;
-  checkFn?: (isChecked: boolean, value: string) => void;
+  checkFn?: {
+    checkTypeFn: (isChecked: boolean, type: any) => void;
+    checkSortFn: (isChecked: boolean, type: any) => void;
+  };
 }
 
 export const Button: React.FC<ButtonProp> = ({
@@ -30,23 +31,56 @@ export const Button: React.FC<ButtonProp> = ({
   const [show, setShow] = useState<boolean>(false);
   const [index, setIndex] = useState<string>();
   const reference = useRef<HTMLInputElement>();
-  const [checkedState, setCheckedState] = useState<{ [key: string]: boolean }>(
-    {}
-  );
+  const [checkedTypeState, setCheckedTypeState] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [checkedSortState, setCheckedSortState] = useState<{
+    [key: string]: boolean;
+  }>({});
 
-  const handleCheckboxChange = (
+  const handleTypeCheckBox = (
     id: string,
     value: string,
     isChecked: boolean
   ) => {
-    setCheckedState({ [id]: isChecked });
-    if (checkFn) {
-      checkFn(isChecked, value);
+    setCheckedTypeState({ [id]: isChecked });
+    if (checkFn?.checkTypeFn) {
+      checkFn.checkTypeFn(isChecked, value);
     }
   };
 
+  const handleSortCheckBox = (
+    id: string,
+    value: string,
+    isChecked: boolean
+  ) => {
+    setCheckedSortState({ [id]: isChecked });
+    if (checkFn?.checkSortFn) {
+      checkFn.checkSortFn(isChecked, value);
+    }
+  };
+
+  useEffect(() => {
+    const handleClose = (event: Event) => {
+      if (
+        reference.current &&
+        !reference.current.contains(event.target as any)
+      ) {
+        setShow(false);
+      }
+    };
+
+    if (show) {
+      window.addEventListener("mousedown", handleClose);
+    }
+
+    return () => {
+      window.removeEventListener("mousedown", handleClose);
+    };
+  }, [show]);
+
   return (
-    <div className="relative ">
+    <div ref={reference as any} className="relative ">
       <div
         className=" cursor-pointer flex justify-end"
         onClick={() => setShow(!show)}
@@ -70,7 +104,7 @@ export const Button: React.FC<ButtonProp> = ({
           <div className="w-full  flex items-center justify-around gap-5">
             {types?.map(
               (data) =>
-                checkFn &&
+                checkFn?.checkTypeFn &&
                 data.value && (
                   <div
                     key={data.id}
@@ -78,14 +112,14 @@ export const Button: React.FC<ButtonProp> = ({
                   >
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        handleCheckboxChange(
+                        handleTypeCheckBox(
                           data.id,
                           data.value,
                           event.target.checked
                         );
                       }}
                       id={data.value}
-                      checked={checkedState[data.id] || false}
+                      checked={checkedTypeState[data.id] || false}
                       type="checkbox"
                       className="w-4 h-4 cursor-pointer accent-black"
                       ref={reference as any}
@@ -118,7 +152,7 @@ export const Button: React.FC<ButtonProp> = ({
           <div className=" flex  overflow-auto items-center justify-around gap-10">
             {sort?.map(
               (data) =>
-                checkFn &&
+                checkFn?.checkSortFn &&
                 data.value && (
                   <div
                     key={data.id}
@@ -126,17 +160,16 @@ export const Button: React.FC<ButtonProp> = ({
                   >
                     <input
                       onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        handleCheckboxChange(
+                        handleSortCheckBox(
                           data.id,
                           data.value,
                           event.target.checked
                         );
                       }}
                       id={data.value}
-                      checked={checkedState[data.id] || false}
+                      checked={checkedSortState[data.id] || false}
                       type="checkbox"
                       className="w-4 h-4 cursor-pointer accent-slate-950  "
-                      ref={reference as any}
                     />
                     <label
                       htmlFor={data.value}
@@ -154,7 +187,7 @@ export const Button: React.FC<ButtonProp> = ({
     </div>
   );
 };
-
+//////////////////////////////
 interface SelectorProp {
   data: { label: string; value: "asc" | "desc" }[];
   onSelect: (value: "asc" | "desc") => void;
