@@ -1,14 +1,14 @@
 import { DailyCategoryAgrregateData, Order } from "../../models/order.model";
 
 export interface ColourOption {
-  readonly value: string;
-  readonly label: string;
-  readonly color: string;
-  readonly isFixed?: boolean;
-  readonly isDisabled?: boolean;
+   value: string;
+   label: string;
+   color?: string;
+   isFixed?: boolean;
+   isDisabled?: boolean;
 }
 
-export const selectOptions: readonly ColourOption[] = [
+export const selectOptions:  ColourOption[] = [
   {
     label: "Current Week",
     value: "current week order",
@@ -25,26 +25,22 @@ export const selectOptions: readonly ColourOption[] = [
     color: "Red",
   },
 ];
-export const requestSelectOption: readonly ColourOption[] = [
+export const requestSelectOption:  ColourOption[] = [
   {
     label: "General Enquiry",
     value: "general enquiry",
-    color: "Red",
   },
   {
     label: "Canteen issues",
     value: "canteen issues",
-    color: "Red",
   },
   {
     label: "Lack of raw materials ",
     value: "raw materials",
-    color: "Red",
   },
   {
     label: "Leave",
     value: "leave",
-    color: "Red",
   },
 ];
 

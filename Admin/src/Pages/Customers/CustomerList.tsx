@@ -164,16 +164,19 @@ const CustomerList: React.FC = () => {
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
       <div className="flex items-center justify-between w-full px-2 pt-5">
-        <div className="flex flex-col items-start justify-center gap-1">
-          <h4 className="text-[1.25rem] font-[600] tracking-wide text-[var(--dark-text)]">
-            All users
+      <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+        <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
+            All Customers
           </h4>
+          <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
+            {totalData || 0} entries found
+          </p>
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex  items-center justify-center gap-2">
             <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
-              <Download className="size-4" />
-              <p className="text-[15px]">Export</p>
+              <Download strokeWidth={2.5} className="size-5" />
+              <p className="text-[16px] tracking-widest ">Export</p>
             </button>
             <Button
               bodyStyle={{
@@ -182,11 +185,9 @@ const CustomerList: React.FC = () => {
                 left: "-18rem",
               }}
               parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
-                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
-                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
-                    Filter
-                  </span>
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                  <Filter strokeWidth={2.5} className="size-5 text-[var(--dark-secondary-text)]" />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">Filter</p>
                 </div>
               }
               checkFn={{

@@ -17,9 +17,9 @@ import { WeekReveneuChart } from "../../Components/LineChart/LineChart.tsx";
 const Dasboard: React.FC = () => {
   
   return (
-    <div className="flex flex-col items-center justify-center w-full gap-16 px-3 py-5 pb-5 2xl:container">
+    <div className="flex flex-col  items-center justify-center w-full gap-16 px-3 py-5 pb-5 2xl:container">
       <Revenue />
-      <div className="flex flex-col items-start justify-between w-full px-3 gap-7 md:flex-row">
+      <div className="flex flex-col items-start justify-between w-full px-3 gap-7 lg:flex-row">
         <RecentOrders />
         <RecentTickets />
       </div>

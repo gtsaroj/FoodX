@@ -8,6 +8,7 @@ import { RootState } from "../../Reducer/Store";
 import toast from "react-hot-toast";
 import { createTicket } from "../../Services";
 import { User } from "../../models/user.model";
+import { Selector } from "../Selector/Selector";
 
 const CreateTicket: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
@@ -52,8 +53,8 @@ const CreateTicket: React.FC = () => {
         ref={reference as any}
         className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
       >
-        <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
-          Add an banner
+        <h3 className=" h-12 sticky tracking-widest  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+          Create Ticket
         </h3>
 
         <form
@@ -69,19 +70,11 @@ const CreateTicket: React.FC = () => {
             >
               Category
             </label>
-            <Select
-              onChange={(event) =>
-                setInitialTicket((prev: any) => {
-                  if (event) {
-                    return {
-                      ...prev,
-                      category: event.value,
-                    };
-                  }
-                })
+            <Selector
+              categoryOption={requestSelectOption}
+              setField={(value) =>
+                setInitialTicket((prev) => ({ ...prev, category: value }))
               }
-              className="w-full"
-              options={requestSelectOption}
             />
           </div>
           {/* Second Row */}

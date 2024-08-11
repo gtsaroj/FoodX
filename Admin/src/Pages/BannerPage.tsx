@@ -23,9 +23,9 @@ const FoodPage: React.FC = () => {
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
     { id: string }[]
-    >([]);
+  >([]);
   const [isFilter, setIsFilter] = useState<string>();
-  const [sortOrder, setSortOrder] = useState<"asc" |"desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const closeModal = () => setIsModelOpen(true);
 
@@ -166,9 +166,7 @@ const FoodPage: React.FC = () => {
     setInitialBanner(filterCategory);
   };
 
-  const handleSelect = () => {
-    
-  }
+  const handleSelect = () => {};
 
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     initialBanner,
@@ -182,12 +180,12 @@ const FoodPage: React.FC = () => {
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
       <div className="flex items-center justify-between w-full">
         <div className="flex flex-col items-start justify-center gap-8">
-          <div className="flex flex-col items-start justify-center gap-1">
-            <h4 className="text-xl tracking-wide text-[var(--dark-text)]">
-              Banners
+          <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+            <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
+              All Banners
             </h4>
-            <p className="text-[14px] text-[var(--dark-secondary-text)] text-nowrap ">
-              {initialBanner.length} entries found
+            <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
+              {initialBanner?.length || 0} entries found
             </p>
           </div>
           <div className="flex items-center justify-start gap-2 ">
@@ -217,8 +215,8 @@ const FoodPage: React.FC = () => {
               onClick={() => setIsModelOpen(!isModalOpen)}
               className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
-              <Plus className="size-4" />
-              <p className="text-[15px]">Item</p>
+              <Plus strokeWidth={2.5} className="size-5" />
+              <p className="text-[16px] tracking-widest ">Item</p>
             </button>
             <Button
               sortFn={(value) => setSortOrder(value)}
@@ -228,31 +226,28 @@ const FoodPage: React.FC = () => {
                 left: "-18rem",
               }}
               parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
-                  <Filter className="size-5 text-[var(--dark-secondary-text)]" />
-                  <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
+                <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                  <Filter
+                    strokeWidth={2.5}
+                    className="size-5 text-[var(--dark-secondary-text)]"
+                  />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
                     Filter
-                  </span>
+                  </p>
                 </div>
               }
-              types={[
-                { label: "Specials", value: "specials", id: "fklsdjf" },
-                { label: "products", value: "products", id: "fkjdls" },
-              ]}
               sort={[
                 { label: "Price", value: "price", id: "jfhkdj" },
                 { label: "Orders", value: "orders", id: "fkdsj" },
                 { label: "Revenue", value: "revenue", id: "flkjdsf" },
               ]}
-              checkFn={(isChecked: boolean, value: any) =>
-                handleSelect(isChecked, value)
-              }
+
             />
           </div>
         </div>
       </div>
       <Table
-         totalData={4}
+        totalData={4}
         selectedData={bulkSelectedBanner}
         columns={columns}
         data={initialBanner}
