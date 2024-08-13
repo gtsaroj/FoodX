@@ -87,7 +87,7 @@ export const getOrderAction = createAsyncThunk(
   "orders/all",
   async (_, thunkApi) => {
     try {
-      const response = await ProductService.getOrders();
+      const response = await ProductService.getAllOrder();
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue("Error while getting orders from slice");

@@ -51,7 +51,7 @@ const UploadFood: React.FC = () => {
         ref={reference as any}
         className="relative flex flex-col items-center justify-center w-full h-full gap-5 overflow-auto"
       >
-        <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
+        <h3 className=" h-12 sticky tracking-wider  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
           Add an item
         </h3>
 

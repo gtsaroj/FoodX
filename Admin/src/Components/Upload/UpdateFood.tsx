@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { ChevronDown, UploadIcon } from "lucide-react";
+import { UploadIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Reducer/Store";
 import { addLogs, updateProduct } from "../../Services";
@@ -77,7 +77,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   };
   return (
     <div className="flex flex-col items-start justify-center gap-5">
-      <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
+      <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
         Update Food
       </h3>
       <form

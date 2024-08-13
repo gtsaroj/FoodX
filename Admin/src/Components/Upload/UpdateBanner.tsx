@@ -41,8 +41,8 @@ const UpdateBanner: React.FC<updateComponentProp> = ({ id }) => {
   };
   return (
     <div className="flex flex-col items-start justify-center gap-5">
-      <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
-        Update Category
+      <h3 className=" h-12 sticky tracking-wider  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+        Update Banner
       </h3>
       <form
         action=""

@@ -9,11 +9,10 @@ interface SelectorPop {
 export const Selector: React.FC<SelectorPop> = ({
   categoryOption,
   setField,
-  
 }) => {
-    console.log(categoryOption)
-    const [show, setShow] = useState<boolean>(false);
-    const [showField, setShowField] = useState<string>();
+  console.log(categoryOption);
+  const [show, setShow] = useState<boolean>(false);
+  const [showField, setShowField] = useState<string>();
   return (
     <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
       <div
@@ -27,7 +26,7 @@ export const Selector: React.FC<SelectorPop> = ({
           value={showField}
           placeholder="Select option"
         />
-        <ChevronDown />
+        <ChevronDown className="text-[var(--dark-text)] cursor-pointer " />
       </div>
       <div
         className={` bg-[var(--light-foreground)] overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
@@ -41,7 +40,7 @@ export const Selector: React.FC<SelectorPop> = ({
             onClick={() => {
               setField(option.value as any);
               setShowField(option.label);
-              setShow(false)
+              setShow(false);
             }}
             key={option.label}
             className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"

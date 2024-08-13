@@ -4,8 +4,9 @@ import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/productMode";
 import { getCategory } from "../../firebase/db";
 import { getAllCategory } from "../../Services";
+import { Selector } from "../Common/Selector/Selector";
 
-interface categoriesTagOption {
+export interface categoriesTagOption {
   name: string;
   id?: string;
   image: string;
@@ -24,7 +25,7 @@ export const MenuType: React.FC = () => {
   const [categorizedData, setCategorizedData] = useState<ProductType[]>();
 
   const handleEvent = (tag: string) => {
-    console.log(tag)
+    console.log(tag);
     const filteredData = initialData?.filter(
       (singleProduct) => singleProduct.tag === tag
     );
@@ -55,22 +56,8 @@ export const MenuType: React.FC = () => {
 
   return (
     <div className="flex flex-col flex-wrap gap-8 py-8 ">
-      <div className="flex flex-wrap h-full gap-3 px-3 justify-evenly ">
-        {categoriesTag?.map((items: categoriesTagOption, index) => (
-          <div
-            onClick={() => handleEvent(items.name as string)}
-            key={index}
-            className=" py-3 sm:h-full  sm:rounded-md cursor-pointer flex flex-col gap-2 text-sm sm:text-[15px] flex-wrap  items-center justify-center "
-          >
-            <div className=" bg-[#dbd9e462]  hover:bg-[#8a84953a]  p-3 rounded-md">
-              <img className=" w-[40px] h-[40px] " src={items.image} />
-            </div>
-            <p className="sm:text-[16px]  text-[12px]">
-              {items.name}
-            </p>
-          </div>
-        ))}
-      </div>
+      <Selector children={categoriesTag as categoriesTagOption[]} action={(tag) => handleEvent(tag)} />
+
       <div className="flex flex-col gap-8 rounded-md bg-[var(--light-foreground)] px-5 py-8">
         <div className="w-full p-2">
           <p className="text-2xl font-bold tracking-wider">Category Title</p>

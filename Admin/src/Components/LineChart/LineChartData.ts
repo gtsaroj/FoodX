@@ -1,90 +1,171 @@
-import {
-  aggregateDataCurrentMonth,
-  aggregateDataCurrentWeek,
-  aggregateDataPreviousMonth,
-  convertTimestampToDate,
-  dayNames,
-} from "../../Utility/DateUtils";
-import { Order } from "../../models/order.model";
 
-const today = new Date();
-export const Week = [
-  today.getDay() + 1,
-  today.getDay() + 2,
-  today.getDay() + 3,
-  today.getDay() + 4,
-  today.getDay() + 5,
-  today.getDay() + 6,
-  today.getDay() + 7,
-];
+import { DailyOrders } from "../../models/chart.modal";
+import { getOrder, getRevenue } from "../../Utility/Utils";
+import dayjs from "dayjs";
 
-export function weekDateRoundUp() {
-  const dateCollection: number[] = [];
-  Week.forEach((date) => {
-    if (date > 7) {
-      const currentDate = date - 7;
-      dateCollection.push(currentDate);
-      return;
-    }
-    dateCollection.push(date);
-  });
-  return dateCollection;
-}
-// aggregate LineChart Weekly Data
-export const aggregateLineDataWeekly = (orders: Order[]) => {
-  const datas: { [key: string]: string | number }[] = [];
-
-  const orderDataOfWeek = aggregateDataCurrentWeek(orders);
-
-  orderDataOfWeek?.forEach((order) => {
-    const orderDate = convertTimestampToDate(order.orderFullFilled);
-    const dayName = dayNames[new Date(orderDate as string).getDay()];
-
-    const weekData = datas.find((data) => data["week"] === dayName);
-    if (!weekData) {
-      datas.push({ week: dayName, revenue: 0 });
-    }
-
-    const productRevenue = order.products.reduce(
-      (prodSum, product) => prodSum + product.price,
-      0
-    );
-
-    const weekData1 = datas.find((data) => data["week"] === dayName);
-
-    if (weekData1)
-      weekData1.revenue = (weekData1.revenue as number) + productRevenue;
-  });
-
-  return datas;
+export const revenueData = (data: DailyOrders[]) => {
+  if (!data) throw new Error("data not found");
+  try {
+    const orders = data.map((order): { revenue: number; time: string } => {
+      const revenue = getRevenue(order.orders);
+      return {
+        revenue: revenue,
+        time: order.id,
+      };
+    });
+    return orders;
+  } catch (error) {
+    throw new Error("Unable to aggregate daily revenue data" + error);
+  }
 };
 
-// aggregate monthly date optionally
-export const aggregateLineDataMonthly = (orders: Order[], option: string) => {
-  const datas: { [key: string]: string | number }[] = [];
-
-  let currentFilterData: Order[] = [];
-
-  if (option === "previous month")
-    currentFilterData = aggregateDataPreviousMonth(orders);
-  if (option === "current month")
-    currentFilterData = aggregateDataCurrentMonth(orders);
-
-  currentFilterData?.forEach((order) => {
-    const orderDate = convertTimestampToDate(order.orderFullFilled);
-    const dayName = dayNames[new Date(orderDate as string).getDay()];
-
-    const weekData = datas.find((data) => data["week"] === dayName);
-    if (!weekData) datas.push({ week: dayName, revenue: 0 });
-
-    const productRevenue = order.products.reduce(
-      (prodSum, product) => prodSum + product.price,
-      0
+export const weeklyRevenue = (data: DailyOrders[]) => {
+  if (!data)
+    throw new Error(
+      "data not found in weekly revenue : file=> linchartdata.ts"
     );
+  try {
+    const revenue = revenueData(data).slice(0, 7);
+    return revenue;
+  } catch (error) {
+    throw new Error(
+      "Unable to get weekly revenue : file=> linechartdata.ts" + error
+    );
+  }
+};
 
-    if (weekData)
-      weekData.revenue = (weekData.revenue as number) + productRevenue;
-  });
+export const monthlyRevenue = (data: DailyOrders[]) => {
+  if (!data)
+    throw new Error(
+      "data not found in weekly revenue : file=> linchartdata.ts"
+    );
+  try {
+    const revenue = revenueData(data).slice(0, 34);
+    const monthlyData = getWeekTotal(revenue);
+    return monthlyData;
+  } catch (error) {
+    throw new Error(
+      "Unable to get weekly revenue : file=> linechartdata.ts" + error
+    );
+  }
+};
 
-  return datas;
+export const getWeekTotal = (
+  aggregateMonthlyData: {
+    revenue: number;
+    time: string;
+  }[]
+) => {
+  const weeklyOrders: { time: string; revenue: number }[] = [];
+
+  let weekNumber = 1;
+  let weeklyTotal = 0;
+
+  for (let i = 0; i < aggregateMonthlyData.length; i++) {
+    const currentOrder = aggregateMonthlyData[i];
+
+    // Calculate which week the current order belongs to
+    const dayOfMonth = dayjs(currentOrder.time).date();
+    const currentWeek = Math.ceil(dayOfMonth / 7);
+
+    if (currentWeek === weekNumber) {
+      weeklyTotal += currentOrder.revenue;
+    } else {
+      // Push the previous week data
+      weeklyOrders.push({
+        time: `Week ${weekNumber}`,
+        revenue: weeklyTotal,
+      });
+
+      // Reset and start new week
+      weekNumber = currentWeek;
+      weeklyTotal = currentOrder.revenue;
+    }
+  }
+
+  // Push the last week data
+  if (weeklyTotal > 0) {
+    weeklyOrders.push({
+      time: `Week ${weekNumber}`,
+      revenue: weeklyTotal,
+    });
+  }
+
+  return weeklyOrders;
+};
+
+export const orderData = (data: DailyOrders[]) => {
+  if (!data) throw new Error("data not found");
+  try {
+    const orders = data.map((order): { orders: number; time: string } => {
+      const orders = getOrder(order.orders);
+      return {
+        orders: orders,
+        time: order.id,
+      };
+    });
+    return orders;
+  } catch (error) {
+    throw new Error("Unable to aggregate daily revenue data" + error);
+  }
+};
+
+export const monthlyTotal = (data: DailyOrders[]) => {
+  if (!data)
+    throw new Error(
+      "data not found in weekly revenue : file=> linchartdata.ts"
+    );
+  try {
+    const order = orderData(data).slice(0, 34);
+    const monthlyData = getOrderWeeklyTotal(order);
+    return monthlyData;
+  } catch (error) {
+    throw new Error(
+      "Unable to get weekly revenue : file=> linechartdata.ts" + error
+    );
+  }
+};
+
+ const getOrderWeeklyTotal = (
+  aggregateMonthlyData: {
+    orders: number;
+    time: string;
+  }[]
+) => {
+  const weeklyOrders: { time: string; orders: number }[] = [];
+
+  let weekNumber = 1;
+  let weeklyTotal = 0;
+
+  for (let i = 0; i < aggregateMonthlyData.length; i++) {
+    const currentOrder = aggregateMonthlyData[i];
+
+    // Calculate which week the current order belongs to
+    const dayOfMonth = dayjs(currentOrder.time).date();
+    const currentWeek = Math.ceil(dayOfMonth / 7);
+
+    if (currentWeek === weekNumber) {
+      weeklyTotal += currentOrder.orders;
+    } else {
+      // Push the previous week data
+      weeklyOrders.push({
+        time: `Week ${weekNumber}`,
+        orders: weeklyTotal,
+      });
+
+      // Reset and start new week
+      weekNumber = currentWeek;
+      weeklyTotal = currentOrder.orders;
+    }
+  }
+
+  // Push the last week data
+  if (weeklyTotal > 0) {
+    weeklyOrders.push({
+      time: `Week ${weekNumber}`,
+      orders: weeklyTotal,
+    });
+  }
+
+  return weeklyOrders;
 };

@@ -1,10 +1,10 @@
 import { Filter } from "lucide-react";
 import Revenue from "../../Components/Analytics/DailyAnalytics";
-import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
+import { MonthlyOrderChart } from "../../Components/BarChart/BarChart.tsx";
 import { PieChartAnalytics } from "../../Components/PieChart/PieChart";
 import {
+  MonthlyOrderLinechart,
   MonthlyRevenueChart,
-  WeekReveneuChart,
 } from "../../Components/LineChart/LineChart";
 import { DatePicker } from "../../Components/DatePicker/DatePicker";
 import { Button } from "../../Components/Common/Button/Button";
@@ -35,24 +35,38 @@ const Overview: React.FC = () => {
             Top Products
             <div>
               <Button
+                bodyStyle={{
+                  width: "400px",
+                  top: "3rem",
+                  left: "-18rem",
+                }}
                 parent={
-                  <button
-                    className="flex border duration-150 hover:text-[var(--dark-text)] text-[var(--dark-secondary-text)] items-center gap-1.5 px-2 py-1 rounded 
-               justify-center"
-                  >
-                    <Filter className="size-4" />
-                    <span className=" text-[16px] tracking-wider ">Filter</span>
-                  </button>
+                  <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                    <Filter
+                      strokeWidth={2.5}
+                      className="size-5 text-[var(--dark-secondary-text)]"
+                    />
+                    <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                      Filter
+                    </p>
+                  </div>
                 }
-                children={[
-                  "Last month",
-                  <DatePicker
-                    dateRangeFn={(startDate: Date, endDate: Date) =>
-                      handleDateChange(startDate, endDate)
-                    }
-                  />,
+                types={[
+                  {
+                    label: "Previous week",
+                    value: "previousWeek",
+                    id: "kjfsdks;12",
+                  },
+                  {
+                    label: "Date",
+                    value: "date",
+                    id: "34",
+                  },
                 ]}
-                onSelect={(value) => console.log(value)}
+                checkFn={{
+                  checkTypeFn: (isChecked: boolean, value: string) =>
+                    console.log(isChecked, value),
+                }}
               />
             </div>
           </p>
@@ -63,14 +77,14 @@ const Overview: React.FC = () => {
         </div>
 
         <div className="w-full lg:max-w-[500px] min-w-[200px] border p-2 rounded-md">
-          <MonthlyRevenueChart
+          <MonthlyOrderLinechart
             dateRange={dateRange as { startDate: Dayjs; endDate: Dayjs }}
           />
         </div>
       </div>
       <div className="flex items-center flex-wrap justify-start w-full gap-3 px-5 ">
         <div className="w-full lg:max-w-[600px] border p-2 rounded-md">
-          <WeekReveneuChart />
+          <MonthlyRevenueChart />
         </div>
         <div className="flex  relative justify-center items-center flex-grow border rounded w-[400px] ">
           <PieChartAnalytics />

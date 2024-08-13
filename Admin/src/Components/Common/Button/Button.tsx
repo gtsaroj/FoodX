@@ -101,140 +101,142 @@ export const Button: React.FC<ButtonProp> = ({
       </div>
       <div
         style={bodyStyle}
-        className={`flex border    flex-col items-start gap-5  px-4 py-3  z-[100]  duration-100 absolute ${
+        className={`flex border    flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
           show
-            ? "visible translate-y-0 opacity-100 "
-            : "invisible z-[-100] -translate-y-2 opacity-0 "
+            ? "visible translate-y-0 z-50 opacity-100 "
+            : " invisible  z-0   -translate-y-2 opacity-0  "
         } flex-col shadow-sm w-full  shadow-[#0000000e] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded `}
       >
-        <div
-          className={`flex ${
-            types && types?.length > 0 ? "visible" : "hidden"
-          } flex-col w-full items-start justify-center  gap-4`}
-        >
-          <h1 className="text-[18px] tracking-wider ">Types</h1>
-          <div className="w-full  flex items-center justify-around gap-5">
-            {types?.map(
-              (data) =>
-                checkFn?.checkTypeFn &&
-                data.value && (
-                  <div
-                    key={data.id}
-                    className="w-full   flex items-center justify-start gap-2 cursor-pointer"
-                  >
-                    <input
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        handleTypeCheckBox(
-                          data.id,
-                          data.value,
-                          event.target.checked
-                        );
-                      }}
-                      id={data.id}
-                      checked={checkedTypeState[data.id] || false}
-                      type="checkbox"
-                      className="w-4 h-4 cursor-pointer accent-black"
-                      ref={reference as any}
-                    />
-                    <label
-                      htmlFor={data.id}
-                      className=" text-[17px] cursor-pointer tracking-wide "
+        {types && (
+          <div
+            className={`flex  flex-col w-full items-start justify-center  gap-4`}
+          >
+            <h1 className="text-[18px] tracking-wider ">Types</h1>
+            <div className="w-full  flex items-center justify-around gap-5">
+              {types?.map(
+                (data) =>
+                  checkFn?.checkTypeFn &&
+                  data.value && (
+                    <div
+                      key={data.id}
+                      className="w-full   flex items-center justify-start gap-2 cursor-pointer"
                     >
-                      {" "}
-                      {data.label}
-                    </label>
-                  </div>
-                )
-            )}
-          </div>
-        </div>
-        <div className="flex w-full flex-col items-start justify-start  gap-7">
-          <div className="w-full flex items-center justify-between ">
-            <h1 className="text-[18px] tracking-wider ">Sort By</h1>
-            <div className="w-[130px]">
-              <Selector
-                data={[
-                  { label: "Low to High", value: "asc" },
-                  { label: "High to Low", value: "desc" },
-                ]}
-                onSelect={(type) => sortFn(type as "asc" | "desc")}
-              />
+                      <input
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          handleTypeCheckBox(
+                            data.id,
+                            data.value,
+                            event.target.checked
+                          );
+                        }}
+                        id={data.id}
+                        checked={checkedTypeState[data.id] || false}
+                        type="checkbox"
+                        className="w-4 h-4 cursor-pointer accent-black"
+                        ref={reference as any}
+                      />
+                      <label
+                        htmlFor={data.id}
+                        className=" text-[17px] cursor-pointer tracking-wide "
+                      >
+                        {" "}
+                        {data.label}
+                      </label>
+                    </div>
+                  )
+              )}
             </div>
           </div>
-          <div className=" flex  overflow-auto items-center justify-around gap-10">
-            {sort?.map(
-              (data) =>
-                checkFn?.checkSortFn &&
-                data.value && (
-                  <div
-                    key={data.id}
-                    className="flex items-center  justify-start gap-2"
-                  >
-                    <input
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        handleSortCheckBox(
-                          data.id,
-                          data.value,
-                          event.target.checked
-                        );
-                      }}
-                      id={data.id}
-                      checked={checkedSortState[data.id] || false}
-                      type="checkbox"
-                      className="w-4 h-4 cursor-pointer accent-slate-950  "
-                    />
-                    <label
-                      htmlFor={data.id}
-                      className=" text-[17px] cursor-pointer tracking-wide "
+        )}
+        {sort && (
+          <div className="flex w-full flex-col items-start justify-start  gap-7">
+            <div className="w-full flex items-center justify-between ">
+              <h1 className="text-[18px] tracking-wider ">Sort By</h1>
+              <div className="w-[130px]">
+                <Selector
+                  data={[
+                    { label: "Low to High", value: "asc" },
+                    { label: "High to Low", value: "desc" },
+                  ]}
+                  onSelect={(type) => sortFn(type as "asc" | "desc")}
+                />
+              </div>
+            </div>
+            <div className=" flex  overflow-auto items-center justify-around gap-10">
+              {sort?.map(
+                (data) =>
+                  checkFn?.checkSortFn &&
+                  data.value && (
+                    <div
+                      key={data.id}
+                      className="flex items-center  justify-start gap-2"
                     >
-                      {" "}
-                      {data.label}
-                    </label>
-                  </div>
-                )
-            )}
+                      <input
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          handleSortCheckBox(
+                            data.id,
+                            data.value,
+                            event.target.checked
+                          );
+                        }}
+                        id={data.id}
+                        checked={checkedSortState[data.id] || false}
+                        type="checkbox"
+                        className="w-4 h-4 cursor-pointer accent-slate-950  "
+                      />
+                      <label
+                        htmlFor={data.id}
+                        className=" text-[17px] cursor-pointer tracking-wide "
+                      >
+                        {" "}
+                        {data.label}
+                      </label>
+                    </div>
+                  )
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className={`flex ${
-            action && action?.length > 0 ? "visible" : "hidden"
-          } flex-col w-full items-start justify-center  gap-4`}
-        >
-          <h1 className="text-[18px] tracking-wider ">Actions</h1>
-          <div className="w-full flex-wrap flex-row  flex items-center justify-start gap-5">
-            {action?.map(
-              (data) =>
-                checkFn?.checkActionFn &&
-                data.value && (
-                  <div
-                    key={data.id}
-                    className="   flex items-center justify-start gap-2 cursor-pointer"
-                  >
-                    <input
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        handleActionBox(
-                          data.id,
-                          data.value,
-                          event.target.checked
-                        );
-                      }}
-                      id={data.id}
-                      checked={checkActionState[data.id] || false}
-                      type="checkbox"
-                      className="w-4 h-4 cursor-pointer accent-black"
-                    />
-                    <label
-                      htmlFor={data.id}
-                      className=" text-[17px] cursor-pointer tracking-wide "
+        )}
+        {action && (
+          <div
+            className={`flex flex-col w-full items-start justify-center  gap-4`}
+          >
+            <h1 className="text-[18px] tracking-wider ">Actions</h1>
+            <div className="w-full flex-wrap flex-row  flex items-center justify-start gap-5">
+              {action?.map(
+                (data) =>
+                  checkFn?.checkActionFn &&
+                  data.value && (
+                    <div
+                      key={data.id}
+                      className="   flex items-center justify-start gap-2 cursor-pointer"
                     >
-                      {" "}
-                      {data.label}
-                    </label>
-                  </div>
-                )
-            )}
+                      <input
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          handleActionBox(
+                            data.id,
+                            data.value,
+                            event.target.checked
+                          );
+                        }}
+                        id={data.id}
+                        checked={checkActionState[data.id] || false}
+                        type="checkbox"
+                        className="w-4 h-4 cursor-pointer accent-black"
+                      />
+                      <label
+                        htmlFor={data.id}
+                        className=" text-[17px] cursor-pointer tracking-wide "
+                      >
+                        {" "}
+                        {data.label}
+                      </label>
+                    </div>
+                  )
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

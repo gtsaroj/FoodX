@@ -21,6 +21,7 @@ import { updateUserPassword } from "../../firebase/utils";
 import { UpdateProfileUser } from "../../../../frontend/src/Reducer/AuthUpdateUser";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { User } from "../../models/user.model";
+import Modal from "../../Components/Common/Popup/Popup";
 
 export const AdminProfile = () => {
   const authUser = useSelector(
@@ -30,7 +31,7 @@ export const AdminProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getUserData("admins", authUser?.uid);
+      const data = await getUserData("admin", authUser?.uid);
 
       setUserData(data);
       return data;
@@ -399,7 +400,7 @@ const PersonlInformation = (props: any) => {
 };
 
 const ChangePasswordComponent = () => {
-  const [openChangePassword, setOpenChangePassword] = useState<boolean>(false);
+  const [openChangePassword, setOpenChangePassword] = useState<boolean>(true);
 
   const [newPassword, setNewpassword] = useState<string>();
   const [newConfirmPassword, setConfirmNewpassword] = useState<string>();
@@ -504,101 +505,98 @@ const ChangePasswordComponent = () => {
           <DeleteAccount />
         </div>
       )}
-      {openChangePassword && (
-        <div
-          className={`fixed ${
-            openChangePassword ? "visible" : "invisible"
-          } flex items-center justify-center top-16 w-full z-50  bg-[#5f5b6667] bottom-0 left-0 right-0`}
-        >
-          {submitNewPassword ? (
-            <ReAuth reAuthUsers={HandlePasswordChange} />
-          ) : (
-            <div
-              className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
-            >
-              <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
-                <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
-                  <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
-                    <h1 className="md:hidden">Change Password</h1>
-                    <h1 className="hidden md:block">Change Password</h1>
-                  </div>
-                  <div className="px-3 py-4">
-                    <form
-                      className="flex flex-col gap-4 p-2"
-                      onSubmit={() =>
-                        SubmitNewPassword(
-                          event as unknown as FormEvent<HTMLFormElement>
-                        )
-                      }
-                    >
-                      <div className="relative flex flex-col gap-2">
-                        <label htmlFor="logEmail" className="text-[15px]">
-                          New Password
-                        </label>
-                        <input
-                          type="text"
-                          name="email"
-                          autoComplete="off"
-                          value={newPassword}
-                          onChange={(e) => setNewpassword(e.target.value)}
-                          required
-                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
-                        />
-                      </div>
-                      <div className="relative flex flex-col gap-2">
-                        <label htmlFor="logPassword" className="text-[15px]">
-                          Confirm New Password
-                        </label>
-                        <input
-                          type={passwordType}
-                          name="password"
-                          autoComplete="off"
-                          maxLength={25}
-                          value={newConfirmPassword}
-                          onChange={(e) =>
-                            setConfirmNewpassword(e.target.value)
-                          }
-                          required
-                          className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
-                        />
-
-                        {show ? (
-                          <div
-                            className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
-                            onClick={showPassword}
-                          >
-                            <Eye size={23} />
-                          </div>
-                        ) : (
-                          <div
-                            className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
-                            onClick={showPassword}
-                          >
-                            <EyeOff size={23} />
-                          </div>
-                        )}
-                      </div>
-
-                      <button
-                        className="h-[40px] rounded bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
-                        type="submit"
-                      >
-                        Submit
-                      </button>
-                    </form>
-                  </div>
-                  <div
-                    onClick={() => setOpenChangePassword(!openChangePassword)}
-                    className="absolute top-0 right-0 p-3  rounded-tr-md text-[var(--secondary-color)] cursor-pointer hover:bg-[var(--secondary-light)] hover:text-[var(--light-text)] transition-all ease-in-out duration-150 "
+      <Modal
+        close={openChangePassword}
+        closeModal={() => setOpenChangePassword(true)}
+      >
+        {" "}
+        {submitNewPassword ? (
+          <ReAuth reAuthUsers={HandlePasswordChange} />
+        ) : (
+          <div
+            className={` h-[80vh] flex justify-center items-center px-5 z-30`}
+          >
+            <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
+              <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
+                <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
+                  <h1 className="md:hidden">Change Password</h1>
+                  <h1 className="hidden md:block">Change Password</h1>
+                </div>
+                <div className="px-3 py-4">
+                  <form
+                    className="flex flex-col gap-4 p-2"
+                    onSubmit={() =>
+                      SubmitNewPassword(
+                        event as unknown as FormEvent<HTMLFormElement>
+                      )
+                    }
                   >
-                    <X />
-                  </div>
+                    <div className="relative flex flex-col gap-2">
+                      <label htmlFor="logEmail" className="text-[15px]">
+                        New Password
+                      </label>
+                      <input
+                        type="text"
+                        name="email"
+                        autoComplete="off"
+                        value={newPassword}
+                        onChange={(e) => setNewpassword(e.target.value)}
+                        required
+                        className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
+                      />
+                    </div>
+                    <div className="relative flex flex-col gap-2">
+                      <label htmlFor="logPassword" className="text-[15px]">
+                        Confirm New Password
+                      </label>
+                      <input
+                        type={passwordType}
+                        name="password"
+                        autoComplete="off"
+                        maxLength={25}
+                        value={newConfirmPassword}
+                        onChange={(e) => setConfirmNewpassword(e.target.value)}
+                        required
+                        className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
+                      />
+
+                      {show ? (
+                        <div
+                          className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
+                          onClick={showPassword}
+                        >
+                          <Eye size={23} />
+                        </div>
+                      ) : (
+                        <div
+                          className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
+                          onClick={showPassword}
+                        >
+                          <EyeOff size={23} />
+                        </div>
+                      )}
+                    </div>
+
+                    <button
+                      className="h-[40px] rounded bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
+                      type="submit"
+                    >
+                      Submit
+                    </button>
+                  </form>
+                </div>
+
+                <div
+                  onClick={() => setOpenChangePassword(!openChangePassword)}
+                  className="absolute top-0 right-0 p-3  rounded-tr-md text-[var(--secondary-color)] cursor-pointer hover:bg-[var(--secondary-light)] hover:text-[var(--light-text)] transition-all ease-in-out duration-150 "
+                >
+                  <X />
                 </div>
               </div>
             </div>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

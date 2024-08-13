@@ -75,7 +75,7 @@ export const RecentTickets = () => {
                 date={ticket.date as any}
                 description={ticket.description}
                 title={ticket.title}
-                id={`#${ticket.id}`}
+                id={`${ticket.id}`}
                 key={ticket.id}
               />
             ))

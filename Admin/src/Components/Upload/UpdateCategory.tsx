@@ -55,12 +55,12 @@ const UpdateCategory: React.FC<updateComponentProp> = ({ id }) => {
   };
   return (
     <div className="flex flex-col items-start justify-center gap-5">
-      <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
+      <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
         Update Category
       </h3>
       <form
         action=""
-        className="flex py-5 px-10 flex-col items-start justify-start gap-5 w-full"
+        className="flex text-[var(--dark-text)] py-5 px-10 flex-col items-start justify-start gap-5 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
         <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
