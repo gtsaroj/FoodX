@@ -59,7 +59,7 @@ export const PieChartAnalytics = () => {
           </div>
         )}
       </div>
-      <div className="w-full flex items-center justify-between pr-2">
+      <div className="w-full px-5 flex items-center justify-between ">
         <h1 className="text-xl tracking-wider  pl-1 ">Top Food Categories</h1>
         <Button
           bodyStyle={{
