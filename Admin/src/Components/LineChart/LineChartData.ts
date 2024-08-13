@@ -1,4 +1,3 @@
-
 import { DailyOrders } from "../../models/chart.modal";
 import { getOrder, getRevenue } from "../../Utility/Utils";
 import dayjs from "dayjs";
@@ -125,8 +124,23 @@ export const monthlyTotal = (data: DailyOrders[]) => {
     );
   }
 };
+export const previousMonthOrder = (data: DailyOrders[]) => {
+  if (!data)
+    throw new Error(
+      "data not found in weekly revenue : file=> linchartdata.ts"
+    );
+  try {
+    const order = orderData(data).slice(0, 34);
+    const monthlyData = getOrderWeeklyTotal(order);
+    return monthlyData;
+  } catch (error) {
+    throw new Error(
+      "Unable to get weekly revenue : file=> linechartdata.ts" + error
+    );
+  }
+};
 
- const getOrderWeeklyTotal = (
+const getOrderWeeklyTotal = (
   aggregateMonthlyData: {
     orders: number;
     time: string;

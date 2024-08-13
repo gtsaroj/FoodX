@@ -394,7 +394,7 @@ const AllProductAnalytics = () => {
             )}
           </div>
         </div>
-        <div className=" z-[1000]">
+        <div className="">
           <Button
             sortFn={(value) => setSortOrder(value)}
             bodyStyle={{

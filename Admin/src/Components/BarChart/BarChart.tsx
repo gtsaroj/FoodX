@@ -3,7 +3,9 @@ import { BarChart } from "@mui/x-charts";
 import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { barData, monthlyBarData } from "./BarChart";
-import { chartData } from "../../data.json";
+import { currentWeekData, previousWeekData } from "../../data.json";
+import { Button } from "../Common/Button/Button";
+import { Filter, X } from "lucide-react";
 interface MonthlyOrderChartProps {
   height: number;
   dateRange: { startDate: Dayjs; endDate: Dayjs };
@@ -16,31 +18,23 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   const [initialData, setInitialData] = useState<
     { [key: string]: number | string }[]
   >([]);
-  const [dataKey1, setDataKey1] = useState<string[]>([]);
-  const [dataKey2, setDataKey2] = useState<string[]>([]);
-  const [dataKey3, setDataKey3] = useState<string[]>([]);
-  const [dataKey4, setDataKey4] = useState<string[]>([]);
-  const [dataKey5, setDataKey5] = useState<string[]>([]);
+  console.log(initialData);
+  const [dataKey, setDataKey] = useState<string[]>([]);
+  const [filter, setFilter] = useState<{
+    dateFilter?: string;
+    normalFilter?: string;
+  }>();
 
   useEffect(() => {
-    const response = monthlyBarData(chartData);
-    setInitialData(response);
-    console.log(response);
-    const object1 = Object.keys(response[0]).filter((key) => key !== "time");
+    // const response = monthlyBarData(chartData);
+    // setInitialData(response);
+    // console.log(response);
 
-    setDataKey1(object1);
-    const object2 = Object.keys(response[1]).filter((key) => key !== "time");
-    setDataKey2(object2);
-    const object3 = Object.keys(response[2]).filter((key) => key !== "time");
-    setDataKey3(object3);
-    const object4 = Object.keys(response[3]).filter((key) => key !== "time");
-    setDataKey4(object4);
-    const object5 = Object.keys(response[4]).filter((key) => key !== "time");
-    setDataKey5(object5);
-    // const allkeys: string[] = extractUniqueKeys(response);
-    // setDataKey(allkeys);
+    // setDataKey(object1);
+    setInitialData(currentWeekData);
+    const allkeys: string[] = extractUniqueKeys(currentWeekData);
+    setDataKey(allkeys);
   }, []);
-  console.log(dataKey1);
 
   // useEffect(() => {
   //   const filterByDate = async () => {
@@ -69,22 +63,13 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   // }, [dateRange.startDate, dateRange.endDate]);
 
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
-    console.log(data);
     const allKeys = new Set();
     data.forEach((item) => {
-      const labelKeys = Object.keys(item).filter((index) => index !== "time");
+      const labelKeys = Object.keys(item).filter((index) => index !== "date");
       labelKeys.forEach((key) => allKeys.add(key));
     });
     return [...allKeys];
   };
-  // Function to check if a key is relevant (used in the dataset)
-  const isKeyRelevant = (key: string): boolean => {
-    return initialData.some((dataPoint) =>
-      Object.keys(dataPoint).includes(key)
-    );
-  };
-
-  const valueFormattor = (value: number) => (value ? value : "hello");
 
   // Update series creation logic to filter out unused keys
   // const series = dataKey.filter(isKeyRelevant).map((key) => ({
@@ -93,13 +78,100 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   //   valueFormattor,
   // }));
 
+  useEffect(() => {
+    if (filter?.dateFilter?.length > 0 || filter?.normalFilter?.length > 0) {
+      setInitialData(previousWeekData);
+    } else {
+      setInitialData(currentWeekData);
+    }
+  }, [filter?.dateFilter?.length, filter?.normalFilter?.length]);
+
+  console.log(initialData);
+
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
     <div className={`w-full p-2 h-[${height}px]`}>
+      <div className="flex h-[20px] items-center justify-start gap-2">
+        {filter?.dateFilter && (
+          <div className="flex px-2 w-[150px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {filter?.normalFilter && (
+          <div className="flex px-2 w-[120px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setFilter((prev) => ({ ...prev, normalFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+      </div>
+      <p className="w-full  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
+        Top Products
+        <div>
+          <Button
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            checkFn={{
+              checkActionFn: (isChecked: boolean, value: string) => {
+                if (!isChecked) {
+                  setFilter((prev) => ({ ...prev, normalFilter: value }));
+                }
+                if (isChecked) {
+                  setFilter((prev) => ({ ...prev, normalFilter: value }));
+                }
+              },
+              dateActionFn: (firstDate, secondDate) => {
+                if (firstDate && secondDate) {
+                  setFilter((prev) => ({
+                    ...prev,
+                    dateFilter: ` ${firstDate} to ${secondDate} `,
+                  }));
+                }
+              },
+            }}
+            action={[
+              { label: "Previous", value: "previous", id: "27909q3ur98fu" },
+            ]}
+          />
+        </div>
+      </p>
       <BarChart
         grid={{ horizontal: true }}
         colors={colorPallette}
-        skipAnimation
         slotProps={{
           // loadingOverlay: { message: "Loading Data....." },
           // noDataOverlay: { message: "No Data to display." },
@@ -123,23 +195,13 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
           {
             scaleType: "band",
             dataKey: "time",
-            data: initialData?.map((data) => data["time"]),
+            data: initialData?.map((data) => data["date"]),
           },
         ]}
-        series={[
-          {
-            data: [1300, 1500, 1214, 2341, 234],
-          },
-          {
-            data: [1340, 1475, 1220, 2320, 250],
-          },
-          {
-            data: [1320, 1550, 1200, 2280, 260],
-          },
-          {
-            data: [1360, 1480, 1240, 2370, 240],
-          },
-        ]}
+        series={dataKey?.map((key) => ({
+          dataKey: key,
+          label: key,
+        }))}
       />
     </div>
   );

@@ -204,6 +204,7 @@ const Logs = () => {
               action={[
                 { label: "Create", value: "create", id: "dflkjsklkfkls" },
                 { label: "Register", value: "register", id: "dlalksslk" },
+                { label: "Login", value: "login", id: "fkdjs;jfdskewoij930ikds" },
                 {
                   label: "Delete",
                   value: "delete",
@@ -260,11 +261,6 @@ const Logs = () => {
         >
           <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
-              endMessage={
-                <div className="w-full flex items-center justify-center py-3 text-[18px] tracking-wider ">
-                  No data to load
-                </div>
-              }
               scrollableTarget={"scrollableDiv"}
               dataLength={totalData ? totalData : 0}
               hasMore={hasMore}
@@ -289,7 +285,7 @@ const Logs = () => {
                 <div className="w-full flex flex-col items-center pt-3 justify-center ">
                   {/* <Skeleton height={70} count={5} /> */}
                   <div className="flex items-center justify-center gap-3">
-                    <RotatingLines width="27" />
+                    <RotatingLines strokeColor="black" width="27" />
                     <span className="text-[17px] tracking-wider ">
                       {" "}
                       loading...

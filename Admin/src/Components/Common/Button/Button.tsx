@@ -6,6 +6,13 @@ import React, {
   useState,
 } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+
+import { CalendarCheck } from "lucide-react";
+
+import dayjs from "dayjs";
 
 interface ButtonProp {
   action?: { label: string; value: string; id: string }[];
@@ -19,6 +26,7 @@ interface ButtonProp {
     checkTypeFn?: (isChecked: boolean, type: any) => void;
     checkSortFn?: (isChecked: boolean, type: any) => void;
     checkActionFn?: (isChecked: boolean, type: any) => void;
+    dateActionFn?: (from: Date, to: Date) => void;
   };
 }
 
@@ -32,6 +40,8 @@ export const Button: React.FC<ButtonProp> = ({
   action,
 }) => {
   const [show, setShow] = useState<boolean>(false);
+  const [isShowTo, setIsShowTo] = useState<boolean>(false);
+  const [isShowFrom, setIsShowFrom] = useState<boolean>(false);
   const [index, setIndex] = useState<string>();
   const reference = useRef<HTMLInputElement>();
   const [checkedTypeState, setCheckedTypeState] = useState<{
@@ -44,6 +54,10 @@ export const Button: React.FC<ButtonProp> = ({
     [key: string]: boolean;
   }>({});
 
+  //date
+  const [from, setFrom] = useState<dayjs.Dayjs>();
+  const [to, setTo] = useState<dayjs.Dayjs>();
+
   const handleTypeCheckBox = (
     id: string,
     value: string,
@@ -54,6 +68,16 @@ export const Button: React.FC<ButtonProp> = ({
       checkFn.checkTypeFn(isChecked, value);
     }
   };
+
+  const firstCalenderReference = useRef<HTMLDivElement>();
+  const secondCalenderReference = useRef<HTMLDivElement>();
+  console.log(firstCalenderReference.current);
+
+  useEffect(() => {
+    if (to && from) {
+      to && from && checkFn?.dateActionFn && checkFn.dateActionFn(from, to);
+    }
+  }, [from, to]);
 
   const handleSortCheckBox = (
     id: string,
@@ -81,6 +105,29 @@ export const Button: React.FC<ButtonProp> = ({
         setShow(false);
       }
     };
+    const closeModalFirst = (event: Event) => {
+      if (
+        firstCalenderReference.current &&
+        !firstCalenderReference.current.contains(event.target as any)
+      ) {
+        setIsShowFrom(false);
+      }
+    };
+    const closeModalSecond = (event: Event) => {
+      if (
+        secondCalenderReference.current &&
+        !secondCalenderReference.current.contains(event.target as any)
+      ) {
+        setIsShowTo(false);
+      }
+    };
+
+    if (isShowFrom) {
+      window.addEventListener("mousedown", closeModalFirst);
+    }
+    if (isShowTo) {
+      window.addEventListener("mousedown", closeModalSecond);
+    }
 
     if (show) {
       window.addEventListener("mousedown", handleClose);
@@ -89,7 +136,7 @@ export const Button: React.FC<ButtonProp> = ({
     return () => {
       window.removeEventListener("mousedown", handleClose);
     };
-  }, [show]);
+  }, [show, isShowFrom, isShowTo]);
 
   return (
     <div ref={reference as any} className="relative ">
@@ -101,7 +148,7 @@ export const Button: React.FC<ButtonProp> = ({
       </div>
       <div
         style={bodyStyle}
-        className={`flex border    flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
+        className={`flex border     flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
           show
             ? "visible translate-y-0 z-50 opacity-100 "
             : " invisible  z-0   -translate-y-2 opacity-0  "
@@ -234,6 +281,110 @@ export const Button: React.FC<ButtonProp> = ({
                     </div>
                   )
               )}
+            </div>
+          </div>
+        )}
+        {checkFn?.dateActionFn && (
+          <div className="flex flex-col  w-full items-start gap-5">
+            <h1 className="text-[18px] tracking-wider ">Date</h1>
+            <div className="flex justify-start items-center gap-3">
+              <span className="text-[16px] tracking-wide">From</span>
+              <div
+                ref={firstCalenderReference as any}
+                className="w-full flex items-center justify-start"
+              >
+                <div className="flex items-center justify-start gap-2">
+                  <div
+                    onClick={() => setIsShowFrom(!isShowFrom)}
+                    className="flex cursor-pointer px-2 py-1.5 rounded-lg border items-center justify-start gap-2"
+                  >
+                    <input
+                      className="text-[16px] cursor-pointer tracking-wide w-full outline-none"
+                      type="text"
+                      readOnly
+                      value={from?.format("YYYY-MM-DD")}
+                    />
+                    <CalendarCheck className="size-6" />
+                  </div>
+                  <div
+                    className={`w-[200px] right-0-[0rem] duration-150 bg-[var(--light-foreground)] top-52 absolute ${
+                      isShowFrom && !isShowTo
+                        ? "visible opacity-100 z-10"
+                        : "invisible opacity-0 z-[-1]"
+                    }`}
+                  >
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DateCalendar
+                        onChange={(value) => value && setFrom(value)}
+                        sx={{
+                          color: "white",
+                          ".MuiTypography-root": { color: "white" },
+                          ".MuiPickersDay-root": { color: "white" },
+                          ".MuiPickersDay-today": { borderColor: "white" },
+                          ".MuiPickersDay-dayOutsideMonth": {
+                            color: "rgba(255, 255, 255, 0.5)",
+                          },
+                          ".MuiIconButton-root": { color: "white" },
+                        }}
+                        className="bg-[#121212] rounded-md text-white"
+                        showDaysOutsideCurrentMonth
+                        fixedWeekNumber={6}
+                      />
+                    </LocalizationProvider>
+                  </div>
+                </div>
+                <div className=" flex items-center justify-start gap-2">
+                  <span className="tracking-wide text-[16px] ">To</span>
+                  <div className="w-full" ref={secondCalenderReference as any}>
+                    <div
+                      onClick={() => setIsShowTo(!isShowTo)}
+                      className="flex text-[16px] px-2 rounded-lg tracking-wide border items-center justify-start gap-2"
+                    >
+                      <input
+                        className=" py-1.5 cursor-pointer  w-full outline-none"
+                        type="text"
+                        readOnly
+                        value={dayjs(to)?.format("YYYY-MM-DD")}
+                      />
+                      <CalendarCheck className="size-5" />
+                    </div>
+                    <div
+                      className={`w-[200px]   left-[0rem] duration-150 bg-[var(--light-foreground)] top-52 absolute ${
+                        isShowTo
+                          ? "visible opacity-100 z-10"
+                          : "invisible opacity-0 z-[-1] "
+                      } `}
+                    >
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DateCalendar
+                          onChange={(value) => setTo(value)}
+                          sx={{
+                            color: "white",
+                            ".MuiTypography-root": {
+                              color: "white", // This targets the text color within the calendar
+                            },
+                            ".MuiPickersDay-root": {
+                              color: "white", // This targets the individual day numbers
+                            },
+                            ".MuiPickersDay-today": {
+                              borderColor: "white", // This changes the border color of today's date
+                            },
+                            ".MuiPickersDay-dayOutsideMonth": {
+                              color: "rgba(255, 255, 255, 0.5)", // This changes the color for days outside the current month
+                            },
+                            ".MuiIconButton-root": {
+                              color: "white", // This changes the color of the icons (like arrows for navigating months)
+                            },
+                          }}
+                          className="bg-[#121212]  rounded-md text-white "
+                          showDaysOutsideCurrentMonth
+                          fixedWeekNumber={6}
+                        />
+                      </LocalizationProvider>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -76,7 +76,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
     setNewData(imageUrl);
   };
   return (
-    <div className="flex flex-col items-start justify-center gap-5">
+    <div className="flex z-[100] flex-col items-start justify-center gap-5">
       <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
         Update Food
       </h3>
