@@ -189,10 +189,10 @@ export const MobileCart: React.FC = () => {
     // Desktop
     <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
       <div className="w-full h-full flex lg:flex-row flex-col gap-7  items-center lg:items-start justify-around">
-        <div className="w-[500px]">
+        <div className="w-[500px] p-2 rounded border">
           <Cart />
         </div>
-        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 bg-white  rounded-lg">
+        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 bg-white border  rounded-lg">
           <h2 className="text-[25px] tracking-wider px-4 py-3">
             Recent Products
           </h2>

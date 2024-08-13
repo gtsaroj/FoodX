@@ -18,6 +18,7 @@ import { RootState } from "../../Reducer/Store";
 import ProductSearch from "./ProductSearch";
 import { Frown, Smile } from "lucide-react";
 import Profile from "../AuthProfile/AuthProfile";
+import Favourite from "../../Pages/Cart/Favourite";
 const navbarItems = [
   {
     name: "Home",
@@ -41,12 +42,13 @@ export const Navbar: React.FC = () => {
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
   const [closeFilter, setCloseFilter] = useState(false);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
-
+  const [openFavourite, setOpenFavourite] = useState<boolean>(false);
   const { data, loading, error } = UseFetch("/products/all");
   const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
+  const favouriteReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
     const filteringData: any = data?.filter((singleProduct) =>
@@ -61,6 +63,14 @@ export const Navbar: React.FC = () => {
         setCloseFilter(true);
       }
     };
+    const closeModal = (event: MouseEvent) => {
+      if (
+        favouriteReference.current &&
+        !favouriteReference.current.contains(event.target as any)
+      ) {
+        setOpenFavourite(false);
+      }
+    };
 
     const closeProfile = (event: MouseEvent) => {
       if (!profileRef?.current?.contains(event.target as Node)) {
@@ -70,12 +80,16 @@ export const Navbar: React.FC = () => {
 
     document.addEventListener("mousedown", closeProfile);
     document.addEventListener("mousedown", handleClickOutside);
+    if (openFavourite) {
+      document.addEventListener("mousedown", closeModal);
+    }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       if (closeFilter) {
         document.removeEventListener("mousedown", closeProfile);
       }
+      document.removeEventListener("mousedown", closeProfile);
     };
   }, [filteredData, closeFilter, openProfile]);
   const navigate = useNavigate();
@@ -136,7 +150,21 @@ export const Navbar: React.FC = () => {
           <div className="hidden lg:flex" ref={FilterRef}>
             <DesktopSearch />
           </div>
-          <Heart className="size-7"/>
+          <div className="relative" ref={favouriteReference as any}>
+            <Heart
+              onClick={() => setOpenFavourite(!openFavourite)}
+              className="size-7 cursor-pointer "
+            />
+            <div
+              className={` left-[-23rem] top-12 duration-150 absolute ${
+                openFavourite
+                  ? "visible z-10 translate-y-0 opacity-100 "
+                  : "-translate-y-2 opacity-0 z-[-1]"
+              } `}
+            >
+              <Favourite />
+            </div>
+          </div>
           {userImage?.avatar ? (
             <div
               onClick={() => setOpenProfile(!openProfile)}
@@ -227,7 +255,6 @@ export const Navbar: React.FC = () => {
           openProfile ? "flex" : "hidden"
         }`}
       >
-       
         {userImage && <Profile user={userImage} />}
       </div>
     </nav>
