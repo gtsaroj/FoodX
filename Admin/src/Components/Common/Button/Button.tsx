@@ -101,10 +101,10 @@ export const Button: React.FC<ButtonProp> = ({
       </div>
       <div
         style={bodyStyle}
-        className={`flex border  flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
+        className={`flex border    flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
           show
-            ? "visible translate-y-0 z-10 opacity-100 "
-            : " invisible    -translate-y-2 opacity-0  "
+            ? "visible translate-y-0 z-50 opacity-100 "
+            : " invisible  z-0   -translate-y-2 opacity-0  "
         } flex-col shadow-sm w-full  shadow-[#0000000e] items-start justify-center gap-1 bg-[var(--light-foreground)]  rounded `}
       >
         {types && (

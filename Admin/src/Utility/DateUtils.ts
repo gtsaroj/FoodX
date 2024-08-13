@@ -1,7 +1,6 @@
 import { DailyAggregateData, Order, RequestTime } from "../models/order.model";
 import { totalRevenue } from "./Utils";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import dayjs, { Dayjs } from "dayjs";
 
 dayjs.extend(isSameOrAfter);
@@ -293,66 +292,3 @@ export const aggregateWeeklyData = (orders: Order[], option: string) => {
   }
 };
 
-//bardata
-export const barData = async (data: Order[]) => {
-  const today = dayjs().format("YYYY-MM-DD");
-  const datas: { [key: string]: string }[] = [];
-
-  data?.forEach((order) => {
-    const orderDate = dayjs(order.orderRequest).format("YYYY-MM-DD");
-
-    let foundOrder = false;
-    datas.forEach((data) => {
-      data["time"] === orderDate;
-      foundOrder = true;
-    });
-
-    if (!foundOrder) datas.push({ time: orderDate });
-
-    datas?.forEach((data) => {
-      order?.products?.forEach((product) => {
-        if (data["time"] === orderDate) {
-          data[product.name]
-            ? (data[product.name] += product.quantity as number)
-            : (data[product.name] = product.quantity as any);
-        }
-      });
-    });
-  });
-  return datas;
-};
-
-export const filterBarData = async (
-  data: Order[],
-  time: { startDate: Dayjs; endDate: Dayjs }
-) => {
-  const filterData = data.filter((order) => {
-    const orderDate = order.orderRequest;
-
-    return (
-      orderDate >= time.startDate.toISOString() &&
-      orderDate <= time.endDate.toISOString()
-    );
-  });
-  const filterOrderData = barData(filterData);
-  return filterOrderData;
-};
-
-export const filterBarTodayData = async (data: Order[]) => {
-  // Get today's date
-  const today = dayjs();
-
-  // Calculate the start and end of the current month
-  const startOfMonth = today.startOf("month").format("YYYY-MM-DD");
-  const endOfMonth = today.endOf("month").format("YYYY-MM-DD");
-  console.log(startOfMonth, endOfMonth);
-
-  // Filter data for the current month
-  const filteredData = data.filter((order) => {
-    const orderDate = dayjs(order.orderRequest).format("YYY-MM-DD");
-    return startOfMonth >= orderDate && orderDate <= endOfMonth;
-  });
-
-  const filterOrderData = barData(filteredData);
-  return filterOrderData;
-};

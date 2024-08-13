@@ -4,62 +4,82 @@ import { CustomerType } from "../../models/user.model";
 import { getTopCustomers } from "../../Utility/CustomerUtils";
 import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import Skeleton from "react-loading-skeleton";
+import { Filter } from "lucide-react";
+import { Button } from "../../Components/Common/Button/Button";
 
 export const TopCustomers = () => {
   const [TopCustomer, setTopCustomer] = useState<CustomerType[]>([]);
-  const [sortOrder, setSortOrder] = useState({ field: "", order: "desc" });
+  const [originalData, setOriginalData] = useState<CustomerType[]>([]);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const handleSelect = async (value: string) => {
-    const newOrder = sortOrder.order === "asc" ? "desc" : "asc";
-
+  const handleSelect = async (value: string | undefined) => {
+    console.log(value);
     let sortedCustomers;
     if (value === "totalOrders") {
-      sortedCustomers = [...(TopCustomer as CustomerType[])].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? (((b.totalOrder as number) - a.totalOrder) as number)
-            : (((a.totalOrder as number) - b.totalOrder) as number)
+      sortedCustomers = TopCustomer?.sort((a: CustomerType, b: CustomerType) =>
+        sortOrder === "desc"
+          ? (((b.totalOrder as number) - a.totalOrder) as number)
+          : (((a.totalOrder as number) - b.totalOrder) as number)
       );
     }
     if (value === "totalSpent") {
-      sortedCustomers = [...(TopCustomer as CustomerType[])].sort(
-        (a: CustomerType, b: CustomerType) =>
-          newOrder === "desc"
-            ? (((b.amountSpent as number) - a.amountSpent) as number)
-            : (((a.amountSpent as number) - b.amountSpent) as number)
+      sortedCustomers = TopCustomer?.sort((a: CustomerType, b: CustomerType) =>
+        sortOrder === "desc"
+          ? (((b.amountSpent as number) - a.amountSpent) as number)
+          : (((a.amountSpent as number) - b.amountSpent) as number)
       );
     }
-
-    setSortOrder({ field: value, order: newOrder });
+    if (value === undefined) {
+      return setTopCustomer(originalData);
+    }
     setTopCustomer(sortedCustomers as CustomerType[]);
   };
 
   useEffect(() => {
     (async () => {
       const customers = await getTopCustomers();
-
-      if (customers) setTopCustomer(customers as any);
+      setOriginalData(customers as CustomerType[]);
+      if (customers) setTopCustomer(customers as CustomerType[]);
     })();
   }, []);
+  console.log(originalData);
 
   return (
     <div className="bg-[var(--body-bg)] flex flex-col justify-center items-start px-2 rounded-md py-3 ">
       <div className="flex items-center justify-between w-full gap-3 px-3 pt-3 pb-5">
         <h4 className="text-xl">Top Customers</h4>
         <div>
-          {" "}
-          <FilterButton
-            onSelect={handleSelect}
-            sortOrder={sortOrder.order}
-            children={[
-              { label: "Total order", value: "totalOrders" },
-              { label: "Total spent", value: "totalSpent" },
+          <Button
+            bodyStyle={{
+              width: "400px",
+              top: "3.5rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            checkFn={{
+              checkSortFn: (isChecked: boolean, value: string) => {
+                if (!isChecked) {
+                  return handleSelect((value = undefined));
+                }
+                handleSelect(value);
+              },
+            }}
+            sort={[
+              { label: "Orders", value: "totalOrders", id: "flkiogrgaiosjd" },
+              { label: "Amount", value: "totalSpent", id: "lfwrtpokjds" },
             ]}
-            bodyStyle={
-              {
-                width: "150px",
-                left: "-9.5rem"
-              }
+            sortFn={(type: "asc" | "desc") =>
+              setSortOrder(type as "asc" | "desc")
             }
           />
         </div>

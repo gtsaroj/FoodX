@@ -1,5 +1,6 @@
 import { getOrders } from "../Services";
 import { getUserData } from "../firebase/db";
+import { OrderProduct } from "../models/chart.modal";
 import { Order, Product } from "../models/order.model";
 
 // get fullName from userData to show in order table in customer column
@@ -64,4 +65,17 @@ export const getOrderId = async () => {
   const totalOrders = orders.data as Order[];
   const orderId = totalOrders?.map((order) => order.orderId);
   return orderId;
+};
+
+export const getRevenue = (products: OrderProduct[]) => {
+  const revenue = products?.reduce(
+    (productQuan, product) => productQuan + product.price * product.quantity,
+    1
+  );
+  return revenue;
+};
+
+export const getOrder = (orders: OrderProduct[]) => {
+  const order = orders?.reduce((OrderQuan, od) => OrderQuan + od.quantity, 1);
+  return order;
 };

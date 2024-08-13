@@ -44,7 +44,7 @@ const TicketCard: React.FC<TicketProp> = ({
           <h2 className="text-[14px] w-full font-[600] ">{title}</h2>
         </div>
         <h3 className="text-[14px] tracking-wider py-0.5 px-1 rounded border-[1px] text-[#247f8b] border-[#247f8b] ">
-          #{id}
+          #{id?.slice(0,10)}
         </h3>
         {/* <div className="bg-red-600 text-[10px] text-white px-3 py-0.5 rounded-sm ">High</div> */}
       </div>

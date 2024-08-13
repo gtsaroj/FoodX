@@ -9,7 +9,7 @@ import { LogCard } from "../../Components/Common/Cards/LogCard";
 import { getLogs } from "../../Services";
 import { Button } from "../../Components/Common/Button/Button";
 import { Filter, X } from "lucide-react";
-import Skeleton from "react-loading-skeleton";
+import { RotatingLines } from "react-loader-spinner";
 
 const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
@@ -286,8 +286,15 @@ const Logs = () => {
                 })
               }
               loader={
-                <div className="w-full ">
-                  <Skeleton height={70} count={5} />
+                <div className="w-full flex flex-col items-center pt-3 justify-center ">
+                  {/* <Skeleton height={70} count={5} /> */}
+                  <div className="flex items-center justify-center gap-3">
+                    <RotatingLines width="27" />
+                    <span className="text-[17px] tracking-wider ">
+                      {" "}
+                      loading...
+                    </span>
+                  </div>
                 </div>
               }
             >

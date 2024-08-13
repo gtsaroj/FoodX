@@ -1,129 +1,97 @@
 /* eslint-disable no-empty */
 import { BarChart } from "@mui/x-charts";
-import { orderChartsOfMonthly } from "../LineChart/D";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { getAllOrder } from "../../Services";
-import {
-  barData,
-  filterBarData,
-  filterBarTodayData,
-} from "../../Utility/DateUtils";
+import { barData, monthlyBarData } from "./BarChart";
+import { chartData } from "../../data.json";
 interface MonthlyOrderChartProps {
   height: number;
   dateRange: { startDate: Dayjs; endDate: Dayjs };
 }
-const foodData = [
-  {
-    samosa: 10,
-    pizza: 5,
-    burger: 8,
-    pasta: 12,
-    fries: 20,
-    time: dayjs("2024-08-01T10:00:00Z").format("YYYY-MM-DD"),
-  },
-  {
-    samosa: 15,
-    pizza: 10,
-    burger: 12,
-    pasta: 10,
-    fries: 25,
-    time: dayjs("2024-08-02T10:00:00Z").format("YYYY-MM-DD"),
-  },
-  {
-    samosa: 7,
-    pizza: 9,
-    burger: 5,
-    pasta: 11,
-    fries: 18,
-    time: dayjs("2024-08-03T10:00:00Z").format("YYYY-MM-DD"),
-  },
-  {
-    samosa: 20,
-    pizza: 12,
-    burger: 15,
-    pasta: 10,
-    fries: 30,
-    time: dayjs("2024-08-04T10:00:00Z").format("YYYY-MM-DD"),
-  },
-  {
-    samosa: 25,
-    pizza: 14,
-    burger: 18,
-    pasta: 13,
-    fries: 22,
-    time: dayjs("2024-08-05T10:00:00Z").format("YYYY-MM-DD"),
-  },
-  {
-    samosa: 10,
-    pizza: 5,
-    burger: 8,
-    pasta: 12,
-    fries: 20,
-    time: dayjs("2024-08-06T10:00:00Z").format("YYYY-MM-DD"),
-  },
-];
 
 export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   height,
   dateRange,
 }) => {
-  const [initialData, setInitialData] = useState<{ [key: string]: string }[]>(
-    []
-  );
-  const [dataKey, setDataKey] = useState<string[]>([]);
-  const getAllOrders = async () => {
-    try {
-      const response = await getAllOrder();
-      const filtersData = await filterBarTodayData(response);
+  const [initialData, setInitialData] = useState<
+    { [key: string]: number | string }[]
+  >([]);
+  const [dataKey1, setDataKey1] = useState<string[]>([]);
+  const [dataKey2, setDataKey2] = useState<string[]>([]);
+  const [dataKey3, setDataKey3] = useState<string[]>([]);
+  const [dataKey4, setDataKey4] = useState<string[]>([]);
+  const [dataKey5, setDataKey5] = useState<string[]>([]);
 
-      setInitialData(filtersData);
-      filtersData?.forEach((data) => {
-        const keys = Object.keys(data).filter((key) => key !== "time");
-        const ogDataKey = [...new Set(keys)];
-        setDataKey(ogDataKey);
-      });
-    } catch (error) {
-      throw new Error("Unable to get orders in bar" + error);
-    }
+  useEffect(() => {
+    const response = monthlyBarData(chartData);
+    setInitialData(response);
+    console.log(response);
+    const object1 = Object.keys(response[0]).filter((key) => key !== "time");
+
+    setDataKey1(object1);
+    const object2 = Object.keys(response[1]).filter((key) => key !== "time");
+    setDataKey2(object2);
+    const object3 = Object.keys(response[2]).filter((key) => key !== "time");
+    setDataKey3(object3);
+    const object4 = Object.keys(response[3]).filter((key) => key !== "time");
+    setDataKey4(object4);
+    const object5 = Object.keys(response[4]).filter((key) => key !== "time");
+    setDataKey5(object5);
+    // const allkeys: string[] = extractUniqueKeys(response);
+    // setDataKey(allkeys);
+  }, []);
+  console.log(dataKey1);
+
+  // useEffect(() => {
+  //   const filterByDate = async () => {
+  //     // const startDate = dayjs(dateRange.startDate).format();
+  //     // const endDate = dayjs(dateRange.endDate);
+  //     const getOrder = await getAllOrder();
+  //     const filteredData = await filterBarData(getOrder, {
+  //       startDate: dateRange.startDate,
+  //       endDate: dateRange.endDate,
+  //     });
+  //     setInitialData(filteredData);
+  //     filteredData?.forEach((data) => {
+  //       const keys = Object.keys(data).filter((key) => key !== "time");
+  //       const ogDataKey = [...new Set(keys)];
+  //       setDataKey(ogDataKey);
+  //     });
+  //   };
+
+  //   if (
+  //     dateRange.startDate &&
+  //     dateRange.endDate &&
+  //     dateRange.startDate !== dateRange.endDate
+  //   ) {
+  //     filterByDate();
+  //   }
+  // }, [dateRange.startDate, dateRange.endDate]);
+
+  const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
+    console.log(data);
+    const allKeys = new Set();
+    data.forEach((item) => {
+      const labelKeys = Object.keys(item).filter((index) => index !== "time");
+      labelKeys.forEach((key) => allKeys.add(key));
+    });
+    return [...allKeys];
+  };
+  // Function to check if a key is relevant (used in the dataset)
+  const isKeyRelevant = (key: string): boolean => {
+    return initialData.some((dataPoint) =>
+      Object.keys(dataPoint).includes(key)
+    );
   };
 
-  useEffect(() => {
-    getAllOrders();
-  }, []);
+  const valueFormattor = (value: number) => (value ? value : "hello");
 
-  useEffect(() => {
-    const filterByDate = async () => {
-      // const startDate = dayjs(dateRange.startDate).format();
-      // const endDate = dayjs(dateRange.endDate);
-      const getOrder = await getAllOrder();
-      const filteredData = await filterBarData(getOrder, {
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-      });
-      setInitialData(filteredData);
-      filteredData?.forEach((data) => {
-        const keys = Object.keys(data).filter((key) => key !== "time");
-        const ogDataKey = [...new Set(keys)];
-        setDataKey(ogDataKey);
-      });
-    };
-
-    if (
-      dateRange.startDate &&
-      dateRange.endDate &&
-      dateRange.startDate !== dateRange.endDate
-    ) {
-      filterByDate();
-    }
-  }, [dateRange.startDate, dateRange.endDate]);
-
-  const series =
-    dataKey &&
-    dataKey.map((key) => ({
-      dataKey: key,
-      label: key,
-    }));
+  // Update series creation logic to filter out unused keys
+  // const series = dataKey.filter(isKeyRelevant).map((key) => ({
+  //   dataKey: key,
+  //   label: key,
+  //   valueFormattor,
+  // }));
 
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
@@ -158,7 +126,20 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
             data: initialData?.map((data) => data["time"]),
           },
         ]}
-        series={series as { dataKey: string; label: string }[]}
+        series={[
+          {
+            data: [1300, 1500, 1214, 2341, 234],
+          },
+          {
+            data: [1340, 1475, 1220, 2320, 250],
+          },
+          {
+            data: [1320, 1550, 1200, 2280, 260],
+          },
+          {
+            data: [1360, 1480, 1240, 2370, 240],
+          },
+        ]}
       />
     </div>
   );
