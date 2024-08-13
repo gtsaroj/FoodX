@@ -420,7 +420,7 @@ const AllCustomers = () => {
             )}
           </div>
         </div>
-        <div className="z-[100]">
+        <div >
           <Button
             bodyStyle={{
               width: "400px",

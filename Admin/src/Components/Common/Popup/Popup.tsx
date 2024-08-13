@@ -33,7 +33,7 @@ const Modal: React.FC<ModelProp> = ({
 
   return (
     <div
-      className={`md:w-[600px] bg-[var(--popup-bg)] w-full py-9 overflow-hidden   min-w-[100vw] px-7 sm:min-h-[100vh] h-full  z-[20] justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}
+      className={`md:w-[600px] bg-[var(--popup-bg)] w-full py-9 overflow-hidden   min-w-[100vw] px-7 sm:min-h-[100vh] h-full   justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}
       style={{
         opacity: !close ? 1 : 0,
         zIndex: !close ? 50 : -3,
@@ -43,7 +43,7 @@ const Modal: React.FC<ModelProp> = ({
         className=" overflow-auto rounded py-4 bg-[var(--light-background)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150 sm:h-fit relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  "
         ref={modalRef}
       >
-        <div className="w-full overflow-auto">{children}</div>
+        <div className="w-full z-[1000] overflow-auto">{children}</div>
         <button
           className="absolute top-[7px] rounded right-[30px] p-3 hover:cursor-pointer duration-150 ease-in-out text-red-500 hover:text-red-600"
           onClick={closeModal}

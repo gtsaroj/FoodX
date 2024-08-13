@@ -218,7 +218,7 @@ const FoodPage: React.FC = () => {
               <Plus strokeWidth={2.5} className="size-5" />
               <p className="text-[16px] tracking-widest ">Item</p>
             </button>
-            <Button
+            {/* <Button
               sortFn={(value) => setSortOrder(value)}
               bodyStyle={{
                 width: "400px",
@@ -242,7 +242,7 @@ const FoodPage: React.FC = () => {
                 { label: "Revenue", value: "revenue", id: "flkjdsf" },
               ]}
 
-            />
+            /> */}
           </div>
         </div>
       </div>

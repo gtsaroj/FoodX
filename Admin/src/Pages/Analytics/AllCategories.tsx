@@ -235,7 +235,7 @@ const AllCategories = () => {
             </div>
           </div>
         </div>
-        <div className="z-[100]">
+        <div>
           <Button
             sortFn={(value) => setSortOrder(value)}
             bodyStyle={{
