@@ -1,5 +1,5 @@
 import { LineChart } from "@mui/x-charts";
-import { ArrowUp, Filter, X } from "lucide-react";
+import { ArrowUp, Filter, MoveUp, X } from "lucide-react";
 import "./LineChart.css";
 import { chartData } from "../../data.json";
 import { useEffect, useState } from "react";
@@ -72,9 +72,7 @@ export const WeekReveneuChart: React.FC = () => {
   );
 };
 
-export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = ({
-  dateRange,
-}) => {
+export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
   const [filter, setFilter] = useState<{
@@ -84,10 +82,10 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = ({
 
   useEffect(() => {
     if (filter?.dateFilter || filter?.normalFilter) {
-      const monthlyData = monthlyRevenue(chartData);
+      const monthlyData = monthlyRevenue(chartData.reverse());
       setInitialData(monthlyData);
     } else {
-      const monthlyData = monthlyRevenue(chartData.reverse());
+      const monthlyData = monthlyRevenue(chartData);
       setInitialData(monthlyData);
     }
   }, [filter?.normalFilter, filter?.dateFilter]);
@@ -95,48 +93,14 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = ({
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full gap-1 px-3 py-1 rounded">
-      <div className="flex  h-[20px]  w-full  items-center justify-start gap-2">
-        {filter?.dateFilter && (
-          <div className="flex px-2 w-[180px]  overflow-hidden py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-        {filter?.normalFilter && (
-          <div className="flex px-2 w-[120px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setFilter((prev) => ({ ...prev, normalFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center justify-between w-full gap-3 px-2">
+    <div className="flex flex-col h-[430px] items-center justify-center w-full gap-1 p-2 rounded">
+      <div className="flex items-center justify-between w-full gap-3 ">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-sm text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5 border border-[var(--green-text)] rounded-lg">
-            10%
-            <span>
-              <ArrowUp size={15} />
+          <p className="text-[18px] tracking-wider font-semibold text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+            <span>10%</span>
+            <span className="mb-[3px]">
+              <MoveUp strokeWidth={3} size={14} />
             </span>
           </p>
         </div>
@@ -184,7 +148,41 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = ({
           }
         />
       </div>
-      <div className="h-[400px] lg:h-[300px] w-full">
+      <div className="flex  h-[10px]  w-full  items-center justify-start gap-2">
+        {filter?.dateFilter && (
+          <div className="flex px-1 overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1  items-center justify-center">
+              <span className="text-[15px] w-[115px]   text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {filter?.normalFilter && (
+          <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setFilter((prev) => ({ ...prev, normalFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="h-[400px] lg:h-[335px] w-full">
         <LineChart
           slotProps={{
             legend: {
@@ -213,9 +211,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = ({
   );
 };
 
-export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = ({
-  dateRange,
-}) => {
+export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; orders: number }[]>();
   const [filter, setIsFilter] = useState<{
@@ -224,7 +220,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = ({
   }>();
 
   useEffect(() => {
-    if (filter?.dateFilter && filter?.normalFilter) {
+    if (filter?.dateFilter || filter?.normalFilter) {
       const monthlyData = monthlyTotal(chartData);
       setInitialData(monthlyData);
     } else {
@@ -236,50 +232,14 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = ({
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
   return (
-    <div className="flex  flex-col items-center justify-center w-full gap-2 px-3 py-1 rounded">
-      <div className="flex  h-[20px] w-full  items-center justify-start gap-2">
-        {filter?.dateFilter && (
-          <div className="flex px-2 w-[180px]  overflow-hidden py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setIsFilter((prev) => ({ ...prev, dateFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-        {filter?.normalFilter && (
-          <div className="flex px-2 w-[120px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="flex items-center justify-between w-full gap-3 px-2">
+    <div className="flex flex-col p-2 items-center justify-center w-full   py-1 rounded">
+      <div className="flex items-center justify-between w-full gap-3 ">
         <div className="  text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Order</p>
-          <p className="text-sm text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5 border border-[var(--green-text)] rounded-lg">
-            10%
-            <span>
-              <ArrowUp size={15} />
+          <p className="text-[18px] tracking-wider font-semibold text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+            <span>10%</span>
+            <span className="mb-1">
+              <MoveUp strokeWidth={3} size={14} />
             </span>
           </p>
         </div>
@@ -321,7 +281,43 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = ({
           }
         />
       </div>
-      <div className="h-[400px] lg:h-[300px] w-full">
+      <div className="flex h-[20px]  w-full   items-center justify-start gap-2">
+        {filter?.dateFilter && (
+          <div className="flex px-1 overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] w-[110px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setIsFilter((prev) => ({ ...prev, dateFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {filter?.normalFilter && (
+          <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="h-[398px]  lg:h-[398px] w-full">
         <LineChart
           slotProps={{
             legend: {

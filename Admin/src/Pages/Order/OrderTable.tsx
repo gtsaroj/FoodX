@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../Services";
 
 interface orderTableProp {
-  totalData: number
+  totalData: number;
   orders: OrderModal[];
   loading?: boolean;
   pagination: { currentPage: number; perPage: number };
@@ -26,6 +26,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
   );
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
 
   const statusChangeFn = async (newStatus: string) => {
@@ -54,8 +55,10 @@ export const OrderTable: React.FC<orderTableProp> = ({
       render: (item: OrderModal) => (
         <div className=" !p-0 w-[100px]   relative cursor-pointer group/id text-center ">
           #{item.id?.substring(0, 8)}
-          <div className=" top-[-27px]  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
-           rounded shadow ">
+          <div
+            className=" top-[-27px]  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
+           rounded shadow "
+          >
             {item.id}
           </div>
         </div>
@@ -79,11 +82,20 @@ export const OrderTable: React.FC<orderTableProp> = ({
       },
       render: (item: OrderModal) => (
         <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
-          <p>{item.id == selectedId ? item.products : selectedProducts}</p>
-          <span onClick={() => setSelectedId(item.id)}>
+          <p>
+            {item.id == selectedId && isCollapsed
+              ? item.products
+              : selectedProducts}
+          </p>
+          <span
+            onClick={() => {
+              setSelectedId(item.id);
+              setIsCollapsed(!isCollapsed);
+            }}
+          >
             <ChevronRight
               className={`size-5 ${
-                selectedId === item.id ? "rotate-90" : ""
+                selectedId === item.id && isCollapsed ? "rotate-90" : ""
               }  duration-200 cursor-pointer `}
             />
             {}{" "}

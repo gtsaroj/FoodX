@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { barData, monthlyBarData } from "./BarChart";
 import { currentWeekData, previousWeekData } from "../../data.json";
 import { Button } from "../Common/Button/Button";
-import { Filter, X } from "lucide-react";
+import { Filter, MoveUp, X } from "lucide-react";
 interface MonthlyOrderChartProps {
   height: number;
   dateRange: { startDate: Dayjs; endDate: Dayjs };
@@ -90,43 +90,17 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
 
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
-    <div className={`w-full p-2 h-[${height}px]`}>
-      <div className="flex h-[20px] items-center justify-start gap-2">
-        {filter?.dateFilter && (
-          <div className="flex px-2 w-[150px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-        {filter?.normalFilter && (
-          <div className="flex px-2 w-[120px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setFilter((prev) => ({ ...prev, normalFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-      </div>
+    <div className={`w-full p-2 h-[450px]`}>
       <p className="w-full  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
-        Top Products
+        <div className="flex items-center justify-start gap-3">
+          <span>Top Products</span>
+          <p className="text-[18px] tracking-wider font-semibold text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+            <span>10%</span>
+            <span className="mb-[3px]">
+              <MoveUp strokeWidth={3} size={14} />
+            </span>
+          </p>
+        </div>
         <div>
           <Button
             bodyStyle={{
@@ -148,7 +122,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
             checkFn={{
               checkActionFn: (isChecked: boolean, value: string) => {
                 if (!isChecked) {
-                  setFilter((prev) => ({ ...prev, normalFilter: value }));
+                  setFilter((prev) => ({ ...prev, normalFilter: "" }));
                 }
                 if (isChecked) {
                   setFilter((prev) => ({ ...prev, normalFilter: value }));
@@ -169,40 +143,76 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
           />
         </div>
       </p>
-      <BarChart
-        grid={{ horizontal: true }}
-        colors={colorPallette}
-        slotProps={{
-          // loadingOverlay: { message: "Loading Data....." },
-          // noDataOverlay: { message: "No Data to display." },
-          // legend: {
-          //   hidden: true,
-          //   itemMarkHeight: 10,
-          //   labelStyle: { fontSize: "30px", alignItems: "center" },
-          //   direction: "row",
-          //   position: { vertical: "bottom", horizontal: "middle" },
-          // },
-          legend: {
-            hidden: true,
-            // labelStyle: {
-            //   fontSize: "12px",
+      <div className="flex h-[20px] items-center justify-start gap-2">
+        {filter?.dateFilter && (
+          <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] w-[110px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {filter?.normalFilter && (
+          <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setFilter((prev) => ({ ...prev, normalFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+      </div>
+      <div className="w-full h-[400px]">
+        <BarChart
+          grid={{ horizontal: true }}
+          colors={colorPallette}
+          slotProps={{
+            // loadingOverlay: { message: "Loading Data....." },
+            // noDataOverlay: { message: "No Data to display." },
+            // legend: {
+            //   hidden: true,
+            //   itemMarkHeight: 10,
+            //   labelStyle: { fontSize: "30px", alignItems: "center" },
+            //   direction: "row",
+            //   position: { vertical: "bottom", horizontal: "middle" },
             // },
-          },
-        }}
-        dataset={initialData}
-        borderRadius={6}
-        xAxis={[
-          {
-            scaleType: "band",
-            dataKey: "time",
-            data: initialData?.map((data) => data["date"]),
-          },
-        ]}
-        series={dataKey?.map((key) => ({
-          dataKey: key,
-          label: key,
-        }))}
-      />
+            legend: {
+              hidden: true,
+              // labelStyle: {
+              //   fontSize: "12px",
+              // },
+            },
+          }}
+          dataset={initialData}
+          borderRadius={6}
+          xAxis={[
+            {
+              scaleType: "band",
+              dataKey: "time",
+              data: initialData?.map((data) => data["date"]),
+            },
+          ]}
+          series={dataKey?.map((key) => ({
+            dataKey: key,
+            label: key,
+          }))}
+        />
+      </div>
     </div>
   );
 };

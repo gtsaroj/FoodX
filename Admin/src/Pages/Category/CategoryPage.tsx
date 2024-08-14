@@ -271,22 +271,11 @@ export const CategoryPage: React.FC = () => {
         </div>
         <div>
           {isFilter && (
-            <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex px-1 py-0.5 w-full gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
               <div className="flex gap-1 items-center justify-center">
                 <span className="  text-[15px] text-[var(--dark-secondary-text)]">
                   {isFilter.toLowerCase()}
                 </span>
-                <p
-                  className={` duration-150 ${
-                    sortOrder === "desc"
-                      ? "rotate-180"
-                      : sortOrder === "asc"
-                      ? ""
-                      : ""
-                  } `}
-                >
-                  <ChevronUp size={20} />
-                </p>
               </div>
               <button onClick={() => setIsFilter("")} className=" ">
                 <X className="text-[var(--danger-text)] " size={20} />
@@ -296,7 +285,7 @@ export const CategoryPage: React.FC = () => {
         </div>
       </div>
       <CategoryTable
-        totalData={initialCategory.length}
+        totalData={initialCategory?.length}
         selectedData={bulkSelectedCategory}
         loading={loading}
         category={initialCategory}

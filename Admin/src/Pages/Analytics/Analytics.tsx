@@ -21,7 +21,7 @@ const Analytics: React.FC = () => {
   };
   return (
     <div className="flex flex-col items-center justify-center w-full gap-8 py-5">
-      <div className="flex  relative items-center tracking-wider justify-start w-full gap-5 text-[18px] text-[var(--dark-secondary-text)] border-b-[5px] border-b-[var(--light-border))] pb-2 px-7 lg:px-10">
+      <div className="flex  relative items-center tracking-wider justify-start w-full gap-5 text-[18px] text-[var(--dark-secondary-text)] border-b-[4px] border-b-[var(--light-border))] pb-2 px-7 lg:px-10">
         {/* tabs */}
         <p
           className={`relative cursor-pointer ${
@@ -65,7 +65,7 @@ const Analytics: React.FC = () => {
               : currentPage === "Logs"
               ? "translate-x-[202px]"
               : ""
-          }  absolute h-[4px] top-[35px] w-[89px] bg-[var(--primary-color)]`}
+          }  absolute h-[3px] top-[35px] w-[89px] bg-[var(--primary-color)]`}
         ></div>
       </div>
       <div className="flex items-start justify-center w-full gap-8">

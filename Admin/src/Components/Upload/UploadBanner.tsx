@@ -53,9 +53,9 @@ const UploadBanner: React.FC = () => {
     <React.Fragment>
       <div
         ref={reference as any}
-        className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
+        className="w-full relative text-[var(--dark-text)] overflow-auto h-full flex-col gap-5 items-center justify-center flex"
       >
-        <h3 className=" h-12 sticky  overflow-hidden shadow text-center  w-full border-b-[1px] text-black text-[20px]">
+        <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
           Add an banner
         </h3>
 

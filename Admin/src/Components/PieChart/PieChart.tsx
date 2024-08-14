@@ -2,7 +2,7 @@ import { PieChart } from "@mui/x-charts";
 import { categoryCurrentData, categoryPreviousData } from "../../data.json";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
-import { Filter, X } from "lucide-react";
+import { Filter, MoveUp, X } from "lucide-react";
 
 export const PieChartAnalytics = () => {
   const [initialData, setInitialData] = useState<any[]>([]);
@@ -21,46 +21,17 @@ export const PieChartAnalytics = () => {
   }, [filter?.dateFilter, filter?.normalFilter]);
 
   return (
-    <div className="w-full py-1 h-[350px]  gap-3 sm:h-[430px]">
-      {" "}
-      <div className="flex  h-[20px] my-1 w-full px-2   items-center justify-start gap-2">
-        {filter?.dateFilter && (
-          <div className="flex px-2 w-[180px]  overflow-hidden py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setIsFilter((prev) => ({ ...prev, dateFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-        {filter?.normalFilter && (
-          <div className="flex px-2 w-[120px]  py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-            <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
-              </span>
-            </div>
-            <button
-              onClick={() =>
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
-      </div>
-      <div className="w-full px-5 flex items-center justify-between ">
-        <h1 className="text-xl tracking-wider  pl-1 ">Top Food Categories</h1>
+    <div className="w-full h-[350px]  p-2 gap-3 sm:h-[430px]">
+      <div className="w-full  flex items-center justify-between ">
+        <div className="flex w-full h-full gap-2 items-center justify-start">
+          <h1 className="text-xl tracking-wider   ">Top Food Categories</h1>
+          <p className="text-[18px] tracking-wider xl:mb-[3px] font-semibold text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
+            <span>10%</span>
+            <span className="mb-[1px]">
+              <MoveUp strokeWidth={3} size={14} />
+            </span>
+          </p>
+        </div>
         <Button
           bodyStyle={{
             width: "400px",
@@ -98,6 +69,42 @@ export const PieChartAnalytics = () => {
             },
           }}
         />
+      </div>
+      <div className="flex  h-[10px] my-1 w-full    items-center justify-start gap-2">
+        {filter?.dateFilter && (
+          <div className="flex px-1   overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] w-[115px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setIsFilter((prev) => ({ ...prev, dateFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
+        {filter?.normalFilter && (
+          <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+            <div className="flex gap-1 items-center justify-center">
+              <span className="text-[15px] text-[var(--dark-secondary-text)]">
+                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+              </span>
+            </div>
+            <button
+              onClick={() =>
+                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
+              }
+              className=" "
+            >
+              <X className="text-[var(--danger-text)] " size={20} />
+            </button>
+          </div>
+        )}
       </div>
       <div className="w-full h-full ">
         <PieChart

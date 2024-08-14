@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Dasboard from "./Pages/Dashboard/Dasboard";
+import collegeLogo from "./assets/logo/texas.png";
 import {
   BrowserRouter as Router,
   Route,
@@ -24,11 +25,36 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Footer/Footer";
 import { CategoryPage } from "./Pages/Category/CategoryPage";
 import Navbar from "./Navbar/Navbar";
+import { Sun, User } from "lucide-react";
 
 const MainPage = () => {
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  useEffect(() => {
+    isDarkMode
+      ? document.body.classList.add("dark")
+      : document.body.classList.remove("dark");
+  }, [isDarkMode]);
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
+      <div className="bg-[var(--light-background)] hidden xl:flex w-full  items-center justify-between px-4 py-3 ">
+        <div className="flex items-center justify-center gap-4">
+          <div className="w-[150px]">
+            <img className="w-full h-full" src={collegeLogo} alt="" />
+          </div>
+        </div>
+        <div className="flex  items-center  gap-3">
+          <div
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className="cursor-pointer"
+          >
+            <Sun size={25} />
+          </div>
+          <div>
+            <User />
+          </div>
+        </div>
+      </div>
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
         <div className="hidden xl:flex ">
           <DesktopSlider closeFn={() => {}} open={false} />
@@ -69,9 +95,9 @@ const App: React.FC = () => {
             showContent ? <Navigate to={"/admin"} replace /> : <Register />
           }
         />
-        <Route  
+        <Route
           element={
-            <PrivateRoute  role={[{ role: "admin" }, { role: "chef" }]} />
+            <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
           }
         >
           <Route path="admin/" element={<MainPage />}>
