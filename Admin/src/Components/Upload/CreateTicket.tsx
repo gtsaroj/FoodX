@@ -53,14 +53,14 @@ const CreateTicket: React.FC = () => {
         ref={reference as any}
         className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
       >
-        <h3 className=" h-12 sticky tracking-widest  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+        <h3 className=" h-12 sticky tracking-widest  overflow-hidden  text-center  w-full border-b-[1px] text-[var(--dark-text)] text-[20px]">
           Create Ticket
         </h3>
 
         <form
           onSubmit={(event) => handleSubmit(event)}
           action=""
-          className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
+          className="sm:w-[600px]  text-[var(--dark-etx)]  w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
           {/* First Row */}
           <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
@@ -94,7 +94,7 @@ const CreateTicket: React.FC = () => {
                 }))
               }
               type="text"
-              className="w-full outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full outline-none text-[var(--dark-text)] placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* Third Row */}
@@ -114,11 +114,11 @@ const CreateTicket: React.FC = () => {
                 }))
               }
               placeholder="Describe your request"
-              className="w-full h-[200px] resize-none  outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full h-[200px] resize-none text-[var(--dark-text)]  outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
 
-          <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button className="w-full tracking-wider text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 Sending <HashLoader color="white" size={"20px"} />

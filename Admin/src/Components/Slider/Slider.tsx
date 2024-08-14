@@ -88,10 +88,10 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
 
         {/* Actions Section */}
         <div className="flex items-start justify-start flex-grow h-full overflow-auto ">
-          <ul className="flex flex-col items-start justify-center w-full gap-5">
+          <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-5">
             <li
               onClick={() => setUrl("/admin")}
-              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] w-full py-3 px-2 rounded duration-150  "
+              className="flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] w-full py-3 px-2 rounded duration-150  "
             >
               <LayoutDashboard />
               <span>Dashboard</span>
@@ -101,7 +101,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("analytics")}
-                className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
+                className="flex items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
               >
                 <LineChart />
                 <span>Analytics</span>
@@ -110,7 +110,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             <li className="relative flex flex-col items-center justify-start w-full gap-3 ">
               <button
                 onClick={() => setOpenCollection(!openCollection)}
-                className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
+                className="flex  items-center  dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
               >
                 <Combine />
                 <span>Collections</span>
@@ -129,14 +129,14 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               >
                 <li
                   onClick={() => setUrl("collection/foodlist")}
-                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                  className=" text-[14px] flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                 >
                   <Utensils className="size-5" />
                   Food list
                 </li>
                 <li
                   onClick={() => setUrl("collection/banner")}
-                  className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                  className=" text-[14px] flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                 >
                   <Fullscreen className="size-5" />
                   Banner
@@ -145,14 +145,14 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             </li>
             <li
               onClick={() => setUrl("category")}
-              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
+              className="flex items-center justify-start gap-5 dark:hover:text-[var(--light-text)] cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
             >
               <Shapes />
               <span>Category</span>
             </li>
             <li
               onClick={() => setUrl("order-list")}
-              className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] w-full p-3 rounded duration-150   "
+              className="flex items-center justify-start gap-5  dark:hover:text-[var(--light-text)] cursor-pointer hover:bg-[#e8e8e8] w-full p-3 rounded duration-150   "
             >
               <ListOrdered />
               <span>Order</span>
@@ -162,7 +162,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("customer-list")}
-                className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150  "
+                className="flex items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150  "
               >
                 <BookUser />
                 <span>Customers</span>
@@ -171,7 +171,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             <li className="relative flex flex-col items-center justify-start w-full gap-3 ">
               <button
                 onClick={() => setOpenContact(!openContact)}
-                className="flex  items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
+                className="flex  items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
               >
                 <Mail />
                 <span>Contact</span>
@@ -193,7 +193,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
                     Admin Details
@@ -204,7 +204,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
                     Chef Details
@@ -215,7 +215,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/tickets")}
-                    className=" text-[14px] flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <Ticket />
                     My Requests
@@ -246,7 +246,7 @@ export const MobileSlider: React.FC = () => {
           <img className="w-full h-full" src={collegeLogo} alt="" />
         </div>
       </div>
-      <div className="flex items-center justify-around gap-3">
+      <div className="flex xl:hidden items-center justify-around gap-3">
         <button onClick={() => setOpenMenu(!openMenu)}>
           {openMenu ? <X className="size-8" /> : <Menu className="size-8" />}
         </button>

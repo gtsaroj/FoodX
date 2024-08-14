@@ -207,7 +207,7 @@ const OrderList = () => {
       <div className="flex items-center justify-between w-full pt-5">
         <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
           <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
-            All Categories
+            All Orders
           </h4>
           <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
             {totalData || 0} entries found
@@ -273,8 +273,8 @@ const OrderList = () => {
           />
         </form>
         {isFilter?.sortFilter && (
-          <div className="flex w-[150px]  items-center rounded-lg border  justify-between p-2">
-            <div className="flex gap-1 items-center justify-center">
+          <div className="flex items-center rounded-md border  justify-between px-1 gap-2 py-1  ">
+            <div className="flex  items-center justify-center">
               <span className="  text-sm ">
                 {isFilter.sortFilter && isFilter.sortFilter}
               </span>

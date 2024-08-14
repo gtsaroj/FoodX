@@ -45,7 +45,7 @@ export const TopCustomers = () => {
   console.log(originalData);
 
   return (
-    <div className="bg-[var(--body-bg)] flex flex-col justify-center items-start px-2 rounded-md py-3 ">
+    <div className="bg-[var(--body-bg)] h-[394px] flex flex-col justify-start overflow-y-auto items-start px-2 rounded-md py-3 ">
       <div className="flex items-center justify-between w-full gap-3 px-3 pt-3 pb-5">
         <h4 className="text-xl">Top Customers</h4>
         <div>
@@ -84,7 +84,7 @@ export const TopCustomers = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3 max-h-[350px] flex-grow overflow-y-scroll">
+      <div className="flex flex-col gap-3 max-h-[100px] flex-grow overflow-y-scroll">
         {TopCustomer?.length > 0 ? (
           TopCustomer?.map((customer, index) => (
             <CustomerCard key={customer.id} prop={customer} index={index} />

@@ -261,6 +261,7 @@ const Logs = () => {
         >
           <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
+               endMessage={""}
               scrollableTarget={"scrollableDiv"}
               dataLength={totalData ? totalData : 0}
               hasMore={hasMore}

@@ -28,25 +28,25 @@ const Overview: React.FC = () => {
       <div>
         <Revenue />
       </div>
-      <div className="flex flex-wrap items-center justify-between w-full gap-5 px-5 py-5">
-        <div className="w-full h-full lg:max-w-[550px] flex flex-col items-center justify-center border rounded-md px-2 py-0 min-w-[400px] flex-grow">
+      <div className="flex xl:flex-row flex-col items-center justify-between w-full gap-5 px-5 py-5">
+        <div className="w-full h-full xl:max-w-[550px] flex flex-col items-center justify-center border rounded-md px-2 py-0 min-w-[400px] flex-grow">
           <MonthlyOrderChart
             dateRange={dateRange as { startDate: Dayjs; endDate: Dayjs }}
-            height={400}
+            height={425}
           />
         </div>
 
-        <div className="w-full lg:max-w-[500px] min-w-[200px] border p-2 rounded-md">
+        <div className="w-full xl:max-w-[500px] h-[450px] min-w-[200px] border p-2 rounded-md">
           <MonthlyOrderLinechart
             dateRange={dateRange as { startDate: Dayjs; endDate: Dayjs }}
           />
         </div>
       </div>
-      <div className="flex items-center flex-wrap justify-start w-full gap-3 px-5 ">
-        <div className="w-full lg:max-w-[600px] border p-2 rounded-md">
+      <div className="flex items-center 2xl:flex-row flex-col  justify-start w-full gap-3 px-5 ">
+        <div className="w-full 2xl:max-w-[600px] border rounded-md">
           <MonthlyRevenueChart />
         </div>
-        <div className="flex  relative justify-center items-center flex-grow border rounded w-[400px] ">
+        <div className="flex  relative justify-center w-full items-center flex-grow border rounded 2xl:w-[400px] ">
           <PieChartAnalytics />
         </div>
       </div>

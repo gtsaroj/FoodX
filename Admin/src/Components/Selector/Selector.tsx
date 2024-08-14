@@ -14,7 +14,7 @@ export const Selector: React.FC<SelectorPop> = ({
   const [show, setShow] = useState<boolean>(false);
   const [showField, setShowField] = useState<string>();
   return (
-    <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+    <div className="w-full text-[var(--dark-text)] relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
       <div
         onClick={() => setShow(!show)}
         className="flex items-center  justify-between"

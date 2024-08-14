@@ -10,7 +10,7 @@ const Navbar = () => {
 
   return (
     <div className="w-full border-b-2 border-[var(--light-background)] h-[80px] flex justify-between items-center gap-5 px-3 py-4">
-      <h1 className="px-3 text-2xl">
+      <h1 className="px-3 text-[var(--dark-text)] text-2xl">
         Welcome back,{" "}
         <span className="font-semibold tracking-wide">{user?.fullName}</span>
       </h1>
