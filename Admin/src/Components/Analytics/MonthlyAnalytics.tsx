@@ -1,68 +1,101 @@
 import React, { useEffect, useState } from "react";
-import { DropDown } from "../Common/DropDown/DropDown";
-import { DailyAggregateData } from "../../models/order.model";
-import { getOrders } from "../../Services";
-import { aggregateWeeklyData } from "../../Utility/DateUtils";
-import { Filter } from "lucide-react";
+import "react-circular-progressbar/dist/styles.css";
+import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
+import { CardAnalyticsProp } from "../../models/order.model";
+import { categoryCurrentData, categoryPreviousData } from "../../data.json";
+import { EllipsisVertical } from "lucide-react";
+import Skeleton from "react-loading-skeleton";
+import { Button } from "../Common/Button/Button";
+// import { getOrders } from "../../Services";
+// import { DailyAggregateData } from "../../models/order.model";
+// import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 
 export const MonthlyAnalytics: React.FC = () => {
-  const [weeklyFilterOrder, setWeeklyFilterOrder] =
-    useState<DailyAggregateData[]>();
-  console.log(weeklyFilterOrder);
-  // const handleSelect = async (option: string) => {
-  //   try {
-  //     const orders = await getOrders();
-
-  //     const filterData = aggregateWeeklyData(orders.data, option.toLowerCase());
-  //     console.log(orders);
-  //     setWeeklyFilterOrder(filterData);
-  //   } catch (error) {
-  //     throw new Error("Unable to filtered weekly data" + error);
-  //   }
-  // };
+  const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    getOrders().then((data) => {
-      const filterData = aggregateWeeklyData(data.data, "current week");
-      setWeeklyFilterOrder(filterData);
-    });
+    // setLoading(true);
+    // getAllOrder()
+    //   .then((order) => {
+    //     const currentData = aggregateCurrentDayData(order);
+    //     if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
+    //     setLoading(false);
+    //   })
+    //   .catch((error) => {
+    //     throw new Error(
+    //       "Unable to aggregate current data file: dailAnalytics " + error
+    //     );
+    //   });
+    // setLoading(false);
   }, []);
+  // console.log(`Daily Aggregate data: ${totalOrder}`);
+  console.log(loading);
+
+  function handleSelect(value: string) {
+    throw new Error("Function not implemented.");
+  }
 
   return (
-    <div className=" w-full flex  gap-4 flex-col items-start justify-center">
-      <div className="w-full flex items-center px-5  justify-between">
-        <h2 className="text-left text-xl text-[var(--primary-color)] ">
-          Order Details
-        </h2>
-        <DropDown
-          style={{
-            display: "flex",
-            fontSize: "15px",
-            borderRadius: "4px",
-            padding: "0.5rem 1rem 0.5rem 1rem",
-            color: "var(--dark-text)",
-            border: "1px solid var(--dark-secondary-text)  ",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            background: "",
-          }}
-          children={
-            <>
-              <Filter className="size-4" />
-              <span>Filter</span>
-            </>
-          }
-          options={["Current Week", "1 week ago"]}
-        />
+    <React.Fragment>
+      <div className="flex  flex-wrap items-center justify-center w-full gap-3 px-5 xl:justify-start md:justify-between sm:justify-start sm:gap-5 ">
+        {/* <div className="grid w-full grid-cols-1 md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center sm:grid sm:grid-cols-2 lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 "> */}
+        {/* {totalOrder?.map((item, index) => { */}
+
+        {/* })} */}
+        <div className="flex flex-wrap items-center justify-start w-full gap-7 ">
+          {totalOrder?.length > 0 ? (
+            totalOrder?.map((order, index) => (
+              <CardAnalytics
+                filter={
+                  <Button
+                    types={[
+                      {
+                        label: "Previous",
+                        value: "previous",
+                        id: "fush9uwoj39",
+                      },
+                    ]}
+                    bodyStyle={{
+                      width: "250px",
+                      top: "3rem",
+                      left: "-17rem",
+                      zIndex: 10000,
+                    }}
+                    parent={<EllipsisVertical />}
+                  />
+                }
+                title={order.title}
+                total={order.total}
+                percentage={order.percentage}
+                subtitle={order.subtitle}
+                key={index}
+              />
+            ))
+          ) : (
+            <div className="w-full grid grid-cols-3 gap-3 ">
+              <Skeleton
+                height={200}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={200}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={200}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      <div className="w-full grid  md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center  sm:grid grid-cols-1 sm:grid-cols-2  lg:grid lg:grid-cols-2 xl:gap-x-10 gap-x-4 gap-y-6 ">
-        {/* { weeklyFilterOrder?.map((item, index) => (
-          <div className="col-span-1">
-            <CardAnalytics prop={item} key={index} />
-          </div>
-        ))} */}
-      </div>
-    </div>
+    </React.Fragment>
   );
 };

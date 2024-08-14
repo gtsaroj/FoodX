@@ -33,13 +33,13 @@ const Delete: React.FC<DeleteProp> = ({
         <div className="w-full flex items-center justify-center gap-5">
           <button
             onClick={closeModal}
-            className="text-[var(--dark-text)] hover:bg-gray-100 duration-150 border text-[17px] tracking-wide px-7 py-2 rounded-lg  "
+            className="text-[var(--dark-text)] hover:bg-[var(--light-background)] duration-150 border-[var(--dark-secondary-text)] text-[17px] tracking-wide px-7 py-2 rounded-lg  "
           >
             Cancel
           </button>
           <button
             onClick={() => setDelete(id, type as "specials" | "products")}
-            className="text-[var(--light-text)] border-[var(--danger-text)] hover:bg-[var(--danger-text)] duration-150 text-[17px] tracking-wide px-7 py-2 rounded-lg bg-[var(--danger-bg)] "
+            className="text-[var(--dark-text)] border-[var(--danger-text)] hover:bg-[var(--danger-text)] duration-150 text-[17px] tracking-wide px-7 py-2 rounded-lg bg-[var(--danger-bg)] "
           >
             Delete
           </button>
@@ -61,7 +61,7 @@ export const DeleteButton: React.FC<DeleteButtonProp> = ({
   return (
     <button
       disabled={dataLength < 1}
-      className={`hover:bg-gray-100 ${
+      className={`hover:bg-[var(--light-background)] ${
         dataLength > 0 ? "cursor-pointer" : "cursor-not-allowed"
       } rounded-lg duration-150 p-2`}
       onClick={deleteFn}

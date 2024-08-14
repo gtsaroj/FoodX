@@ -213,7 +213,7 @@ const FoodPage: React.FC = () => {
           <div className="flex items-center justify-center gap-2">
             <button
               onClick={() => setIsModelOpen(!isModalOpen)}
-              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
               <Plus strokeWidth={2.5} className="size-5" />
               <p className="text-[16px] tracking-widest ">Item</p>

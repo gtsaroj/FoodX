@@ -72,7 +72,7 @@ export const LogCard: React.FC<LogCardProps> = ({
   const newDate = dayjs(date).format("dddd, MMMM D, YYYY h:mm A")
   return (
     <div>
-      <div className="flex items-center justify-between w-full h-full gap-3 p-4 border rounded-md ">
+      <div className="flex items-center justify-between w-full h-full gap-3 p-4 border-[1px] border-[var(--dark-border)] rounded-md ">
         <div className="flex items-center justify-center gap-1">
           <div className="pr-2">
             <p className="relative">
@@ -89,23 +89,23 @@ export const LogCard: React.FC<LogCardProps> = ({
           />
           <div className="px-2">
             <p className="flex flex-wrap items-center justify-start gap-1 text-[var(--dark-secondary-text)] text-sm">
-              <span>{name}</span>
-              <span>{titles[`${action}`]}</span>
+              <span  className="text-[var(--dark-text)] " >{name}</span>
+              <span  className="text-[var(--dark-text)] " >{titles[`${action}`]}</span>
             </p>
             <p className="text-[var(--dark-secondary-text)] text-xs">
               {newDate}
             </p>
           </div>
         </div>
-        <div className="cursor-pointer" onClick={() => handleCollapse()}>
-          {openMenu ? <ChevronDown /> : <ChevronRight />}
+        <div className={`${openMenu ? "rotate-90":""} duration-150 cursor-pointer text-[var(--dark-text)] ` } onClick={() => handleCollapse()}>
+          <ChevronRight />
         </div>
       </div>
       {openMenu && (
         <div className="px-3 py-4 mt-0.5 text-sm border rounded-md ">
           {detail ? (
-            <div className="flex flex-col items-start justify-center gap-0.5 text-sm">
-              <span className="text-[var(--dark-secondary-text)] text-[10px]">
+            <div className="flex text-[var(--dark-text)] flex-col items-start justify-center gap-0.5 text-sm">
+              <span className=" tracking-widest text-[10px]">
                 #{uid}
               </span>
               {detail}

@@ -349,7 +349,7 @@ const AllProductAnalytics = () => {
                 id="search"
                 type="search"
                 onChange={(event) => debounceSearch(event?.target.value)}
-                className=" border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
+                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
                 placeholder="Search for products"
               />
             </form>
@@ -403,7 +403,7 @@ const AllProductAnalytics = () => {
               left: "-18rem",
             }}
             parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
               <Filter
                 strokeWidth={2.5}
                 className="size-5 text-[var(--dark-secondary-text)]"

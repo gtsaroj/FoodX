@@ -48,7 +48,7 @@ export const CardAnalytics: React.FC<CardAnalyticsProp> = ({
   total,
 }: CardAnalyticsProp) => {
   return (
-    <div className="flex flex-col items-center justify-center px-3 py-4 border border-[var(--light-secondary-background)] rounded-lg md:w-[350px] w-full ">
+    <div className="flex flex-col items-center justify-center px-3 py-4 border border-[var(--dark-border)] rounded-lg md:w-[350px] w-full ">
       <div className="flex items-center justify-between w-full gap-3 px-2 pb-2">
         <div className="flex items-center justify-start gap-3">
           {" "}

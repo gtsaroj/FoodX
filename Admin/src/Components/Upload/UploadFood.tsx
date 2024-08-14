@@ -51,7 +51,7 @@ const UploadFood: React.FC = () => {
         ref={reference as any}
         className="relative flex flex-col items-center justify-center w-full h-full gap-5 overflow-auto"
       >
-        <h3 className=" h-12 sticky tracking-wider  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+        <h3 className=" h-12 sticky border-[var(--dark-border)] tracking-wider  overflow-hidden  text-center  w-full border-b-[1px] text-[var(--dark-text)] text-[20px]">
           Add an item
         </h3>
 
@@ -79,7 +79,7 @@ const UploadFood: React.FC = () => {
                   }))
                 }
                 placeholder="Pizza"
-                className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-2 px-4 rounded"
+                className="w-full text-[var(--dark-text)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
               />
             </div>
             <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
@@ -98,7 +98,7 @@ const UploadFood: React.FC = () => {
                   }))
                 }
                 placeholder="Rs. 1,200"
-                className="w-full placeholder:text-sm  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
+                className="w-full placeholder:text-sm bg-[var(--light-foreground)]  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
               />
             </div>
           </div>
@@ -131,7 +131,7 @@ const UploadFood: React.FC = () => {
               >
                 Quantity
               </label>
-              <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)] ">
+              <div className="w-full py-1 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)] ">
                 <input
                   type="number"
                   onChange={(event) =>
@@ -144,14 +144,14 @@ const UploadFood: React.FC = () => {
                     }))
                   }
                   placeholder="Enter Quantity"
-                  className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
+                  className="w-full text-[var(--dark-text)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
                 />
               </div>
             </div>
           </div>
           {/* Third Row */}
           {addFood.products.image ? (
-            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px]">
               {" "}
               <img
                 className="w-full h-[230px] object-fill"
@@ -161,7 +161,7 @@ const UploadFood: React.FC = () => {
           ) : (
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+              className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--light-foreground)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}
@@ -203,13 +203,14 @@ const UploadFood: React.FC = () => {
                   setAddFood((prev) => ({ ...prev, collection: "products" }));
               }}
               type="checkbox"
+              id="1245"
               value={"specials"}
-              className="w-[15px] cursor-pointer scale-[1.1] h-[15px] "
+              className="w-[15px] accent-slate-900 cursor-pointer scale-[1.1] h-[15px] "
             />
-            <p className="text-[16px] text-[var(--dark-text)] ">
+            <label htmlFor="1245" className="text-[16px] cursor-pointer text-[var(--dark-text)] ">
               {" "}
               Would you like to mark this as a special product ?
-            </p>
+            </label>
           </div>
           <button
             type="submit"

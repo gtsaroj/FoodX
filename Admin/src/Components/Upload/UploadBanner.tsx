@@ -55,7 +55,7 @@ const UploadBanner: React.FC = () => {
         ref={reference as any}
         className="w-full relative text-[var(--dark-text)] overflow-auto h-full flex-col gap-5 items-center justify-center flex"
       >
-        <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+        <h3 className=" h-12 sticky  text-[var(--dark-text)] overflow-hidden border-[var(--dark-border)]  text-center  w-full border-b-[1px]  text-[20px]">
           Add an banner
         </h3>
 
@@ -78,13 +78,13 @@ const UploadBanner: React.FC = () => {
               }
               type="text"
               placeholder="Pizza"
-              className="w-full outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* Third Row */}
           <div
             onClick={() => fileRef.current?.click()}
-            className="w-full h-[300px] transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+            className="w-full h-[300px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] dark:border-[var(--light-foreground)] stroke-[1px] py-20"
           >
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -119,7 +119,7 @@ const UploadBanner: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
           </button>

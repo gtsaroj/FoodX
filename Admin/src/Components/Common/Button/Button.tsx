@@ -148,7 +148,7 @@ export const Button: React.FC<ButtonProp> = ({
       </div>
       <div
         style={bodyStyle}
-        className={`flex border     flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
+        className={`flex border-[1px] border-[var(--dark-border)]     flex-col items-start gap-5  px-4 py-3 duration-100 absolute ${
           show
             ? "visible translate-y-0 z-50 opacity-100 "
             : " invisible  z-0   -translate-y-2 opacity-0  "
@@ -156,7 +156,7 @@ export const Button: React.FC<ButtonProp> = ({
       >
         {types && (
           <div
-            className={`flex  flex-col w-full items-start justify-center  gap-4`}
+            className={`flex text-[var(--dark-text)]  flex-col w-full items-start justify-center  gap-4`}
           >
             <h1 className="text-[18px] tracking-wider ">Types</h1>
             <div className="w-full  flex items-center justify-around gap-5">
@@ -196,7 +196,7 @@ export const Button: React.FC<ButtonProp> = ({
           </div>
         )}
         {sort && (
-          <div className="flex w-full flex-col items-start justify-start  gap-7">
+          <div className="flex  text-[var(--dark-text)]   w-full flex-col items-start justify-start  gap-7">
             <div className="w-full flex items-center justify-between ">
               <h1 className="text-[18px] tracking-wider ">Sort By</h1>
               <div className="w-[130px]">
@@ -246,7 +246,7 @@ export const Button: React.FC<ButtonProp> = ({
         )}
         {action && (
           <div
-            className={`flex flex-col w-full items-start justify-center  gap-4`}
+            className={`flex  text-[var(--dark-text)]   flex-col w-full items-start justify-center  gap-4`}
           >
             <h1 className="text-[18px] tracking-wider ">Actions</h1>
             <div className="w-full flex-wrap flex-row  flex items-center justify-start gap-5">
@@ -285,7 +285,7 @@ export const Button: React.FC<ButtonProp> = ({
           </div>
         )}
         {checkFn?.dateActionFn && (
-          <div className="flex flex-col  w-full items-start gap-5">
+          <div className="flex  text-[var(--dark-text)]   flex-col  w-full items-start gap-5">
             <h1 className="text-[18px] tracking-wider ">Date</h1>
             <div className="flex justify-start items-center gap-3">
               <span className="text-[16px] tracking-wide">From</span>
@@ -296,10 +296,10 @@ export const Button: React.FC<ButtonProp> = ({
                 <div className="flex items-center justify-start gap-2">
                   <div
                     onClick={() => setIsShowFrom(!isShowFrom)}
-                    className="flex cursor-pointer px-2 py-1.5 rounded-lg border items-center justify-start gap-2"
+                    className="flex cursor-pointer px-2 py-1.5 rounded-lg border-[1px] border-[var(--dark-border)] items-center justify-start gap-2"
                   >
                     <input
-                      className="text-[16px] cursor-pointer tracking-wide w-full outline-none"
+                      className="text-[16px] bg-[var(--light-foreground)] cursor-pointer tracking-wide w-full outline-none"
                       type="text"
                       readOnly
                       value={from?.format("YYYY-MM-DD")}
@@ -334,14 +334,14 @@ export const Button: React.FC<ButtonProp> = ({
                   </div>
                 </div>
                 <div className=" flex items-center justify-start gap-2">
-                  <span className="tracking-wide text-[16px] ">To</span>
+                  <span className="tracking-wide text-[16px] pl-2 ">To</span>
                   <div className="w-full" ref={secondCalenderReference as any}>
                     <div
                       onClick={() => setIsShowTo(!isShowTo)}
-                      className="flex text-[16px] px-2 rounded-lg tracking-wide border items-center justify-start gap-2"
+                      className="flex text-[16px] px-2 rounded-lg tracking-wide border-[1px] border-[var(--dark-border)] items-center justify-start gap-2"
                     >
                       <input
-                        className=" py-1.5 cursor-pointer  w-full outline-none"
+                        className=" py-1.5 cursor-pointer bg-[var(--light-foreground)]  w-full outline-none"
                         type="text"
                         readOnly
                         value={dayjs(to)?.format("YYYY-MM-DD")}
@@ -401,14 +401,14 @@ const Selector: React.FC<SelectorProp> = ({ data, onSelect }) => {
   const [show, setShow] = useState<boolean>(false);
   const [showField, setShowField] = useState<string>("Low to High");
   return (
-    <div className="w-full relative group/selector border-[1px] rounded px-2 border-[var(--light-secondary-text)]">
+    <div className="w-full relative group/selector border-[1px] border-[var(--dark-border)] rounded px-2 ">
       <div
         onClick={() => setShow(!show)}
         className="flex items-center cursor-pointer  justify-between"
       >
         <input
           type="text"
-          className="w-full text-[var(--dark-secondary-text)]  outline-none cursor-pointer "
+          className="w-full text-[var(--dark-secondary-text)] bg-transparent  outline-none cursor-pointer "
           readOnly
           value={showField}
         />

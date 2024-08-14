@@ -14,14 +14,14 @@ export const Selector: React.FC<SelectorPop> = ({
   const [show, setShow] = useState<boolean>(false);
   const [showField, setShowField] = useState<string>();
   return (
-    <div className="w-full text-[var(--dark-text)] relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+    <div className="w-full text-[var(--dark-text)] relative group/selector py-1 gap-2 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">
       <div
         onClick={() => setShow(!show)}
         className="flex items-center  justify-between"
       >
         <input
           type="text"
-          className="w-full py-1  outline-none cursor-pointer "
+          className="w-full py-1 bg-[var(--light-foreground)]  outline-none cursor-pointer "
           readOnly
           value={showField}
           placeholder="Select option"
@@ -38,14 +38,14 @@ export const Selector: React.FC<SelectorPop> = ({
         {categoryOption?.map((option) => (
           <p
             onClick={() => {
-              setField(option.value as any);
-              setShowField(option.label);
+              setField(option.value  ? option.value : option as any);
+              setShowField(option.label ? option.label :option as any);
               setShow(false);
             }}
             key={option.label}
-            className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
+            className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-[var(--light-background)] w-full rounded"
           >
-            {option.label}
+            {option.label || option}
           </p>
         ))}
       </div>

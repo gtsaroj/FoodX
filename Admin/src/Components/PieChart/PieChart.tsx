@@ -24,8 +24,10 @@ export const PieChartAnalytics = () => {
     <div className="w-full h-[350px]  p-2 gap-3 sm:h-[430px]">
       <div className="w-full  flex items-center justify-between ">
         <div className="flex w-full h-full gap-2 items-center justify-start">
-          <h1 className="text-xl tracking-wider   ">Top Food Categories</h1>
-          <p className="text-[18px] tracking-wider xl:mb-[3px] font-semibold text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
+          <h1 className="text-xl tracking-wider text-[var(--dark-text)]  ">
+            Top Food Categories
+          </h1>
+          <p className="text-[18px] tracking-wider xl:mt-[3px]  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[1px]">
               <MoveUp strokeWidth={3} size={14} />
@@ -40,7 +42,7 @@ export const PieChartAnalytics = () => {
           }}
           types={[{ label: "Previous", value: "previous", id: "fkldsj;fs" }]}
           parent={
-            <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
               <Filter
                 strokeWidth={2.5}
                 className="size-5 text-[var(--dark-secondary-text)]"
@@ -108,7 +110,7 @@ export const PieChartAnalytics = () => {
       </div>
       <div className="w-full h-full ">
         <PieChart
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", color: "white" }}
           series={[
             {
               data: initialData?.map((data, index) => ({
@@ -116,7 +118,6 @@ export const PieChartAnalytics = () => {
                 label: data.name,
                 id: index,
               })),
-
               highlightScope: { fade: "series", highlight: "item" },
               innerRadius: 30,
               outerRadius: 100,
@@ -132,8 +133,9 @@ export const PieChartAnalytics = () => {
               itemMarkWidth: 15,
               itemMarkHeight: 15,
               labelStyle: {
+                color: "red",
                 fontSize: 17,
-                letterSpacing: 1,
+                letterSpacing: 2,
               },
             },
           }}

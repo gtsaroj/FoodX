@@ -428,7 +428,7 @@ const AllCustomers = () => {
               left: "-18rem",
             }}
             parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
               <Filter strokeWidth={2.5} className="size-5 text-[var(--dark-secondary-text)]" />
               <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">Filter</p>
             </div>

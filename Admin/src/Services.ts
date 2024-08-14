@@ -1,4 +1,4 @@
-import { getTicketByStatus } from './Services';
+import { getTicketByStatus } from "./Services";
 import { GetOrderModal } from "./../../backend/src/models/order.model";
 import { UserInfo } from "firebase/auth";
 import { globalRequest } from "./GlobalRequest";
@@ -34,7 +34,7 @@ import {
 } from "./models/category.model";
 import { GetLogProp, LogCardProps } from "./models/logModel";
 import { authLogout } from "./Reducer/Action";
-import { Axios } from "axios";
+import axios, { Axios } from "axios";
 import { da } from "date-fns/locale";
 import { GetUserModal } from "./models/UserModels";
 
@@ -170,6 +170,7 @@ export const getAllOrder = async () => {
       method: "get",
       url: "orders/all-orders",
     });
+
     return response.data.data;
   } catch (error) {
     throw new Error(`Error while getting orders : ${error}`);
@@ -191,11 +192,7 @@ export const bulkDeleteOfCustomer = async (data: {
     throw new Error("Unable to bulk delete" + error);
   }
 };
-export const deleteCustomer = async (data: {
-  role: string;
-  id: string;
-  newData: string;
-}) => {
+export const deleteCustomer = async () => {
   try {
     return toast.error("No route found");
   } catch (error) {
@@ -326,7 +323,7 @@ export const createTicket = async (data: TicketType) => {
   }
 };
 
-export const getTickets = async (data : GetTicketModal) => {
+export const getTickets = async (data: GetTicketModal) => {
   let request = 5;
   console.log(request);
   if (request < 0) return console.log("Time finished");
@@ -335,7 +332,7 @@ export const getTickets = async (data : GetTicketModal) => {
     const response = await makeRequest({
       method: "post",
       url: "tickets/get-tickets",
-      data: {...data},
+      data: { ...data },
     });
     return response.data.data;
   } catch (error) {
@@ -351,7 +348,7 @@ export const getTicket = async (ticketState: string) => {
     const response = await makeRequest({
       method: "post",
       url: "tickets/get-ticket-status",
-      data: {status : ticketState},
+      data: { status: ticketState },
     });
     return response.data.data;
   } catch (error) {

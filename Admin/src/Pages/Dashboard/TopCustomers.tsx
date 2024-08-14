@@ -45,21 +45,22 @@ export const TopCustomers = () => {
   console.log(originalData);
 
   return (
-    <div className="bg-[var(--body-bg)] h-[394px] flex flex-col justify-start overflow-y-auto items-start px-2 rounded-md py-3 ">
-      <div className="flex items-center justify-between w-full gap-3 px-3 pt-3 pb-5">
+    <div className="w-full border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] h-[394px] flex flex-col justify-start  items-start px-2 rounded-md py-3 ">
+      <div className="flex items-center text-[var(--dark-text)] justify-between w-full gap-3 px-3 pt-3 pb-5">
         <h4 className="text-xl">Top Customers</h4>
         <div>
           <Button
             bodyStyle={{
-              width: "400px",
-              top: "3.5rem",
-              left: "-18rem",
+              width: "250px",
+              top: "3rem",
+              left: "-8.9rem",
+              zIndex: 10000,
             }}
             parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
                 <Filter
                   strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
+                  className="size-5 text-[var(--dark-text)] "
                 />
                 <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
                   Filter
@@ -84,7 +85,7 @@ export const TopCustomers = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3 max-h-[100px] flex-grow overflow-y-scroll">
+      <div className="flex flex-col gap-3 max-h-[100px] w-full  flex-grow overflow-y-scroll">
         {TopCustomer?.length > 0 ? (
           TopCustomer?.map((customer, index) => (
             <CustomerCard key={customer.id} prop={customer} index={index} />

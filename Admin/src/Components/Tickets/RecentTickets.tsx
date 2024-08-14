@@ -50,7 +50,7 @@ export const RecentTickets = () => {
   }, []);
 
   return (
-    <div className="flex flex-col w-full h-full p-4 border rounded-lg lg:max-w-[420px]">
+    <div className="flex flex-col text-[var(--dark-text)] w-full h-full p-4 border-[var(--dark-border)] border-[1px] rounded-lg lg:max-w-[420px]">
       <div className="flex items-center justify-between gap-3 pb-7">
         <h2 className="text-2xl tracking-wide text-nowrap">Recent Tickets</h2>
         <p className="flex items-center justify-center text-[12px] cursor-pointer hover:underline text-[var(--primary-color)] flex-nowrap">

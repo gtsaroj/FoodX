@@ -48,7 +48,7 @@ export const RecentOrders = () => {
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">
       <div className="flex items-center justify-between pb-7">
-        <h2 className="text-2xl tracking-wide text-nowrap">Recent Orders</h2>
+        <h2 className="text-2xl text-[var(--dark-text)] tracking-wide text-nowrap">Recent Orders</h2>
         <p className="flex items-center justify-center text-[12px] cursor-pointer hover:underline text-[var(--primary-color)] flex-nowrap">
           <span className="text-nowrap" onClick={() => setUrl("order-list")}>
             View More

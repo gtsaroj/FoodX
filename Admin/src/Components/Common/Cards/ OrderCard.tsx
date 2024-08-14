@@ -22,7 +22,7 @@ export const OrderCard: React.FC<RecentOrderType> = ({
 
 
   return (
-    <div className="flex items-center justify-between flex-shrink-0 w-full h-full gap-5 p-3 border border-[var(--light-secondary-background)] rounded-md min-w-[500px]">
+    <div className="flex items-center justify-between flex-shrink-0 w-full h-full gap-5 p-3 border border-[var(--dark-border)] rounded-md min-w-[500px]">
       <div className="flex w-full items-center justify-start gap-3">
         <div className="w-[40px] h-[40px] ">
          <img src={image} className="w-full rounded-full  h-full" alt="" />

@@ -77,7 +77,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
   };
   return (
     <div className="flex z-[100] flex-col items-start justify-center gap-5">
-      <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
+      <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] border-[var(--dark-border)] text-[var(--dark-text)] text-[20px]">
         Update Food
       </h3>
       <form
@@ -92,7 +92,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
 
         {field === "image" ? (
           newData ? (
-            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-background)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px]">
               {" "}
               <img
                 className="w-full h-[230px] object-fill"
@@ -102,7 +102,7 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
           ) : (
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+              className="w-full transition-all hover:bg-[var(--light-background)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--light-foreground)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}
@@ -122,9 +122,9 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
             </div>
           )
         ) : field === "name" ? (
-          <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+          <div className="w-full py-1 border-[var(--dark-border)] border-[1px]  rounded px-2 bg-[var(--light-foreground)]">
             <input
-              className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
+              className="w-full text-[var(--dark-text)] bg-[var(--light-foreground)]  outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
               value={newData as string}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -138,32 +138,24 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
             type="text"
             onChange={(event) => setNewData(parseInt(event.target.value))}
             placeholder="1200"
-            className="w-full placeholder:text-sm  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
+            className="w-full placeholder:text-sm  border-[var(--dark-border)] border-[1px] bg-[var(--light-foreground)] outline-none text-[var(--dark-text)] py-2 px-4 rounded"
           />
         ) : field === "quantity" ? (
           <input
             value={newData as number}
             onChange={(event) => setNewData(parseInt(event.target.value))}
             type="text"
-            className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
+            className="w-full border-[var(--dark-border)] border-[1px] bg-[var(--light-foreground)] text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded"
           />
         ) : field === "category" ? (
-          <select
-            onChange={(event) => setNewData(event.target.value)}
-            className=" rounded bg-[var(--light-foreground)] w-full pr-40 text-[14px] py-2 text-[var(--dark-text)] pointer outline-none"
-            name=""
-            id=""
-          >
-            {options.map((opt) => (
-              <option className="text-[var(--dark-text)]" value={opt as string}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          <Selector
+            categoryOption={options}
+            setField={(value) => setNewData(value)}
+          />
         ) : (
           ""
         )}
-        <button className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+        <button className="w-full dark:text-[var(--dark-text)] text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
           Submit
         </button>
       </form>

@@ -24,7 +24,7 @@ const Dasboard: React.FC = () => {
         <RecentTickets />
       </div>
       <div className="flex flex-col items-center justify-between w-full px-5 gap-7 md:flex-row">
-        <div className="flex flex-grow border rounded-lg">
+        <div className="flex flex-grow border-[var(--dark-border)] border-[1px] rounded-lg">
           <WeekReveneuChart />
         </div>
         <div className="hidden lg:block">

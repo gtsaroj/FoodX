@@ -55,8 +55,8 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
         ref={reference as any}
         className="w-full relative overflow-auto h-full flex-col gap-5 items-center justify-center flex"
       >
-        <h3 className=" h-12 sticky  overflow-hidden  text-center  w-full border-b-[1px] text-black text-[20px]">
-          Add an banner
+        <h3 className=" h-12 sticky  overflow-hidden border-[var(--dark-border)]  text-center  w-full border-b-[1px] text-[var(--dark-text)] text-[20px]">
+          Add an Category
         </h3>
 
         <form
@@ -78,7 +78,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
               onChange={(e) => setCategoryName(e.target.value)}
               type="text"
               placeholder="Pizza"
-              className="w-full outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* second row */}
@@ -90,7 +90,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
           ) : (
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+              className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}
@@ -120,7 +120,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
           {/* Third Row */}
           <button
             type="submit"
-            className="w-full text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
           </button>

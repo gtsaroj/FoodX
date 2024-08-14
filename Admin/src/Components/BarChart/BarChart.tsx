@@ -94,9 +94,9 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
       <p className="w-full  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
         <div className="flex items-center justify-start gap-3">
           <span>Top Products</span>
-          <p className="text-[18px] tracking-wider font-semibold text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+          <p className="text-[18px] tracking-wider  text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
-            <span className="mb-[3px]">
+            <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={14} />
             </span>
           </p>
@@ -109,7 +109,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
               left: "-18rem",
             }}
             parent={
-              <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+              <div className="flex border-[1px] border-[var(--dark-border)]  px-4 py-2 rounded items-center justify-start gap-2">
                 <Filter
                   strokeWidth={2.5}
                   className="size-5 text-[var(--dark-secondary-text)]"
@@ -179,6 +179,38 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
       </div>
       <div className="w-full h-[400px]">
         <BarChart
+                    sx={{
+                      "& .MuiLineElement-root": {
+                        strokeDasharray: "2 2",
+                        strokeWidth: 3,
+                      },
+                      "& .MuiAreaElement-series-Germany": {
+                        fill: "url('#myGradient')",
+                      },
+                      "& .MuiChartsHoverLine": {
+                        stroke: "var(--dark-text)", // Set the hover line color to white
+                        strokeWidth: 1, // Adjust the thickness as needed
+                      },
+                      "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                        stroke: "var(--dark-text)", // Blue color for the X-axis line
+                        strokeWidth: 0.8,
+                      },
+                      "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                        stroke: "var(--dark-text)", // Blue color for the Y-axis line
+                        strokeWidth: 0.8,
+                      },
+                      "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                        letterSpacing: "2px",
+                        fill: "var(--dark-text)", // Blue color for the X-axis labels
+                        strokeWidth: "0.5",
+                      },
+          
+                      "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                        fill: "var(--dark-text)", // Red color for the Y-axis labels
+                        strokeWidth: "0.4",
+                        letterSpacing: "2px",
+                      },
+                    }}
           grid={{ horizontal: true }}
           colors={colorPallette}
           slotProps={{

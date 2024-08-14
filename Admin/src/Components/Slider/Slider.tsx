@@ -101,7 +101,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("analytics")}
-                className="flex items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
+                className="flex items-center justify-start dark:hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150 "
               >
                 <LineChart />
                 <span>Analytics</span>
@@ -162,7 +162,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("customer-list")}
-                className="flex items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150  "
+                className="flex items-center justify-start dark:hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150  "
               >
                 <BookUser />
                 <span>Customers</span>
@@ -171,7 +171,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             <li className="relative flex flex-col items-center justify-start w-full gap-3 ">
               <button
                 onClick={() => setOpenContact(!openContact)}
-                className="flex  items-center justify-start hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
+                className="flex  items-center justify-start dark:hover:text-[var(--light-text)] gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-500"
               >
                 <Mail />
                 <span>Contact</span>
@@ -193,7 +193,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
                     Admin Details
@@ -204,7 +204,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <CircleUser />
                     Chef Details
@@ -215,7 +215,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 ) : (
                   <li
                     onClick={() => setUrl("contact/tickets")}
-                    className=" text-[14px] flex items-center hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center dark:hover:text-[var(--light-text)] justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <Ticket />
                     My Requests

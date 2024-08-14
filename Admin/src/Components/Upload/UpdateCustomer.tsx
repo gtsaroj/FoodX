@@ -102,7 +102,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
   };
   return (
     <div className="flex flex-col  items-start justify-center gap-7">
-      <h3 className=" h-12 tracking-wider  text-center  w-full border-b-[1px] text-black text-[22px]">
+      <h3 className=" h-12 tracking-wider border-[var(--dark-border)]  text-center  w-full border-b-[1px] text-[var(--dark-text)] text-[22px]">
         Update Customer
       </h3>
       <form
@@ -110,54 +110,21 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
         className="flex text-[var(--dark-text)] py-5 sm:px-16 px-5 flex-col items-start justify-start gap-7 w-full"
         onSubmit={(event) => handleSubmit(event)}
       >
-        <div className="w-full relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
-          <div
-            onClick={() => setShow(!show)}
-            className="flex items-center  justify-between"
-          >
-            <input
-              type="text"
-              className="w-full py-2  outline-none cursor-pointer "
-              readOnly
-              value={showField}
-              placeholder="Select option"
-            />
-            <ChevronDown />
-          </div>
-          <div
-            className={`flex bg-[var(--light-foreground)] left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex-col items-start justify-center gap-1 w-full transition-all duration-300 overflow-hidden ${
-              show
-                ? "max-h-64 opacity-100"
-                : "max-h-0 opacity-0 transform -translate-y-2"
-            }`}
-          >
-            {UpdateCategoryOption?.map((option) => (
-              <p
-                onClick={() => {
-                  setField(option.value as "image" | "name" | "role");
-
-                  setShowField(option.label);
-                  setShow(false);
-                }}
-                key={option.label}
-                className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-slate-200 w-full rounded"
-              >
-                {option.label}
-              </p>
-            ))}
-          </div>
-        </div>
+        <Selector
+          categoryOption={UpdateCategoryOption}
+          setField={(value) => setField(value as "image" | "role" | "name")}
+        />
 
         {field === "image" ? (
           newData ? (
-            <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+            <div className="w-full    overflow-hidden transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--light-foreground)] stroke-[1px]">
               {" "}
               <img className="w-full h-[230px] object-fill" src={newData} />
             </div>
           ) : (
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-full transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+              className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--light-foreground)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}
@@ -177,9 +144,9 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
             </div>
           )
         ) : field === "name" ? (
-          <div className="w-full py-1 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
+          <div className="w-full py-1 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">
             <input
-              className="w-full text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
+              className="w-full bg-[var(--light-foreground)] text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
               type="text"
               placeholder="Eg. Saroj GT"
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -195,7 +162,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
         ) : (
           ""
         )}
-        <button className="w-full text-[18px] tracking-wider text-[var(--light-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+        <button className="w-full text-[18px] tracking-wider text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
           Submit
         </button>
       </form>

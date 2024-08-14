@@ -6,12 +6,9 @@ import { AuthFooter } from "../../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { singInAction } from "../../Reducer/Action";
-import { addLogs } from "../../Services";
-import { GetUserModal } from "../../models/UserModels";
-import { PayloadAction } from "@reduxjs/toolkit";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -22,25 +19,25 @@ const LoginContainer: React.FC = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [dataSend, setDataSend] = useState<boolean>(true);
+  const [dataSend, setDataSend] = useState<boolean>(false);
 
   const showPassword = () => {
     setShow((show) => !show);
     setPasswordType(passwordType === "text" ? "password" : "text");
   };
-  const today = new Date().toISOString();
 
   const dispatch = useDispatch<AppDispatch>();
 
   const LoginFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setDataSend(true);
     try {
-      setDataSend(false);
       await dispatch(singInAction({ email, password, userRole: "admin" }));
     } catch (error) {
-      console.error(`Error occuring while sending form : ${error}`);
-      setDataSend(true);
+      toast.error("Invalid email or password");
+      throw new Error(`Error occuring while sending form : ${error}`);
     }
+    setDataSend(false);
   };
 
   return (
@@ -51,7 +48,10 @@ const LoginContainer: React.FC = () => {
           <h1 className="hidden md:block">Login with Email</h1>
         </div>
         <div className="px-3 py-4">
-          <form className="flex flex-col gap-4 p-2" onSubmit={LoginFormSubmit}>
+          <form
+            className="flex text-[var(--dark-text)] flex-col gap-4 p-2"
+            onSubmit={LoginFormSubmit}
+          >
             <div className="relative flex flex-col gap-2">
               <label htmlFor="logEmail" className="text-[15px]">
                 Email
@@ -63,7 +63,7 @@ const LoginContainer: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
             </div>
             <div className="relative flex flex-col gap-2">
@@ -78,7 +78,7 @@ const LoginContainer: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (
@@ -104,13 +104,13 @@ const LoginContainer: React.FC = () => {
             >
               Forgot Password?
             </p>
-            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)]  text-[var(--light-text)] dark:text-[var(--dark-text)] text-xl font-bold tracking-wider transition-colors duration-500 ease-in-out mt-5 ">
               {dataSend ? (
-                "Submit"
-              ) : (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />
                 </div>
+              ) : (
+                "Submit"
               )}
             </button>
             <p
