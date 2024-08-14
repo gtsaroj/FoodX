@@ -122,7 +122,7 @@ const Logs = () => {
       <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-2 md:max-w-[800px]">
         <div className="flex items-center justify-between w-full gap-5 px-3 pb-5 ">
           <div className="flex items-center justify-start gap-2">
-            <p className="text-lg font-semibold tracking-wide text-nowrap">
+            <p className="text-lg text-[var(--dark-text)] font-semibold tracking-wide text-nowrap">
               Audit Logs
             </p>
             <div className="flex items-center justify-start gap-2">
@@ -204,7 +204,11 @@ const Logs = () => {
               action={[
                 { label: "Create", value: "create", id: "dflkjsklkfkls" },
                 { label: "Register", value: "register", id: "dlalksslk" },
-                { label: "Login", value: "login", id: "fkdjs;jfdskewoij930ikds" },
+                {
+                  label: "Login",
+                  value: "login",
+                  id: "fkdjs;jfdskewoij930ikds",
+                },
                 {
                   label: "Delete",
                   value: "delete",
@@ -261,7 +265,7 @@ const Logs = () => {
         >
           <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
-               endMessage={""}
+              endMessage={""}
               scrollableTarget={"scrollableDiv"}
               dataLength={totalData ? totalData : 0}
               hasMore={hasMore}
@@ -286,8 +290,8 @@ const Logs = () => {
                 <div className="w-full flex flex-col items-center pt-3 justify-center ">
                   {/* <Skeleton height={70} count={5} /> */}
                   <div className="flex items-center justify-center gap-3">
-                    <RotatingLines strokeColor="black" width="27" />
-                    <span className="text-[17px] tracking-wider ">
+                    <RotatingLines strokeColor="var(--dark-text)" width="27" />
+                    <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                       {" "}
                       loading...
                     </span>

@@ -21,9 +21,7 @@ export const aggregateCustomerData = async (
         try {
           const userOrderData = await getOrderByUser(data.uid);
           if (!userOrderData) throw new Error("user not found");
-
           const totalUserOrder = userOrderData.data as Order[];
-
           let totalCustomerCost: number = 0;
           let totalCustomerQuantity: number = 0;
           totalUserOrder?.forEach((order) => {
@@ -38,7 +36,7 @@ export const aggregateCustomerData = async (
             image: data.avatar,
             amountSpent: Math.round(totalCustomerCost * 100) / 100,
             totalOrder: totalCustomerQuantity,
-            role: data.role as string,
+            role: data.role as "customer" | "admin" | "chef",
           };
         } catch (error) {
           console.error(`Error fetching orders for user ${data.uid}:`, error);

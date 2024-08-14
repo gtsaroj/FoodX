@@ -2,7 +2,7 @@
   .MuiChartsAxis-tickLabel {
     fill: var(--dark-text) !important;
     font-weight: 500 !important;
-    font-size: 14px !important;
+    font-size: 200px !important;
   }
 }
 .MuiChartsLinePlot-line {

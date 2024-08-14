@@ -37,24 +37,7 @@ const MainPage = () => {
   }, [isDarkMode]);
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
-      <div className="bg-[var(--light-background)] hidden xl:flex w-full  items-center justify-between px-4 py-3 ">
-        <div className="flex items-center justify-center gap-4">
-          <div className="w-[150px]">
-            <img className="w-full h-full" src={collegeLogo} alt="" />
-          </div>
-        </div>
-        <div className="flex  items-center  gap-3">
-          <div
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="cursor-pointer"
-          >
-            <Sun size={25} />
-          </div>
-          <div>
-            <User />
-          </div>
-        </div>
-      </div>
+
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
         <div className="hidden xl:flex ">
           <DesktopSlider closeFn={() => {}} open={false} />

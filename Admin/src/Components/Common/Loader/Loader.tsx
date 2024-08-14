@@ -9,7 +9,7 @@ export const Loader: React.FC<LoaderProp> = ({ url }) => {
   const [loader, setLoader] = useState<boolean>(true);
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoader(false);
+      setLoader(prev => !prev);
     }, 500);
 
     return () => {

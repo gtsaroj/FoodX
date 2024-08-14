@@ -80,11 +80,11 @@ const Pagination: React.FC<PaginationProps> = ({
       pageNumbers.push(
         <button
           key={index}
-          className={`px-3 py-1 duration-150 rounded hover:text-[var(--light-text)]  hover:bg-[#3a3939e0] ${
+          className={`px-3 py-1 duration-150 rounded text-[var(--dark-text)] hover:text-[var(--dark-text)]  hover:bg-[var(--light-background)] ${
             typeof page === "number" ? "pagination-page" : "not-btn"
           } ${
             page === currentPage
-              ? " text-[var(--light-foreground)] bg-red-500 hover:!bg-red-600  "
+              ? " text-[var(--dark-text)] bg-red-500 hover:!bg-red-600  "
               : ""
           }`}
           style={{

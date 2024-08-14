@@ -78,7 +78,7 @@ function Table<T extends { id: string }>({
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
       <table className="w-full relative border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
         <thead className="w-full px-2 bg-[var(--light-background)] ">
-          <tr className="w-full border-b flex justify-start gap-5 items-center overflow-auto  ">
+          <tr className="w-full  flex justify-start gap-5 items-center overflow-auto  ">
             {!!actions?.checkFn && !disableActions && (
               <th className="w-[30px]">
                 <input
@@ -87,7 +87,7 @@ function Table<T extends { id: string }>({
                     actions.checkAllFn(event.target.checked);
                     setIsChecked(event.target.checked);
                   }}
-                  className="w-4 h-4 cursor-pointer"
+                  className="w-4 accent-slate-900 h-4 cursor-pointer"
                   type="checkbox"
                 />
               </th>
@@ -143,7 +143,7 @@ function Table<T extends { id: string }>({
               {currentData &&
                 currentData.map((item, index) => (
                   <tr
-                    className=" border-b  px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
+                    className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
                     key={(item?.id && item.id) || index}
                   >
                     {!!actions?.checkFn && !disableActions && (
@@ -156,7 +156,7 @@ function Table<T extends { id: string }>({
                               actions.checkFn(item.id, event.target.checked);
                             setIsChecked(event.target.checked);
                           }}
-                          className="w-4 h-4 cursor-pointer"
+                          className="w-4 h-4 accent-slate-900 cursor-pointer"
                           type="checkbox"
                         />
                       </th>
@@ -173,7 +173,7 @@ function Table<T extends { id: string }>({
                           actions?.editFn && actions?.editFn(item.id);
                         }}
                       >
-                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] gap-2">
+                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
                           <FaEdit />
                           <span className="text-[16px]  tracking-wide">
                             Edit
@@ -188,7 +188,7 @@ function Table<T extends { id: string }>({
                           actions?.deleteFn && actions?.deleteFn(item.id);
                         }}
                       >
-                        <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide text-[var(--light-text)] gap-2">
+                        <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
                           <FaTrash />
                           <span className="text-[16px]  tracking-wide ">
                             Delete

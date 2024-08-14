@@ -215,9 +215,9 @@ const OrderList = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
-            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
               <Download strokeWidth={2.5} className="size-5" />
-              <p className="text-[16px] text-[var(--light-text)] tracking-widest ">
+              <p className="text-[16px]  tracking-widest ">
                 Export
               </p>
             </button>
@@ -229,7 +229,7 @@ const OrderList = () => {
                 left: "-18rem",
               }}
               parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
                   <Filter
                     strokeWidth={2.5}
                     className="size-5 text-[var(--dark-secondary-text)]"
@@ -275,7 +275,7 @@ const OrderList = () => {
         {isFilter?.sortFilter && (
           <div className="flex items-center rounded-md border  justify-between px-1 gap-2 py-1  ">
             <div className="flex  items-center justify-center">
-              <span className="  text-sm ">
+              <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
                 {isFilter.sortFilter && isFilter.sortFilter}
               </span>
             </div>

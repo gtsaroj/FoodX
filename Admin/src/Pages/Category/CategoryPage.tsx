@@ -207,7 +207,7 @@ export const CategoryPage: React.FC = () => {
           <div className="flex items-center justify-center gap-2">
             <button
               onClick={() => setIsUPloadModalOpen(!isUploadModalOpen)}
-              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--light-foreground)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
               <Plus strokeWidth={2.5} className="size-5   " />
               <p className="text-[16px] tracking-widest ">Item</p>
@@ -220,7 +220,7 @@ export const CategoryPage: React.FC = () => {
                 left: "-18rem",
               }}
               parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
                   <Filter strokeWidth={2.5} className="size-5 text-[var(--dark-secondary-text)]" />
                   <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">Filter</p>
                 </div>
