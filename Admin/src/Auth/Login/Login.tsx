@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../../Navbar/AuthNavbar";
@@ -20,6 +20,21 @@ const LoginContainer: React.FC = () => {
     "password"
   );
   const [dataSend, setDataSend] = useState<boolean>(false);
+
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
+  console.log(isDark);
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  });
 
   const showPassword = () => {
     setShow((show) => !show);
@@ -63,7 +78,7 @@ const LoginContainer: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-[var(--dark-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
             </div>
             <div className="relative flex flex-col gap-2">
@@ -78,7 +93,7 @@ const LoginContainer: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--dark-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)]   border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (

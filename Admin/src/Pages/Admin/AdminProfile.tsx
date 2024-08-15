@@ -69,7 +69,7 @@ export const AdminProfile = () => {
         <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
           Danger Zone
         </p>
-        <div className="w-full flex justify-center items-center   bg-slate-200 border border-red-400 rounded">
+        <div className="w-full  flex justify-center items-center border border-red-500 rounded">
           <ChangePasswordComponent />
         </div>
       </div>

@@ -91,13 +91,13 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
     <div className={`w-full p-2 h-[450px]`}>
-      <p className="w-full  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
+      <p className="w-full py-2  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
         <div className="flex items-center justify-start gap-2">
           <span>Top Products</span>
           <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={14} />
+              <MoveUp strokeWidth={3} size={12} />
             </span>
           </p>
         </div>

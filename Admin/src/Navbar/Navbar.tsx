@@ -8,7 +8,11 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Profile from "../Auth/AuthProfile";
 
 const Navbar = () => {
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return prefersDarkScheme;
+  });
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const profileReference = useRef<HTMLDivElement>();
@@ -53,6 +57,7 @@ const Navbar = () => {
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setIsDark(event.target.checked)
             }
+            checked={isDark}
             type="checkbox"
           />
           <span className="slider"></span>

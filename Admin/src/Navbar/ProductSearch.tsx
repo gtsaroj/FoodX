@@ -37,7 +37,7 @@ const ProductSearch: React.FC<PropType> = ({ prop }: PropType) => {
           }
           toast.success("Your product is added.");
         }}
-        className=" w-[50px] flex justify-center items-center px-4 py-1 text-[var(--light-text)] text-sm rounded-sm bg-[var(--primary-color)]"
+        className=" w-[50px] h-[50px] flex justify-center rounded-full items-center px-4 py-1 text-[var(--light-text)] text-sm bg-[var(--primary-color)]"
       >
         <ShoppingCart className="size-5" />
       </button>

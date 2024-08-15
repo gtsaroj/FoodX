@@ -666,6 +666,580 @@
       ]
     }
   ],
+  "prevChartData": {
+    "chartData": [
+      {
+        "id": "2023-06-01",
+        "orders": [
+          {
+            "pid": "1",
+            "price": 6.99,
+            "quantity": 3,
+            "category": "momo",
+            "name": "Chicken Momo"
+          },
+          {
+            "pid": "2",
+            "price": 4.49,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Lemonade"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-02",
+        "orders": [
+          {
+            "pid": "3",
+            "price": 8.49,
+            "quantity": 2,
+            "category": "pizza",
+            "name": "Veggie Pizza"
+          },
+          {
+            "pid": "4",
+            "price": 2.49,
+            "quantity": 5,
+            "category": "samosa",
+            "name": "Spicy Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-03",
+        "orders": [
+          {
+            "pid": "5",
+            "price": 9.99,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Bacon Cheeseburger"
+          },
+          {
+            "pid": "6",
+            "price": 3.49,
+            "quantity": 3,
+            "category": "hot drinks",
+            "name": "Latte"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-04",
+        "orders": [
+          {
+            "pid": "7",
+            "price": 5.49,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Grilled Chicken Salad"
+          },
+          {
+            "pid": "8",
+            "price": 4.29,
+            "quantity": 4,
+            "category": "cold drinks",
+            "name": "Orange Juice"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-05",
+        "orders": [
+          {
+            "pid": "9",
+            "price": 7.49,
+            "quantity": 3,
+            "category": "momo",
+            "name": "Pork Momo"
+          },
+          {
+            "pid": "10",
+            "price": 2.79,
+            "quantity": 2,
+            "category": "samosa",
+            "name": "Paneer Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-06",
+        "orders": [
+          {
+            "pid": "11",
+            "price": 6.99,
+            "quantity": 2,
+            "category": "pizza",
+            "name": "Margherita Pizza"
+          },
+          {
+            "pid": "12",
+            "price": 4.29,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Iced Tea"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-07",
+        "orders": [
+          {
+            "pid": "13",
+            "price": 8.99,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Classic Burger"
+          },
+          {
+            "pid": "14",
+            "price": 2.19,
+            "quantity": 4,
+            "category": "hot drinks",
+            "name": "Hot Chocolate"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-08",
+        "orders": [
+          {
+            "pid": "15",
+            "price": 7.49,
+            "quantity": 1,
+            "category": "lunch",
+            "name": "Beef Taco Salad"
+          },
+          {
+            "pid": "16",
+            "price": 3.79,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Ginger Ale"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-09",
+        "orders": [
+          {
+            "pid": "17",
+            "price": 6.99,
+            "quantity": 2,
+            "category": "momo",
+            "name": "Vegetarian Momo"
+          },
+          {
+            "pid": "18",
+            "price": 2.59,
+            "quantity": 1,
+            "category": "samosa",
+            "name": "Lamb Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-10",
+        "orders": [
+          {
+            "pid": "19",
+            "price": 8.49,
+            "quantity": 2,
+            "category": "pizza",
+            "name": "BBQ Pizza"
+          },
+          {
+            "pid": "20",
+            "price": 3.79,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Fruit Punch"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-11",
+        "orders": [
+          {
+            "pid": "21",
+            "price": 9.49,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Double Bacon Burger"
+          },
+          {
+            "pid": "22",
+            "price": 2.59,
+            "quantity": 3,
+            "category": "hot drinks",
+            "name": "Espresso"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-12",
+        "orders": [
+          {
+            "pid": "23",
+            "price": 6.49,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Chicken Caesar Salad"
+          },
+          {
+            "pid": "24",
+            "price": 2.69,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Mint Lemonade"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-13",
+        "orders": [
+          {
+            "pid": "25",
+            "price": 7.99,
+            "quantity": 2,
+            "category": "momo",
+            "name": "Buff Momo"
+          },
+          {
+            "pid": "26",
+            "price": 2.39,
+            "quantity": 1,
+            "category": "samosa",
+            "name": "Chicken Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-14",
+        "orders": [
+          {
+            "pid": "27",
+            "price": 8.29,
+            "quantity": 1,
+            "category": "pizza",
+            "name": "Hawaiian Pizza"
+          },
+          {
+            "pid": "28",
+            "price": 2.19,
+            "quantity": 2,
+            "category": "hot drinks",
+            "name": "Cappuccino"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-15",
+        "orders": [
+          {
+            "pid": "29",
+            "price": 7.49,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Cheeseburger"
+          },
+          {
+            "pid": "30",
+            "price": 3.69,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Iced Coffee"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-16",
+        "orders": [
+          {
+            "pid": "31",
+            "price": 6.29,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Pasta Salad"
+          },
+          {
+            "pid": "32",
+            "price": 2.29,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Sparkling Water"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-17",
+        "orders": [
+          {
+            "pid": "33",
+            "price": 7.99,
+            "quantity": 3,
+            "category": "momo",
+            "name": "Spicy Chicken Momo"
+          },
+          {
+            "pid": "34",
+            "price": 2.79,
+            "quantity": 2,
+            "category": "samosa",
+            "name": "Vegetable Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-18",
+        "orders": [
+          {
+            "pid": "35",
+            "price": 8.99,
+            "quantity": 1,
+            "category": "pizza",
+            "name": "Meat Lovers Pizza"
+          },
+          {
+            "pid": "36",
+            "price": 2.29,
+            "quantity": 1,
+            "category": "hot drinks",
+            "name": "Macchiato"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-19",
+        "orders": [
+          {
+            "pid": "37",
+            "price": 6.99,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Chicken Burrito"
+          },
+          {
+            "pid": "38",
+            "price": 2.39,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Peach Tea"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-20",
+        "orders": [
+          {
+            "pid": "39",
+            "price": 7.49,
+            "quantity": 2,
+            "category": "momo",
+            "name": "Prawn Momo"
+          },
+          {
+            "pid": "40",
+            "price": 2.69,
+            "quantity": 1,
+            "category": "samosa",
+            "name": "Beef Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-21",
+        "orders": [
+          {
+            "pid": "41",
+            "price": 8.49,
+            "quantity": 1,
+            "category": "pizza",
+            "name": "Four Cheese Pizza"
+          },
+          {
+            "pid": "42",
+            "price": 2.19,
+            "quantity": 2,
+            "category": "hot drinks",
+            "name": "Tea"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-22",
+        "orders": [
+          {
+            "pid": "43",
+            "price": 7.99,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Chicken Burger"
+          },
+          {
+            "pid": "44",
+            "price": 3.59,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Ginger Ale"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-23",
+        "orders": [
+          {
+            "pid": "45",
+            "price": 6.49,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Turkey Sandwich"
+          },
+          {
+            "pid": "46",
+            "price": 2.59,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Berry Smoothie"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-24",
+        "orders": [
+          {
+            "pid": "47",
+            "price": 7.99,
+            "quantity": 2,
+            "category": "momo",
+            "name": "Beef Momo"
+          },
+          {
+            "pid": "48",
+            "price": 2.79,
+            "quantity": 2,
+            "category": "samosa",
+            "name": "Cheese Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-25",
+        "orders": [
+          {
+            "pid": "49",
+            "price": 8.99,
+            "quantity": 1,
+            "category": "pizza",
+            "name": "Vegetarian Pizza"
+          },
+          {
+            "pid": "50",
+            "price": 2.39,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Fruit Punch"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-26",
+        "orders": [
+          {
+            "pid": "51",
+            "price": 9.49,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Deluxe Burger"
+          },
+          {
+            "pid": "52",
+            "price": 3.29,
+            "quantity": 2,
+            "category": "hot drinks",
+            "name": "Americano"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-27",
+        "orders": [
+          {
+            "pid": "53",
+            "price": 6.99,
+            "quantity": 2,
+            "category": "lunch",
+            "name": "Fish Tacos"
+          },
+          {
+            "pid": "54",
+            "price": 2.29,
+            "quantity": 1,
+            "category": "cold drinks",
+            "name": "Mint Lemonade"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-28",
+        "orders": [
+          {
+            "pid": "55",
+            "price": 8.49,
+            "quantity": 1,
+            "category": "momo",
+            "name": "Chicken and Pork Momo"
+          },
+          {
+            "pid": "56",
+            "price": 2.69,
+            "quantity": 1,
+            "category": "samosa",
+            "name": "Vegetarian Samosa"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-29",
+        "orders": [
+          {
+            "pid": "57",
+            "price": 7.49,
+            "quantity": 2,
+            "category": "pizza",
+            "name": "Pepperoni Pizza"
+          },
+          {
+            "pid": "58",
+            "price": 2.39,
+            "quantity": 1,
+            "category": "hot drinks",
+            "name": "Macchiato"
+          }
+        ]
+      },
+      {
+        "id": "2023-06-30",
+        "orders": [
+          {
+            "pid": "59",
+            "price": 9.99,
+            "quantity": 1,
+            "category": "burger",
+            "name": "Double Cheeseburger"
+          },
+          {
+            "pid": "60",
+            "price": 3.49,
+            "quantity": 2,
+            "category": "cold drinks",
+            "name": "Iced Coffee"
+          }
+        ]
+      }
+    ]
+  },
   "categoryCurrentData": [
     { "name": "samosa", "value": 45 },
     { "name": "pizza", "value": 30 },

@@ -79,7 +79,7 @@ const UploadFood: React.FC = () => {
                   }))
                 }
                 placeholder="Pizza"
-                className="w-full text-[var(--dark-text)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
+                className="w-full border-[var(--dark-border)] border-[1px] text-[var(--dark-text)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
               />
             </div>
             <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
@@ -98,7 +98,7 @@ const UploadFood: React.FC = () => {
                   }))
                 }
                 placeholder="Rs. 1,200"
-                className="w-full placeholder:text-sm bg-[var(--light-foreground)]  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
+                className="w-full border-[1px] border-[var(--dark-border)] placeholder:text-sm bg-[var(--light-foreground)]  outline-none text-[var(--dark-text)] py-2 px-4 rounded"
               />
             </div>
           </div>
@@ -207,7 +207,10 @@ const UploadFood: React.FC = () => {
               value={"specials"}
               className="w-[15px] accent-slate-900 cursor-pointer scale-[1.1] h-[15px] "
             />
-            <label htmlFor="1245" className="text-[16px] cursor-pointer text-[var(--dark-text)] ">
+            <label
+              htmlFor="1245"
+              className="text-[16px] cursor-pointer text-[var(--dark-text)] "
+            >
               {" "}
               Would you like to mark this as a special product ?
             </label>

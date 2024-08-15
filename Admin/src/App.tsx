@@ -28,13 +28,6 @@ import Navbar from "./Navbar/Navbar";
 import { Sun, User } from "lucide-react";
 
 const MainPage = () => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  useEffect(() => {
-    isDarkMode
-      ? document.body.classList.add("dark")
-      : document.body.classList.remove("dark");
-  }, [isDarkMode]);
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
@@ -44,10 +37,12 @@ const MainPage = () => {
         <div className="flex w-full xl:hidden">
           <MobileSlider />
         </div>
-        <div className="w-full  overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)] ">
+        <div className="w-full h-full overflow-auto  flex flex-col items-center justify-end bg-[var(--light-foreground)] ">
           <Navbar />
-          <div className="w-full h-[100vh]  2xl:justify-between  flex flex-col items-center bg-[var(--light-foreground)]  ">
+          <div className="w-full h-[200vh] overflow-auto 2xl:justify-between  flex flex-col items-center bg-[var(--light-foreground)]  ">
             <Outlet />
+          </div>
+          <div className="h-[8vh] w-full">
             <Footer />
           </div>
         </div>
