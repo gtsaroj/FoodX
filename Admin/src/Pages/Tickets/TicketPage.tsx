@@ -98,7 +98,7 @@ const TicketPage: React.FC = () => {
   const component = ticketState && TicketComponents[ticketState];
 
   return (
-    <div className="flex flex-col items-start justify-center px-4 py-5 gap-7">
+    <div className="flex flex-col w-full items-start justify-center px-4 py-5 gap-7">
       <div className="flex items-center justify-between w-full px-5">
         <h1 className="text-[25px] brightness-125 contrast-125 font-[600] text-[var(--dark-text)] ">
           Tickets

@@ -37,7 +37,6 @@ const MainPage = () => {
   }, [isDarkMode]);
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
-
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
         <div className="hidden xl:flex ">
           <DesktopSlider closeFn={() => {}} open={false} />
@@ -45,12 +44,12 @@ const MainPage = () => {
         <div className="flex w-full xl:hidden">
           <MobileSlider />
         </div>
-        <div className="w-full h-[100vh]  2xl:justify-between overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)]  ">
-          <div className="w-full">
-            <Navbar />
+        <div className="w-full  overflow-y-auto flex flex-col items-center bg-[var(--light-foreground)] ">
+          <Navbar />
+          <div className="w-full h-[100vh]  2xl:justify-between  flex flex-col items-center bg-[var(--light-foreground)]  ">
             <Outlet />
+            <Footer />
           </div>
-          <Footer />
         </div>
       </div>
     </div>

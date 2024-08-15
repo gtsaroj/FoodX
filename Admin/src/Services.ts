@@ -43,6 +43,7 @@ export const signIn = async (
   password?: string,
   userRole: string = "admin"
 ) => {
+  const toastLoader = toast.loading("User login...");
   try {
     await signInUser(email, password as string);
     const response = await globalRequest({
@@ -63,8 +64,11 @@ export const signIn = async (
       userId: user.uid,
       userRole: user.role as UserRole,
     });
+    toast.dismiss(toastLoader);
+    toast.success("User logged in successfully");
     return user;
   } catch (error) {
+    toast.dismiss(toastLoader);
     toast.error("Invalid username or password");
     throw new Error("Invalid username or password");
   }
@@ -134,6 +138,7 @@ export const deletUser = async (data: { uid: string; role: string }) => {
 };
 
 export const signOut = async () => {
+  const toastLoader = toast.loading("User logout...");
   try {
     await makeRequest({
       method: "post",
@@ -141,12 +146,13 @@ export const signOut = async () => {
     });
     await addLogs({ action: "logout", date: new Date() });
     await signOutUser();
-
     Cookies.remove("accessToken");
     Cookies.remove("refreshToken");
     Store.dispatch(authLogout());
+    toast.dismiss(toastLoader);
     toast.success("User successfully logout");
   } catch (error) {
+    toast.error("Error while logout user");
     throw new Error("Error while logging out user ->" + error);
   }
 };

@@ -44,35 +44,33 @@ export const AdminProfile = () => {
   console.log(userData);
 
   return (
-    <div className="flex items-center justify-center w-full h-full px-3 py-5 ">
-      <div className="max-w-[1800px] flex justify-center items-center  p-2 flex-grow flex-col gap-12">
-        <div className="flex flex-col items-center justify-center flex-grow w-full p-3">
-          <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
-            My Profile
-          </p>
-          <ProfileCard
-            fullName={userData?.fullName as string}
-            avatar={userData?.avatar as string}
-            role={userData?.role as string}
-            email={userData?.email as string}
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center max-w-[1200px] w-full gap-2 lg:p-0  p-3 rounded ">
-          <PersonlInformation
-            fullName={userData?.fullName}
-            avatar={userData?.avatar}
-            role={userData?.role}
-            email={userData?.email}
-            phoneNumber={userData?.phoneNumber}
-          />
-        </div>
-        <div className="flex flex-col items-center justify-center flex-grow w-full p-3">
-          <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
-            Danger Zone
-          </p>
-          <div className="w-full max-w-[1200px] border border-red-400 rounded">
-            <ChangePasswordComponent />
-          </div>
+    <div className="flex flex-col items-center  overflow-autojustify-center w-full h-full px-3 py-5 ">
+      <div className="flex flex-col items-center justify-center flex-grow w-full p-3">
+        <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
+          My Profile
+        </p>
+        <ProfileCard
+          fullName={userData?.fullName as string}
+          avatar={userData?.avatar as string}
+          role={userData?.role as string}
+          email={userData?.email as string}
+        />
+      </div>
+      <div className="flex flex-col items-center justify-center max-w-[1200px] w-full gap-2 lg:p-0  p-3 rounded ">
+        <PersonlInformation
+          fullName={userData?.fullName}
+          avatar={userData?.avatar}
+          role={userData?.role}
+          email={userData?.email}
+          phoneNumber={userData?.phoneNumber}
+        />
+      </div>
+      <div className="flex flex-col items-center justify-center h-full flex-grow w-full p-3">
+        <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
+          Danger Zone
+        </p>
+        <div className="w-full flex justify-center items-center   bg-slate-200 border border-red-400 rounded">
+          <ChangePasswordComponent />
         </div>
       </div>
     </div>
@@ -125,7 +123,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
 
   return (
     <div
-      className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--light-border)] rounded ${
+      className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--dark-border)] rounded ${
         loading
           ? ""
           : "bg-gradient-to-r from-gray-300 to-slate-400 animate-pulse "
@@ -271,7 +269,7 @@ const PersonlInformation = (props: any) => {
         </div>
       </div>
       <div
-        className="max-w-[1200px] w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--light-border)] rounded
+        className="max-w-[1200px] w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--dark-border)] rounded
     "
       >
         <div
@@ -444,7 +442,7 @@ const ChangePasswordComponent = () => {
   };
   return (
     <div className=" relative max-w-[1200px] w-full grow flex-col gap-8 flex items-center justify-center px-5 py-7 text-[var(--dark-text)]">
-      <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]">
+      <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]">
         <p className="flex flex-col gap-1 font-semibold tracking-wide ">
           Change your password
           <span className="text-sm font-normal text-[var(--dark-secondary-text)]">
@@ -460,7 +458,7 @@ const ChangePasswordComponent = () => {
       </div>
       <div
         onClick={() => setConfirmToDisable(!confirmToDisable)}
-        className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]"
+        className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]"
       >
         <p className="flex flex-col gap-1 font-semibold tracking-wide">
           Disable your account
@@ -472,7 +470,7 @@ const ChangePasswordComponent = () => {
           <p className="w-full text-center">Disable Account</p>
         </div>
       </div>
-      <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--light-border)]">
+      <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]">
         <p className="flex flex-col gap-1 font-semibold tracking-wide">
           Delete your account
           <span className="text-sm font-normal text-[var(--dark-secondary-text)]">
@@ -603,8 +601,8 @@ const ChangePasswordComponent = () => {
 
 export const EditProfileIcon: React.FC = () => {
   return (
-    <div className="bg-[var(--light-foreground)] p-2 rounded-full flex justify-center items-center gap-2 cursor-pointer text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] transition-all ease-in-out duration-250 border border-[var(--light-border)] ">
-      <p className="text-xs">Edit</p>
+    <div className="bg-[var(--light-foreground)] dark:text-white p-2 rounded-full flex justify-center items-center gap-2 cursor-pointer text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] transition-all ease-in-out duration-250 border border-[var(--dark-border)] ">
+      <p className="text-xs ">Edit</p>
       <EditIcon size={15} />
     </div>
   );
