@@ -40,7 +40,7 @@ const Modal: React.FC<ModelProp> = ({
       }}
     >
       <div
-        className=" overflow-auto rounded py-4 bg-[var(--light-background)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150 sm:h-fit relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  "
+        className=" overflow-auto rounded py-4 bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150 sm:h-fit relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  "
         ref={modalRef}
       >
         <div className="w-full z-[1000] overflow-auto">{children}</div>

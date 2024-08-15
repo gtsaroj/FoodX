@@ -10,7 +10,7 @@ const Logout: React.FC<LogoutProp> = ({ logout }) => {
     <React.Fragment>
       <button
         onClick={() => logout()}
-        className="w-full flex items-center justify-start gap-5 py-3 px-3 hover:dark:text-[var(--light-text)] text-[var(--dark-text)] rounded dark:hover:bg-[#9ca3af]  hover:bg-[#e8e8e8]"
+        className="w-full flex items-center justify-start gap-5 py-3 px-3 text-[var(--dark-text)] rounded dark:hover:bg-[#121b28] hover:bg-[#e8e8e8]"
       >
         <LogOut className="size-5" />
         <span className="text-[15px]">Logout</span>

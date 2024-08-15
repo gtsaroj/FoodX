@@ -24,6 +24,7 @@ const FoodPage: React.FC = () => {
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
     { id: string }[]
   >([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isFilter, setIsFilter] = useState<string>();
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
@@ -77,6 +78,7 @@ const FoodPage: React.FC = () => {
   ];
 
   const getAllBanners = async () => {
+    setLoading(true);
     try {
       const response = (await getBanners()) as BannerModel[];
       console.log(response);
@@ -92,6 +94,7 @@ const FoodPage: React.FC = () => {
     } catch (error) {
       throw new Error("Unable to fetch banners");
     }
+    setLoading(false);
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
@@ -190,7 +193,10 @@ const FoodPage: React.FC = () => {
           </div>
           <div className="flex items-center justify-start gap-2 ">
             {" "}
-            <form action="" className="relative w-full ">
+            <form
+              action=""
+              className="relative text-[var(--dark-text)] w-full "
+            >
               <input
                 id="search"
                 type="search"
@@ -244,6 +250,7 @@ const FoodPage: React.FC = () => {
         </div>
       </div>
       <Table
+        loading={loading}
         totalData={4}
         selectedData={bulkSelectedBanner}
         columns={columns}

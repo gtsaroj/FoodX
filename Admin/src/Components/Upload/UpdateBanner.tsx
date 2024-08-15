@@ -64,7 +64,7 @@ const UpdateBanner: React.FC<updateComponentProp> = ({ id }) => {
           ) : (
             <div
               onClick={() => fileRef.current?.click()}
-              className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px] py-20"
+              className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}

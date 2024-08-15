@@ -30,7 +30,7 @@ export const WeekReveneuChart: React.FC = () => {
       <div className="flex items-center justify-between w-full gap-3 px-2">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-[17px] text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+          <p className="text-[16px] text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
             10%
             <span>
               <MoveUp size={14} className="mb-[3px]" />
@@ -122,9 +122,9 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   return (
     <div className="flex flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
       <div className="flex  items-center justify-between w-full gap-3 ">
-        <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
+        <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-2">
           <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-[18px] tracking-wider  text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={14} />
@@ -175,7 +175,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
           }
         />
       </div>
-      <div className="flex  h-[10px]  w-full  items-center justify-start gap-2">
+      <div className="flex  pt-1 h-[10px]  w-full  items-center justify-start gap-2">
         {filter?.dateFilter && (
           <div className="flex px-1 overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1  items-center justify-center">
@@ -299,9 +299,9 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
   return (
     <div className="flex flex-col p-2 items-center justify-center w-full rounded">
       <div className="flex items-center justify-between w-full gap-3 ">
-        <div className="  text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
+        <div className="  text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-2">
           <p className="text-nowrap">Weekly Order</p>
-          <p className="text-[18px] tracking-wider  text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={14} />
@@ -346,7 +346,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
           }
         />
       </div>
-      <div className="flex h-[20px]  w-full   items-center justify-start gap-2">
+      <div className="flex pt-1 h-[20px]  w-full   items-center justify-start gap-2">
         {filter?.dateFilter && (
           <div className="flex px-1 overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
