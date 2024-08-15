@@ -1,23 +1,19 @@
 import React from "react";
-import { RootState } from "../../Reducer/Store";
-import { useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Reducer/Store";
+import { useDispatch, useSelector } from "react-redux";
 import { SingleCard } from "./SingleCard";
 import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { addToCart } from "../../Reducer/Reducer";
+import toast from "react-hot-toast";
 
-const Favourite = () => {
+const Favourite: React.FC = () => {
   const selectedProducts = useSelector(
-    (state: RootState) => state.root.Products.cart.products
+    (state: RootState) => state.root.favourite.favourite
   );
 
   const navigate = useNavigate();
-  const Total = () => {
-    let total = 0;
-    selectedProducts?.forEach(
-      (singleProduct) => (total += singleProduct.price * singleProduct.quantity)
-    );
-    return total;
-  };
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <div className="flex flex-col  h-[580px] rounded-sm   bg-[var(--light-foreground)] w-[450px]    ">
@@ -43,18 +39,17 @@ const Favourite = () => {
         )}
       </div>
       <div className="flex flex-col py-3 px-3 border-t w-full gap-5">
-        <div className="flex justify-between p-2  text-[var(--dark-text)]">
-          <p className="text-lg font-bold tracking-wide">Total Amount:</p>
-          <p className="text-lg">
-            Rs <span>{Total()}</span>
-          </p>
-        </div>
-        <div
-          onClick={() => navigate("/cart/checkout")}
-          className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
-        >
-          <button className="text-[var(--light-text)] tracking-wider text-xl font-bold">
-            Checkout
+        <div className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
+          <button
+            onClick={() => {
+              selectedProducts?.forEach((product) => {
+                dispatch(addToCart(product));
+              });
+              toast.success("Succesfully added!");
+            }}
+            className="text-[var(--light-text)] tracking-wider text-xl font-bold"
+          >
+            Add to cart
           </button>
         </div>
       </div>

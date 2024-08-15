@@ -1,5 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import CardReducer from "./Reducer";
+import CardReducer, { favouriteReducer } from "./Reducer";
 import OrderReducer from "./OrderReducer";
 import {
   persistStore,
@@ -18,14 +18,17 @@ import authReducer from "./authReducer";
 //   authRegister: registerSlice,
 //   authLogin: loginSlice,
 // });
-const Product = combineReducers({
-  cart: CardReducer,
-  order: OrderReducer,
-});
+// const Product = combineReducers({
+//   cart: CardReducer,
+//   order: OrderReducer,
+//   favourite: favouriteReducer,
+// });
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  Products: Product,
+  cart: CardReducer,
+  order: OrderReducer,
+  favourite: favouriteReducer,
 });
 
 const persistConfig = {

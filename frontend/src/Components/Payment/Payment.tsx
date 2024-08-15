@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { ShoppingBag, ShoppingCart } from "lucide-react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { SingleCard } from "../../Pages/Cart/SingleCard";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Reducer/Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Reducer/Store";
 import { ProductType } from "../../models/productMode";
 import { order } from "../../Services";
-import { Order, Product } from "../../models/order.model";
+import { Product } from "../../models/order.model";
 import toast from "react-hot-toast";
 import Cart from "../../Pages/Cart/Cart";
-import { OrderCard } from "../../Pages/Orders/Order";
 import { SpecialCards } from "../Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
+import { addToCart } from "../../Reducer/Reducer";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 interface CartProp {
   prop: Product;
@@ -19,7 +21,7 @@ interface CartProp {
 
 export const Payment: React.FC = () => {
   const selectedProduct = useSelector(
-    (state: RootState) => state.root.Products.cart.products
+    (state: RootState) => state.root.cart.products
   );
 
   const navigate = useNavigate();
@@ -32,27 +34,29 @@ export const Payment: React.FC = () => {
   };
 
   // fetch products
-  const products = useSelector(
-    (state: RootState) => state.root.Products.cart.products
-  );
+  const products = useSelector((state: RootState) => state.root.cart.products);
   const userId = useSelector(
     (state: RootState) => state.root.auth.userInfo.uid
   );
   console.log(products, userId.uid);
 
-  const handleOrder = async () => {
-    console.log("fkdjl");
+  const handleOrder = async (event: FormEvent) => {
+    event.preventDefault();
+    const toasLoader = toast.loading("Ordering ...");
     const today = new Date().toISOString();
     try {
-      const sendOrder = await order({
+      await order({
         products: products,
         uid: userId,
         orderRequest: today,
         orderFullFilled: "",
         status: "Pending",
       });
-      if (sendOrder) toast.success("Order Succesfully");
+      toast.dismiss(toasLoader);
+      toast.success("Order Succesfully");
     } catch (error) {
+      toast.dismiss(toasLoader);
+      toast.error("error while ordering");
       throw new Error("Error while ordering food " + error);
     }
   };
@@ -61,14 +65,14 @@ export const Payment: React.FC = () => {
     <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
       {/* <MobileCart/> */}
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
-        <div className="py-[19px] px-[10px] w-full bg-[#dedde2] rounded-xl  h-[500px]   flex flex-col items-center gap-5">
-          <div className="flex flex-col gap-[30px] items-center border-b-[var(--dark-border)] border-b-[1px] w-full pb-8">
-            <h3 className="sm:text-[30px]  text-xl font-semibold">Your Cart</h3>
+        <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl  h-[500px]   flex flex-col items-center justify-between gap-5">
+          <div className="flex flex-col gap-[30px] items-center  border-b-[1px] w-full pb-8">
+            <h3 className="sm:text-[30px]  text-xl font-semibold"> Cart</h3>
           </div>
           <div className="flex w-full overflow-y-auto flex-col items-center gap-5">
             {selectedProduct.length <= 0 ? (
-              <div className="flex flex-col items-center justify-center gap-2">
-                <ShoppingBag className="size-16" />
+              <div className="flex flex-col  py-16 items-center justify-center gap-2">
+                <ShoppingBag className=" cursor-pointer size-16" />
 
                 <h1 className="text-[25px]">Your cart is empty</h1>
               </div>
@@ -80,77 +84,45 @@ export const Payment: React.FC = () => {
               ))
             )}
           </div>
-          <div className="flex items-center justify-between w-[350px]  sm:px-[10px] px-[20px]">
+          <div className="flex  border-t w-full pt-5 items-center justify-between   sm:px-[10px] px-[20px]">
             <h3>Total : </h3>
             <h3>RS. {Total()}</h3>
           </div>
         </div>
-        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[#dedde2] rounded-xl ">
-          <h3 className="sm:text-[30px]  text-xl font-semibold">
+        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[var(--light-foreground)] rounded-xl ">
+          <h3 className="sm:text-[30px]  border-b  w-full text-center pb-7 text-xl font-semibold">
             Payment Method
           </h3>
-          <div className="flex flex-col w-full justify-between  items-center gap-[30px]">
-            <div className="flex items-center sm:gap-[20px] gap-[10px] ">
-              <div className=" flex  items-center  gap-[3px] sm:w-[100px] w-full sm:py-[7px] sm:px-[10px] py-3 px-2 hover:border-[1px] hover:border-[var(--primary-color)] cursor-pointer text-[var(--dark-text)] bg-[var(--light-background)] rounded-md ">
-                <div className="">
-                  <img
-                    className="w-[20px] object-cover transform scale-[7]"
-                    src="../../../public/logo/esewa.png"
-                    alt=""
-                  />
-                </div>
-                <span className="md:text-lg sm:text-md text-sm">Esewa</span>
-              </div>
-              <div className=" bg-[var(--light-background)] flex  items-center  gap-[3px] hover:border-[1px] hover:border-[var(--primary-color)] cursor-pointer sm:w-[100px] w-full py-[7px] px-[10px] text-[var(--dark-text)]   h-[40px] rounded-md ">
-                <div className="">
-                  <img
-                    className="w-[20px] object-cover transform scale-[7]"
-                    src="../../../public/logo/khalti.png"
-                    alt=""
-                  />
-                </div>
-                <span className="md:text-lg sm:text-md text-sm">Khalti</span>
-              </div>
-              <div className=" bg-[var(--light-background)] flex  items-center  gap-[3px] hover:border-[1px] hover:border-[var(--primary-color)] cursor-pointer sm:w-[100px] w-full  py-[7px] px-[10px] text-[var(--dark-text)]   h-[40px] rounded-md ">
-                <div className="">
-                  <img
-                    className="w-[20px] object-cover transform scale-[7]"
-                    src="../../../public/logo/ime.png"
-                    alt=""
-                  />
-                </div>
-                <span className="md:text-lg sm:text-md text-sm">Ime</span>
-              </div>
-            </div>
-            <div>
+          <div className="flex flex-col  w-full justify-between  items-center gap-[30px]">
+            <div className="w-full">
               {/* payment */}
               <form
-                onClick={() => handleOrder()}
+                onSubmit={(event: FormEvent) => handleOrder(event)}
                 action=""
-                className="flex flex-col gap-[20px] items-center "
+                className="flex px-7  w-full flex-col  gap-[20px] items-center "
               >
-                <div className="flex flex-col gap-[1px] ">
+                <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
                   <label htmlFor="">Full Name</label>
                   <input
                     type="text"
                     className="w-full text-sm px-[20px] py-2 border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
-                <div className="flex flex-col gap-[1px] ">
+                <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
                   <label htmlFor="">Contact No.</label>
                   <input
                     type="text"
                     className="w-full text-sm px-5 py-2 border-[1px] border-[var(--light-border)]   rounded-md outline-none"
                   />
                 </div>
-                <div className="flex flex-col gap-[1px]   ">
+                <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
                   <label htmlFor="">Gmail</label>
                   <input
                     type="text"
                     className="w-full text-sm px-5 py-[6px] border-[1px] border-[var(--light-border)]   rounded-md outline-none"
                   />
                 </div>
-                <div className="flex  bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px] py-2 px-5">
+                <div className="flex mt-8  bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px] py-2 px-5">
                   <button type="submit">Pay Now</button>
                 </div>
               </form>
@@ -163,61 +135,68 @@ export const Payment: React.FC = () => {
 };
 
 export const MobileCart: React.FC = () => {
-  const [initialData, setInitialData] = useState<ProductType[]>();
+  const [initialData, setInitialData] = useState<ProductType[]>([]);
   const { data } = UseFetch("/products/all");
 
   useEffect(() => {
     if (data && data?.length > 0) {
       setInitialData(data);
     }
-  }, []);
-
-  const selectedProducts = useSelector(
-    (state: RootState) => state.root.Products.cart.products
-  );
-  const navigate = useNavigate();
-
-  const Total = () => {
-    let total = 0;
-    selectedProducts?.forEach(
-      (singleProduct) => (total += singleProduct.price * singleProduct.quantity)
-    );
-    return total;
-  };
+  }, [data]);
 
   return (
     // Desktop
     <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
-      <div className="w-full h-full flex lg:flex-row flex-col gap-7  items-center lg:items-start justify-around">
-        <div className="w-[500px] p-2 rounded border">
+      <div className="w-full h-full flex lg:flex-row flex-col gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
+        <div className="w-[600px] p-2 py-4 bg-[var(--light-background)] px-5 rounded border">
           <Cart />
         </div>
-        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 bg-white border  rounded-lg">
-          <h2 className="text-[25px] tracking-wider px-4 py-3">
+        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 bg-[var(--light-background)] border  rounded-lg">
+          <h3 className="w-full text-3xl px-7  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
             Recent Products
-          </h2>
-          <div className="w-full h-full overflow-y-auto">
-            <div className="flex flex-col w-full items-start h-[400px]  gap-2">
-              <Carts />
-              <Carts />
-              <Carts />
-              <Carts />
-              <Carts />
-              <Carts />
-              <Carts />
+          </h3>
+          <div className="w-full h-full ">
+            <div className="flex flex-col w-full overflow-auto    items-start h-[530px]  gap-2">
+              {initialData?.length > 0 ? (
+                initialData?.map((data) => <Carts prop={data} key={data.id} />)
+              ) : (
+                <Skeleton
+                  height={100}
+                  baseColor="var(--light-background)"
+                  highlightColor="var(--light-foreground)"
+                  count={1}
+                />
+              )}
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
+      <div className="w-full mx-4 h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
         <h1 className="text-[23px] tracking-wider ">Popular products</h1>
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">
-              {initialData?.map((singleObject) => (
-                <SpecialCards prop={singleObject} key={singleObject.id} />
-              ))}{" "}
+              {initialData?.length > 0 ? (
+                initialData?.map((singleObject) => (
+                  <SpecialCards prop={singleObject} key={singleObject.id} />
+                ))
+              ) : (
+                <div className="w-full flex">
+                  <Skeleton
+                    height={80}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={80}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -226,26 +205,111 @@ export const MobileCart: React.FC = () => {
   );
 };
 
-export const Carts = () => {
+interface MenuProp {
+  prop: Product;
+}
+
+export const Carts: React.FC<MenuProp> = ({ prop }) => {
+  console.log(prop);
+  const [activeCart, setActiveCart] = useState<boolean>();
+  const [cartQuantity, setCartQuantity] = useState<number>(1);
+
+  const selectedProductsQuantity = useSelector(
+    (state: RootState) => state.root.cart.products
+  );
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleClick = () => {
+    setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
+
+    const findQuantity = selectedProductsQuantity?.find(
+      (singleProduct) => singleProduct.id == prop.id
+    );
+    if (findQuantity?.quantity) {
+      dispatch(
+        addToCart({
+          id: prop.id,
+          quantity: findQuantity.quantity <= 1 ? 1 : -1,
+        })
+      );
+    }
+  };
   return (
-    <div className="w-[550px] py-2 flex items-center justify-between bg-[var(--light-background)] h-[200px] px-5">
+    <div className="sm:w-[550px] w-full   flex items-center justify-between bg-[var(--light-foreground)] h-[200px] px-5">
       <div className="flex w-full items-center justify-start gap-3">
-        <div className="  h-full ">
+        <div className=" py-2  h-full ">
           <img
-            src="https://www.shutterstock.com/image-photo/burger-tomateoes-lettuce-pickles-on-600nw-2309539129.jpg"
-            className="  w-[90px] h-[90px] rounded-full    "
+            src={prop.image}
+            className="  w-[80px] h-[80px] rounded-full    "
           ></img>
         </div>
         <div className="flex flex-col  items-start justify-center gap-2">
           <p className="text-[var(--dark-text)] font-semibold text-[20px] w-full ">
-            Chicken Burger
+            {prop.name}
           </p>
-          <span className="text-[18px] text-[var(--dark-text)] ">Rs 250</span>
+          <span className="text-[18px] text-[var(--dark-text)] ">
+            Rs {prop.price}
+          </span>
         </div>
       </div>
-      <button className="p-3 rounded-full border-[3px] border-[var(--light-text)] ">
-        <ShoppingCart className="size-8 text-[var(--primary-color)] " />
-      </button>
+
+      <div
+        className={`p-2   ${
+          activeCart
+            ? ""
+            : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+        }   bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center  right-1 border  `}
+      >
+        {activeCart ? (
+          <div className="flex items-center gap-2 px-1 text-xs select-none ">
+            <button
+              onClick={() => handleClick()}
+              disabled={cartQuantity <= 1 ? true : false}
+            >
+              <Minus
+                size={20}
+                className={` hover:text-[var(--secondary-color)]`}
+                aria-disabled={"true"}
+              />
+            </button>
+
+            <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
+            <Plus
+              size={20}
+              className=" cursor-pointer hover:text-[var(--secondary-color)]"
+              onClick={() => {
+                setCartQuantity((prevValue) => prevValue + 1);
+                dispatch(
+                  addToCart({
+                    id: prop.id,
+                    quantity: +1,
+                  })
+                );
+              }}
+            />
+          </div>
+        ) : (
+          <button>
+            <ShoppingCart
+              className=" size-7"
+              onClick={() => {
+                setActiveCart((prevValue) => !prevValue);
+                dispatch(
+                  addToCart({
+                    id: prop.id,
+                    name: prop.name,
+                    image: prop.image,
+                    price: prop.price,
+                    quantity: 1,
+                    tag: prop.tag,
+                  })
+                );
+              }}
+            />
+          </button>
+        )}
+      </div>
     </div>
   );
 };

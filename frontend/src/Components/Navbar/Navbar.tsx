@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../logo/texas.png";
 import {
   ChevronDown,
@@ -19,6 +19,7 @@ import ProductSearch from "./ProductSearch";
 import { Frown, Smile } from "lucide-react";
 import Profile from "../AuthProfile/AuthProfile";
 import Favourite from "../../Pages/Cart/Favourite";
+import { debounce } from "../../Utility/Debounce";
 const navbarItems = [
   {
     name: "Home",
@@ -94,10 +95,12 @@ export const Navbar: React.FC = () => {
   }, [filteredData, closeFilter, openProfile]);
   const navigate = useNavigate();
 
+   const debounceSearch = useCallback(debounce())
+
   return (
     <nav
       ref={FilterRef}
-      className="w-full min-w-[100vw] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
+      className="w-full min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
       {/* Logo */}
       <div
@@ -159,7 +162,7 @@ export const Navbar: React.FC = () => {
               className={` left-[-23rem] top-12 duration-150 absolute ${
                 openFavourite
                   ? "visible z-10 translate-y-0 opacity-100 "
-                  : "-translate-y-2 opacity-0 z-[-1]"
+                  : "-translate-y-2 invisible opacity-0 z-[-100]"
               } `}
             >
               <Favourite />
@@ -228,7 +231,7 @@ export const Navbar: React.FC = () => {
           search ? "flex flex-col" : "hidden"
         }  ${
           closeFilter ? "hidden" : "flex"
-        } justify-center items-center px-5 top-44 left-0 `}
+        } justify-center items-center  top-44 left-0 `}
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
           {filteredData.length <= 0 ? (
@@ -357,7 +360,7 @@ export const DesktopSearch = () => {
     <div
       ref={FilterRef}
       className={
-        " flex relative items-center w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
+        " flex relative items-center   w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
         (search ? " bg-[var(--light-foreground)]" : " ")
       }
     >

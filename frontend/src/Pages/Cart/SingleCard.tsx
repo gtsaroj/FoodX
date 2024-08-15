@@ -15,7 +15,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className=" duration-1000  group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
+    <div className=" duration-1000   group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
       <div>
         <img
           className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
@@ -30,7 +30,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         <p className="text-sm text-[var(--dark-secondary-text)] ">
           Rs {prop.price}
         </p>
-        <div className="flex gap-[40px]  items-center ">
+        <div className="flex gap-[40px]   items-center ">
           <div className="flex gap-2 text-md text-[var(--primary-color)]">
             <button
               disabled={prop.quantity <= 1 ? true : false}
