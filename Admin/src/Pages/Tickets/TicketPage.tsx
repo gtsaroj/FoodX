@@ -172,8 +172,8 @@ const TicketPage: React.FC = () => {
               <div className="w-full flex flex-col items-center pt-3 justify-center ">
                 {/* <Skeleton height={70} count={5} /> */}
                 <div className="flex items-center justify-center gap-3">
-                  <RotatingLines width="27" />
-                  <span className="text-[17px] tracking-wider ">
+                  <RotatingLines strokeColor="var(--dark-text)" width="27" />
+                  <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                     {" "}
                     loading...
                   </span>

@@ -240,13 +240,13 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
   return (
     <div
       ref={reference as any}
-      className={`w-full flex p-1 duration-200 flex-col bg-[var(--light-foreground)] border shadow rounded-lg items-center ${
+      className={`w-full flex p-1 duration-200 flex-col bg-[var(--light-foreground)] border-[1px] border-[var(--dark-border)] shadow rounded-lg items-center ${
         showModal ? "visible" : "invisible"
       } `}
     >
       {updateStatus.map((status, index) => (
         <button
-          className={`w-[150px] flex items-center tracking-wider gap-3 justify-start py-1.5 px-5 duration-150 hover:bg-slate-200 rounded-lg `}
+          className={`w-[150px] flex items-center tracking-wider gap-3 justify-start py-1.5 px-5 duration-150 hover:bg-[var(--light-background)] rounded-lg `}
           onClick={() => statusFn(status)}
           key={index}
         >

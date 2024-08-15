@@ -201,19 +201,16 @@ const AllCategories = () => {
           <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
             <div className="flex items-center justify-start gap-2 ">
               {" "}
-              <form
-                action=""
-                className="relative sm:w-auto w-[300px] min-w-[200px] "
-              >
-                <input
-                  onChange={(event) => debouncingSearch(event.target.value)}
-                  id="search"
-                  type="search"
-                  className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)]"
-                  placeholder="Search"
-                />
-              </form>
-              <div className="h-10  w-[1px] bg-gray-300 "></div>
+              <form action="" className="relative w-full ">
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debouncingSearch(event?.target.value)}
+                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+                placeholder="Search for products"
+              />
+            </form>
+              <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
               <DeleteButton
                 deleteFn={() => setIsBulkDelete(true)}
                 dataLength={bulkSelectedCategory.length}

@@ -164,8 +164,8 @@ const CustomerList: React.FC = () => {
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
       <div className="flex items-center justify-between w-full px-2 pt-5">
-      <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
-        <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
+        <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+          <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
             All Customers
           </h4>
           <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
@@ -186,8 +186,13 @@ const CustomerList: React.FC = () => {
               }}
               parent={
                 <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                  <Filter strokeWidth={2.5} className="size-5 text-[var(--dark-secondary-text)]" />
-                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">Filter</p>
+                  <Filter
+                    strokeWidth={2.5}
+                    className="size-5 text-[var(--dark-secondary-text)]"
+                  />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                    Filter
+                  </p>
                 </div>
               }
               checkFn={{
@@ -226,13 +231,13 @@ const CustomerList: React.FC = () => {
         </div>
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
-        <form action="" className=" w-full sm:w-auto">
+        <form action="" className="relative w-full ">
           <input
             id="search"
             type="search"
             onChange={(event) => debouncedHandleChange(event?.target.value)}
-            className="border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
-            placeholder="Search"
+            className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+            placeholder="Search for products"
           />
         </form>
         {isFilter?.sortFilter && (

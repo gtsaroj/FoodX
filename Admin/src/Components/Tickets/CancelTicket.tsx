@@ -12,8 +12,18 @@ interface RejectedProp {
 const CancelTicket: React.FC<RejectedProp> = ({ prop, loading }) => {
   return loading ? (
     <div className="w-full ">
-      <Skeleton className="mb-8" height={100} />
-      <Skeleton height={70} count={4} />
+      <Skeleton
+        height={100}
+        baseColor="var(--light-background)"
+        highlightColor="var(--light-foreground)"
+        count={1}
+      />
+      <Skeleton
+        height={80}
+        baseColor="var(--light-background)"
+        highlightColor="var(--light-foreground)"
+        count={3}
+      />
     </div>
   ) : prop?.length > 0 ? (
     <div className="flex flex-col px-2 sm:px-3 py-2 items-start gap-2  justify-center rounded ">

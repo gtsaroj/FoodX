@@ -263,15 +263,15 @@ const OrderList = () => {
         </div>
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
-        <form action="" className="w-full sm:w-auto">
-          <input
-            id="search"
-            type="search"
-            onChange={(event) => debouncedHandleChange(event?.target.value)}
-            className=" border placeholder:text-sm placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-secondary-background)] bg-[var(--light-background)] rounded-lg  focus:border-[var(--primary-color)] "
-            placeholder="Search"
-          />
-        </form>
+      <form action="" className="relative w-full ">
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debouncedHandleChange(event?.target.value)}
+                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+                placeholder="Search for products"
+              />
+            </form>
         {isFilter?.sortFilter && (
           <div className="flex items-center rounded-md border  justify-between px-1 gap-2 py-1  ">
             <div className="flex  items-center justify-center">
