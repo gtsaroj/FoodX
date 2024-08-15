@@ -13,10 +13,10 @@ const Specials: React.FC = () => {
       </div>
       <div className="grid grid-cols-5 gap-8 " id="specials">
         <div className="bg-[var(--light-background)]  flex flex-col items-center justify-center rounded-md px-5 py-8 col-span-5 lg:col-span-3">
-          <div className="w-full  h-full overflow-x-scroll">
+          <div className="w-full  h-full  overflow-x-scroll">
             <SpecialCardsContainer />
           </div>
-          <div className="w-full   h-full overflow-x-scroll">
+          <div className="w-full overflow-x-scroll">
             <SpecialCardsContainer1 />
           </div>
         </div>

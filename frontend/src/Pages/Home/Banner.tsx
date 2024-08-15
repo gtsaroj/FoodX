@@ -27,7 +27,7 @@ const Banner: React.FC = () => {
 
 export const Sponsor: React.FC = () => {
   return (
-    <div className="flex items-center justify-center w-full h-full">
+    <div className="md:flex hidden items-center justify-center w-full h-full">
       <div className="lg:h-[540px]  h-[300px] w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
       <img src={slides[0].url} className="w-full rounded-xl h-full" alt="" />
     </div>

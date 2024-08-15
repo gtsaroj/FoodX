@@ -1,8 +1,7 @@
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ProductType } from "../../Reducer/Reducer";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../Reducer/Reducer";
+import { addToCart, addToFavourite } from "../../Reducer/Reducer";
 import { RootState } from "../../Reducer/Store";
 import { Product } from "../../models/order.model";
 
@@ -16,7 +15,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const dispatch = useDispatch();
 
   const selectedProductsQuantity = useSelector(
-    (state: RootState) => state.root.Products.cart.products
+    (state: RootState) => state.root.cart.products
   );
 
   const handleClick = () => {
@@ -49,7 +48,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   return (
     <div
       className={
-        " h-full w-[250px] rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
+        " h-full w-[250px] group/heart  rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
       }
       key={prop.id}
     >
@@ -115,12 +114,32 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
                   image: prop.image,
                   price: prop.price,
                   quantity: 1,
-                  tag : prop.tag
+                  tag: prop.tag,
                 })
               );
             }}
           />
         )}
+      </div>
+      <div
+        onClick={() => {
+          dispatch(
+            addToFavourite({
+              id: prop.id,
+              name: prop.name,
+              image: prop.image,
+              price: prop.price,
+              quantity: 1,
+              tag: prop.tag,
+            })
+          );
+        }}
+        className="absolute bg-[var(--light-foreground)] rounded-full p-3 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--light-text)] right-2 top-2"
+      >
+        <Heart
+          fill="var(--danger-bg) "
+          className="size-9 text-[var(--danger-bg)] "
+        />
       </div>
     </div>
   );

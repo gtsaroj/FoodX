@@ -1,26 +1,12 @@
 import { useEffect, useState } from "react";
-import { getOrderByUser } from "../../firebase/oder";
 import { Order, Product } from "../../models/order.model";
 import { nanoid } from "@reduxjs/toolkit";
-import {
-  ChevronsLeft,
-  ChevronRight,
-  ChevronsRight,
-  MoveRight,
-  ArrowRight,
-  SendIcon,
-} from "lucide-react";
-import { RootState, Store } from "../../Reducer/Store";
-import {
-  addToList,
-  onNavigateNextPage,
-  onNavigatePrevPage,
-} from "../../Reducer/OrderReducer";
-import { useSelector } from "react-redux";
+import { ArrowRight } from "lucide-react";
 import { ProductType } from "../../models/productMode";
-import { getAllCategory } from "../../Services";
 import { SpecialCards } from "../../Components/Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const product: Product = {
   id: nanoid(),
@@ -53,7 +39,7 @@ export const OrderComponent = () => {
     if (data && data?.length > 0) {
       setInitialData(data);
     }
-  }, []);
+  }, [data]);
 
   return (
     <div className="flex  flex-col items-start gap-10 py-5 justify-center w-full h-full ">
@@ -81,19 +67,26 @@ export const OrderComponent = () => {
         </div>
       </div>{" "}
       <div className="w-full h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-      <h1 className="text-[23px] tracking-wider ">Popular products</h1>
-      <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center"> 
-  
-        <div className=" overflow-hidden">
-        <div className="w-full h-full flex items-center gap-4 justify-start  ">
-          {initialData?.map((singleObject) => (
-            <SpecialCards prop={singleObject} key={singleObject.id} />
-          ))}{" "}
+        <h1 className="text-[23px] tracking-wider ">Popular products</h1>
+        <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
+          <div className=" overflow-hidden">
+            <div className="w-full h-full flex items-center gap-4 justify-start  ">
+              {initialData?.length > 0 ? (
+                initialData?.map((singleObject) => (
+                  <SpecialCards prop={singleObject} key={singleObject.id} />
+                ))
+              ) : (
+                <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              )}{" "}
+            </div>
+          </div>
         </div>
-    </div>
-      </div> 
       </div>
-
     </div>
   );
 };
@@ -117,7 +110,7 @@ export const OrderCard = (props: { item: Order }) => {
             04:15 AM
           </p>
         </div>
-        <div className="flex pb-5 text-[15px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-secondary-text)] items-center justify-start">
+        <div className="flex pb-5 text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-secondary-text)] items-center justify-start">
           Chicken Burger *3, Chicken Momo *2
         </div>
         <div className="flex  items-center justify-between w-full">
