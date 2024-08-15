@@ -217,9 +217,7 @@ const OrderList = () => {
           <div className="flex items-center justify-center gap-2">
             <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
               <Download strokeWidth={2.5} className="size-5" />
-              <p className="text-[16px]  tracking-widest ">
-                Export
-              </p>
+              <p className="text-[16px]  tracking-widest ">Export</p>
             </button>
             <Button
               sortFn={(value) => setSortOrder(value)}
@@ -262,18 +260,18 @@ const OrderList = () => {
           </div>
         </div>
       </div>
-      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
-      <form action="" className="relative text-[var(--dark-text)] w-full ">
-              <input
-                id="search"
-                type="search"
-                onChange={(event) => debouncedHandleChange(event?.target.value)}
-                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                placeholder="Search for products"
-              />
-            </form>
+      <div className="flex sm:flex-row flex-col items-start sm:items-start   justify-start gap-8 sm:gap-5 w-full px-1">
+        <form action="" className="relative text-[var(--dark-text)]  ">
+          <input
+            id="search"
+            type="search"
+            onChange={(event) => debouncedHandleChange(event?.target.value)}
+            className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+            placeholder="Search for products"
+          />
+        </form>
         {isFilter?.sortFilter && (
-          <div className="flex items-center rounded-md border  justify-between px-1 gap-2 py-1  ">
+          <div className="flex items-center rounded-md border-[1px] border-[var(--dark-border)]  justify-between px-1 gap-2 py-1  ">
             <div className="flex  items-center justify-center">
               <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
                 {isFilter.sortFilter && isFilter.sortFilter}

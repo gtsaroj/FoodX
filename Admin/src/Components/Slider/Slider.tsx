@@ -16,7 +16,6 @@ import {
   Menu,
   User,
   X,
-  
 } from "lucide-react";
 import Logout from "../Logout/Logout";
 import { signOut } from "../../Services";
@@ -239,11 +238,15 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
 
 export const MobileSlider: React.FC = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [isDark, setIsDark] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const profileReference = useRef<HTMLDivElement>();
-
 
   useEffect(() => {
     const closeModal = (event: MouseEvent) => {
@@ -269,9 +272,7 @@ export const MobileSlider: React.FC = () => {
     };
   }, [isDark, isOpen]);
   const reference = useRef<HTMLDivElement>(null);
-  const user = useSelector(
-    (state: RootState) => state.root.auth.userInfo
-  );
+  const user = useSelector((state: RootState) => state.root.auth.userInfo);
 
   return (
     <div className="relative flex items-center justify-between w-full px-4 lg:shadow-none">
@@ -282,11 +283,16 @@ export const MobileSlider: React.FC = () => {
       </div>
       <div className="flex  items-center justify-around gap-3">
         <button onClick={() => setOpenMenu(!openMenu)}>
-          {openMenu ? <X className="size-8 text-[var(--dark-text)] " /> : <Menu className="size-8 text-[var(--dark-text)] " />}
+          {openMenu ? (
+            <X className="size-8 text-[var(--dark-text)] " />
+          ) : (
+            <Menu className="size-8 text-[var(--dark-text)] " />
+          )}
         </button>
         <div className="flex gap-5 items-center justify-start">
           <label className="switch">
             <input
+              checked={isDark}
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setIsDark(event.target.checked)
               }

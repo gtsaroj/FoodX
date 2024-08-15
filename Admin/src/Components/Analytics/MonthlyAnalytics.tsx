@@ -6,6 +6,10 @@ import { categoryCurrentData, categoryPreviousData } from "../../data.json";
 import { EllipsisVertical } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
+import { aggregateCurrentDayData } from "../../Utility/DateUtils";
+import { getAllOrder } from "../../Services";
+import toast from "react-hot-toast";
+import { fi } from "date-fns/locale";
 // import { getOrders } from "../../Services";
 // import { DailyAggregateData } from "../../models/order.model";
 // import { aggregateCurrentDayData } from "../../Utility/DateUtils";
@@ -15,19 +19,19 @@ export const MonthlyAnalytics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // setLoading(true);
-    // getAllOrder()
-    //   .then((order) => {
-    //     const currentData = aggregateCurrentDayData(order);
-    //     if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     throw new Error(
-    //       "Unable to aggregate current data file: dailAnalytics " + error
-    //     );
-    //   });
-    // setLoading(false);
+    setLoading(true);
+    getAllOrder()
+      .then((order) => {
+        const currentData = aggregateCurrentDayData(order);
+        if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
+        setLoading(false);
+      })
+      .catch((error) => {
+        throw new Error(
+          "Unable to aggregate current data file: dailAnalytics " + error
+        );
+      });
+    setLoading(false);
   }, []);
   // console.log(`Daily Aggregate data: ${totalOrder}`);
   console.log(loading);
@@ -56,13 +60,22 @@ export const MonthlyAnalytics: React.FC = () => {
                         id: "fush9uwoj39",
                       },
                     ]}
+                    checkFn={{
+                      checkTypeFn: (isChecked, value) => {
+                        if (isChecked) toast.success("fn not implemented");
+                      },
+                      dateActionFn: (firstDate, secondDate) =>
+                        console.log(firstDate, secondDate),
+                    }}
                     bodyStyle={{
-                      width: "250px",
-                      top: "3rem",
-                      left: "-17rem",
+                      width: "350px",
+                      top: "1.6rem",
+                      left: "-20.8rem",
                       zIndex: 10000,
                     }}
-                    parent={<EllipsisVertical />}
+                    parent={
+                      <EllipsisVertical className="text-[var(--dark-text)] " />
+                    }
                   />
                 }
                 title={order.title}

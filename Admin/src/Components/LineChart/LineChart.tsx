@@ -1,7 +1,7 @@
 import { LineChart } from "@mui/x-charts";
 import { ArrowUp, Filter, MoveUp, X } from "lucide-react";
 import "./LineChart.css";
-import { chartData } from "../../data.json";
+import { chartData, prevChartData } from "../../data.json";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import { Dayjs } from "dayjs";
@@ -33,7 +33,7 @@ export const WeekReveneuChart: React.FC = () => {
           <p className="text-[16px] text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
             10%
             <span>
-              <MoveUp size={14} className="mb-[3px]" />
+              <MoveUp size={12} className="mb-[3px]" />
             </span>
           </p>
         </div>
@@ -90,7 +90,7 @@ export const WeekReveneuChart: React.FC = () => {
               data: initialData?.map((order) => order["revenue"]),
               type: "line",
               color: "#45c241",
-            }
+            },
           ]}
           grid={{ vertical: true, horizontal: true }}
         ></LineChart>
@@ -102,6 +102,9 @@ export const WeekReveneuChart: React.FC = () => {
 export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
+  const [previousData, setPreviousData] = useState<
+    { time: string; revenue: number }[]
+  >([]);
   const [filter, setFilter] = useState<{
     dateFilter?: string;
     normalFilter?: string;
@@ -109,25 +112,30 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
 
   useEffect(() => {
     if (filter?.dateFilter || filter?.normalFilter) {
-      const monthlyData = monthlyRevenue(chartData.reverse());
-      setInitialData(monthlyData);
+      const monthlyData = monthlyRevenue(prevChartData.chartData);
+      setPreviousData(monthlyData);
     } else {
-      const monthlyData = monthlyRevenue(chartData);
-      setInitialData(monthlyData);
+      setPreviousData([]);
     }
   }, [filter?.normalFilter, filter?.dateFilter]);
+
+  useEffect(() => {
+    const monthlyData = monthlyRevenue(chartData);
+    setInitialData(monthlyData);
+  }, []);
+  console.log(previousData);
 
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
   return (
-    <div className="flex flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
-      <div className="flex  items-center justify-between w-full gap-3 ">
-        <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-2">
+    <div className="flex px-5 flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
+      <div className="flex  items-center   justify-between w-full gap-3 ">
+        <div className="text-left text-xl  text-[var(--dark-text)] flex justify-center items-center gap-2">
           <p className="text-nowrap">Weekly Revenue</p>
           <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={14} />
+              <MoveUp strokeWidth={3} size={12} />
             </span>
           </p>
         </div>
@@ -262,6 +270,11 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
               type: "line",
               color: "#45c241",
             },
+            previousData && {
+              data: previousData?.map((order) => order["revenue"]),
+              type: "line",
+              color: "red",
+            },
           ]}
           grid={{ vertical: true, horizontal: true }}
         ></LineChart>
@@ -286,13 +299,17 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
 
   useEffect(() => {
     if (filter?.dateFilter || filter?.normalFilter) {
-      const monthlyData = previousMonthOrder(chartData.reverse());
-      setInitialData(monthlyData);
+      const monthlyData = previousMonthOrder(prevChartData.chartData);
+      setPreviousData(monthlyData);
     } else {
-      const monthlyData = monthlyTotal(chartData);
-      setInitialData(monthlyData);
+      setPreviousData([]);
     }
   }, [filter?.dateFilter, filter?.normalFilter]);
+
+  useEffect(() => {
+    const monthlyData = monthlyTotal(chartData);
+    setInitialData(monthlyData);
+  }, []);
 
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
@@ -304,7 +321,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
           <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={14} />
+              <MoveUp strokeWidth={3} size={12} />
             </span>
           </p>
         </div>
@@ -437,6 +454,11 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
               type: "line",
               color: "#45c241",
               highlightScope: { fade: "global", highlight: "item" },
+            },
+            previousData && {
+              data: previousData?.map((order) => order["orders"]),
+              type: "line",
+              color: "red",
             },
           ]}
           grid={{ vertical: true, horizontal: true }}

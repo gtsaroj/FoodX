@@ -78,7 +78,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
               onChange={(e) => setCategoryName(e.target.value)}
               type="text"
               placeholder="Pizza"
-              className="w-full bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full border-[1px] border-[var(--dark-border)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* second row */}

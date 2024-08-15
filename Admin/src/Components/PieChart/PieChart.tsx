@@ -21,7 +21,7 @@ export const PieChartAnalytics = () => {
   }, [filter?.dateFilter, filter?.normalFilter]);
 
   return (
-    <div className="w-full h-[350px]  p-3 gap-3 sm:h-[430px]">
+    <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
       <div className="w-full  flex items-center justify-between ">
         <div className="flex w-full h-full gap-2 items-center justify-start">
           <span className="text-xl tracking-wider text-[var(--dark-text)]  ">
@@ -29,8 +29,8 @@ export const PieChartAnalytics = () => {
           </span>
           <p className="text-[16px] tracking-wider h-full   text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
-            <span className="mb-[2px] ">
-              <MoveUp strokeWidth={3} size={14} />
+            <span className="mb-[1px] ">
+              <MoveUp strokeWidth={3} size={12} />
             </span>
           </p>
         </div>
