@@ -92,8 +92,12 @@ export const TopCustomers = () => {
           ))
         ) : (
           <div className="w-full ">
-            <Skeleton className="mb-1" height={100} />
-            <Skeleton height={70} count={4} />
+            <Skeleton
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              height={70}
+              count={5}
+            />
           </div>
         )}
       </div>

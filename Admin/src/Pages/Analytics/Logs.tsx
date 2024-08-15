@@ -184,7 +184,7 @@ const Logs = () => {
                 left: "-18rem",
               }}
               parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-3">
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-3">
                   <Filter className="size-5 text-[var(--dark-secondary-text)]" />
                   <span className=" text-[17px] tracking-wide text-[var(--dark-secondary-text)]">
                     Filter

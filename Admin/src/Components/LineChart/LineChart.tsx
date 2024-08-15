@@ -30,10 +30,10 @@ export const WeekReveneuChart: React.FC = () => {
       <div className="flex items-center justify-between w-full gap-3 px-2">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-sm text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5 border border-[var(--green-text)] rounded-lg">
+          <p className="text-[17px] text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
             10%
             <span>
-              <ArrowUp size={15} />
+              <MoveUp size={14} className="mb-[3px]" />
             </span>
           </p>
         </div>
@@ -90,12 +90,7 @@ export const WeekReveneuChart: React.FC = () => {
               data: initialData?.map((order) => order["revenue"]),
               type: "line",
               color: "#45c241",
-            },
-            prevData && {
-              data: prevData?.map((order: any) => order["revenue"]),
-              type: "line",
-              color: "red",
-            },
+            }
           ]}
           grid={{ vertical: true, horizontal: true }}
         ></LineChart>
@@ -125,13 +120,13 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
   return (
-    <div className="flex flex-col h-[430px] items-center justify-center w-full gap-1 p-2 rounded">
-      <div className="flex items-center justify-between w-full gap-3 ">
+    <div className="flex flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
+      <div className="flex  items-center justify-between w-full gap-3 ">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Revenue</p>
           <p className="text-[18px] tracking-wider  text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
-            <span className="mb-[2px">
+            <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={14} />
             </span>
           </p>
@@ -282,13 +277,19 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
     dateFilter?: string;
     normalFilter?: string;
   }>();
+  const [previousData, setPreviousData] = useState<
+    {
+      time: string;
+      orders: number;
+    }[]
+  >();
 
   useEffect(() => {
     if (filter?.dateFilter || filter?.normalFilter) {
-      const monthlyData = monthlyTotal(chartData);
+      const monthlyData = previousMonthOrder(chartData.reverse());
       setInitialData(monthlyData);
     } else {
-      const monthlyData = previousMonthOrder(chartData.reverse());
+      const monthlyData = monthlyTotal(chartData);
       setInitialData(monthlyData);
     }
   }, [filter?.dateFilter, filter?.normalFilter]);
@@ -296,7 +297,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
   // useEffect(() => {}, [dateRange.startDate, dateRange.endDate]);
 
   return (
-    <div className="flex flex-col p-2 items-center justify-center w-full   py-1 rounded">
+    <div className="flex flex-col p-2 items-center justify-center w-full rounded">
       <div className="flex items-center justify-between w-full gap-3 ">
         <div className="  text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Order</p>

@@ -21,7 +21,7 @@ export const PieChartAnalytics = () => {
   }, [filter?.dateFilter, filter?.normalFilter]);
 
   return (
-    <div className="w-full h-[350px]  p-2 gap-3 sm:h-[430px]">
+    <div className="w-full h-[350px]  p-3 gap-3 sm:h-[430px]">
       <div className="w-full  flex items-center justify-between ">
         <div className="flex w-full h-full gap-2 items-center justify-start">
           <h1 className="text-xl tracking-wider text-[var(--dark-text)]  ">
