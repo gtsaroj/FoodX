@@ -102,7 +102,7 @@ export const LogCard: React.FC<LogCardProps> = ({
         </div>
       </div>
       {openMenu && (
-        <div className="px-3 py-4 mt-0.5 text-sm border rounded-md ">
+        <div className="px-3 py-4 mt-0.5 text-sm border-[1px] border-[var(--dark-border)] rounded-md ">
           {detail ? (
             <div className="flex text-[var(--dark-text)] flex-col items-start justify-center gap-0.5 text-sm">
               <span className=" tracking-widest text-[10px]">

@@ -24,12 +24,12 @@ export const PieChartAnalytics = () => {
     <div className="w-full h-[350px]  p-3 gap-3 sm:h-[430px]">
       <div className="w-full  flex items-center justify-between ">
         <div className="flex w-full h-full gap-2 items-center justify-start">
-          <h1 className="text-xl tracking-wider text-[var(--dark-text)]  ">
-            Top Food Categories
-          </h1>
-          <p className="text-[18px] tracking-wider xl:mt-[3px]  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
+          <span className="text-xl tracking-wider text-[var(--dark-text)]  ">
+            Top Categories
+          </span>
+          <p className="text-[16px] tracking-wider h-full   text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
-            <span className="mb-[1px]">
+            <span className="mb-[2px] ">
               <MoveUp strokeWidth={3} size={14} />
             </span>
           </p>
@@ -72,7 +72,7 @@ export const PieChartAnalytics = () => {
           }}
         />
       </div>
-      <div className="flex  h-[10px] my-1 w-full    items-center justify-start gap-2">
+      <div className="flex pt-1  h-[10px] my-1 w-full    items-center justify-start gap-2">
         {filter?.dateFilter && (
           <div className="flex px-1   overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
@@ -110,7 +110,13 @@ export const PieChartAnalytics = () => {
       </div>
       <div className="w-full h-full ">
         <PieChart
-          sx={{ cursor: "pointer", color: "white" }}
+          sx={{
+            cursor: "pointer",
+            color: "white",
+            "& .MuiChartsLabel": {
+              fill: "white", // Set the label color to white
+            },
+          }}
           series={[
             {
               data: initialData?.map((data, index) => ({
@@ -133,7 +139,7 @@ export const PieChartAnalytics = () => {
               itemMarkWidth: 15,
               itemMarkHeight: 15,
               labelStyle: {
-                color: "red",
+                fill: "var(--dark-text)",
                 fontSize: 17,
                 letterSpacing: 2,
               },

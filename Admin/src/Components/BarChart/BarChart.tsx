@@ -92,9 +92,9 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   return (
     <div className={`w-full p-2 h-[450px]`}>
       <p className="w-full  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
-        <div className="flex items-center justify-start gap-3">
+        <div className="flex items-center justify-start gap-2">
           <span>Top Products</span>
-          <p className="text-[18px] tracking-wider  text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
+          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={14} />
@@ -109,15 +109,15 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
               left: "-18rem",
             }}
             parent={
-              <div className="flex border-[1px] border-[var(--dark-border)]  px-4 py-2 rounded items-center justify-start gap-2">
-                <Filter
-                  strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
-                />
-                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                  Filter
-                </p>
-              </div>
+              <div className="flex border-[1px] border-[var(--dark-border)]  px-4 py-1.5 rounded items-center justify-start gap-2">
+              <Filter
+                strokeWidth={2.5}
+                className="size-5 text-[var(--dark-secondary-text)]"
+              />
+              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                Filter
+              </p>
+            </div>
             }
             checkFn={{
               checkActionFn: (isChecked: boolean, value: string) => {
@@ -143,7 +143,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
           />
         </div>
       </p>
-      <div className="flex h-[20px] items-center justify-start gap-2">
+      <div className="flex h-[20px] pt-1 items-center justify-start gap-2">
         {filter?.dateFilter && (
           <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">

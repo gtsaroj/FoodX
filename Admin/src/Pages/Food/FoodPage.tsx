@@ -389,7 +389,7 @@ const FoodPage: React.FC = () => {
       <div className="flex items-center justify-start w-full gap-2 ">
         <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
           {" "}
-          <form action="" className="relative w-full ">
+          <form action="" className="relative text-[var(--dark-text)] w-full ">
               <input
                 id="search"
                 type="search"

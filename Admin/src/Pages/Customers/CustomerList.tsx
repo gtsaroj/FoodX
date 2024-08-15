@@ -231,7 +231,7 @@ const CustomerList: React.FC = () => {
         </div>
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
-        <form action="" className="relative w-full ">
+        <form action="" className="relative text-[var(--dark-text)] w-full ">
           <input
             id="search"
             type="search"

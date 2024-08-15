@@ -78,13 +78,13 @@ const UploadBanner: React.FC = () => {
               }
               type="text"
               placeholder="Pizza"
-              className="w-full bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full border-[1px] border-[var(--dark-border)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* Third Row */}
           <div
             onClick={() => fileRef.current?.click()}
-            className="w-full h-[300px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] dark:border-[var(--light-foreground)] stroke-[1px] py-20"
+            className="w-full h-[300px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
           >
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +98,7 @@ const UploadBanner: React.FC = () => {
               className="hidden"
             />
             {image ? (
-              <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-secondary-text)] stroke-[1px]">
+              <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px]">
                 {" "}
                 <img
                   className="w-full h-[230px] object-fill"
@@ -106,7 +106,7 @@ const UploadBanner: React.FC = () => {
                 />
               </div>
             ) : (
-              <div className="absolute w-full flex flex-col items-center bottom-24 justify-center gap-1">
+              <div className="absolute  w-full flex flex-col items-center bottom-24 justify-center gap-1">
                 <UploadIcon className="size-7 text-[var(--dark-text)] " />
                 <span className="text-sm text-[var(--dark-text)] ">
                   Upload a file or drag and drop
@@ -119,7 +119,7 @@ const UploadBanner: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full text-white dark:text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
           </button>
