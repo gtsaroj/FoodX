@@ -7,7 +7,7 @@ interface CustomerCardProp {
 
 export const CustomerCard: React.FC<CustomerCardProp> = ({ prop, index }) => {
   return (
-    <div className="flex items-center justify-between w-full h-full gap-2 px-2 py-3 bg-[var(--light-background)] rounded-lg">
+    <div className="flex items-center justify-between w-full gap-2 px-2 py-3 bg-[var(--light-background)] rounded-lg">
       <div className="w-full flex items-center justify-start gap-3">
         <div className="w-[50px] h-[50px] ">
           <img

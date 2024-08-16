@@ -85,7 +85,7 @@ export const TopCustomers = () => {
           />
         </div>
       </div>
-      <div className="flex flex-col gap-3 max-h-[100px] w-full  flex-grow overflow-y-scroll">
+      <div className="flex flex-col gap-3  w-full  flex-grow overflow-y-scroll">
         {TopCustomer?.length > 0 ? (
           TopCustomer?.map((customer, index) => (
             <CustomerCard key={customer.id} prop={customer} index={index} />
