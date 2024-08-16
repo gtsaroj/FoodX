@@ -38,7 +38,6 @@ export const Payment: React.FC = () => {
   const userId = useSelector(
     (state: RootState) => state.root.auth.userInfo.uid
   );
-  console.log(products, userId.uid);
 
   const handleOrder = async (event: FormEvent) => {
     event.preventDefault();
@@ -65,10 +64,10 @@ export const Payment: React.FC = () => {
     <div className=" flex flex-col items-baseline justify-between py-6 w-full gap-20 sm:px-[30px] px-[5px]">
       {/* <MobileCart/> */}
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
-        <div className="py-[19px] px-[10px] w-full bg-[var(--light-foreground)] rounded-xl  h-[500px]   flex flex-col items-center justify-between gap-5">
-          <div className="flex flex-col gap-[30px] items-center  border-b-[1px] w-full pb-8">
-            <h3 className="sm:text-[30px]  text-xl font-semibold"> Cart</h3>
-          </div>
+        {/* my cart */}
+        <div className="py-[19px] px-[10px] w-full rounded-lg   h-[500px]   flex flex-col items-start border-[1px] border-[var(--dark-border)] justify-between gap-5">
+          <h3 className="sm:text-[30px]  text-xl px-2 font-semibold">My Cart</h3>
+
           <div className="flex w-full overflow-y-auto flex-col items-center gap-5">
             {selectedProduct.length <= 0 ? (
               <div className="flex flex-col  py-16 items-center justify-center gap-2">
@@ -89,7 +88,8 @@ export const Payment: React.FC = () => {
             <h3>RS. {Total()}</h3>
           </div>
         </div>
-        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[var(--light-foreground)] rounded-xl ">
+        {/* My cart */}
+        <div className="flex flex-col w-full items-center gap-[30px] px-[10px] py-[20px] bg-[var(--light-foreground)] rounded-lg ">
           <h3 className="sm:text-[30px]  border-b  w-full text-center pb-7 text-xl font-semibold">
             Payment Method
           </h3>
@@ -99,30 +99,30 @@ export const Payment: React.FC = () => {
               <form
                 onSubmit={(event: FormEvent) => handleOrder(event)}
                 action=""
-                className="flex px-7  w-full flex-col  gap-[20px] items-center "
+                className="flex px-7  w-full flex-col  gap-6  items-center "
               >
                 <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
-                  <label htmlFor="">Full Name</label>
+                  <label htmlFor="">Full name</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-[20px] py-2 border-[1px] border-[var(--light-border)] rounded-md outline-none"
+                    className="w-full  px-[20px] py-2.5 text-[16px] focus:bg-[var(--light-background)] border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
                 <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
                   <label htmlFor="">Contact No.</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-5 py-2 border-[1px] border-[var(--light-border)]   rounded-md outline-none"
+                    className="w-full  px-[20px] py-2.5 text-[16px] focus:bg-[var(--light-background)] border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
                 <div className="flex w-full text-[18px] tracking-wide flex-col gap-[1px] ">
                   <label htmlFor="">Gmail</label>
                   <input
                     type="text"
-                    className="w-full text-sm px-5 py-[6px] border-[1px] border-[var(--light-border)]   rounded-md outline-none"
+                    className="w-full  px-[20px] py-2.5 text-[16px] focus:bg-[var(--light-background)] border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
-                <div className="flex mt-8  bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px] py-2 px-5">
+                <div className="flex mt-8  py-3 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px]  px-5">
                   <button type="submit">Pay Now</button>
                 </div>
               </form>
@@ -148,15 +148,15 @@ export const MobileCart: React.FC = () => {
     // Desktop
     <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
       <div className="w-full h-full flex lg:flex-row flex-col gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
-        <div className="w-[600px] p-2 py-4 bg-[var(--light-background)] px-5 rounded border">
+        <div className="w-[600px] p-2 py-4  px-5 rounded">
           <Cart />
         </div>
-        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 bg-[var(--light-background)] border  rounded-lg">
-          <h3 className="w-full text-3xl px-7  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
+        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 px-4 bg-[var(--light-background)] border  rounded-lg">
+          <h3 className="w-full text-3xl   py-2 font-semibold tracking-wide text-[var(--dark-text)]">
             Recent Products
           </h3>
-          <div className="w-full h-full ">
-            <div className="flex flex-col w-full overflow-auto    items-start h-[530px]  gap-2">
+          <div className="w-full h-full overflow-y-auto ">
+            <div className="flex  flex-col w-full items-start h-[530px]  gap-3">
               {initialData?.length > 0 ? (
                 initialData?.map((data) => <Carts prop={data} key={data.id} />)
               ) : (
@@ -209,6 +209,8 @@ interface MenuProp {
   prop: Product;
 }
 
+//recent products
+
 export const Carts: React.FC<MenuProp> = ({ prop }) => {
   console.log(prop);
   const [activeCart, setActiveCart] = useState<boolean>();
@@ -235,20 +237,33 @@ export const Carts: React.FC<MenuProp> = ({ prop }) => {
       );
     }
   };
+
+  useEffect(() => {
+    const findQuantity = selectedProductsQuantity?.find(
+      (singleProduct) => singleProduct.id === prop.id
+    );
+    if (findQuantity) {
+      setCartQuantity(findQuantity.quantity);
+    }
+    if (findQuantity?.quantity === undefined || null) {
+      setActiveCart(false);
+    }
+  }, [selectedProductsQuantity]);
+
   return (
-    <div className="sm:w-[550px] w-full   flex items-center justify-between bg-[var(--light-foreground)] h-[200px] px-5">
-      <div className="flex w-full items-center justify-start gap-3">
-        <div className=" py-2  h-full ">
+    <div className=" w-full  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)] h-[200px] ">
+      <div className="flex w-full items-stretch h-full justify-start gap-3">
+        <div className=" h-full ">
           <img
             src={prop.image}
-            className="  w-[80px] h-[80px] rounded-full    "
+            className="  w-[120px] h-[105px] rounded-l-lg    "
           ></img>
         </div>
-        <div className="flex flex-col  items-start justify-center gap-2">
-          <p className="text-[var(--dark-text)] font-semibold text-[20px] w-full ">
+        <div className="flex h-full  flex-col  items-start justify-evenly">
+          <p className="text-[var(--dark-text)] tracking-wide font-semibold text-[20px] w-full ">
             {prop.name}
           </p>
-          <span className="text-[18px] text-[var(--dark-text)] ">
+          <span className="text-[18px] tracking-wide text-[var(--dark-text)] ">
             Rs {prop.price}
           </span>
         </div>

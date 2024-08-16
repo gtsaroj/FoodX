@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react";
 import { ProductType } from "../../models/productMode";
 import { SpecialCards } from "../../Components/Card/SpecialCards";
 import { UseFetch } from "../../UseFetch";
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const product: Product = {
   id: nanoid(),
@@ -44,7 +44,9 @@ export const OrderComponent = () => {
   return (
     <div className="flex  flex-col items-start gap-10 py-5 justify-center w-full h-full ">
       <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
-        <h1 className="text-[23px] tracking-wider ">Recent Orders</h1>
+        <h1 className="text-[30px] tracking-wider font-semibold ">
+          Recent Orders
+        </h1>
         <div className="flex items-center w-full  gap-5 overflow-x-auto ">
           <OrderCard />
           <OrderCard />
@@ -58,7 +60,9 @@ export const OrderComponent = () => {
       </div>
       <div className="w-full">
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
-          <h1 className="text-[23px] tracking-wider ">Recent Orders</h1>
+          <h1 className="text-[30px] font-semibold tracking-wider ">
+            Recent Orders
+          </h1>
           <div className="flex flex-col items-center w-full  gap-5  ">
             <div className="h-[60px] w-full bg-slate-200 "></div>
             <div className="h-[60px] w-full bg-slate-200 "></div>
@@ -71,17 +75,17 @@ export const OrderComponent = () => {
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">
-              {initialData?.length > 0 ? (
+              {initialData && initialData?.length > 0 ? (
                 initialData?.map((singleObject) => (
                   <SpecialCards prop={singleObject} key={singleObject.id} />
                 ))
               ) : (
                 <Skeleton
-                height={100}
-                baseColor="var(--light-background)"
-                highlightColor="var(--light-foreground)"
-                count={1}
-              />
+                  height={100}
+                  baseColor="var(--light-background)"
+                  highlightColor="var(--light-foreground)"
+                  count={1}
+                />
               )}{" "}
             </div>
           </div>
@@ -93,7 +97,7 @@ export const OrderComponent = () => {
 
 export const OrderCard = (props: { item: Order }) => {
   return (
-    <div className="w-[550px] rounded-l-lg pr-5 h-full bg-[var(--light-background)] gap-5  flex items-center justify-center">
+    <div className="w-[550px] rounded-l-lg pr-5 h-full border-[1px] border-[var(--dark-border)] rounded-lg gap-5  flex items-center justify-center">
       <div className="w-[350px] rounded-l-lg h-[200px]">
         <img
           src="https://www.shutterstock.com/image-photo/burger-tomateoes-lettuce-pickles-on-600nw-2309539129.jpg"
@@ -110,7 +114,7 @@ export const OrderCard = (props: { item: Order }) => {
             04:15 AM
           </p>
         </div>
-        <div className="flex pb-5 text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-secondary-text)] items-center justify-start">
+        <div className="flex pb-5 text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-border)] items-center justify-start">
           Chicken Burger *3, Chicken Momo *2
         </div>
         <div className="flex  items-center justify-between w-full">

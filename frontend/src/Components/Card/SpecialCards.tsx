@@ -134,12 +134,9 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
             })
           );
         }}
-        className="absolute bg-[var(--light-foreground)] rounded-full p-3 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--light-text)] right-2 top-2"
+        className="absolute bg-[var(--light-foreground)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--light-text)] right-2 top-2"
       >
-        <Heart
-          fill="var(--danger-bg) "
-          className="size-9 text-[var(--danger-bg)] "
-        />
+        <Heart className="size-6 hover:scale-[1.05] duration-150 hover:fill-[var(--danger-bg)] hover:text-[var(--danger-bg)]  text-[var(--dark-text)] " />
       </div>
     </div>
   );

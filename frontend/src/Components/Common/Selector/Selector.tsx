@@ -28,8 +28,8 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
       <div
         className={` bg-[var(--light-foreground)] rounded-t-sm p-1 overflow-auto left-0 top-[57px] z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
           show
-            ? "max-h-64 opacity-100"
-            : "max-h-0 opacity-0 transform -translate-y-2"
+            ? "max-h-64 z-[100] opacity-100"
+            : "max-h-0 opacity-0 z-0 transform -translate-y-2"
         }`}
       >
         {children?.map((option) => (
