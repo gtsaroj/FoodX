@@ -23,11 +23,11 @@ const Cart: React.FC = () => {
     // Desktop
     <div className="flex flex-col w-full justify-between h-[580px] gap-3   sm:px-1 px-[30px]">
       <div className="flex flex-col items-start ">
-        <h3 className="w-full text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full py-2 text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
           My Cart
         </h3>
 
-        <div className="flex flex-col items-center gap-2 w-full py-5 overflow-y-scroll">
+        <div className="flex flex-col h-[420px] items-center gap-2 w-full py-5 overflow-auto">
           {selectedProducts.length > 0 ? (
             selectedProducts?.map((singleSelectedProduct) => (
               <SingleCard

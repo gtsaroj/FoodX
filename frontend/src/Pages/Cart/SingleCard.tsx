@@ -1,5 +1,5 @@
-
-import { ProductType, addToCart, removeCart } from "../../Reducer/Reducer";
+import { addToCart, removeCart, removeFavourite } from "../../Reducer/Reducer";
+import { ProductType } from "../../models/productMode";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Reducer/Store";
 import { DeleteIcon, Trash2 } from "lucide-react";
@@ -15,7 +15,10 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   const dispatch = useDispatch<AppDispatch>();
 
   return (
-    <div className=" duration-1000   group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] shadow-sm rounded-md ">
+    <div
+      key={prop.id}
+      className={`duration-1000  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] rounded-md `}
+    >
       <div>
         <img
           className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
