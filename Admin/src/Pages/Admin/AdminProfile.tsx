@@ -44,7 +44,7 @@ export const AdminProfile = () => {
   console.log(userData);
 
   return (
-    <div className="flex flex-col items-center  overflow-autojustify-center w-full h-full px-3 py-5 ">
+    <div className="flex flex-col items-center overflow-autojustify-center w-full  px-3 py-5 ">
       <div className="flex flex-col items-center justify-center flex-grow w-full p-3">
         <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
           My Profile

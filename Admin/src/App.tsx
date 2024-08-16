@@ -41,8 +41,6 @@ const MainPage = () => {
           <Navbar />
           <div className="w-full h-[200vh] overflow-auto 2xl:justify-between  flex flex-col items-center bg-[var(--light-foreground)]  ">
             <Outlet />
-          </div>
-          <div className="h-[8vh] w-full">
             <Footer />
           </div>
         </div>

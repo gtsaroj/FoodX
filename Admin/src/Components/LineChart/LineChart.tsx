@@ -273,7 +273,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
             previousData && {
               data: previousData?.map((order) => order["revenue"]),
               type: "line",
-              color: "red",
+              color: previousData?.length > 0 ? "red":"transparent"
             },
           ]}
           grid={{ vertical: true, horizontal: true }}
@@ -457,8 +457,8 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
             },
             previousData && {
               data: previousData?.map((order) => order["orders"]),
-              type: "line",
-              color: "red",
+             color: previousData?.length > 0 ? "red":"transparent"
+           
             },
           ]}
           grid={{ vertical: true, horizontal: true }}
