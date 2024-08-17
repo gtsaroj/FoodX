@@ -31,7 +31,7 @@ const HomePage = () => {
         <div className="w-full">
           <PrivateRoute userRole={["customer","admin"]} />
         </div>
-        <div>
+        <div className="w-full">
           <Footer />
         </div>
       </div>

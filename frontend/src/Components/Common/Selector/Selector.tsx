@@ -9,7 +9,7 @@ interface SelectorPop {
 
 export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
   const [show, setShow] = useState<boolean>(false);
-  const [showField, setShowField] = useState<string>();
+  const [showField, setShowField] = useState<string>("Burger");
   return (
     <div className="w-[350px] rounded-t-xl relative group/selector py-1 gap-2 border-[1px] rounded px-2 bg-[var(--light-foreground)]">
       <div
@@ -35,8 +35,8 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
         {children?.map((option) => (
           <div 
             onClick={() => {
-              action(option.name);
-              setShowField(option.name);
+              action(option?.name);
+              setShowField(option?.name);
               setShow(false);
             }}
             key={option.id}

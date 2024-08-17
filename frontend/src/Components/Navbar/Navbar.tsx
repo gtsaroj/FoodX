@@ -20,6 +20,8 @@ import { Frown, Smile } from "lucide-react";
 import Profile from "../AuthProfile/AuthProfile";
 import Favourite from "../../Pages/Cart/Favourite";
 import { debounce } from "../../Utility/Debounce";
+import toast from "react-hot-toast";
+import { LoadingText } from "../Loader/Loader";
 const navbarItems = [
   {
     name: "Home",
@@ -38,24 +40,42 @@ const navbarItems = [
 export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
   const [search, setSearch] = useState<boolean>(false);
-  // const [mobileMenu, setMobileMenu] = useState<boolean>(false);
-  const [filteredData, setFilteredData] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [initialData, setInitialData] = useState<ProductType[]>([]);
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
   const [closeFilter, setCloseFilter] = useState(false);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
   const [openFavourite, setOpenFavourite] = useState<boolean>(false);
   const { data, loading, error } = UseFetch("/products/all");
+  const { data: specialProducts } = UseFetch("/products/specials");
   const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
+  const [loader, setLoader] = useState<boolean>(false);
 
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const favouriteReference = useRef<HTMLDivElement>();
 
-  useEffect(() => {
-    const filteringData: any = data?.filter((singleProduct) =>
-      singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
+  const searchModel = (value: string) => {
+    if (value.length > 0) {
+      setLoader(true);
+    }
+    if (!value) throw new Error("input value not found" + error);
+
+    const filteringData = initialData?.filter((singleProduct) =>
+      singleProduct.name.toLowerCase().includes(value.toLowerCase())
     );
-    setStoreFilteredData(filteringData);
+    setStoreFilteredData(filteringData as ProductType[]);
+  };
+  const debouncedDataModel = useCallback(debounce(searchModel, 500), []);
+
+  useEffect(() => {
+    if (data && specialProducts) {
+      const collectOfProduct = [
+        ...(data as ProductType[]),
+        ...(specialProducts as ProductType[]),
+      ];
+      setInitialData(collectOfProduct);
+    }
 
     const handleClickOutside = (event: MouseEvent) => {
       if (FilterRef.current?.contains(event.target as Node)) {
@@ -92,10 +112,10 @@ export const Navbar: React.FC = () => {
       }
       document.removeEventListener("mousedown", closeProfile);
     };
-  }, [filteredData, closeFilter, openProfile]);
+  }, [closeFilter, openProfile, debouncedDataModel, data, specialProducts]);
   const navigate = useNavigate();
 
-   const debounceSearch = useCallback(debounce())
+  const isFavourite = useSelector((state: RootState) => state.root.favourite);
 
   return (
     <nav
@@ -154,10 +174,17 @@ export const Navbar: React.FC = () => {
             <DesktopSearch />
           </div>
           <div className="relative" ref={favouriteReference as any}>
-            <Heart
-              onClick={() => setOpenFavourite(!openFavourite)}
-              className="size-7 cursor-pointer "
-            />
+            <div className="relative">
+              <Heart
+                onClick={() => setOpenFavourite(!openFavourite)}
+                className="size-7 cursor-pointer "
+              />
+              <div
+                className={`w-[10px] duration-150 ${
+                  isFavourite.favourite.length > 0 ? "visible" : "invisible"
+                } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
+              ></div>
+            </div>
             <div
               className={` left-[-23rem] top-12 duration-150 absolute ${
                 openFavourite
@@ -211,10 +238,11 @@ export const Navbar: React.FC = () => {
       {search && (
         <form className="absolute flex  w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
           <input
-            value={filteredData}
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setFilteredData(event.target.value)
-            }
+            value={searchValue}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              debouncedDataModel(event.target.value);
+              setSearchValue(event.target.value as string);
+            }}
             className="p-3 text-md w-full rounded-md focus:outline focus:outline-[var(--primary-color)] placeholder:text-[var(--dark-secondary-text)]"
             placeholder="Search..."
             autoCorrect="off"
@@ -234,7 +262,7 @@ export const Navbar: React.FC = () => {
         } justify-center items-center  top-44 left-0 `}
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {filteredData.length <= 0 ? (
+          {searchValue?.length <= 0 ? (
             <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Find Your Products
               <Smile className="size-16 text-[var(--primary-color)]" />
@@ -260,6 +288,10 @@ export const Navbar: React.FC = () => {
       >
         {userImage && <Profile user={userImage} />}
       </div>
+      <LoadingText
+        isLoading={loader as boolean}
+        loadingFn={() => setLoader(false)}
+      />
     </nav>
   );
 };
@@ -325,22 +357,36 @@ export const Header: React.FC = () => {
 
 export const DesktopSearch = () => {
   const [search, setSearch] = useState<boolean>();
-  const [filteredData, setFilteredData] = useState<string>("");
+  const [loader, setLoader] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
   const { data, loading, error } = UseFetch("/products/all");
   const { data: specials } = UseFetch("/products/specials");
   const [closeFilter, setCloseFilter] = useState<boolean>(false);
+  const [initialData, setInitialData] = useState<ProductType[]>([]);
 
-  const TotalData = [...(data || []), ...(specials || [])];
+  const searchModel = (value: string) => {
+    if (value.length > 0) {
+      setLoader(true);
+    }
+    if (!value) throw new Error("input value not found" + error);
+    const filteringData = initialData?.filter((singleProduct) =>
+      singleProduct.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setStoreFilteredData(filteringData as ProductType[]);
+  };
+  const debouncedDataModel = useCallback(debounce(searchModel, 500), []);
 
   const FilterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const filteringData: any = data?.filter((singleProduct) =>
-      singleProduct.name.toLowerCase().includes(filteredData?.toLowerCase())
-    );
-    setStoreFilteredData(filteringData);
-
+    if (data && specials) {
+      const collectOfProduct = [
+        ...(data as ProductType[]),
+        ...(specials as ProductType[]),
+      ];
+      setInitialData(collectOfProduct);
+    }
     const handleClickOutside = (event: MouseEvent) => {
       if (FilterRef.current?.contains(event.target as Node)) {
         setCloseFilter(false);
@@ -354,7 +400,7 @@ export const DesktopSearch = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [filteredData, closeFilter]);
+  }, [closeFilter, data, specials]);
 
   return (
     <div
@@ -374,13 +420,14 @@ export const DesktopSearch = () => {
         className={"items-center  " + (search ? " flex order-2" : " hidden")}
       >
         <input
-          value={filteredData}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setFilteredData(event.target.value)
-          }
+          value={searchValue}
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            setSearchValue(event.target.value);
+            debouncedDataModel(event.target.value);
+          }}
           type="text"
           placeholder="Search..."
-          className="px-3 py-2 focus:outline-none rounded-lg max-w-[250px] w-full bg-transparent  "
+          className="px-3 py-2 focus:outline-none rounded-lg w-[340px] bg-transparent  "
         />
         <X
           size={20}
@@ -397,7 +444,7 @@ export const DesktopSearch = () => {
         }
       >
         <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {filteredData.length <= 0 ? (
+          {searchValue.length <= 0 ? (
             <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
               Find Your Products
               <Smile className="size-16 text-[var(--primary-color)]" />
@@ -413,6 +460,7 @@ export const DesktopSearch = () => {
             ))
           )}
         </div>
+        <LoadingText isLoading={loader} loadingFn={() => setLoader(false)} />
       </div>
     </div>
   );

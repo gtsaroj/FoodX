@@ -27,10 +27,33 @@
 
     --danger-text: #d91006;
     --danger-bg: #e00b0b;
+    --popup-bg: #4b4a4a60;
+    --orange-bg: #ff9800;
+    --green-bg: #4caf50;
+
+    --green-text: #177e1a;
   }
 
   ::-webkit-scrollbar {
     width: 0px;
+  }
+
+  @layer components {
+    .scrollbar-custom {
+      @apply overflow-y-scroll; /* Enables scrolling */
+    }
+  
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 8px; /* Adjust scrollbar width */
+    }
+  
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      @apply bg-gray-400 rounded-md; /* Customize the scrollbar thumb */
+    }
+  
+    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+      @apply bg-gray-600; /* Hover effect */
+    }
   }
 
   body {

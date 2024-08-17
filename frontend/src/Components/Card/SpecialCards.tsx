@@ -4,13 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart, addToFavourite } from "../../Reducer/Reducer";
 import { RootState } from "../../Reducer/Store";
 import { Product } from "../../models/order.model";
+import { LoadingText } from "../Loader/Loader";
+import { ProductType } from "../../models/productMode";
 
 interface MenuProp {
-  prop: Product;
+  prop: ProductType;
 }
 export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
   const [cartQuantity, setCartQuantity] = useState<number>(1);
+  const [loader, setLoader] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -44,6 +47,11 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       setActiveCart(false);
     }
   }, [selectedProductsQuantity]);
+
+  const closeLoader = () => {
+    setLoader(false);
+    return false;
+  };
 
   return (
     <div
@@ -123,6 +131,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       </div>
       <div
         onClick={() => {
+          setLoader(true);
           dispatch(
             addToFavourite({
               id: prop.id,
@@ -138,6 +147,8 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       >
         <Heart className="size-6 hover:scale-[1.05] duration-150 hover:fill-[var(--danger-bg)] hover:text-[var(--danger-bg)]  text-[var(--dark-text)] " />
       </div>
+
+      <LoadingText isLoading={loader} loadingFn={() => closeLoader()} />
     </div>
   );
 };
