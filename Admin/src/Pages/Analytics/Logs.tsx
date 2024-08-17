@@ -261,7 +261,7 @@ const Logs = () => {
 
         <div
           id="scrollableDiv"
-          className="flex items-start  overflow-auto justify-start flex-grow w-full"
+          className="flex items-start scrollbar-custom px-2   overflow-auto justify-start flex-grow w-full"
         >
           <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll

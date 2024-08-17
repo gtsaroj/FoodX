@@ -105,7 +105,7 @@ const TicketPage: React.FC = () => {
         </h1>
         <button
           onClick={() => setCloseModal(!closeModal)}
-          className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+          className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.4rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
         >
           <CirclePlus className="size-5" />
           <span className="tex-[16px] tracking-wider "> New Ticket</span>
@@ -159,7 +159,7 @@ const TicketPage: React.FC = () => {
         </button>
       </div>
       {/* Employee Card */}
-      <div id="ticketScrollable" className="w-full py-6 h-full overflow-auto">
+      <div id="ticketScrollable" className="w-full py-6 h-full overflow-auto   scrollbar-custom px-5 ">
         <div className="w-full h-[400px] ">
           <InfiniteScroll
             endMessage={

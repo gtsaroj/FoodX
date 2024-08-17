@@ -94,7 +94,7 @@ const CreateTicket: React.FC = () => {
                 }))
               }
               type="text"
-              className="w-full bg-[var(--light-foreground)] outline-none text-[var(--dark-text)] placeholder:text-sm py-2 px-4 rounded"
+              className="w-full bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px] outline-none text-[var(--dark-text)] placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
           {/* Third Row */}
@@ -114,11 +114,11 @@ const CreateTicket: React.FC = () => {
                 }))
               }
               placeholder="Describe your request"
-              className="w-full bg-[var(--light-foreground)] h-[200px] resize-none text-[var(--dark-text)]  outline-none placeholder:text-sm py-2 px-4 rounded"
+              className="w-full bg-[var(--light-foreground)] border-[1px] border-[var(--dark-border)] h-[200px] resize-none text-[var(--dark-text)]  outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
 
-          <button className="w-full tracking-wider text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
+          <button className="w-full tracking-wider text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] ">
             {loading ? (
               <div className="flex items-center justify-center gap-2">
                 Sending <HashLoader color="white" size={"20px"} />
