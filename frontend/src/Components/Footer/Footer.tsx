@@ -3,8 +3,8 @@ import CollegeLogo from "../../logo/texas.png";
 
 const Footer: React.FC = () => {
   return (
-    <>
-      <footer className="w-full h-full bg-[var(--primary-color)] text-[var(--light-text)] min-w-[100vw] place-items-center grid px-5 py-4">
+    <div className="w-full flex text-white flex-col ">
+      <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-white place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />
@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
             <div></div>
           </div>
         </div>
-        <div className="grid w-full h-full grid-cols-1 gap-6 py-4 md:grid-cols-2 place-items-center md:place-items-start">
+        <div className="grid w-full grid-cols-1 gap-6 py-4 md:grid-cols-2 place-items-center md:place-items-start">
           <div className="flex flex-col gap-6 p-5">
             <p className="font-bold tracking-wider">Quick Contact</p>
             <div className="flex flex-col gap-5">
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
           <div className="flex justify-between w-full gap-6 px-5 py-6 ">
             <div className="flex flex-col gap-5">
               <p className="font-bold tracking-wider">Links</p>
-              <div className="flex flex-col gap-3 text-sm text-[var(--light-text)] ">
+              <div className="flex flex-col gap-3 text-sm text-white ">
                 <a
                   href="/"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
             </div>
             <div className="flex flex-col gap-5">
               <p className="font-bold tracking-wider">Resources</p>
-              <div className="flex flex-col gap-3 text-sm text-[var(--light-text)]">
+              <div className="flex flex-col gap-3 text-sm text-white">
                 <a
                   href="/terms"
                   target="_blank"
@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </footer>
-      <div className="w-full h-full min-w-[100vw] flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
+      <div className="w-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
         <p>Copyright © 2024 All Rights Reserved.</p>
         <p className="cursor-pointer">
           Developed By:{" "}
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
           </a>
         </p>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -27,7 +27,7 @@ const Cart: React.FC = () => {
           My Cart
         </h3>
 
-        <div className="flex flex-col h-[420px] items-center gap-2 w-full py-5 overflow-auto">
+        <div className="flex flex-col h-[420px] items-center gap-2 w-full py-5 scrollbar-custom  px-5 overflow-auto">
           {selectedProducts.length > 0 ? (
             selectedProducts?.map((singleSelectedProduct) => (
               <SingleCard

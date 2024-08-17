@@ -66,7 +66,9 @@ export const Payment: React.FC = () => {
       <div className="flex gap-[20px] flex-col md:flex-row items-stretch justify-center w-full md:px-[50px] sm:px-[40px] px-[0px] ">
         {/* my cart */}
         <div className="py-[19px] px-[10px] w-full rounded-lg   h-[500px]   flex flex-col items-start border-[1px] border-[var(--dark-border)] justify-between gap-5">
-          <h3 className="sm:text-[30px]  text-xl px-2 font-semibold">My Cart</h3>
+          <h3 className="sm:text-[30px]  text-xl px-2 font-semibold">
+            My Cart
+          </h3>
 
           <div className="flex w-full overflow-y-auto flex-col items-center gap-5">
             {selectedProduct.length <= 0 ? (
@@ -139,23 +141,21 @@ export const MobileCart: React.FC = () => {
   const { data } = UseFetch("/products/all");
 
   useEffect(() => {
-    if (data && data?.length > 0) {
-      setInitialData(data);
-    }
+    setInitialData(data as ProductType[]);
   }, [data]);
 
   return (
     // Desktop
     <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
       <div className="w-full h-full flex lg:flex-row flex-col gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
-        <div className="w-[600px] p-2 py-4  px-5 rounded">
+        <div className="lg:w-[600px] w-full p-2 py-4  px-5 rounded">
           <Cart />
         </div>
-        <div className="w-[550px] flex h-full flex-col gap-4 pt-3 px-4 bg-[var(--light-background)] border  rounded-lg">
+        <div className="lg:w-[550px] w-full flex h-full flex-col gap-4 pt-3 px-4 bg-[var(--light-background)] border  rounded-lg">
           <h3 className="w-full text-3xl   py-2 font-semibold tracking-wide text-[var(--dark-text)]">
             Recent Products
           </h3>
-          <div className="w-full h-full overflow-y-auto ">
+          <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">
             <div className="flex  flex-col w-full items-start h-[530px]  gap-3">
               {initialData?.length > 0 ? (
                 initialData?.map((data) => <Carts prop={data} key={data.id} />)
