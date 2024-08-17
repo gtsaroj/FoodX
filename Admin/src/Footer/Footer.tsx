@@ -3,10 +3,10 @@ import CollegeLogo from "../../src/assets/logo/texas.png";
 
 const Footer: React.FC = () => {
   return (
-    <div className="w-full flex text-[var(--dark-text)] flex-col items-center justify-center">
-      <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-[var(--dark-text)] place-items-center grid px-5">
+    <div className="w-full flex text-white flex-col items-center justify-center">
+      <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-white place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
-          <div className="px-5 py-3 bg-[var(--light-background)] rounded">
+          <div className="px-5 py-3 bg-[white] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />
           </div>
           <div className="flex items-center justify-center gap-3">
@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
           <div className="flex justify-between w-full gap-6 px-5 py-6 ">
             <div className="flex flex-col gap-5">
               <p className="font-bold tracking-wider">Links</p>
-              <div className="flex flex-col gap-3 text-sm text-[var(--dark-text)] ">
+              <div className="flex flex-col gap-3 text-sm text-white ">
                 <a
                   href="/"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
@@ -88,18 +88,18 @@ const Footer: React.FC = () => {
             </div>
             <div className="flex flex-col gap-5">
               <p className="font-bold tracking-wider">Resources</p>
-              <div className="flex flex-col gap-3 text-sm text-[var(--dark-text)]">
+              <div className="flex flex-col gap-3 text-sm text-white">
                 <a
                   href="/terms"
                   target="_blank"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+                  className="cursor-pointer hover:underline  hover:text-[var(--secondary-color)]"
                 >
                   Terms & Condition
                 </a>
                 <a
                   target="_blank"
                   href="/privacy"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+                  className="cursor-pointer hover:underline  hover:text-[var(--secondary-color)]"
                 >
                   Privacy Policy
                 </a>

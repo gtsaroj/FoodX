@@ -65,9 +65,9 @@ export const RecentTickets = () => {
       </div>
       <div
         ref={orderReference as any}
-        className={`max-h-[550px] overflow-y-scroll`}
+        className={`max-h-[550px] scrollbar-custom scroll-smooth px-6 overflow-y-scroll`}
       >
-        <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
+        <div className="flex flex-col items-center justify-center gap-2 py-2  ">
           {tickets.length > 0 ? (
             tickets?.map((ticket) => (
               <TicketCard

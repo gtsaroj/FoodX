@@ -174,7 +174,7 @@ const CustomerList: React.FC = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex  items-center justify-center gap-2">
-            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-[var(--dark-text)] py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
               <Download strokeWidth={2.5} className="size-5" />
               <p className="text-[16px] tracking-widest ">Export</p>
             </button>

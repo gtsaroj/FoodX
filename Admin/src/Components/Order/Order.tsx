@@ -59,7 +59,7 @@ export const RecentOrders = () => {
         </p>
       </div>
       <div
-        className={`duration-200 max-h-[550px] overflow-y-scroll
+        className={`duration-200 max-h-[550px] scrollbar-custom px-5 overflow-y-scroll
          `}
       >
         <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
