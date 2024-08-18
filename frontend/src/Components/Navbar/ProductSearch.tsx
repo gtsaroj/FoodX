@@ -1,8 +1,8 @@
-import { ProductType } from "../../models/productMode";
+import { ProductType } from "../../models/product.model";
 import React from "react";
 import { ShoppingCart } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../../Reducer/Reducer";
+import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 
 interface PropType {

@@ -1,4 +1,4 @@
-import { LoginTypes } from "../../models/Authentication";
+import { LoginTypes } from "../../models/authentication.model";
 
 export const LoginInputs: LoginTypes[] = [
   {

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SpecialCards } from "../Card/SpecialCards";
+import { SpecialCards } from "../Card/ProductCard";
 import { UseFetch } from "../../UseFetch";
-import { ProductType } from "../../models/productMode";
+import { ProductType } from "../../models/product.model";
 import { getCategory } from "../../firebase/db";
-import { getAllCategory } from "../../Services";
+import { getCategories } from "../../Services/category.services";
 import { Selector } from "../Common/Selector/Selector";
 import { LoadingContent } from "../Loader/Loader";
 
@@ -38,8 +38,9 @@ export const MenuType: React.FC = () => {
     const CategoriesData = async () => {
       setLoading(true);
       try {
-        const response = await getAllCategory();
-        setCategoriesTag(response);
+        const response = await getCategories();
+        console.log(response)
+        setCategoriesTag(response.data);
       } catch (error) {
         throw new Error("Error fetching tags:" + error);
       }
@@ -58,7 +59,7 @@ export const MenuType: React.FC = () => {
   }, [initialData]);
 
   return (
-    <div className="flex flex-col flex-wrap gap-8 py-8 ">
+    <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
       <Selector
         children={categoriesTag as categoriesTagOption[]}
         action={(tag) => handleEvent(tag)}

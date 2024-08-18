@@ -1,5 +1,5 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import CollegeLogo from "../../logo/texas.png";
+import CollegeLogo from "../../assets/logo/texas.png";
 
 const Footer: React.FC = () => {
   return (

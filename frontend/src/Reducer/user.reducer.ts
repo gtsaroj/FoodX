@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authState } from "../models/UserModels";
-import { singInAction, singUpAction, updateUserAction } from "./Action";
+import { authState } from "../models/user.model";
+import { singInAction, singUpAction, updateUserAction } from "../Actions/user.actions";
 
 // const userToken = localStorage.getItem("userToken");
 const initialState: authState = {
   error: null,
   loading: true,
   success: false,
-  userInfo: [],
+  userInfo: {},
 };
 
 const authSlice = createSlice({
@@ -17,7 +17,7 @@ const authSlice = createSlice({
     authLogout: (state) => {
       (state.loading = false),
         (state.success = false),
-        (state.userInfo = null),
+        (state.userInfo = {}),
         (state.error = null);
     },
   },
@@ -25,6 +25,7 @@ const authSlice = createSlice({
     // Sign up new user
     builder.addCase(singUpAction?.pending, (state) => {
       state.loading = true;
+      state.userInfo = {}
     }),
       builder.addCase(singUpAction?.fulfilled, (state, action) => {
         (state.loading = false),
@@ -40,12 +41,13 @@ const authSlice = createSlice({
       builder.addCase(singInAction?.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.userInfo = {}
       }),
       builder.addCase(singInAction.fulfilled, (state, action) => {
         (state.loading = false),
           (state.success = true),
           (state.error = null),
-          (state.userInfo = action.payload);
+         state.userInfo = action.payload
       }),
       builder.addCase(singInAction.rejected, (state, action) => {
         (state.loading = false),
@@ -68,6 +70,6 @@ const authSlice = createSlice({
   },
 });
 
-export default authSlice.reducer;
+export  const userReducer =  authSlice.reducer;
 
 export const { authLogout } = authSlice.actions;

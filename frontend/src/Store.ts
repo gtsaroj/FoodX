@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import CardReducer, { favouriteReducer } from "./Reducer";
-import OrderReducer from "./OrderReducer";
+import { favouriteReducer } from "./Reducer/favourite.reducer";
+
+import OrderReducer from "./Reducer/order.reducer";
 import {
   persistStore,
   persistReducer,
@@ -12,21 +13,12 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "./authReducer";
-
-// const loginRoot = combineReducers({
-//   authRegister: registerSlice,
-//   authLogin: loginSlice,
-// });
-// const Product = combineReducers({
-//   cart: CardReducer,
-//   order: OrderReducer,
-//   favourite: favouriteReducer,
-// });
+import { userReducer } from "./Reducer/user.reducer";
+import { cartReducer } from "./Reducer/product.reducer";
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  cart: CardReducer,
+  auth: userReducer,
+  cart: cartReducer,
   order: OrderReducer,
   favourite: favouriteReducer,
 });

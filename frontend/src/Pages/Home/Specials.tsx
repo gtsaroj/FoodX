@@ -1,7 +1,8 @@
-import React from "react";
-import { SpecialCards } from "../../Components/Card/SpecialCards";
-import { UseFetch } from "../../UseFetch";
+import React, { useEffect, useState } from "react";
+import { SpecialCards } from "../../Components/Card/ProductCard";
 import Cart from "../Cart/Cart";
+import { getSpecialProducts } from "../../Services/product.services";
+import { Product } from "../../models/product.model";
 
 const Specials: React.FC = () => {
   return (
@@ -31,26 +32,56 @@ const Specials: React.FC = () => {
 export default Specials;
 
 const SpecialCardsContainer: React.FC = () => {
-  const { data } = UseFetch("/products/specials");
-  const firstGroup = data?.slice(0, 4);
+  const [initalProducts, setInitialProducts] = useState<Product[]>([]);
+
+  const specialProducts = async () => {
+    try {
+      const response = await getSpecialProducts();
+      const products = response.data.products as Product[];
+      setInitialProducts(products.slice(0, 4));
+    } catch (error) {
+      throw new Error("Error while getting special products" + error);
+    }
+  };
+
+  useEffect(() => {
+    specialProducts();
+  }, []);
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex pb-4  gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
-        {firstGroup &&
-          firstGroup.map((item) => <SpecialCards prop={item} key={item.id} />)}
+        {initalProducts &&
+          initalProducts.map((item) => (
+            <SpecialCards prop={item} key={item.id} />
+          ))}
       </div>
     </div>
   );
 };
 export const SpecialCardsContainer1: React.FC = () => {
-  const { data } = UseFetch("/products/specials");
-  const secondGroup = data?.slice(4);
+  const [initalProducts, setInitialProducts] = useState<Product[]>([]);
+
+  const specialProducts = async () => {
+    try {
+      const response = await getSpecialProducts();
+      const products = response.data.products as Product[];
+      setInitialProducts(products.slice(4));
+    } catch (error) {
+      throw new Error("Error while getting special products" + error);
+    }
+  };
+
+  useEffect(() => {
+    specialProducts();
+  }, []);
   return (
     <div className="flex flex-col gap-5">
       <div className="flex  pb-4 gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
-        {secondGroup &&
-          secondGroup.map((item) => <SpecialCards prop={item} key={item.id} />)}
+        {initalProducts &&
+          initalProducts.map((item) => (
+            <SpecialCards prop={item} key={item.id} />
+          ))}
       </div>
     </div>
   );

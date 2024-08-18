@@ -1,17 +1,17 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
-import { SingleCard } from "../../Pages/Cart/SingleCard";
+import { SingleCard } from "../Card/CardProductCart";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Reducer/Store";
-import { ProductType } from "../../models/productMode";
-import { order } from "../../Services";
-import { Product } from "../../models/order.model";
+import { AppDispatch, RootState } from "../../Store";
+import { ProductType } from "../../models/product.model";
+import { order } from "../../Services/order.services";
+import { Product } from "../../models/product.model";
 import toast from "react-hot-toast";
 import Cart from "../../Pages/Cart/Cart";
-import { SpecialCards } from "../Card/SpecialCards";
+import { SpecialCards } from "../Card/ProductCard";
 import { UseFetch } from "../../UseFetch";
-import { addToCart } from "../../Reducer/Reducer";
+import { addToCart } from "../../Reducer/product.reducer";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 

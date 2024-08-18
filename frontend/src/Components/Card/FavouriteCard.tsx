@@ -1,11 +1,11 @@
-import { addToCart, removeCart, removeFavourite } from "../../Reducer/Reducer";
-import { ProductType } from "../../models/productMode";
+import { Product } from "../../models/product.model";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
-import { DeleteIcon, Trash2 } from "lucide-react";
+import { AppDispatch } from "../../Store";
+import { Trash2 } from "lucide-react";
+import { removeFavourite } from "../../Reducer/favourite.reducer";
 
 interface SingleCardProp {
-  prop: ProductType;
+  prop: Product;
 }
 
 export const FavouriteCard: React.FC<SingleCardProp> = ({

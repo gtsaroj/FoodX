@@ -1,14 +1,14 @@
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart, addToFavourite } from "../../Reducer/Reducer";
-import { RootState } from "../../Reducer/Store";
-import { Product } from "../../models/order.model";
+import { addToCart } from "../../Reducer/product.reducer";
+import { RootState } from "../../Store";
 import { LoadingText } from "../Loader/Loader";
-import { ProductType } from "../../models/productMode";
+import { addToFavourite } from "../../Reducer/favourite.reducer";
+import { Product } from "../../models/product.model";
 
 interface MenuProp {
-  prop: ProductType;
+  prop: Product;
 }
 export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);

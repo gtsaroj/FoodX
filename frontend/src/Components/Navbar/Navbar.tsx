@@ -1,27 +1,18 @@
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import CollegeLogo from "../../logo/texas.png";
+import { useCallback, useEffect, useRef, useState } from "react";
+import CollegeLogo from "../../assets/logo/texas.png";
 import {
-  ChevronDown,
   Heart,
-  MenuIcon,
   Phone,
-  Search,
   ShoppingBag,
   UserCircleIcon,
-  X,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { UseFetch } from "../../UseFetch";
-import { ProductType } from "../../models/productMode";
+import { ProductType } from "../../models/product.model";
 import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../../Reducer/Store";
-import ProductSearch from "./ProductSearch";
-import { Frown, Smile } from "lucide-react";
-import Profile from "../AuthProfile/AuthProfile";
+import { RootState } from "../../Store";
 import Favourite from "../../Pages/Cart/Favourite";
 import { debounce } from "../../Utility/Debounce";
-import toast from "react-hot-toast";
-import { LoadingText } from "../Loader/Loader";
 const navbarItems = [
   {
     name: "Home",
@@ -39,17 +30,13 @@ const navbarItems = [
 
 export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
-  const [search, setSearch] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
   const [initialData, setInitialData] = useState<ProductType[]>([]);
-  const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
-  const [closeFilter, setCloseFilter] = useState(false);
   const [openProfile, setOpenProfile] = useState<boolean>(false);
   const [openFavourite, setOpenFavourite] = useState<boolean>(false);
+
   const { data, loading, error } = UseFetch("/products/all");
   const { data: specialProducts } = UseFetch("/products/specials");
-  const userImage = useSelector((state: RootState) => state.root.auth.userInfo);
-  const [loader, setLoader] = useState<boolean>(false);
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
@@ -69,14 +56,6 @@ export const Navbar: React.FC = () => {
   const debouncedDataModel = useCallback(debounce(searchModel, 500), []);
 
   useEffect(() => {
-    if (data && specialProducts) {
-      const collectOfProduct = [
-        ...(data as ProductType[]),
-        ...(specialProducts as ProductType[]),
-      ];
-      setInitialData(collectOfProduct);
-    }
-
     const handleClickOutside = (event: MouseEvent) => {
       if (FilterRef.current?.contains(event.target as Node)) {
         setCloseFilter(false);
@@ -107,12 +86,8 @@ export const Navbar: React.FC = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
-      if (closeFilter) {
-        document.removeEventListener("mousedown", closeProfile);
-      }
-      document.removeEventListener("mousedown", closeProfile);
     };
-  }, [closeFilter, openProfile, debouncedDataModel, data, specialProducts]);
+  }, [openProfile, debouncedDataModel, data, specialProducts]);
   const navigate = useNavigate();
 
   const isFavourite = useSelector((state: RootState) => state.root.favourite);
@@ -133,7 +108,7 @@ export const Navbar: React.FC = () => {
           className="max-h-[80px]  w-[160px]  sm:w-full h-full p-2  "
         />
       </div>
-      {/*  */}
+      {/* Navbar  */}
       <div className="items-center justify-around hidden h-full md:flex">
         {navbarItems &&
           navbarItems.map((item, index) => (
@@ -154,26 +129,18 @@ export const Navbar: React.FC = () => {
             </Link>
           ))}
       </div>
-      {/*  */}
+      {/*  Product Search */}
       <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full space-x-3 place-items-center">
-          <div className="flex items-center justify-center shrink-0">
-            <Search
-              onClick={() => setSearch((search) => !search)}
-              size={30}
-              className=" cursor-pointer hover:text-[var(--secondary-color)] transition-colors duration-500 ease-in-out lg:hidden "
-            />
-          </div>
+          {/* Cart */}
           <div
             onClick={() => navigate("/cart")}
             className="flex items-center justify-center md:hidden"
           >
             <ShoppingBag />
           </div>
-          <div className="hidden lg:flex" ref={FilterRef}>
-            <DesktopSearch />
-          </div>
           <div className="relative" ref={favouriteReference as any}>
+            {/* Favourite icon */}
             <div className="relative">
               <Heart
                 onClick={() => setOpenFavourite(!openFavourite)}
@@ -185,6 +152,7 @@ export const Navbar: React.FC = () => {
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
             </div>
+            {/* Favourite container */}
             <div
               className={` left-[-23rem] top-12 duration-150 absolute ${
                 openFavourite
@@ -195,14 +163,15 @@ export const Navbar: React.FC = () => {
               <Favourite />
             </div>
           </div>
-          {userImage?.avatar ? (
+          {authUser?.avatar ? (
             <div
+              ref={profileRef}
               onClick={() => setOpenProfile(!openProfile)}
               className=" hover:bg-[#8080807c] p-1 rounded-full cursor-pointer group/user"
             >
               <img
                 className="rounded-full sm:size-9 size-8"
-                src={userImage.avatar}
+                src={authUser.avatar}
                 alt=""
               />
             </div>
@@ -215,69 +184,6 @@ export const Navbar: React.FC = () => {
             </div>
           )}
         </div>
-        {/* <div>
-          {!mobileMenu ? (
-            <MenuIcon
-              onClick={() => setMobileMenu((mobileMenu) => !mobileMenu)}
-              size={30}
-              className={
-                "hover:text-[var(--secondary-color)] cursor-pointer transition-colors ease-in-out duration-500 md:hidden"
-              }
-            />
-          ) : (
-            <X
-              onClick={() => setMobileMenu((mobileMenu) => !mobileMenu)}
-              size={30}
-              className={
-                "text-[var(--secondary-color)] cursor-pointer transition-colors ease-in-out duration-500 md:hidden"
-              }
-            />
-          )}
-        </div> */}
-      </div>
-      {search && (
-        <form className="absolute flex  w-full bottom-[-60px] right-0 px-5 text-[var(--dark-text)] lg:hidden">
-          <input
-            value={searchValue}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              debouncedDataModel(event.target.value);
-              setSearchValue(event.target.value as string);
-            }}
-            className="p-3 text-md w-full rounded-md focus:outline focus:outline-[var(--primary-color)] placeholder:text-[var(--dark-secondary-text)]"
-            placeholder="Search..."
-            autoCorrect="off"
-          />
-          <X
-            size={20}
-            className=" top-4 right-10 absolute cursor-pointer text-[var(--secondary-color)] "
-            onClick={() => setSearch((search) => !search)}
-          />
-        </form>
-      )}
-      <div
-        className={`absolute w-full lg:hidden  ${
-          search ? "flex flex-col" : "hidden"
-        }  ${
-          closeFilter ? "hidden" : "flex"
-        } justify-center items-center  top-44 left-0 `}
-      >
-        <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {searchValue?.length <= 0 ? (
-            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
-              Find Your Products
-              <Smile className="size-16 text-[var(--primary-color)]" />
-            </div>
-          ) : storeFilteredData?.length <= 0 ? (
-            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
-              Your Product Not Found
-              <Frown className="size-16 text-[var(--primary-color)]" />
-            </div>
-          ) : (
-            storeFilteredData?.map((filterData) => (
-              <ProductSearch prop={filterData} key={filterData.id} />
-            ))
-          )}
-        </div>
       </div>
       {/* {mobileMenu && <MobileMenu />} */}
       <div
@@ -285,17 +191,12 @@ export const Navbar: React.FC = () => {
         className={`absolute right-5 top-20 flex w-full justify-end items-center ${
           openProfile ? "flex" : "hidden"
         }`}
-      >
-        {userImage && <Profile user={userImage} />}
-      </div>
-      <LoadingText
-        isLoading={loader as boolean}
-        loadingFn={() => setLoader(false)}
-      />
+      ></div>
     </nav>
   );
 };
 
+//header
 export const Header: React.FC = () => {
   const [nav, setNav] = useState<boolean>(false);
   const changeColor = () => {
@@ -328,140 +229,5 @@ export const Header: React.FC = () => {
         <Navbar />
       </div>
     </header>
-  );
-};
-
-// export const MobileMenu: React.FC = () => {
-//   const navigate = useNavigate();
-//   return (
-//     <div className="flex flex-col w-full h-auto top-[120px] fixed z-5 bg-[var(--light-foreground)] left-0 items-baseline justify-center">
-//       {navbarItems &&
-//         navbarItems.map((item, index) => (
-//           <div
-//             key={index}
-//             className=" cursor-pointer border-b border-b-[var(--light-border)] w-full px-5 py-4 hover:bg-[var(--light-border)]"
-//             onClick={() => navigate(item.url)}
-//           >
-//             <p>{item.name}</p>
-//           </div>
-//         ))}
-//       <button
-//         onClick={()=>navigate("/profile")}
-//         className=" w-full text-start px-5 py-4 hover:bg-[var(--light-border)]"
-//       >
-//         Profile
-//       </button>
-//     </div>
-//   );
-// };
-
-export const DesktopSearch = () => {
-  const [search, setSearch] = useState<boolean>();
-  const [loader, setLoader] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [storeFilteredData, setStoreFilteredData] = useState<ProductType[]>([]);
-  const { data, loading, error } = UseFetch("/products/all");
-  const { data: specials } = UseFetch("/products/specials");
-  const [closeFilter, setCloseFilter] = useState<boolean>(false);
-  const [initialData, setInitialData] = useState<ProductType[]>([]);
-
-  const searchModel = (value: string) => {
-    if (value.length > 0) {
-      setLoader(true);
-    }
-    if (!value) throw new Error("input value not found" + error);
-    const filteringData = initialData?.filter((singleProduct) =>
-      singleProduct.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setStoreFilteredData(filteringData as ProductType[]);
-  };
-  const debouncedDataModel = useCallback(debounce(searchModel, 500), []);
-
-  const FilterRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (data && specials) {
-      const collectOfProduct = [
-        ...(data as ProductType[]),
-        ...(specials as ProductType[]),
-      ];
-      setInitialData(collectOfProduct);
-    }
-    const handleClickOutside = (event: MouseEvent) => {
-      if (FilterRef.current?.contains(event.target as Node)) {
-        setCloseFilter(false);
-      } else if (!FilterRef.current?.contains(event.target as Node)) {
-        setCloseFilter(true);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [closeFilter, data, specials]);
-
-  return (
-    <div
-      ref={FilterRef}
-      className={
-        " flex relative items-center   w-full h-full gap-5 text-sm rounded-lg px-2 transition-all duration-300 py-1 ease-linear  " +
-        (search ? " bg-[var(--light-foreground)]" : " ")
-      }
-    >
-      <div
-        className={"order-2 cursor-pointer  " + (search ? " order" : " ")}
-        onClick={() => setSearch((search) => !search)}
-      >
-        <Search size={30} />
-      </div>
-      <form
-        className={"items-center  " + (search ? " flex order-2" : " hidden")}
-      >
-        <input
-          value={searchValue}
-          onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            setSearchValue(event.target.value);
-            debouncedDataModel(event.target.value);
-          }}
-          type="text"
-          placeholder="Search..."
-          className="px-3 py-2 focus:outline-none rounded-lg w-[340px] bg-transparent  "
-        />
-        <X
-          size={20}
-          className="cursor-pointer text-[var(--secondary-color)] "
-          onClick={() => setSearch((search) => !search)}
-        />
-      </form>
-      <div
-        className={
-          `absolute w-full ${
-            search ? "flex flex-col" : "hidden"
-          }  justify-center items-center top-14 left-0 ` +
-          (closeFilter ? "hidden" : "flex")
-        }
-      >
-        <div className="  overflow-y-auto gap-3 rounded-md flex flex-col  px-4 items-baseline py-3 bg-[var(--light-foreground)] h-[500px] w-full ">
-          {searchValue.length <= 0 ? (
-            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
-              Find Your Products
-              <Smile className="size-16 text-[var(--primary-color)]" />
-            </div>
-          ) : storeFilteredData?.length <= 0 ? (
-            <div className="flex flex-col-reverse items-center justify-center w-full gap-3 py-20">
-              Your Product Not Found
-              <Frown className="size-16 text-[var(--primary-color)]" />
-            </div>
-          ) : (
-            storeFilteredData?.map((filterData) => (
-              <ProductSearch prop={filterData} key={filterData.id} />
-            ))
-          )}
-        </div>
-        <LoadingText isLoading={loader} loadingFn={() => setLoader(false)} />
-      </div>
-    </div>
   );
 };

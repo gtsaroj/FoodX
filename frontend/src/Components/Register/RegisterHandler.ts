@@ -1,4 +1,4 @@
-import { ValidationType } from "../../models/Register.model";
+import { ValidationType } from "../../models/register.model";
 
 export const allFieldsRequired = (
   RegisterValue: ValidationType,
