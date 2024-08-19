@@ -17,7 +17,10 @@ const Modal: React.FC<ModelProp> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
-      if (modalRef.current && !modalRef.current?.contains(event.target as any)) {
+      if (
+        modalRef.current &&
+        !modalRef.current?.contains(event.target as any)
+      ) {
         closeModal();
       }
     };
@@ -43,13 +46,11 @@ const Modal: React.FC<ModelProp> = ({
         className=" overflow-auto rounded py-4 bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] flex duration-150 sm:h-fit relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  "
         ref={modalRef}
       >
-        <div className="w-full z-[1000] overflow-auto">{children}</div>
-        <button
-          className="absolute top-[7px] rounded right-[30px] p-3 hover:cursor-pointer duration-150 ease-in-out text-red-500 hover:text-red-600"
+        <div className="w-full z-[100]  overflow-auto">{children}</div>
+        <X
+          className=" text-red-500 right-5 z-[1000]  top-[15px] absolute  cursor-pointer hover:text-red-700"
           onClick={closeModal}
-        >
-          <X />
-        </button>
+        />
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { makeRequest } from "../../makeRequest";
 import { signOutUser } from "../../firebase/Authentication";
 import { useDispatch } from "react-redux";
-import { authLogout } from "../../Reducer/authReducer";
+import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
