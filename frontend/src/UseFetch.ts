@@ -1,8 +1,8 @@
 import { makeRequest } from "./makeRequest";
 import { useEffect, useState } from "react";
-import { ProductType } from "./models/productMode";
-import { RootState, Store } from "./Reducer/Store";
-import { authLogout } from "./Reducer/authReducer";
+import { ProductType } from "./models/product.model";
+import { RootState, Store } from "./Store";
+import { authLogout } from "./Reducer/user.reducer";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";
 
@@ -21,18 +21,6 @@ export const UseFetch = (url: string) => {
   useEffect(() => {
     const fetchApiData = async () => {
       try {
-        setLoading(true);
-        if (!authUser.success) {
-          return setLoading(true);
-        }
-        const refresToken = Cookies.get("refreshToken");
-        if (!refresToken) {
-          Store.dispatch(authLogout());
-        }
-        const accessToken = Cookies.get("accessToken");
-        if (!accessToken) {
-          return setLoading(true);
-        }
         const response = await makeRequest.get(url);
         const responseData = await response.data.data.products;
         setLoading(false);

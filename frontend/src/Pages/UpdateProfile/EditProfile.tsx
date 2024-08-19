@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { allFieldsRequired, checkValidNumber } from "./UpdateProfileValidation";
-import { AppDispatch, RootState } from "../../Reducer/Store";
+import { AppDispatch, RootState } from "../../Store";
 import { UpdateProfileType } from "./UpdateProfile";
 import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import { updateUserProfile } from "../../firebase/utils";

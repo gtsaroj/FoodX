@@ -9,17 +9,14 @@ import {
   Route,
   BrowserRouter,
   Outlet,
-  Navigate,
 } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
-import { OrderComponent } from "./Pages/Orders/Order.tsx";
+import { OrderComponent } from "./Pages/Order/Order.tsx";
 import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
 import { useEffect, useState } from "react";
-import { RootState, persistor } from "./Reducer/Store.ts";
+import { RootState } from "./Store.ts";
 import { useSelector } from "react-redux";
-import { app } from "./firebase/index.ts";
 
 const HomePage = () => {
   return (
@@ -29,7 +26,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <PrivateRoute userRole={["customer","admin"]} />
+          <Outlet/>
         </div>
         <div className="w-full">
           <Footer />
@@ -39,8 +36,6 @@ const HomePage = () => {
   );
 };
 export const App: React.FC = () => {
-  // persistor.purge()
-  // console.log(PrivateRoute({userRole : ["customers"]}))
   const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
 
@@ -51,17 +46,11 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/login"
-          element={showContent ? <Navigate to={"/"} replace /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={showContent ? <Navigate to={"/"} replace /> : <Register />}
-        />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
-        <Route element={<PrivateRoute userRole={["customer","admin"]} />}>
+        <Route>
           <Route path="/" element={<HomePage />}>
             <Route index element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>

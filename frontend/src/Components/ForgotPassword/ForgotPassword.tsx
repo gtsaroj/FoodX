@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../../logo/Fx.png";
+import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useNavigate } from "react-router-dom";
@@ -62,11 +62,7 @@ export const ForgotPassword: React.FC = () => {
       {/* Tablet and Desktop */}
       <div className="items-center justify-around hidden min-h-[90vh] w-full gap-5 px-3 py-4 overflow-x-hidden md:flex">
         <div className=" items-center justify-center hidden lg:flex">
-          <img
-            src={Logo}
-            className="w-full h-full "
-            alt="logo"
-          />
+          <img src={Logo} className="w-full h-full " alt="logo" />
         </div>
         <div className=" max-w-[700px] w-full pr-8">
           <LoginContainer />

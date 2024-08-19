@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Order, Product } from "../../models/order.model";
 import { nanoid } from "@reduxjs/toolkit";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { ProductType } from "../../models/productMode";
-import { SpecialCards } from "../../Components/Card/SpecialCards";
+import { ProductType } from "../../models/product.model";
+import { SpecialCards } from "../../Components/Card/ProductCard";
 import { UseFetch } from "../../UseFetch";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -12,28 +12,7 @@ import { ColumnProps, OrderModal } from "../../models/table.model";
 import Table from "../../Components/Common/Table/Table";
 import { orderHistory as orderData } from "../../data.json";
 
-const product: Product = {
-  id: nanoid(),
-  image: "img.png",
-  name: "Chicken Pizza",
-  price: 120,
-  quantity: 5,
-  tag: "pizza",
-};
 
-const order1: Order = {
-  orderId: nanoid(),
-  uid: "X8LHXCdRffcKJMR9Rs1s87HJBm83",
-  products: [product],
-  orderRequest: {
-    nanoseconds: 1,
-    seconds: 2,
-  },
-  orderFullFilled: {
-    nanoseconds: 3,
-    seconds: 4,
-  },
-};
 
 export const OrderComponent = () => {
   const [initialData, setInitialData] = useState<ProductType[]>([]);

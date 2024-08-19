@@ -1,8 +1,7 @@
-import  { Toaster } from "react-hot-toast";
 import Banner, { Sponsor } from "./Banner";
-import Category from "./Category";
 import Specials from "./Specials";
 import PrivateRoute from "../../PrivateRoute";
+import { MenuType } from "../../Components/Category/MenuType";
 const Home = () => {
   console.log(PrivateRoute({userRole: ["customers"]}))
   return (
@@ -16,10 +15,9 @@ const Home = () => {
           <Specials />
         </div>
         <div className="w-full flex items-center justify-center">
-          <Category />
+          <MenuType />
         </div>
       </div>
-      <Toaster/>
     </div>
   );
 };

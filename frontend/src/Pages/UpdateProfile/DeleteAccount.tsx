@@ -3,7 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { makeRequest } from "../../makeRequest";
 import { deleteAccount } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
-import { authLogout } from "../../Reducer/authReducer";
+import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import ReAuth from "./ReAuth";
 

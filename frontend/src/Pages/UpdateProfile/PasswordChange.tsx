@@ -6,7 +6,7 @@ import {
 } from "./UpdateProfileValidation";
 import { updateUserPassword } from "../../firebase/utils";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
+import { AppDispatch } from "../../Store";
 import { authLogout } from "../../Reducer/authReducer";
 import HashLoader from "react-spinners/HashLoader";
 import toast from "react-hot-toast";

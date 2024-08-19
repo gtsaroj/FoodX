@@ -1,7 +1,7 @@
 import React from "react";
-import { SingleCard } from "./SingleCard";
+import { SingleCard } from "../../Components/Card/CardProductCart";
 import { useSelector } from "react-redux";
-import { RootState } from "../../Reducer/Store";
+import { RootState } from "../../Store";
 import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

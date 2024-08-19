@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { RootState } from "./Reducer/Store";
+import { RootState } from "./Store";
 import { useEffect } from "react";
 
 interface PrivateRouteProp {
@@ -21,7 +21,7 @@ const PrivateRoute: React.FC<PrivateRouteProp> = ({ userRole }) => {
       <div>Unauthorized Access</div>
     )
   ) : (
-    <Navigate to={"/login"} state={location} replace></Navigate>
+    <Navigate to={"/"} state={location} replace></Navigate>
   );
 };
 

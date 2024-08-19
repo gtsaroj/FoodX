@@ -1,19 +1,16 @@
 import React from "react";
-import { AppDispatch, RootState } from "../../Reducer/Store";
+import { AppDispatch, RootState } from "../../Store";
 import { useDispatch, useSelector } from "react-redux";
-import { SingleCard } from "./SingleCard";
 import { ShoppingBag } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { addToCart } from "../../Reducer/Reducer";
+import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
-import { FavouriteCard } from "./FavouriteCard";
+import { FavouriteCard } from "../../Components/Card/FavouriteCard";
 
 const Favourite: React.FC = () => {
   const selectedProducts = useSelector(
     (state: RootState) => state.root.favourite.favourite
   );
 
-  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   return (

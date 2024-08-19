@@ -1,19 +1,19 @@
 import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import Logo from "../../logo/Fx.png";
+import Logo from '../../assets/logo/Fx.png'
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
-import { signInUser } from "../../firebase/Authentication";
-import { LoginUser } from "../../Reducer/authLogin";
+import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { signIn } from "../../Services";
-import { singInAction } from "../../Reducer/Action";
+import { singInAction } from "../../Actions/user.actions";
 
-const LoginContainer: React.FC = () => {
+
+
+//Login container
+export const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
@@ -22,7 +22,7 @@ const LoginContainer: React.FC = () => {
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
   );
-  const [dataSend, setDataSend] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const showPassword = () => {
     setShow((show) => !show);
@@ -33,14 +33,13 @@ const LoginContainer: React.FC = () => {
 
   const LoginFormSubmit = async (event: FormEvent) => {
     event.preventDefault();
-
     try {
-      setDataSend(false);
+      setLoading(true);
       await dispatch(singInAction({ email, password, userRole: "customer" }));
     } catch (error) {
-      console.error(`Error occuring while sending form : ${error}`);
-      setDataSend(true);
+      throw new Error("Error while loging" + error);
     }
+    setLoading(false);
   };
 
   return (
@@ -105,12 +104,12 @@ const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
-              {dataSend ? (
-                "Submit"
-              ) : (
+              {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />
                 </div>
+              ) : (
+                "Submit"
               )}
             </button>
             <p
@@ -149,7 +148,6 @@ const Login: React.FC = () => {
         </div>
       </div>
       <AuthFooter />
-      <Toaster position="top-center" />
     </div>
   );
 };

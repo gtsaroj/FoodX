@@ -1,18 +1,18 @@
 import { EditIcon, Eye, EyeOff, X } from "lucide-react";
 import { useSelector } from "react-redux";
-import { RootState, Store } from "../../Reducer/Store";
+import { RootState, Store } from "../../Store";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { getUserData } from "../../firebase/db";
-import { DbUser } from "../../models/UserModels";
-import avatar from "../../logo/avatar.png";
+import { DbUser, UpdateProfileInfo } from "../../models/user.model";
+import avatar from "../../assets/logo/avatar.png";
 import { storeImageInFirebase } from "../../firebase/storage";
-import { UpdateProfileUser } from "../../Reducer/AuthUpdateUser";
 import ReAuth from "./ReAuth";
 import toast from "react-hot-toast";
-import { authLogout } from "../../Reducer/authReducer";
+import { authLogout } from "../../Reducer/user.reducer";
 import { updateUserPassword } from "../../firebase/utils";
 import DeleteAccount from "./DeleteAccount";
 import DisableAccount from "./DisableAccount";
+import { updateUserAction } from "../../Actions/user.actions";
 
 export const UserProfileComponent = () => {
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
@@ -201,13 +201,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
   );
 };
 
-export interface UpdateProfileInfo {
-  avatar?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phoneNumber?: string;
-}
+
 
 const PersonlInformation = (props: any) => {
   const firstName = props?.fullName?.split(" ")[0];
@@ -231,7 +225,7 @@ const PersonlInformation = (props: any) => {
   const UpdateProfile = async () => {
     setLoading(true);
     await Store.dispatch(
-      UpdateProfileUser(updateProfilInfo as UpdateProfileInfo)
+      updateUserAction(updateProfilInfo as UpdateProfileInfo)
     );
 
     setLoading(false);

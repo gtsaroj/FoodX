@@ -1,22 +1,18 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { ValidationType } from "../../models/Register.model";
+import { ValidationType } from "../../models/register.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
-import { signUpNewUser } from "../../firebase/Authentication";
-import { registerNewUser } from "../../Reducer/authActions";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
+import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import { checkValidNumber, validatePasswordOnChange } from "./RegisterHandler";
 import { allFieldsRequired } from "./RegisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { AuthFooter } from "../Footer/AuthFooter";
-import avatar from "../../logo/avatar.png";
-import logo from "../../logo/Fx.png";
+import avatar from "../../assets/logo/avatar.png";
+import logo from "../../assets/logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { signUp } from "../../Services";
-import { Role } from "./Validation";
-import { singUpAction } from "../../Reducer/Action";
+import { singUpAction } from "../../Actions/user.actions";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
