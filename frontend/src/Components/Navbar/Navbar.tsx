@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
-import {
-  Heart,
-  Phone,
-  ShoppingBag,
-  UserCircleIcon,
-} from "lucide-react";
+import { Heart, Phone, ShoppingBag, UserCircleIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { UseFetch } from "../../UseFetch";
 import { ProductType } from "../../models/product.model";
@@ -13,6 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../Store";
 import Favourite from "../../Pages/Cart/Favourite";
 import { debounce } from "../../Utility/Debounce";
+import Modal from "../Common/Popup/Popup";
+import { LoginContainer } from "../Login/Login";
+import Profile from "../AuthProfile/AuthProfile";
+import { User } from "../../models/user.model";
 const navbarItems = [
   {
     name: "Home",
@@ -31,10 +30,9 @@ const navbarItems = [
 export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
   const [initialData, setInitialData] = useState<ProductType[]>([]);
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
-  const [openFavourite, setOpenFavourite] = useState<boolean>(false);
+  const [closeProfile, setCloseProfile] = useState<boolean>(true);
+  const [openFavourite, setOpenFavourite] = useState<boolean>(true);
 
-  const { data, loading, error } = UseFetch("/products/all");
   const { data: specialProducts } = UseFetch("/products/specials");
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -42,52 +40,38 @@ export const Navbar: React.FC = () => {
   const profileRef = useRef<HTMLDivElement | null>(null);
   const favouriteReference = useRef<HTMLDivElement>();
 
-  const searchModel = (value: string) => {
-    if (value.length > 0) {
-      setLoader(true);
-    }
-    if (!value) throw new Error("input value not found" + error);
-
-    const filteringData = initialData?.filter((singleProduct) =>
-      singleProduct.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setStoreFilteredData(filteringData as ProductType[]);
-  };
-  const debouncedDataModel = useCallback(debounce(searchModel, 500), []);
-
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (FilterRef.current?.contains(event.target as Node)) {
-        setCloseFilter(false);
-      } else if (!FilterRef.current?.contains(event.target as Node)) {
-        setCloseFilter(true);
-      }
-    };
     const closeModal = (event: MouseEvent) => {
       if (
         favouriteReference.current &&
         !favouriteReference.current.contains(event.target as any)
       ) {
-        setOpenFavourite(false);
+        setOpenFavourite(true);
       }
     };
 
     const closeProfile = (event: MouseEvent) => {
-      if (!profileRef?.current?.contains(event.target as Node)) {
-        setOpenProfile(false);
+      if (
+        profileRef.current &&
+        !profileRef?.current.contains(event.target as any)
+      ) {
+        setCloseProfile(true);
       }
     };
 
-    document.addEventListener("mousedown", closeProfile);
-    document.addEventListener("mousedown", handleClickOutside);
-    if (openFavourite) {
+    if (!closeProfile) {
+      document.addEventListener("mousedown", closeProfile);
+    }
+
+    if (!openFavourite) {
       document.addEventListener("mousedown", closeModal);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mousedown", closeModal);
+      document.removeEventListener("mousedown", closeProfile);
     };
-  }, [openProfile, debouncedDataModel, data, specialProducts]);
+  }, [closeProfile, specialProducts]);
   const navigate = useNavigate();
 
   const isFavourite = useSelector((state: RootState) => state.root.favourite);
@@ -155,7 +139,7 @@ export const Navbar: React.FC = () => {
             {/* Favourite container */}
             <div
               className={` left-[-23rem] top-12 duration-150 absolute ${
-                openFavourite
+                !openFavourite && authUser.fullName
                   ? "visible z-10 translate-y-0 opacity-100 "
                   : "-translate-y-2 invisible opacity-0 z-[-100]"
               } `}
@@ -163,35 +147,62 @@ export const Navbar: React.FC = () => {
               <Favourite />
             </div>
           </div>
-          {authUser?.avatar ? (
-            <div
-              ref={profileRef}
-              onClick={() => setOpenProfile(!openProfile)}
-              className=" hover:bg-[#8080807c] p-1 rounded-full cursor-pointer group/user"
-            >
-              <img
-                className="rounded-full sm:size-9 size-8"
-                src={authUser.avatar}
-                alt=""
-              />
-            </div>
-          ) : (
-            <div className="">
-              <UserCircleIcon
-                className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
-                size={30}
-              />
-            </div>
-          )}
+          <div
+            onClick={() => setCloseProfile(!closeProfile)}
+            className="w-full "
+            ref={profileRef}
+          >
+            {authUser?.avatar && (
+              <div className="w-full relative">
+                <div className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user">
+                  <img
+                    className="rounded-full sm:size-9 size-8"
+                    src={authUser.avatar}
+                    alt=""
+                  />
+                </div>
+                <div
+                  className={` duration-150 ${
+                    !closeProfile
+                      ? "visible opacity-100 "
+                      : "invisible opacity-0 "
+                  } w-full absolute right-[16rem] top-[45px]  `}
+                >
+                  <Profile user={authUser} />
+                </div>
+              </div>
+            )}
+            {!authUser?.fullName && (
+              <div className="">
+                <UserCircleIcon
+                  className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
+                  size={30}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
       {/* {mobileMenu && <MobileMenu />} */}
       <div
         ref={profileRef}
         className={`absolute right-5 top-20 flex w-full justify-end items-center ${
-          openProfile ? "flex" : "hidden"
+          !closeProfile ? "flex" : "hidden"
         }`}
       ></div>
+      {!openFavourite && !authUser.fullName && (
+        <Modal
+          close={openFavourite}
+          closeModal={() => setOpenFavourite(!openFavourite)}
+        >
+          <LoginContainer />
+        </Modal>
+      )}
+      {!closeProfile && !authUser?.fullName && (
+        <Modal close={closeProfile} closeModal={() => setCloseProfile(true)}>
+          <LoginContainer />
+        </Modal>
+      )}
     </nav>
   );
 };
