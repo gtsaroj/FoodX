@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import Logo from '../../assets/logo/Fx.png'
+import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
 import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
@@ -9,8 +9,6 @@ import { useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { singInAction } from "../../Actions/user.actions";
-
-
 
 //Login container
 export const LoginContainer: React.FC = () => {
@@ -50,7 +48,10 @@ export const LoginContainer: React.FC = () => {
           <h1 className="hidden md:block">Login with Email</h1>
         </div>
         <div className="px-3 py-4">
-          <form className="flex flex-col gap-4 p-2" onSubmit={LoginFormSubmit}>
+          <form
+            className="flex text-[var(--dark-text)] flex-col gap-4 p-2"
+            onSubmit={LoginFormSubmit}
+          >
             <div className="relative flex flex-col gap-2">
               <label htmlFor="logEmail" className="text-[15px]">
                 Email

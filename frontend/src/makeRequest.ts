@@ -1,22 +1,12 @@
 import axios, { AxiosInstance } from "axios";
-import Cookies from "js-cookie";
+import Cookies from "js-cookie"
 import toast from "react-hot-toast";
+import { Store } from "./Store";
+import { authLogout } from "./Reducer/user.reducer";
 
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
-
-let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
-
-const onRrefreshed = (token: string) => {
-  refreshSubscribers.forEach((callback) => callback(token));
-  refreshSubscribers = [];
-};
-
-const addRefreshSubscriber = (callback: (token: string) => void) => {
-  refreshSubscribers.push(callback);
-};
 
 makeRequest.interceptors.request.use(async (config) => {
   const accessToken = Cookies.get("accessToken");
@@ -30,51 +20,35 @@ makeRequest.interceptors.response.use(
     return response;
   },
   async (error) => {
+
     const status = error.response ? error.response.status : null;
 
-    const originalRequest = error.config;
-
-    if (status === 401 && !originalRequest._retry) {
+    if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
+        Store.dispatch(authLogout())
         return Promise.reject("You have not access, please login again...");
       }
-
-      if (!isRefreshing) {
-        isRefreshing = true;
-        originalRequest._retry = true;
-
-        try {
-          const response = await makeRequest.post("/users/refresh-token", {
-            refreshToken,
-          });
-
-          const responseData = response.data.data;
-          const newAccessToken = responseData.accessToken;
-          const newRefreshToken = responseData.refreshToken;
-
-          Cookies.set("accessToken", newAccessToken);
-          Cookies.set("refreshToken", newRefreshToken);
-
-          isRefreshing = false;
-          onRrefreshed(newAccessToken);
-        } catch (err) {
-          isRefreshing = false;
-          Cookies.remove("accessToken");
-          Cookies.remove("refreshToken");
-          toast.error("Session Expired, Please Login Again");
-          return Promise.reject("You have not access, please login again...");
-        }
-      }
-
-      return new Promise((resolve) => {
-        addRefreshSubscriber((newAccessToken: string) => {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-          resolve(axios(originalRequest));
-        });
+      Cookies.remove("accessToken");
+      console.log(
+        `==================STEP-1===================================`
+      );
+      const response = await makeRequest.post("/users/refresh-token", {
+        refreshToken,
       });
-    }
 
+      const responseData = await response.data.data;
+      const newRefreshToken = await responseData.refreshToken;
+      const newAcessToken = await responseData.accessToken;
+      Cookies.set("accessToken", newAcessToken);
+      let previousRefreshToken = Cookies.get("refreshToken");
+      if (previousRefreshToken) {
+        Cookies.set("refreshToken", (previousRefreshToken = newRefreshToken));
+      }
+      //  try with original request
+      return await makeRequest(error.config);
+    }
+     console.log(error)
     if (status === 403) {
       Cookies.remove("refreshToken");
       toast.error("Session Expired, Please Login Again");

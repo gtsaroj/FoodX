@@ -12,8 +12,6 @@ import { ColumnProps, OrderModal } from "../../models/table.model";
 import Table from "../../Components/Common/Table/Table";
 import { orderHistory as orderData } from "../../data.json";
 
-
-
 export const OrderComponent = () => {
   const [initialData, setInitialData] = useState<ProductType[]>([]);
   const { data, loading: loader } = UseFetch("/products/all");
@@ -50,13 +48,48 @@ export const OrderComponent = () => {
         </div>
       </div>{" "}
       <div className="w-full h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-        <h1 className="text-[23px] pl-5 pt-3 tracking-wider ">Popular products</h1>
+        <h1 className="text-[23px] pl-5 pt-3 tracking-wider ">
+          Popular products
+        </h1>
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">
-              {initialData?.map((singleObject) => (
-                <SpecialCards prop={singleObject} key={singleObject.id} />
-              ))}
+              {initialData?.length > 0 ? (
+                initialData?.map((singleObject) => (
+                  <SpecialCards prop={singleObject} key={singleObject.id} />
+                ))
+              ) : (
+                <div className="w-full gap-4 flex ">
+                  <Skeleton
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                </div>
+              )}
             </div>
           </div>
           {loading && (

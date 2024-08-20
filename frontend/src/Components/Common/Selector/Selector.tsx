@@ -18,7 +18,7 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
       >
         <input
           type="text"
-          className="w-full py-2.5 tracking-wider  outline-none cursor-pointer "
+          className="w-full bg-[var(--light-foreground)] py-2.5 tracking-wider  outline-none cursor-pointer "
           readOnly
           value={showField}
           placeholder="Select option"
@@ -33,7 +33,7 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
         }`}
       >
         {children?.map((option) => (
-          <div 
+          <div
             onClick={() => {
               action(option?.name);
               setShowField(option?.name);

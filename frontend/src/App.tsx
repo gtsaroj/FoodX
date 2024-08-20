@@ -9,6 +9,7 @@ import {
   Route,
   BrowserRouter,
   Outlet,
+  Navigate,
 } from "react-router-dom";
 import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
 import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
@@ -17,6 +18,7 @@ import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
 import { useEffect, useState } from "react";
 import { RootState } from "./Store.ts";
 import { useSelector } from "react-redux";
+import PrivateRoute from "./PrivateRoute.tsx";
 
 const HomePage = () => {
   return (
@@ -26,7 +28,7 @@ const HomePage = () => {
           <Header />
         </div>
         <div className="w-full">
-          <Outlet/>
+          <Outlet />
         </div>
         <div className="w-full">
           <Footer />
@@ -46,8 +48,14 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={showContent ? <Navigate to={"/"} /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={showContent ? <Navigate to={"/"} /> : <Register />}
+        />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
         <Route>
@@ -55,8 +63,20 @@ export const App: React.FC = () => {
             <Route index element={<Home />} />
             <Route path="/cart" element={<MobileCart />}></Route>
             <Route path="/profile" element={<UserProfileComponent />} />
-            <Route path="/orders" element={<OrderComponent />} />
-            <Route path="/cart/checkout" element={<Payment />} />
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/orders" element={<OrderComponent />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/cart/checkout" element={<Payment />} />
+            </Route>
           </Route>
         </Route>
         <Route path="*" element={<NotFoundPage />} />

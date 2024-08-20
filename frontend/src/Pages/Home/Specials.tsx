@@ -3,6 +3,7 @@ import { SpecialCards } from "../../Components/Card/ProductCard";
 import Cart from "../Cart/Cart";
 import { getSpecialProducts } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
+import Skeleton from "react-loading-skeleton";
 
 const Specials: React.FC = () => {
   return (
@@ -14,10 +15,10 @@ const Specials: React.FC = () => {
       </div>
       <div className="grid grid-cols-5 gap-8 " id="specials">
         <div className="  flex flex-col items-center justify-center rounded-md px-5 py-8 col-span-5 lg:col-span-3">
-          <div className="w-full  h-full  overflow-x-scroll">
+          <div className="w-full  h-full  overflow-y-hidden overflow-x-scroll">
             <SpecialCardsContainer />
           </div>
-          <div className="w-full overflow-x-scroll">
+          <div className="w-full h-full overflow-y-hidden overflow-x-scroll">
             <SpecialCardsContainer1 />
           </div>
         </div>
@@ -51,10 +52,35 @@ const SpecialCardsContainer: React.FC = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex pb-4  gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
-        {initalProducts &&
+        {initalProducts.length > 0 ? (
           initalProducts.map((item) => (
             <SpecialCards prop={item} key={item.id} />
-          ))}
+          ))
+        ) : (
+          <div className="w-full gap-4 flex ">
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
@@ -78,10 +104,35 @@ export const SpecialCardsContainer1: React.FC = () => {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex  pb-4 gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
-        {initalProducts &&
+        {initalProducts.length > 0 ? (
           initalProducts.map((item) => (
             <SpecialCards prop={item} key={item.id} />
-          ))}
+          ))
+        ) : (
+          <div className="w-full flex gap-4">
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
