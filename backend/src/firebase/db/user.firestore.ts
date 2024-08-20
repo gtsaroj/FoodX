@@ -1,4 +1,3 @@
-import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { User, AccessType } from "../../models/user.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
@@ -64,26 +63,6 @@ const updateUserDataInFirestore = async (
   }
 };
 
-// const getUserFromDatabase = async (uid: string) => {
-//   try {
-//     const userRef = db.collection("customer").doc(uid);
-//     const adminRef = db.collection("admin").doc(uid);
-
-//     const customerInfo = await userRef.get();
-//     const adminInfo = await adminRef.get();
-//     if (customerInfo.exists) {
-//       const customerData = customerInfo.data() as User;
-//       return customerData;
-//     } else if (adminInfo.exists) {
-//       const adminData = adminInfo.data() as User;
-//       return adminData;
-//     }
-//     throw new ApiError(404, "No user found. Please sign up or login");
-//   } catch (error) {
-//     console.error(error);
-//     throw new ApiError(404, "User not found.");
-//   }
-// };
 const getUserFromDatabase = async (
   uid: string,
   path: "customer" | "admin" | "chef"
@@ -119,38 +98,6 @@ const bulkDeleteUserFromDatabase = async (
     throw new ApiError(401, "Unable to bulk delete users data.");
   }
 };
-
-// const getUsersFromDatabase = async (
-//   path: "customer" | "admin" | "chef",
-//   lastVisible: QueryDocumentSnapshot | null,
-//   pageSize: number,
-//   filter: keyof User,
-//   sort: "asc" | "desc" = "asc"
-// ) => {
-//   const userRef = db.collection(path);
-//   const query = userRef.orderBy(filter, sort).limit(pageSize);
-//   try {
-//     if (lastVisible) query.startAfter(lastVisible);
-//     const userDoc = await query.get();
-//     if (userDoc.empty) throw new ApiError(404, "No users found.");
-
-//     const users: User[] = [];
-//     userDoc.docs.forEach((doc) => {
-//       users.push(doc.data() as User);
-//     });
-
-//     const lastDoc = userDoc.docs[userDoc.docs.length - 1] || null;
-
-//     return { users, lastDoc };
-//   } catch (error) {
-//     throw new ApiError(
-//       500,
-//       "Error while getting users from database.",
-//       null,
-//       error as string[]
-//     );
-//   }
-// };
 
 const getUsersFromDatabase = async (
   path: "customer" | "admin" | "chef",

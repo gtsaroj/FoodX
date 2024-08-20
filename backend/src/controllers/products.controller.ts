@@ -12,6 +12,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { Product, UploadProductType } from "../models/product.model.js";
+import { redisClient } from "../utils/Redis.js";
 
 const getNormalProducts = asyncHandler(async (_: any, res: any) => {
   try {
@@ -195,16 +196,19 @@ const fetchProducts = asyncHandler(async (req: any, res: any) => {
       direction,
       category ? category : undefined
     );
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { products, currentFirstDoc: firstDoc, currentLastDoc: lastDoc , length},
-          "Successfully fetched products from database",
-          true
-        )
-      );
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          products,
+          currentFirstDoc: firstDoc,
+          currentLastDoc: lastDoc,
+          length,
+        },
+        "Successfully fetched products from database",
+        true
+      )
+    );
   } catch (error) {
     throw new ApiError(
       401,

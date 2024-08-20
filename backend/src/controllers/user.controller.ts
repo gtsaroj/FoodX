@@ -1,8 +1,5 @@
 import jwt from "jsonwebtoken";
-import {
-  getUserDataByEmail,
-  getUserDataById,
-} from "../firebase/auth/Authentication.js";
+import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
@@ -17,9 +14,7 @@ import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { CustomerType } from "../models/order.model.js";
-import { json } from "express";
-import { QueryDocumentSnapshot } from "firebase-admin/firestore";
+import { redisClient } from "../utils/Redis.js";
 
 //Cookie options
 const options = {
@@ -39,6 +34,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   try {
     const user = await getUserDataByEmail(email);
     const userDataFromDatabase = await getUserFromDatabase(user.uid, userRole);
+    user.phoneNumber = userDataFromDatabase.phoneNumber;
     const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
@@ -48,13 +44,16 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
     );
     user.refreshToken = refreshToken;
 
-    //TODO: send privilage value somehow from frontend or firebase and store accordingly.
     await updateUserDataInFirestore(
       user.uid,
       userDataFromDatabase.role,
       "refreshToken",
       refreshToken
     );
+
+    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
+      EX: 3600,
+    });
 
     return res
       .status(200)
@@ -69,13 +68,13 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(400, `User login failed.`);
+    throw new ApiError(400, `User login failed.`, null, error as string[]);
   }
 });
 
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
   const { firstName, lastName, email, avatar, phoneNumber, role } = req.body;
-  console.log(role);
+  console.log("Reached signup");
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
@@ -92,10 +91,27 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
     };
 
     await addUserToFirestore(userInfo, role);
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+      uid,
+      userInfo.role
+    );
+
+    userInfo.refreshToken = refreshToken;
+
+    await redisClient.set(`user:${uid}`, JSON.stringify(userInfo), {
+      EX: 3600,
+    });
     return res
       .status(201)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
-        new ApiResponse(201, { userInfo }, "User successfully added", true)
+        new ApiResponse(
+          201,
+          { userInfo, accessToken, refreshToken },
+          "User successfully added",
+          true
+        )
       );
   } catch (error) {
     console.error(error);
@@ -128,14 +144,12 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
     req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) throw new ApiError(401, "Unauthorized access");
-  console.log("-----------------------------------------------");
-  console.log(`From refresh Access token: \n ${incomingRefreshToken}`);
+
   try {
     const decodedToken = jwt.verify(
       incomingRefreshToken,
       process.env.REFRESH_TOKEN_SECRET as string
     ) as DecodeToken;
-    console.log(`Decoded Token: \n ${decodedToken.uid}`);
 
     const user = await getUserFromDatabase(
       decodedToken.uid.trim(),
@@ -143,7 +157,6 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
     );
     const { role } = user;
     if (!user) throw new ApiError(404, "User not found.");
-    console.log(`User refresh token from database: \n${user.refreshToken}`);
 
     if (incomingRefreshToken !== user.refreshToken)
       throw new ApiError(403, "Refresh token is expired or used");
@@ -158,6 +171,11 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
       newRefreshToken
     );
 
+    user.refreshToken = newRefreshToken;
+
+    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .cookie("accessToken", accessToken)
@@ -172,9 +190,13 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
       );
   } catch (error) {
     res.status(403).clearCookie("accessToken").clearCookie("refreshToken");
-    console.log(error);
     res;
-    throw new ApiError(403, "Error  on refreshing the Access Token");
+    throw new ApiError(
+      403,
+      "Error  on refreshing the Access Token",
+      null,
+      error as string[]
+    );
   }
 });
 
@@ -203,7 +225,6 @@ const deleteUser = asyncHandler(async (req: any, res: any) => {
     const foundUser = await getUserFromDatabase(uid, role);
     if (!foundUser) throw new ApiError(404, "User not found.");
 
-    //
     await deleteUserFromFireStore(foundUser.uid, foundUser.role);
     return res
       .status(200)
@@ -242,7 +263,6 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
 const updateAccount = asyncHandler(async (req: any, res: any) => {
   try {
     const { fullName, phoneNumber, avatar } = req.body;
-    console.log(fullName, phoneNumber, avatar);
     const accessToken =
       req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
@@ -279,6 +299,9 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
       await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
     }
 
+    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
+      EX: 3600,
+    });
     res
       .status(200)
       .json(
@@ -294,42 +317,6 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-// const deletAllUser = asyncHandler(async (req: any, res: any) => {
-//   try {
-//     const {
-//       users,
-//       role,
-//     }: {
-//       users: CustomerType[];
-//       role: "customer" | "admin" | "chef";
-//     } = req.body;
-//     if (!users || users.length === 0) {
-//       throw new ApiError(404, "Users not found.");
-//     }
-//     const deletionPromises = users.map(async (user) => {
-//       const foundUser = await getUserFromDatabase(user.id, role);
-
-//       if (!foundUser) {
-//         throw new ApiError(404, `User with uid ${user.id} not found.`);
-//       }
-
-//       await deleteUserFromFireStore(foundUser.uid, foundUser.role);
-//     });
-
-//     await Promise.all(deletionPromises);
-//     return res
-//       .status(200)
-//       .clearCookie("accessToken", options)
-//       .clearCookie("refreshToken", options)
-//       .json(new ApiResponse(200, {}, "Users deleted successfully", true));
-//   } catch (error) {
-//     if (error instanceof ApiError) {
-//       throw error; // Re-throw ApiError with custom message
-//     } else {
-//       throw new ApiError(400, "Error deleting users from firestore.");
-//     }
-//   }
-// });
 const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
   const {
     role,
@@ -358,7 +345,6 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
     role: "customer" | "admin" | "chef";
     newRole: "customer" | "admin" | "chef";
   } = req.body;
-  console.log(id, newRole);
   try {
     const user = await getUserFromDatabase(id, role);
     if (!user) throw new ApiError(404, "User not found.");
@@ -366,7 +352,6 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
     user.role = newRole;
     await addUserToFirestore(user, newRole);
     await generateAccessAndRefreshToken(id, newRole);
-    console.log(user);
     return res
       .status(200)
       .json(
