@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Frown, Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { SingleCard } from "../Card/CardProductCart";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -140,32 +140,54 @@ export const MobileCart: React.FC = () => {
   const [initialData, setInitialData] = useState<ProductType[]>([]);
   const { data } = UseFetch("/products/all");
 
+  const authUser = useSelector((state: RootState) => state.root.auth.success);
+
   useEffect(() => {
     setInitialData(data as ProductType[]);
   }, [data]);
+  const navigate = useNavigate();
 
   return (
     // Desktop
     <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
-      <div className="w-full h-full flex lg:flex-row flex-col gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
+      <div className="w-full h-full flex lg:flex-row flex-col gap-[7rem] sm:gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
         <div className="lg:w-[600px] w-full p-2 py-4  px-5 rounded">
           <Cart />
         </div>
-        <div className="lg:w-[550px] w-full flex h-full flex-col gap-4 pt-3 px-4 bg-[var(--light-background)] border  rounded-lg">
+        <div className="lg:w-[550px] w-full flex h-full flex-col gap-4 pt-3 px-4 border  rounded-lg">
           <h3 className="w-full text-[25px] pl-4  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
             Recent Products
           </h3>
           <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">
             <div className="flex  flex-col w-full items-start h-[530px]  gap-3">
-              {initialData?.length > 0 ? (
-                initialData?.map((data) => <Carts prop={data} key={data.id} />)
+              {authUser ? (
+                initialData?.length > 0 ? (
+                  initialData?.map((data) => (
+                    <Carts prop={data} key={data.id} />
+                  ))
+                ) : (
+                  <div className="w-full ">
+                    <Skeleton
+                      height={90}
+                      baseColor="var(--light-background)"
+                      highlightColor="var(--light-foreground)"
+                      count={5}
+                    />
+                  </div>
+                )
               ) : (
-                <Skeleton
-                  height={100}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
+                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
+                  <Frown className="size-32 text-[var(--dark-secondary-text)] " />
+                  <p className="text-lg text-[var(--dark-secondary-text)] mb-4">
+                    You are not logged in!
+                  </p>
+                  <button
+                    onClick={() => navigate("/login")}
+                    className="bg-[var(--primary-light)] text-white py-2 px-4 rounded hover:bg-[var(--primary-color)] "
+                  >
+                    Log in to see your products
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -173,7 +195,7 @@ export const MobileCart: React.FC = () => {
       </div>
 
       <div className="w-full mx-4 h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-        <h1 className="text-[23px] tracking-wider ">Popular products</h1>
+        <h1 className="text-[23px] pl-5 pt-4 tracking-wider ">Popular products</h1>
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">
@@ -182,15 +204,31 @@ export const MobileCart: React.FC = () => {
                   <SpecialCards prop={singleObject} key={singleObject.id} />
                 ))
               ) : (
-                <div className="w-full flex">
+                <div className="w-full gap-4 flex ">
                   <Skeleton
-                    height={80}
+                    height={230}
+                    width={330}
                     baseColor="var(--light-background)"
                     highlightColor="var(--light-foreground)"
                     count={1}
                   />
                   <Skeleton
-                    height={80}
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={230}
+                    width={330}
+                    baseColor="var(--light-background)"
+                    highlightColor="var(--light-foreground)"
+                    count={1}
+                  />
+                  <Skeleton
+                    height={230}
+                    width={330}
                     baseColor="var(--light-background)"
                     highlightColor="var(--light-foreground)"
                     count={1}
@@ -212,7 +250,6 @@ interface MenuProp {
 //recent products
 
 export const Carts: React.FC<MenuProp> = ({ prop }) => {
-  console.log(prop);
   const [activeCart, setActiveCart] = useState<boolean>();
   const [cartQuantity, setCartQuantity] = useState<number>(1);
 

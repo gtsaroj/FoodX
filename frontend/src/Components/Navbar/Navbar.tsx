@@ -106,7 +106,7 @@ export const Navbar: React.FC = () => {
           {/* Cart */}
           <div
             onClick={() => navigate("/cart")}
-            className="flex items-center justify-center md:hidden"
+            className="flex cursor-pointer items-center justify-center md:hidden"
           >
             <ShoppingBag />
           </div>
@@ -160,7 +160,7 @@ export const Navbar: React.FC = () => {
                     !closeProfile && authUser.fullName
                       ? "visible opacity-100 "
                       : "invisible opacity-0 "
-                  } w-full absolute right-[16rem] top-[45px]  `}
+                  } w-full absolute right-[19.3rem] top-[45px]  `}
                 >
                   <Profile user={authUser} />
                 </div>

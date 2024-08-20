@@ -11,6 +11,7 @@ export const signIn = async (
   password?: string,
   userRole = "customer"
 ) => {
+  const toastLoader = toast.loading("Logging in, please wait...");
   try {
     await signInUser(email, password as string);
     const response = await globalRequest({
@@ -23,10 +24,13 @@ export const signIn = async (
     Cookies.set("refreshToken", responseData.refreshToken);
     const role = await getRoleFromAccessToken();
     responseData.user.role = role;
-    console.log(responseData.user);
+    toast.dismiss(toastLoader);
+    toast.success("Logged in successfully!");
+
     return responseData.user as User;
   } catch (error) {
-    toast.error("Invalid username or password");
+    toast.dismiss(toastLoader);
+    toast.error("Error logging in. Please try again.");
     throw new Error("Invalid username or password");
   }
 };

@@ -21,7 +21,7 @@ const PrivateRoute: React.FC<PrivateRouteProp> = ({ userRole }) => {
       <div>Unauthorized Access</div>
     )
   ) : (
-    <Navigate to={"/"} state={location} replace></Navigate>
+    <Navigate to={"/login"} state={location} replace></Navigate>
   );
 };
 
