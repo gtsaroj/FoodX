@@ -1,9 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
-import { Heart, Phone, ShoppingBag, UserCircleIcon } from "lucide-react";
+import {
+  Heart,
+  Menu,
+  Phone,
+  ShoppingBag,
+  UserCircleIcon,
+  X,
+} from "lucide-react";
 import { useSelector } from "react-redux";
 import { UseFetch } from "../../UseFetch";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { RootState } from "../../Store";
 import Favourite from "../../Pages/Cart/Favourite";
 import Modal from "../Common/Popup/Popup";
@@ -24,12 +31,39 @@ const navbarItems = [
   },
 ];
 
+export const NavbarContainer = () => {
+  const location = useLocation();
+
+  return (
+    <div className="flex text-start  md:flex-row flex-col items-start md:items-center justify-start md:justify-center h-full w-full">
+      {navbarItems &&
+        navbarItems.map((item, index) => (
+          <Link
+            to={item.url}
+            key={index}
+            className={
+              "h-full px-5 py-4 hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)]  text-start w-full md:w-[100px] " +
+              (location.pathname === item.url
+                ? " font-bold text-[var(--secondary-color)] "
+                : " ")
+            }
+          >
+            <p className="flex w-full items-center justify-start md:justify-center h-full tracking-wider text-md">
+              {item.name}
+            </p>
+          </Link>
+        ))}
+    </div>
+  );
+};
+
 export const Navbar: React.FC = () => {
-  const [activeNav, setActiveNav] = useState<number>(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const menuReference = useRef<HTMLDivElement | null>();
+
   const [closeProfile, setCloseProfile] = useState<boolean>(true);
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
 
-  const { data: specialProducts } = UseFetch("/products/specials");
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);
@@ -50,9 +84,15 @@ export const Navbar: React.FC = () => {
       ) {
         setCloseProfile(true);
       }
+      if (
+        menuReference.current &&
+        !menuReference.current.contains(event.target as any)
+      ) {
+        setOpen(false);
+      }
     };
 
-    if (!closeProfile || !openFavourite) {
+    if (!closeProfile || !openFavourite || !open) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -66,39 +106,38 @@ export const Navbar: React.FC = () => {
   return (
     <nav
       ref={FilterRef}
-      className="w-full min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
+      className="w-full  backdrop-blur  min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
-      {/* Logo */}
-      <div
-        className="flex items-center cursor-pointer shrink-0 "
-        onClick={() => navigate("/")}
-      >
-        <img
-          src={CollegeLogo}
-          alt="college logo"
-          className="max-h-[80px]  w-[160px]  sm:w-full h-full p-2  "
-        />
+      <div className="flex  items-center justify-start gap-4">
+        <div ref={menuReference as any} className="w-full  flex md:hidden ">
+          <button onClick={() => setOpen(!open)}>
+            {open ? <X className="size-10" /> : <Menu className="size-10" />}
+          </button>
+          <div
+            className={`w-full  duration-150 ${
+              open
+                ? "top-24 opacity-100 "
+                : " opacity-0 bg-transparent top-[-1000px] "
+            } left-0 flex justify-start items-center absolute bg-[var(--light-background)]  `}
+          >
+            <NavbarContainer />
+          </div>
+        </div>
+        {/* Logo */}
+        <div
+          className="flex items-center cursor-pointer shrink-0 "
+          onClick={() => navigate("/")}
+        >
+          <img
+            src={CollegeLogo}
+            alt="college logo"
+            className="max-h-[80px]  w-[160px]  md:w-full h-full p-2  "
+          />
+        </div>
       </div>
       {/* Navbar  */}
-      <div className="items-center justify-around hidden h-full md:flex">
-        {navbarItems &&
-          navbarItems.map((item, index) => (
-            <Link
-              to={item.url}
-              key={index}
-              onClick={() => setActiveNav(index)}
-              className={
-                "h-full px-5 py-4 hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)] w-[100px] " +
-                (activeNav === index
-                  ? " font-bold text-[var(--secondary-color)] "
-                  : " ")
-              }
-            >
-              <p className="flex items-center justify-center h-full tracking-wider text-md">
-                {item.name}
-              </p>
-            </Link>
-          ))}
+      <div className=" h-full hidden md:flex">
+        <NavbarContainer />
       </div>
       {/*  Product Search */}
       <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
