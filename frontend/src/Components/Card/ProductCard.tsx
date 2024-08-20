@@ -6,6 +6,8 @@ import { RootState } from "../../Store";
 import { LoadingText } from "../Loader/Loader";
 import { addToFavourite } from "../../Reducer/favourite.reducer";
 import { Product } from "../../models/product.model";
+import Modal from "../Common/Popup/Popup";
+import { LoginContainer } from "../Login/Login";
 
 interface MenuProp {
   prop: Product;
@@ -14,12 +16,25 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
   const [cartQuantity, setCartQuantity] = useState<number>(1);
   const [loader, setLoader] = useState<boolean>(false);
+  const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
 
   const dispatch = useDispatch();
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
   );
+  const favourite = useSelector(
+    (state: RootState) => state.root.favourite.favourite
+  );
+
+  const isFavourite = (id: string) => {
+    return favourite?.some((singleProduct) => singleProduct.id === id);
+  };
+  const isAuthUser = useSelector((state: RootState) => state.root.auth.success);
+
+  const heartColor = isFavourite(prop.id)
+    ? "fill-red-600 text-red-600 "
+    : "fill-transparent";
 
   const handleClick = () => {
     setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
@@ -46,7 +61,10 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     if (findQuantity?.quantity === undefined || null) {
       setActiveCart(false);
     }
-  }, [selectedProductsQuantity]);
+    if (isAuthUser) {
+      setIsNotAuthenticated(true);
+    }
+  }, [selectedProductsQuantity, isAuthUser]);
 
   const closeLoader = () => {
     setLoader(false);
@@ -131,24 +149,38 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       </div>
       <div
         onClick={() => {
-          setLoader(true);
-          dispatch(
-            addToFavourite({
-              id: prop.id,
-              name: prop.name,
-              image: prop.image,
-              price: prop.price,
-              quantity: 1,
-              tag: prop.tag,
-            })
-          );
+          if (isAuthUser) {
+            setLoader(true);
+            dispatch(
+              addToFavourite({
+                id: prop.id,
+                name: prop.name,
+                image: prop.image,
+                price: prop.price,
+                quantity: 1,
+                tag: prop.tag,
+              })
+            );
+          } else {
+            setIsNotAuthenticated(false);
+          }
         }}
         className="absolute bg-[var(--light-foreground)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--light-text)] right-2 top-2"
       >
-        <Heart className="size-6 hover:scale-[1.05] duration-150 hover:fill-[var(--danger-bg)] hover:text-[var(--danger-bg)]  text-[var(--dark-text)] " />
+        <Heart
+          className={`size-6 hover:scale-[1.05] duration-150 hover:text-[var(--danger-bg)]  text-[var(--dark-text)] ${
+            isAuthUser ? heartColor : ""
+          } `}
+        />
       </div>
 
       <LoadingText isLoading={loader} loadingFn={() => closeLoader()} />
+      <Modal
+        close={isNotAuthenticated}
+        closeModal={() => setIsNotAuthenticated(true)}
+      >
+        <LoginContainer />
+      </Modal>
     </div>
   );
 };

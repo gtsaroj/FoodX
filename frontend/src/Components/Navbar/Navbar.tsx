@@ -1,17 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import { Heart, Phone, ShoppingBag, UserCircleIcon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { UseFetch } from "../../UseFetch";
-import { ProductType } from "../../models/product.model";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../../Store";
 import Favourite from "../../Pages/Cart/Favourite";
-import { debounce } from "../../Utility/Debounce";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
-import { User } from "../../models/user.model";
 const navbarItems = [
   {
     name: "Home",
@@ -29,7 +26,6 @@ const navbarItems = [
 
 export const Navbar: React.FC = () => {
   const [activeNav, setActiveNav] = useState<number>(0);
-  const [initialData, setInitialData] = useState<ProductType[]>([]);
   const [closeProfile, setCloseProfile] = useState<boolean>(true);
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
 
@@ -41,39 +37,30 @@ export const Navbar: React.FC = () => {
   const favouriteReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
-    const closeModal = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         favouriteReference.current &&
         !favouriteReference.current.contains(event.target as any)
       ) {
         setOpenFavourite(true);
       }
-    };
-
-    const closeProfile = (event: MouseEvent) => {
       if (
         profileRef.current &&
-        !profileRef?.current.contains(event.target as any)
+        !profileRef.current.contains(event.target as any)
       ) {
         setCloseProfile(true);
       }
     };
 
-    if (!closeProfile) {
-      document.addEventListener("mousedown", closeProfile);
-    }
-
-    if (!openFavourite) {
-      document.addEventListener("mousedown", closeModal);
+    if (!closeProfile || !openFavourite) {
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", closeModal);
-      document.removeEventListener("mousedown", closeProfile);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [closeProfile, specialProducts]);
+  }, [closeProfile, openFavourite]);
   const navigate = useNavigate();
-
   const isFavourite = useSelector((state: RootState) => state.root.favourite);
 
   return (
@@ -146,15 +133,22 @@ export const Navbar: React.FC = () => {
             >
               <Favourite />
             </div>
+            {!openFavourite && !authUser.fullName && (
+              <Modal
+                close={openFavourite}
+                closeModal={() => setOpenFavourite(!openFavourite)}
+              >
+                <LoginContainer />
+              </Modal>
+            )}
           </div>
-          <div
-            onClick={() => setCloseProfile(!closeProfile)}
-            className="w-full "
-            ref={profileRef}
-          >
+          <div ref={profileRef} className="w-full">
             {authUser?.avatar && (
               <div className="w-full relative">
-                <div className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user">
+                <div
+                  onClick={() => setCloseProfile(!closeProfile)}
+                  className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
+                >
                   <img
                     className="rounded-full sm:size-9 size-8"
                     src={authUser.avatar}
@@ -163,7 +157,7 @@ export const Navbar: React.FC = () => {
                 </div>
                 <div
                   className={` duration-150 ${
-                    !closeProfile
+                    !closeProfile && authUser.fullName
                       ? "visible opacity-100 "
                       : "invisible opacity-0 "
                   } w-full absolute right-[16rem] top-[45px]  `}
@@ -173,36 +167,24 @@ export const Navbar: React.FC = () => {
               </div>
             )}
             {!authUser?.fullName && (
-              <div className="">
+              <div onClick={() => setCloseProfile(!closeProfile)} className="">
                 <UserCircleIcon
                   className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
                   size={30}
                 />
               </div>
             )}
+            {!closeProfile && !authUser?.fullName && (
+              <Modal
+                close={closeProfile}
+                closeModal={() => setCloseProfile(!closeProfile)}
+              >
+                <LoginContainer />
+              </Modal>
+            )}
           </div>
         </div>
       </div>
-      {/* {mobileMenu && <MobileMenu />} */}
-      <div
-        ref={profileRef}
-        className={`absolute right-5 top-20 flex w-full justify-end items-center ${
-          !closeProfile ? "flex" : "hidden"
-        }`}
-      ></div>
-      {!openFavourite && !authUser.fullName && (
-        <Modal
-          close={openFavourite}
-          closeModal={() => setOpenFavourite(!openFavourite)}
-        >
-          <LoginContainer />
-        </Modal>
-      )}
-      {!closeProfile && !authUser?.fullName && (
-        <Modal close={closeProfile} closeModal={() => setCloseProfile(true)}>
-          <LoginContainer />
-        </Modal>
-      )}
     </nav>
   );
 };

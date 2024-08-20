@@ -27,7 +27,7 @@ export const OrderComponent = () => {
   return (
     <div className="flex  flex-col items-start gap-10 py-5 justify-center w-full h-full ">
       <div className="w-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
-        <h1 className="text-[30px] tracking-wider font-semibold ">
+        <h1 className="text-[25px] tracking-wider font-semibold ">
           Recent Orders
         </h1>
         <div className="flex items-center w-full  gap-5 overflow-x-auto ">
@@ -43,14 +43,14 @@ export const OrderComponent = () => {
       </div>
       <div className="w-full h-full">
         <div className="w-full h-full flex flex-col gap-3 bg-white px-5 py-4   rounded items-start justify-center">
-          <h1 className="text-[30px] py-2 pb-5 font-semibold tracking-wider ">
-            Recent Orders
+          <h1 className="text-[25px] py-2 pb-5 font-semibold tracking-wider ">
+            Order History
           </h1>
           <OrderHistory />
         </div>
       </div>{" "}
       <div className="w-full h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-        <h1 className="text-[23px] tracking-wider ">Popular products</h1>
+        <h1 className="text-[23px] pl-5 pt-3 tracking-wider ">Popular products</h1>
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">
