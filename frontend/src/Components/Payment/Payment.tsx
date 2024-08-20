@@ -152,7 +152,7 @@ export const MobileCart: React.FC = () => {
           <Cart />
         </div>
         <div className="lg:w-[550px] w-full flex h-full flex-col gap-4 pt-3 px-4 bg-[var(--light-background)] border  rounded-lg">
-          <h3 className="w-full text-3xl   py-2 font-semibold tracking-wide text-[var(--dark-text)]">
+          <h3 className="w-full text-[25px] pl-4  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
             Recent Products
           </h3>
           <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">

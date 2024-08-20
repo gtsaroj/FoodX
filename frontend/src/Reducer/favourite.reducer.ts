@@ -1,3 +1,4 @@
+import { id } from "date-fns/locale";
 import { createSlice } from "@reduxjs/toolkit";
 import { Favourite } from "../models/favourite.model";
 import toast from "react-hot-toast";
@@ -11,13 +12,17 @@ const favouriteSlice = createSlice({
   initialState: favouriteState,
   reducers: {
     addToFavourite: (state, action) => {
-      const productId = state.favourite.findIndex(
+      const productId = state.favourite.find(
         (product) => product.id === action.payload.id
       );
-      if (productId > -1) {
-        toast.success("Product already exist");
+      if (productId) {
+        state.favourite = state.favourite.filter(
+          (product) => product.id !== action.payload.id
+        );
+        toast.success("Product removed!")
       } else {
         state.favourite.push(action.payload);
+        toast.success("Product added!")
       }
     },
     removeFavourite: (state, action) => {
