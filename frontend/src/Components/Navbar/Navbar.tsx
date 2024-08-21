@@ -1,21 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
   Heart,
   Menu,
   Phone,
+  Search,
   ShoppingBag,
   UserCircleIcon,
   X,
 } from "lucide-react";
-import { useSelector } from "react-redux";
-import { UseFetch } from "../../UseFetch";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { RootState } from "../../Store";
+import { AppDispatch, RootState } from "../../Store";
 import Favourite from "../../Pages/Cart/Favourite";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
+import { Product } from "../../models/product.model";
+import { debounce } from "../../Utility/Debounce";
+import { getNormalProducts } from "../../Services/product.services";
+import { addToCart } from "../../Reducer/product.reducer";
 const navbarItems = [
   {
     name: "Home",
@@ -60,11 +64,24 @@ export const NavbarContainer = () => {
 export const Navbar: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const menuReference = useRef<HTMLDivElement | null>();
-
+  const [openSearch, setOpenSearch] = useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchData, setSearchData] = useState<Product[]>();
   const [closeProfile, setCloseProfile] = useState<boolean>(true);
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
 
+  console.log(searchValue.length);
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+
+  const getAllProducts = async (): Promise<Product[]> => {
+    try {
+      const response = await getNormalProducts();
+      return response.data.products;
+    } catch (error) {
+      throw new Error("unable to fetch normal products" + error);
+    }
+  };
 
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
@@ -102,6 +119,17 @@ export const Navbar: React.FC = () => {
   }, [closeProfile, openFavourite]);
   const navigate = useNavigate();
   const isFavourite = useSelector((state: RootState) => state.root.favourite);
+
+  const handleSearch = async (value: string) => {
+    if (value.length <= 0) return;
+    const filter = (await getAllProducts())?.filter((product) =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setSearchData(filter);
+  };
+  const debounceSearch = debounce(handleSearch, 500);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   return (
     <nav
@@ -142,6 +170,88 @@ export const Navbar: React.FC = () => {
       {/*  Product Search */}
       <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full space-x-3 place-items-center">
+          <div className=" w-full px-5 ">
+            <button
+              className={`py-2.5 rounded-r-lg duration-150  px-3`}
+              onClick={() => setOpenSearch(!openSearch)}
+            >
+              {openSearch ? <X /> : <Search />}
+            </button>
+            <div
+              className={`absolute md:right-3 px-3 md:px-0 flex  items-center justify-start ${
+                openSearch
+                  ? "visible md:w-[500px] translate-y-0 opacity-100 "
+                  : "w-0 invisible opacity-0  -translate-y-10 "
+              } duration-150 top-[100px] right-0 md:left-auto left-0 `}
+            >
+              <input
+                value={searchValue}
+                onChange={(event) => {
+                  debounceSearch(event.target.value);
+                  setSearchValue(event.target.value);
+                }}
+                type="text"
+                className={` w-full border-[var(--dark-border)] duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-2`}
+              />
+              <button
+                className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
+                onClick={() => setOpenSearch(false)}
+              >
+                <X className="hover:text-[var(--danger-bg)] " />
+              </button>
+            </div>
+            <div
+              className={` duration-150 ${
+                openSearch && searchValue.length > 0
+                  ? "visible opacity-100 translate-y-0 "
+                  : "invisible opacity-0 -translate-y-10 "
+              } w-full h-full top-[10rem]  flex justify-end right-0 px-3 absolute`}
+            >
+              <div className="w-full md:w-[500px] border-[var(--dark-border)] rounded-lg border-[1px] shadow  px-4 py-3 scrollbar-custom  overflow-y-auto bg-[var(--light-foreground)] h-[60vh] ">
+                {searchData?.map((data) => (
+                  <div
+                    key={data.id}
+                    className="w-full flex items-center gap-5 p-3 mb-4 bg-[var(--light-background)] border border-[var(--dark-border)] rounded-lg shadow-sm hover:shadow-md duration-150"
+                  >
+                    <img
+                      src={data.image}
+                      className="w-[60px] h-[60px] rounded-lg object-cover"
+                      alt={data.name}
+                    />
+                    <div className="flex-1">
+                      <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
+                        {data.name}
+                      </h1>
+                      <p className="text-[14px] text-[var(--dark-secondary-text)]">
+                        ${data.price} &bull; {data.quantity} left
+                      </p>
+                      {data.tag && (
+                        <span className="text-[12px] text-[var(--primary-color)]">
+                          {data.tag}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      className="bg-[var(--primary-color)] text-white py-1 px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 text-[14px]"
+                      onClick={() =>
+                        dispatch(
+                          addToCart({
+                            id: data.id,
+                            name: data.name,
+                            price: data.price,
+                            quantity: 1,
+                            image: data.image,
+                          })
+                        )
+                      }
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           {/* Cart */}
           <div
             onClick={() => navigate("/cart")}

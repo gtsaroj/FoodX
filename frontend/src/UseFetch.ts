@@ -1,6 +1,6 @@
 import { makeRequest } from "./makeRequest";
 import { useEffect, useState } from "react";
-import { ProductType } from "./models/product.model";
+import { Product, ProductType } from "./models/product.model";
 import { RootState, Store } from "./Store";
 import { authLogout } from "./Reducer/user.reducer";
 import { useSelector } from "react-redux";
@@ -15,7 +15,7 @@ const DelayRequestTime = <T>(fn: () => Promise<T>, time: number) => {
 export const UseFetch = (url: string) => {
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [data, setData] = useState<ProductType[]>();
+  const [data, setData] = useState<Product[]>();
   const authUser = useSelector((state: RootState) => state.root.auth);
 
   useEffect(() => {
