@@ -9,11 +9,14 @@ import {
 } from "../controllers/category.controller.js";
 import { verifyChef } from "../middlewares/role.middlewares.js";
 import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
+import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const categoryRouter = Router();
 
 //for end users
-categoryRouter.route("/get-category").get(rateLimiter(60, 10), getAllCategory);
+categoryRouter
+  .route("/get-category")
+  .get(rateLimiter(60, 10), cacheMiddleware("category"), getAllCategory);
 
 //for chef dashboard
 categoryRouter

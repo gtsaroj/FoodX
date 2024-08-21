@@ -18,6 +18,9 @@ const getNormalProducts = asyncHandler(async (_: any, res: any) => {
   try {
     const products = await getAllProductsFromDatabase("products");
     if (!products) throw new ApiError(400, "No products found.");
+    await redisClient.set("products", JSON.stringify(products), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json(
@@ -37,6 +40,11 @@ const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
   try {
     const products = await getAllProductsFromDatabase("specials");
     if (!products) throw new ApiError(400, "No today's specials found.");
+    await redisClient
+      .set("specials", JSON.stringify(products), {
+        EX: 3600,
+      })
+      .then((value) => console.log(value));
     return res
       .status(200)
       .json(
