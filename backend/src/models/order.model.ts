@@ -16,7 +16,7 @@ export interface GetOrderModal {
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
   direction?: "prev" | "next";
-  status?: "fullfilled" | "cancelled" | "preparing" | "received";
+  status?: "Recieved" | "Canceled" | "Preparing" | "Received" |"Pending"|"Delivered";
   userId?: string;
 }
 

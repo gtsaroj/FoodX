@@ -16,8 +16,8 @@ import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
 const productRouter = Router();
 
 //routes for end users
-productRouter.route("/all").get(rateLimiter(60, 10), getNormalProducts);
-productRouter.route("/specials").get(rateLimiter(60, 10), getSpecialProducts);
+productRouter.route("/all").get(rateLimiter(60, 20), getNormalProducts);
+productRouter.route("/specials").get(rateLimiter(60, 20), getSpecialProducts);
 productRouter
   .route("/get-product-by-tag")
   .get(rateLimiter(60, 10), getProductByTag);

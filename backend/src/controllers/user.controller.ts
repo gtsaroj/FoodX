@@ -32,9 +32,11 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   }
 
   try {
+    console.log(email, userRole)
     const user = await getUserDataByEmail(email);
+    console.log(user)
     const userDataFromDatabase = await getUserFromDatabase(user.uid, userRole);
-    user.phoneNumber = userDataFromDatabase.phoneNumber;
+    console.log(userDataFromDatabase)
     const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 

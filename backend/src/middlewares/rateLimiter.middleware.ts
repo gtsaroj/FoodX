@@ -8,6 +8,7 @@ const rateLimiter = (limitTime: number, limitRequestAmount: number) => {
       const ip =
         (req.headers["x-forwarded-for"] || "").split(",").pop().trim() ||
         req.socket.remoteAddress;
+      console.log(ip)
       const response = await redisClient
         .multi()
         .incr(ip)

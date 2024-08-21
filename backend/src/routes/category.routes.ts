@@ -12,10 +12,9 @@ import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const categoryRouter = Router();
 
-//for end users
-categoryRouter.route("/get-category").get(rateLimiter(60, 10), getAllCategory);
-
-//for chef dashboard
+categoryRouter
+  .route("/get-category")
+  .get(getAllCategory);
 categoryRouter
   .route("/add-category")
   .post(verifyJwt, verifyChef, rateLimiter(60, 20), addNewCategory);
