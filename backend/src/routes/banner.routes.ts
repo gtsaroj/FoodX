@@ -7,10 +7,13 @@ import {
   getAllBanners,
 } from "../controllers/banner.controller.js";
 import { verifyChef } from "../middlewares/role.middlewares.js";
+import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const bannerRouter = Router();
 
-bannerRouter.route("/get-banners").get(verifyJwt, verifyChef, getAllBanners);
+bannerRouter
+  .route("/get-banners")
+  .get(cacheMiddleware("banner"), getAllBanners);
 bannerRouter.route("/add-banner").post(verifyJwt, verifyChef, addNewBanner);
 bannerRouter
   .route("/delete-banner")

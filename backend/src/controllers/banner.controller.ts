@@ -8,6 +8,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
+import { redisClient } from "../utils/Redis.js";
 
 const addNewBanner = asyncHandler(
   async (req: express.Request, res: express.Response) => {
@@ -32,6 +33,9 @@ const getAllBanners = asyncHandler(
   async (_: express.Request, res: express.Response) => {
     try {
       const banners = await getBannersFromDatabase();
+      await redisClient.set("banners", JSON.stringify(banners), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(

@@ -12,12 +12,17 @@ import {
 } from "../controllers/products.controller.js";
 import { verifyAdmin, verifyChef } from "../middlewares/role.middlewares.js";
 import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
+import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const productRouter = Router();
 
 //routes for end users
-productRouter.route("/all").get(rateLimiter(60, 20), getNormalProducts);
-productRouter.route("/specials").get(rateLimiter(60, 20), getSpecialProducts);
+productRouter
+  .route("/all")
+  .get(rateLimiter(60, 10), cacheMiddleware("products"), getNormalProducts);
+productRouter
+  .route("/specials")
+  .get(rateLimiter(60, 10), cacheMiddleware("specials"), getSpecialProducts);
 productRouter
   .route("/get-product-by-tag")
   .get(rateLimiter(60, 10), getProductByTag);

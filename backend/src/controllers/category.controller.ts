@@ -9,6 +9,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
+import { redisClient } from "../utils/Redis.js";
 
 const addNewCategory = asyncHandler(
   async (req: express.Request, res: express.Response) => {
@@ -35,6 +36,9 @@ const getAllCategory = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     try {
       const categories = await getAllCategoryFromDatabase();
+      await redisClient.set("category", JSON.stringify(categories), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
