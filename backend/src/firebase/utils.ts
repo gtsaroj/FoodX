@@ -11,9 +11,8 @@ export const paginateFnc = async (
   direction?: "prev" | "next"
 ) => {
   let query = db.collection(collection).orderBy(orderBy, sort);
-  const lengthOfDoc = await query.count().get();
-  console.log(`Length of doc: -> ${lengthOfDoc}`);
-  const totalLength = lengthOfDoc.data().count;
+  const lengthOfDoc = await query.get();
+  const totalLength = lengthOfDoc.size;
   console.log(`Length in number : -> ${totalLength}`);
   if (direction === "next" && startAfterDoc) {
     query = query.startAfter(startAfterDoc).limit(pageSize);
