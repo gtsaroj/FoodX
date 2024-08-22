@@ -192,7 +192,7 @@ const fetchProducts = asyncHandler(async (req: any, res: any) => {
     currentLastDoc: any | null;
     category?: string;
   } = req.body;
-
+   console.log(req.body)
   try {
     let { products, firstDoc, lastDoc, length } = await getProductsFromDatabase(
       path,
