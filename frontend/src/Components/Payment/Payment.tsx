@@ -138,7 +138,8 @@ export const Payment: React.FC = () => {
 
 export const MobileCart: React.FC = () => {
   const [initialData, setInitialData] = useState<ProductType[]>([]);
-  const { data } = UseFetch("/products/all");
+  const { data } = UseFetch("products/all");
+  
 
   const authUser = useSelector((state: RootState) => state.root.auth.success);
 
