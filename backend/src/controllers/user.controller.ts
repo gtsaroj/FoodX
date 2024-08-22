@@ -14,7 +14,6 @@ import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { redisClient } from "../utils/Redis.js";
 
 //Cookie options
 const options = {
@@ -32,11 +31,8 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   }
 
   try {
-    console.log(email, userRole)
     const user = await getUserDataByEmail(email);
-    console.log(user)
     const userDataFromDatabase = await getUserFromDatabase(user.uid, userRole);
-    console.log(userDataFromDatabase)
     const { role } = userDataFromDatabase;
     if (!user) throw new ApiError(404, "User doesn't exist.");
 
@@ -52,10 +48,6 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       "refreshToken",
       refreshToken
     );
-
-    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
-      EX: 3600,
-    });
 
     return res
       .status(200)
@@ -76,7 +68,6 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
 
 const signUpNewUser = asyncHandler(async (req: any, res: any) => {
   const { firstName, lastName, email, avatar, phoneNumber, role } = req.body;
-  console.log("Reached signup");
   try {
     const user = await getUserDataByEmail(email);
     if (!user) throw new ApiError(404, "User not found.");
@@ -100,9 +91,6 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
 
     userInfo.refreshToken = refreshToken;
 
-    await redisClient.set(`user:${uid}`, JSON.stringify(userInfo), {
-      EX: 3600,
-    });
     return res
       .status(201)
       .cookie("accessToken", accessToken, options)
@@ -116,8 +104,12 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    console.error(error);
-    throw new ApiError(400, "Error while adding new user in database.");
+    throw new ApiError(
+      400,
+      "Error while adding new user in database.",
+      null,
+      error as string[]
+    );
   }
 });
 
@@ -175,9 +167,6 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
 
     user.refreshToken = newRefreshToken;
 
-    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
-      EX: 3600,
-    });
     return res
       .status(200)
       .cookie("accessToken", accessToken)
@@ -300,10 +289,6 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
     if (avatar) {
       await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
     }
-
-    await redisClient.set(`user:${user.uid}`, JSON.stringify(user), {
-      EX: 3600,
-    });
     res
       .status(200)
       .json(
@@ -404,7 +389,6 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    console.error(error);
     throw new ApiError(
       401,
       "Something went wrong while fetching users from database",

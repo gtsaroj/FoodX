@@ -49,11 +49,11 @@ router
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 10), deleteUser);
 router
   .route("/update-user")
-  .put(verifyJwt, verifyAdmin, rateLimiter(60, 10), updateUser);
+  .put(verifyJwt, verifyAdmin, rateLimiter(60, 5), updateUser);
 router
   .route("/update-role")
-  .put(verifyJwt, verifyAdmin, rateLimiter(60, 10), updateUserRole);
+  .put(verifyJwt, verifyAdmin, rateLimiter(60, 5), updateUserRole);
 router
   .route("/bulk-delete")
-  .delete(verifyJwt, verifyAdmin, rateLimiter(60, 10), deleteUsersInBulk);
+  .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteUsersInBulk);
 export default router;

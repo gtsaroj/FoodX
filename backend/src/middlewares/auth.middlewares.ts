@@ -20,9 +20,6 @@ export const verifyJwt = asyncHandler(async (req: any, res: any, next: any) => {
       accessToken,
       process.env.ACCESS_TOKEN_SECRET as string
     ) as DecodeToken;
-    console.log(
-      `Access token: \n ${decodedAccessToken.uid} ${decodedAccessToken.role}`
-    );
 
     const user = await getUserFromDatabase(
       `${decodedAccessToken.uid}`,
@@ -33,9 +30,8 @@ export const verifyJwt = asyncHandler(async (req: any, res: any, next: any) => {
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(
-      401,
-      (error as string) || "Error while verifying jwt token."
+    next(
+      new ApiError(401, (error as string) || "Error while verifying jwt token.")
     );
   }
 });

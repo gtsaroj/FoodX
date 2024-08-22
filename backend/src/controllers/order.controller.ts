@@ -1,7 +1,7 @@
+import express from "express";
 import {
   addNewOrderToDatabase,
   getAllOrders,
-  getOrdersByUserId,
   getOrdersFromDatabase,
   updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
@@ -9,7 +9,8 @@ import { Order } from "../models/order.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import express from "express";
+import { redisClient } from "../utils/Redis.js";
+import { User } from "../models/user.model.js";
 
 const getAllOrdersFromDatabase = asyncHandler(async (_: any, res: any) => {
   try {
@@ -30,32 +31,80 @@ const getAllOrdersFromDatabase = asyncHandler(async (_: any, res: any) => {
   }
 });
 const getOrderByUserIdFromDatabase = asyncHandler(
-  async (req: express.Request, res: express.Response) => {
+  async (req: any, res: any) => {
+    let {
+      pageSize,
+      filter,
+      sort,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+      status,
+    }: {
+      pageSize: number;
+      filter: keyof Order;
+      sort: "asc" | "desc";
+      currentFirstDoc: any | null;
+      currentLastDoc: any | null;
+      direction?: "prev" | "next";
+      status?: "fullfilled" | "cancelled" | "preparing" | "received";
+    } = req.body;
     try {
-      const { id } = req.body;
-      const response = await getOrdersByUserId(id);
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(200, response, "Orders fetched successfully", true)
-        );
+      const user: User = req.user;
+      if (!user) throw new ApiError(500, "No user found. Please login first.");
+
+      let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
+        pageSize,
+        filter,
+        sort,
+        direction === "next" ? currentLastDoc : null,
+        direction === "prev" ? currentFirstDoc : null,
+        direction,
+        status,
+        user.uid
+      );
+      const pipeline = redisClient.multi();
+
+      orders.forEach((order) => {
+        pipeline.lPush(`latest_orders`, JSON.stringify(order));
+      });
+
+      pipeline.lRange("latest_orders", 0, 9);
+      await pipeline.exec();
+
+      res.status(200).json(
+        new ApiResponse(
+          200,
+          {
+            orders,
+            currentFirstDoc: firstDoc,
+            currentLastDoc: lastDoc,
+            length,
+          },
+          "Successfully fetched orders from database",
+          true
+        )
+      );
     } catch (error) {
       throw new ApiError(
-        501,
-        "Error fetching orders from database.",
+        500,
+        "Error while fetching user orders.",
         null,
         error as string[]
       );
     }
   }
 );
-
 const addNewOrder = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     const order = req.body;
     if (!order) throw new ApiError(400, "Order not found");
     try {
       await addNewOrderToDatabase(order);
+      const pipeline = redisClient.multi();
+      pipeline.lPush("latest_orders", JSON.stringify(order));
+      pipeline.lRange("latest_orders", 0, 9);
+      await pipeline.exec();
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Orders fetched successfully", true));
@@ -122,16 +171,27 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
       status,
       userId
     );
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { orders, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
-          "Successfully fetched orders from database",
-          true
-        )
-      );
+    const pipeline = redisClient.multi();
+
+    orders.forEach((order) => {
+      pipeline.lPush(`fetched_orders`, JSON.stringify(order));
+    });
+
+    await pipeline.exec();
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          orders,
+          currentFirstDoc: firstDoc,
+          currentLastDoc: lastDoc,
+          length,
+        },
+        "Successfully fetched orders from database",
+        true
+      )
+    );
   } catch (error) {
     throw new ApiError(
       401,
