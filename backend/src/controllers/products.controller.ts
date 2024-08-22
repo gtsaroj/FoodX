@@ -60,13 +60,9 @@ const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
   }
 });
 
-const getProductByTag = asyncHandler(async (req: any, res: any) => {
-  const {
-    type,
-    category,
-  }: { type: "specials" | "products"; category: string } = req.body;
+const getProductByTag = asyncHandler(async (req: any, res: any) => {  const { category }: { category: string } = req.body;
   try {
-    const products = await getProductByTagFromDatabase(category, type);
+    const products = await getProductByTagFromDatabase(category, "products");
     if (!products)
       throw new ApiError(400, "No product by categories data found");
     return res
@@ -192,7 +188,7 @@ const fetchProducts = asyncHandler(async (req: any, res: any) => {
     currentLastDoc: any | null;
     category?: string;
   } = req.body;
-   console.log(req.body)
+  
   try {
     let { products, firstDoc, lastDoc, length } = await getProductsFromDatabase(
       path,
