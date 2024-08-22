@@ -7,6 +7,8 @@ import { getCategories } from "../../Services/category.services";
 import { Selector } from "../Common/Selector/Selector";
 import { LoadingContent } from "../Loader/Loader";
 import Skeleton from "react-loading-skeleton";
+import { getProductsByTag } from "../../Services/product.services";
+import { Frown } from "lucide-react";
 
 export interface categoriesTagOption {
   name: string;
@@ -16,22 +18,21 @@ export interface categoriesTagOption {
 
 export const MenuType: React.FC = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
-  const { data, loading: loader } = UseFetch("/products/all");
-  const [loading, setLoading] = useState<boolean>(loader);
 
-  useEffect(() => {
-    setInitialData(data as Product[]);
-  }, [data]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [categoriesTag, setCategoriesTag] = useState<categoriesTagOption[]>([]);
+  const [initialTag, setInitialTag] = useState<string>("Burger");
 
-  const [categorizedData, setCategorizedData] = useState<Product[]>([]);
-
-  const handleEvent = (tag: string) => {
-    const filteredData = initialData?.filter(
-      (singleProduct) => singleProduct.tag === tag
-    );
-    setCategorizedData(filteredData);
+  const getMenuProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await getProductsByTag(initialTag);
+      setInitialData(response.products);
+    } catch (error) {
+      throw new Error("Error while getting products by tag" + error);
+    }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -40,28 +41,23 @@ export const MenuType: React.FC = () => {
       try {
         const response = await getCategories();
         setCategoriesTag(response.data);
+        setInitialTag(response.data[0].name);
       } catch (error) {
         throw new Error("Error fetching tags:" + error);
       }
     };
-
     CategoriesData();
   }, []);
 
   useEffect(() => {
-    if (initialData) {
-      const defaultData = initialData?.filter(
-        (singleProduct) => singleProduct.tag === "Burger"
-      );
-      setCategorizedData(defaultData);
-    }
-  }, [initialData]);
+    getMenuProducts();
+  }, [initialTag]);
 
   return (
     <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
       <Selector
         children={categoriesTag as categoriesTagOption[]}
-        action={(tag) => handleEvent(tag)}
+        action={(tag) => setInitialTag(tag)}
       />
 
       <div className="flex flex-col gap-8 rounded-md bg-[var(--light-foreground)] px-5 py-8">
@@ -69,15 +65,23 @@ export const MenuType: React.FC = () => {
           <p className="text-2xl font-bold tracking-wider">Category Title</p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-start  gap-[34px] p-8 rounded-md flex-shrink-0">
-          {loading ? (
-            <LoadingContent
-              isLoading={loading}
-              loadingFn={() => setLoading(false)}
-            />
-          ) : categorizedData?.length > 0 ? (
-            categorizedData?.map((singleObject, index) => (
-              <SpecialCards prop={singleObject} key={index} />
-            ))
+          {!loading ? (
+            initialData?.length <= 0 ? (
+              <div className="w-full flex flex-col items-center justify-center text-center p-4">
+                <Frown className="size-32 text-[var(--dark-secondary-text)] " />
+                <h2 className="text-xl font-semibold mb-2">
+                  No Products Found
+                </h2>
+                <p className="text-gray-500">
+                  Sorry, we couldn't find any products in this category. Please
+                  try searching for something else.
+                </p>
+              </div>
+            ) : (
+              initialData?.map((singleObject, index) => (
+                <SpecialCards prop={singleObject} key={index} />
+              ))
+            )
           ) : (
             <div className="w-full gap-4 flex ">
               <Skeleton

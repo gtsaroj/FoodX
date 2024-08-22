@@ -261,7 +261,7 @@ const OrderList = () => {
         </div>
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-start   justify-start gap-8 sm:gap-5 w-full px-1">
-        <form action="" className="relative text-[var(--dark-text)]  ">
+        <form action="" className="relative sm:w-auto w-full text-[var(--dark-text)]  ">
           <input
             id="search"
             type="search"

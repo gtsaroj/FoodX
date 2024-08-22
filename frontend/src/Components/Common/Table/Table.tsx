@@ -190,7 +190,7 @@ function Table<T extends { id: string }>({
                           actions?.orderFn && actions?.orderFn(item.id);
                         }}
                       >
-                        <div className=" flex  text-[var(--light-text)]   cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
+                        <div className=" flex  text-[var(--light-text)]  duration-150 hover:bg-[var(--primary-dark)]  cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
                           <LiaRedoAltSolid strokeWidth={1} size={19} />
                           <span className="text-[15px] ">Order</span>
                         </div>
@@ -198,7 +198,7 @@ function Table<T extends { id: string }>({
                     )}
                     {!!actions?.downloadFn && !disableActions && (
                       <td
-                        className="flex  w-[90px] cursor-pointer border-[1px] border-[var(--dark-border)] px-2 py-1.5 rounded-lg items-center gap-2"
+                        className="flex  w-[90px] hover:bg-gray-100 duration-150 cursor-pointer border-[1px] border-[var(--dark-border)] px-2 py-1.5 rounded-lg items-center gap-2"
                         onClick={() => {
                           actions?.downloadFn && actions?.downloadFn(item.id);
                         }}

@@ -123,13 +123,13 @@ const TicketPage: React.FC = () => {
             ticketState === "pending"
               ? "bg-[var(--primary-dark)]"
               : "bg-[var(--primary-light)]  "
-          } py-3 hover:bg-[var(--primary-dark)]  sm:text-[15px] text-sm duration-150   font-[550] contrast-150 rounded text-[var(--dark-text)]`}
+          } py-3 hover:bg-[var(--primary-dark)]  sm:text-[15px] text-sm duration-150   font-[550] contrast-150 rounded text-white`}
         >
           Pending
         </button>
         <button
           onClick={() => setTicketState("Progress")}
-          className={` py-3 sm:text-[15px] hover:bg-[#bb8115]   duration-150 text-sm  font-[550] contrast-150 rounded text-[var(--dark-text)] ${
+          className={` py-3 sm:text-[15px] hover:bg-[#bb8115]   duration-150 text-sm  font-[550] contrast-150 rounded text-white ${
             ticketState === "progress"
               ? "bg-[#bb8115] "
               : "bg-[var(--orange-bg)]"
@@ -143,7 +143,7 @@ const TicketPage: React.FC = () => {
             ticketState === "Resolved"
               ? "bg-[#287e28fd]"
               : "bg-[var(--green-bg)] "
-          }  text-sm  font-[550] contrast-150 rounded text-[var(--dark-text)] `}
+          }  text-sm  font-[550] contrast-150 rounded text-white `}
         >
           Resolve
         </button>
@@ -153,7 +153,7 @@ const TicketPage: React.FC = () => {
             ticketState === "Rejected"
               ? "bg-[#a82d2dfd]"
               : " bg-[var(--danger-bg)] "
-          }  text-sm  font-[550] contrast-150 rounded text-[var(--dark-text)] `}
+          }  text-sm  font-[550] contrast-150 rounded text-white `}
         >
           Cancel
         </button>

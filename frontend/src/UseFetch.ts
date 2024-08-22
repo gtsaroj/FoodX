@@ -22,7 +22,8 @@ export const UseFetch = (url: string) => {
     const fetchApiData = async () => {
       try {
         const response = await makeRequest.get(url);
-        const responseData = await response.data.data.products;
+         console.log(response)
+        const responseData = await response.data.data;
         setLoading(false);
         setData(responseData);
       } catch (err: any) {

@@ -35,12 +35,12 @@ const Revenue: React.FC = () => {
 
   return (
     <React.Fragment>
-      <div className="flex  flex-wrap items-center justify-center w-full gap-3 px-5 xl:justify-start md:justify-between sm:justify-start sm:gap-5 ">
+      <div className="flex  items-center flex-wrap justify-center w-full gap-3 px-5 xl:justify-start md:justify-between sm:justify-start sm:gap-5 ">
         {/* <div className="grid w-full grid-cols-1 md:flex-wrap md:justify-evenly sm:place-items-center lg:place-content-center md:flex md:items-center sm:grid sm:grid-cols-2 lg:grid lg:grid-cols-3 xl:gap-x-10 gap-x-4 gap-y-6 "> */}
         {/* {totalOrder?.map((item, index) => { */}
 
         {/* })} */}
-        <div className="flex flex-wrap items-center justify-start w-full gap-7 ">
+        <div className="flex md:flex-row md:flex-wrap flex-nowrap flex-col  items-center justify-start w-full gap-7 ">
           {totalOrder?.length > 0 ? (
             totalOrder?.map((order, index) => (
               <CardAnalytics

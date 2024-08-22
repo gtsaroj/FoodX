@@ -8,18 +8,17 @@ import { UseFetch } from "../../UseFetch";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { LoadingContent } from "../../Components/Loader/Loader";
-import { ColumnProps, OrderModal } from "../../models/table.model";
-import Table from "../../Components/Common/Table/Table";
-import { orderHistory as orderData } from "../../data.json";
+import { OrderHistory } from "./OrderHistory";
 
 export const OrderComponent = () => {
   const [initialData, setInitialData] = useState<ProductType[]>([]);
   const { data, loading: loader } = UseFetch("/products/all");
+   console.log(data)
   const [loading, setLoading] = useState<boolean>(loader);
   console.log(loader);
 
   useEffect(() => {
-    setInitialData(data as ProductType[]);
+    setInitialData(data as Product[]);
   }, [data]);
 
   return (
@@ -139,143 +138,4 @@ export const OrderCard = (props: { item: Order }) => {
   );
 };
 
-export const OrderHistory = () => {
-  const [selectedProducts, setSelectedProducts] = useState<string[] | string>(
-    []
-  );
-  const [selectedId, setSelectedId] = useState<string>();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [pagination, setPagination] = useState<{
-    currentPage?: number;
-    perPage?: number;
-  }>({ currentPage: 1, perPage: 5 });
 
-  const Columns: ColumnProps[] = [
-    {
-      fieldName: "Id",
-      colStyle: { width: "100px", textAlign: "start" },
-      render: (item: OrderModal) => (
-        <div className=" !p-0 w-[100px]   relative cursor-pointer group/id text-center ">
-          #{item.id?.substring(0, 8)}
-          <div
-            className=" top-[-27px]  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
-         rounded shadow "
-          >
-            {item.id}
-          </div>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Items",
-      colStyle: {
-        width: "180px ",
-        justifyContent: "start",
-        textAlign: "start",
-      },
-      render: (item: OrderModal) => (
-        <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
-          <p>
-            {item.id == selectedId && isCollapsed
-              ? item.product
-              : selectedProducts}
-          </p>
-          <span
-            onClick={() => {
-              setSelectedId(item.id);
-              setIsCollapsed(!isCollapsed);
-            }}
-          >
-            <ChevronRight
-              className={`size-5 ${
-                selectedId === item.id && isCollapsed ? "rotate-90" : ""
-              }  duration-200 cursor-pointer `}
-            />
-            {}{" "}
-          </span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Date",
-      colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
-      render: (item: OrderModal) => (
-        <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.orderDate}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Status",
-      colStyle: { width: "140px", justifyContent: "start", textAlign: "start" },
-      render: (item: OrderModal) => (
-        <div className=" w-[140px]  gap-2 flex  items-center justify-start  text-[var(--dark-text)]  ">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              item.deliveryStatus === "Received"
-                ? "bg-[var(--primary-color)] "
-                : item.deliveryStatus === "Delivered"
-                ? "bg-[var(--green-bg)] "
-                : item.deliveryStatus === "Pending"
-                ? "bg-[var(--primary-light)] "
-                : item.deliveryStatus === "Canceled"
-                ? "bg-[var(--danger-bg)]"
-                : item.deliveryStatus === "Preparing"
-                ? "bg-[var(--orange-bg)] "
-                : ""
-            } `}
-          ></div>
-          <span>{item.deliveryStatus}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Amount",
-      colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
-      render: (item: OrderModal) => (
-        <div className=" w-[100px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.totalAmount}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Payment",
-      colStyle: { width: "170px", justifyContent: "start", textAlign: "start" },
-      render: (item: OrderModal) => (
-        <div className=" w-[170px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.paymentMethod}</span>
-        </div>
-      ),
-    },
-  ];
-
-  useEffect(() => {
-    orderData?.forEach((order) => {
-      if (!order.product) return "Not available";
-      console.log(order.product[0]);
-      setSelectedProducts(order.product[0]);
-    });
-  }, [orderData]);
-
-  return (
-    <Table
-      actions={{
-        orderFn: (id: string) => console.log(id),
-        downloadFn: (id: string) => console.log(id),
-      }}
-      pagination={{
-        currentPage: pagination?.currentPage,
-        perPage: pagination?.perPage,
-      }}
-      onPageChange={(page: number) =>
-        setPagination((prev) => ({ ...prev, currentPage: page }))
-      }
-      headStyle={{ width: "100%" }}
-      bodyHeight={400}
-      columns={Columns}
-      data={orderData}
-      totalData={orderData.length}
-      loading={false}
-    />
-  );
-};
