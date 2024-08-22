@@ -182,7 +182,7 @@ const FoodPage: React.FC = () => {
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
       <div className="flex items-center justify-between w-full">
-        <div className="flex flex-col items-start justify-center gap-8">
+        <div className="flex w-full sm:pt-0 pt-14 flex-col items-start justify-center gap-8">
           <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Banners
@@ -191,11 +191,11 @@ const FoodPage: React.FC = () => {
               {initialBanner?.length || 0} entries found
             </p>
           </div>
-          <div className="flex items-center justify-start gap-2 ">
+          <div className="flex w-full items-center justify-start gap-2 ">
             {" "}
             <form
               action=""
-              className="relative text-[var(--dark-text)] w-full "
+              className="relative  text-[var(--dark-text)] w-full sm:w-auto "
             >
               <input
                 id="search"

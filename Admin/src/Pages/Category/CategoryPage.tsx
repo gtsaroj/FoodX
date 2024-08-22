@@ -248,10 +248,10 @@ export const CategoryPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
-        <div className="flex items-center justify-start gap-2 ">
+      <div className="flex  sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
+        <div className="flex w-full items-center justify-start gap-2 ">
           {" "}
-          <form action="" className="relative text-[var(--dark-text)] w-full ">
+          <form action="" className="relative text-[var(--dark-text)] sm:w-auto w-full ">
               <input
                 id="search"
                 type="search"

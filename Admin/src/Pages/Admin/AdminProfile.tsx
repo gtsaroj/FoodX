@@ -18,7 +18,6 @@ import { RootState, Store } from "../../Reducer/Store";
 import { DbUser } from "../../models/UserModels";
 import { authLogout } from "../../Reducer/Action";
 import { updateUserPassword } from "../../firebase/utils";
-import { UpdateProfileUser } from "../../../../frontend/src/Reducer/AuthUpdateUser";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { User } from "../../models/user.model";
 import Modal from "../../Components/Common/Popup/Popup";

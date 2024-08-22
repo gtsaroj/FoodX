@@ -361,8 +361,8 @@ const AllCustomers = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      <div className="flex items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex flex-col items-start justify-center gap-3">
+      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
+        <div className="flex flex-col w-full items-start justify-center gap-3">
           <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Customers
@@ -371,10 +371,10 @@ const AllCustomers = () => {
               {totalData || 0} entries found
             </p>
           </div>
-          <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full">
+          <div className="flex w-full items-center justify-start gap-2">
             <form
               action=""
-              className="relative text-[var(--darkt-text)] w-full "
+              className="relative text-[var(--darkt-text)] w-full sm:w-auto "
             >
               <input
                 id="search"
