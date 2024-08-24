@@ -61,7 +61,7 @@ export const Payment: React.FC = () => {
         native: true, 
         duration: 5000,
         icon : "https://static.vecteezy.com/system/resources/thumbnails/025/210/773/small/check-mark-icon-transparent-background-checkmark-icon-approved-symbol-confirmation-sign-design-elements-checklist-positive-thinking-sign-correct-answer-verified-badge-flat-icon-png.png",
-        vibrate: 5,
+        vibrate: 2,
 
       });
       toast.success("Order sent successfully! ");
