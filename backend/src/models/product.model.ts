@@ -11,11 +11,10 @@ export interface UploadProductType {
   collection: Collection["name"];
 }
 
-
-// export interface Category {
-//   types: "pizza" | "momo" | "burger" | "cold drinks" | "hot drinks";
-// }
-
 export interface Collection {
   name: "products" | "specials";
+}
+
+export interface SearchResult extends Product {
+  type: string;
 }

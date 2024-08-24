@@ -1,7 +1,11 @@
-import { Collection, Product } from "../../models/product.model.js";
+import {
+  Collection,
+  Product,
+  SearchResult,
+} from "../../models/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
-import { paginateFnc } from "../utils.js";
+import { paginateFnc, searchItemInDatabase } from "../utils.js";
 
 const addProductToFirestore = async (
   product: Product,
@@ -137,6 +141,44 @@ const deleteProductFromDatabase = async (
   }
 };
 
+const searchProductInDatabase = async (query: string) => {
+  try {
+    const productSnapshot = await searchItemInDatabase(
+      "products",
+      query,
+      "name",
+      10
+    );
+
+    const specialSnapshot = await searchItemInDatabase(
+      "specials",
+      query,
+      "name",
+      10
+    );
+
+    let searchResult: SearchResult[] = [
+      ...productSnapshot.docs.map((doc) => ({
+        ...(doc.data() as Product),
+        type: "products",
+      })),
+      ...specialSnapshot.docs.map((doc) => ({
+        ...(doc.data() as Product),
+        type: "specials",
+      })),
+    ];
+
+    searchResult.sort((a, b) => {
+      return a.name.localeCompare(b.name);
+    });
+    searchResult = searchResult.slice(0, 9);
+
+    return searchResult;
+  } catch (error) {
+    throw new ApiError(401, "Error while searching products");
+  }
+};
+
 const getProductsFromDatabase = async (
   path: "products" | "specials",
   pageSize: number,
@@ -198,4 +240,5 @@ export {
   getProductById,
   deleteProductFromDatabase,
   getProductsFromDatabase,
+  searchProductInDatabase,
 };

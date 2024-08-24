@@ -17,12 +17,9 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 const productRouter = Router();
 
 //routes for end users
-
-/*
-// productRouter
-//   .route("/all")
-//   .get(rateLimiter(60, 10), cacheMiddleware("products"), getNormalProducts);
-*/
+productRouter
+  .route("/all")
+  .get(getNormalProducts);
 
 productRouter
   .route("/specials")
