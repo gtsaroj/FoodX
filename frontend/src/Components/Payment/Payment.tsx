@@ -58,7 +58,11 @@ export const Payment: React.FC = () => {
         message:
           "Your order has been successfully placed and is now being processed. You will receive an email confirmation with the details shortly. Thank you for shopping with us!",
         theme: "darkblue",
-        native: true, // when using native, your OS will handle theming.
+        native: true, 
+        duration: 5000,
+        icon : "https://static.vecteezy.com/system/resources/thumbnails/025/210/773/small/check-mark-icon-transparent-background-checkmark-icon-approved-symbol-confirmation-sign-design-elements-checklist-positive-thinking-sign-correct-answer-verified-badge-flat-icon-png.png",
+        vibrate: 2,
+
       });
       toast.success("Order sent successfully! ");
     } catch (error) {
