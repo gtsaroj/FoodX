@@ -1,4 +1,3 @@
-import { Sun, User2Icon } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "../Reducer/Store";
 import { User as user } from "../models/user.model";

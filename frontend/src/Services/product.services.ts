@@ -1,3 +1,4 @@
+
 import { makeRequest } from "../makeRequest";
 
 export const getNormalProducts = async () => {
@@ -23,3 +24,14 @@ export const getSpecialProducts = async () => {
   }
 };
 
+export const getProductsByTag = async (data: string) => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: `products/get-product-by-tag/${data}`,
+    });
+    return response.data.data;
+  } catch (error) {
+    throw new Error("Error while getting products by tag" + error);
+  }
+};

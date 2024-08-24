@@ -4,7 +4,7 @@ import { SingleCard } from "../Card/CardProductCart";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
-import { ProductType } from "../../models/product.model";
+import addNotification from "react-push-notification";
 import { order } from "../../Services/order.services";
 import { Product } from "../../models/product.model";
 import toast from "react-hot-toast";
@@ -41,21 +41,33 @@ export const Payment: React.FC = () => {
 
   const handleOrder = async (event: FormEvent) => {
     event.preventDefault();
-    const toasLoader = toast.loading("Ordering ...");
-    const today = new Date().toISOString();
+    const toasLoader = toast.loading("Processing your order...");
+    const today = new Date();
     try {
       await order({
         products: products,
-        uid: userId,
+        uid: userId as string,
         orderRequest: today,
         orderFullFilled: "",
         status: "Pending",
       });
       toast.dismiss(toasLoader);
-      toast.success("Order Succesfully");
+      addNotification({
+        title: "Order Confirmed",
+        subtitle: "Success!",
+        message:
+          "Your order has been successfully placed and is now being processed. You will receive an email confirmation with the details shortly. Thank you for shopping with us!",
+        theme: "darkblue",
+        native: true, 
+        duration: 5000,
+        icon : "https://static.vecteezy.com/system/resources/thumbnails/025/210/773/small/check-mark-icon-transparent-background-checkmark-icon-approved-symbol-confirmation-sign-design-elements-checklist-positive-thinking-sign-correct-answer-verified-badge-flat-icon-png.png",
+        vibrate: 2,
+
+      });
+      toast.success("Order sent successfully! ");
     } catch (error) {
       toast.dismiss(toasLoader);
-      toast.error("error while ordering");
+      toast.error("Order failed. Please try again.");
       throw new Error("Error while ordering food " + error);
     }
   };
@@ -124,9 +136,12 @@ export const Payment: React.FC = () => {
                     className="w-full  px-[20px] py-2.5 text-[16px] focus:bg-[var(--light-background)] border-[1px] border-[var(--light-border)] rounded-md outline-none"
                   />
                 </div>
-                <div className="flex mt-8  py-3 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px]  px-5">
-                  <button type="submit">Pay Now</button>
-                </div>
+                <button
+                  type="submit"
+                  className="flex mt-8  py-3 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] transition-all duration-150 text-[var(--light-foreground)] cursor-pointer justify-center w-full rounded-md border-[1px]  px-5"
+                >
+                  Pay now
+                </button>
               </form>
             </div>
           </div>
@@ -137,13 +152,13 @@ export const Payment: React.FC = () => {
 };
 
 export const MobileCart: React.FC = () => {
-  const [initialData, setInitialData] = useState<ProductType[]>([]);
-  const { data } = UseFetch("/products/all");
+  const [initialData, setInitialData] = useState<Product[]>([]);
+  const { data } = UseFetch("products/all");
 
   const authUser = useSelector((state: RootState) => state.root.auth.success);
 
   useEffect(() => {
-    setInitialData(data as ProductType[]);
+    setInitialData(data as Product[]);
   }, [data]);
   const navigate = useNavigate();
 
@@ -195,7 +210,9 @@ export const MobileCart: React.FC = () => {
       </div>
 
       <div className="w-full mx-4 h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-        <h1 className="text-[23px] pl-5 pt-4 tracking-wider ">Popular products</h1>
+        <h1 className="text-[23px] pl-5 pt-4 tracking-wider ">
+          Popular products
+        </h1>
         <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
           <div className=" overflow-hidden">
             <div className="w-full h-full flex items-center gap-4 justify-start  ">

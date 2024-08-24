@@ -120,7 +120,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
           {/* Third Row */}
           <button
             type="submit"
-            className="w-full text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
           </button>

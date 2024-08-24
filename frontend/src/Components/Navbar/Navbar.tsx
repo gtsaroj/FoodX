@@ -20,6 +20,7 @@ import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
 import { getNormalProducts } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
+import toast from "react-hot-toast";
 const navbarItems = [
   {
     name: "Home",
@@ -77,7 +78,7 @@ export const Navbar: React.FC = () => {
   const getAllProducts = async (): Promise<Product[]> => {
     try {
       const response = await getNormalProducts();
-      return response.data.products;
+      return response.data;
     } catch (error) {
       throw new Error("unable to fetch normal products" + error);
     }
@@ -125,8 +126,10 @@ export const Navbar: React.FC = () => {
     const filter = (await getAllProducts())?.filter((product) =>
       product.name.toLowerCase().includes(value.toLowerCase())
     );
+
     setSearchData(filter);
   };
+  console.log(searchData);
   const debounceSearch = debounce(handleSearch, 500);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -233,7 +236,7 @@ export const Navbar: React.FC = () => {
                     </div>
                     <button
                       className="bg-[var(--primary-color)] text-white py-1 px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 text-[14px]"
-                      onClick={() =>
+                      onClick={() => {
                         dispatch(
                           addToCart({
                             id: data.id,
@@ -242,8 +245,9 @@ export const Navbar: React.FC = () => {
                             quantity: 1,
                             image: data.image,
                           })
-                        )
-                      }
+                        );
+                        toast.success("Product Added!");
+                      }}
                     >
                       Add to Cart
                     </button>

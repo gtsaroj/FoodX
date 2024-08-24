@@ -94,7 +94,10 @@ const UploadFood: React.FC = () => {
                 onChange={(event) =>
                   setAddFood((prev) => ({
                     ...prev,
-                    products: { ...prev.products, price: event.target.value },
+                    products: {
+                      ...prev.products,
+                      price: parseInt(event.target.value),
+                    },
                   }))
                 }
                 placeholder="Rs. 1,200"
@@ -139,7 +142,7 @@ const UploadFood: React.FC = () => {
                       ...prev,
                       products: {
                         ...prev.products,
-                        quantity: event.target.value,
+                        quantity: parseInt(event.target.value),
                       },
                     }))
                   }
@@ -217,7 +220,7 @@ const UploadFood: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
           </button>
