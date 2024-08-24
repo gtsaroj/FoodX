@@ -94,7 +94,10 @@ const UploadFood: React.FC = () => {
                 onChange={(event) =>
                   setAddFood((prev) => ({
                     ...prev,
-                    products: { ...prev.products, price: event.target.value },
+                    products: {
+                      ...prev.products,
+                      price: parseInt(event.target.value),
+                    },
                   }))
                 }
                 placeholder="Rs. 1,200"
@@ -139,7 +142,7 @@ const UploadFood: React.FC = () => {
                       ...prev,
                       products: {
                         ...prev.products,
-                        quantity: event.target.value,
+                        quantity: parseInt(event.target.value),
                       },
                     }))
                   }
