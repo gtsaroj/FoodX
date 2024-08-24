@@ -4,7 +4,7 @@ export interface Order {
   orderId?: string;
   uid: string;
   products: Product[];
-  orderRequest: string;
+  orderRequest: Date;
   orderFullFilled?: string;
   status?: string;
 }
