@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { User } from "../models/user.model";
-import { authLogout } from "../Reducer/Action";
+import { authLogout } from "../Reducer/user.reducer";
 import { signOutUser } from "../firebase/Authentication";
 import Cookies from "js-cookie";
 import { makeRequest } from "../makeRequest";
@@ -68,7 +68,10 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
           >
             View Orders
           </button>
-          <button onClick={()=> handleLogout()} className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[#8080807c] w-full text-[15px] py-1 px-2 bg-[var(--secondary-light-text)]">
+          <button
+            onClick={() => handleLogout()}
+            className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[#8080807c] w-full text-[15px] py-1 px-2 bg-[var(--secondary-light-text)]"
+          >
             Logout
           </button>
         </div>

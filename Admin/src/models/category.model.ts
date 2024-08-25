@@ -1,4 +1,4 @@
-export interface CategoryType {
+export interface Category {
   id?: string;
   name: string;
   image?: string;
@@ -7,12 +7,7 @@ export interface CategoryType {
   revenue: number;
   rank: number;
 }
-export interface UpdateCategoryType {
-  id: string;
-  field: string;
-  newData: string;
-}
-export interface UpdateComponentType {
+export interface UpdateCategory {
   category?: "specials" | "products";
   id: string;
   field: string;

@@ -8,14 +8,14 @@ import React, {
 } from "react";
 import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
-import { addBanner, addLogs } from "../../Services";
+import { addBanner } from "../../Services/banner.services";
+import { addLogs } from "../../Services/log.services";
 
 const UploadBanner: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
 
-  // const [Scroll, setScroll] = useState<boolean>(false);
 
   const scroller = () => {
     if (reference.current && reference.current?.scrollTop > 0) {

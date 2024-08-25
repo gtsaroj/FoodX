@@ -5,8 +5,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "./index";
-// import { Role } from "../Components/Register/Validation";
-// import { Admin } from "./index";
 const signUpNewUser = async (
   firstName: string,
   lastName: string,

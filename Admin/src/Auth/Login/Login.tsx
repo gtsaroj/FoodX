@@ -1,14 +1,14 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
-import { AuthNavbar } from "../../Navbar/AuthNavbar";
-import { AuthFooter } from "../../Footer/AuthFooter";
+import { AuthNavbar } from "../../Components/Navbar/AuthNavbar";
+import { AuthFooter } from "../../Components/Footer/AuthFooter";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Reducer/Store";
+import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { singInAction } from "../../Reducer/Action";
+import { signInAction } from "../../Actions/user.actions";
 
 const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -27,7 +27,6 @@ const LoginContainer: React.FC = () => {
     ).matches;
     return prefersDarkScheme;
   });
-  console.log(isDark);
   useEffect(() => {
     if (isDark) {
       document.body.classList.add("dark");
@@ -47,7 +46,7 @@ const LoginContainer: React.FC = () => {
     event.preventDefault();
     setDataSend(true);
     try {
-      await dispatch(singInAction({ email, password, userRole: "admin" }));
+      await dispatch(signInAction({ email, password, userRole: "admin" }));
     } catch (error) {
       toast.error("Invalid email or password");
       throw new Error(`Error occuring while sending form : ${error}`);

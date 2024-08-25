@@ -2,17 +2,12 @@ import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { CardAnalyticsProp } from "../../models/order.model";
-import { categoryCurrentData, categoryPreviousData } from "../../data.json";
 import { EllipsisVertical } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
-import { aggregateCurrentDayData } from "../../Utility/DateUtils";
-import { getAllOrder } from "../../Services";
+import { aggregateCurrentDayData } from "./Analtytics";
+import { getAllOrder } from "../../Services/order.services";
 import toast from "react-hot-toast";
-import { fi } from "date-fns/locale";
-// import { getOrders } from "../../Services";
-// import { DailyAggregateData } from "../../models/order.model";
-// import { aggregateCurrentDayData } from "../../Utility/DateUtils";
 
 export const MonthlyAnalytics: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
@@ -33,8 +28,6 @@ export const MonthlyAnalytics: React.FC = () => {
       });
     setLoading(false);
   }, []);
-  // console.log(`Daily Aggregate data: ${totalOrder}`);
-  console.log(loading);
 
   function handleSelect(value: string) {
     throw new Error("Function not implemented.");

@@ -2,6 +2,6 @@ interface SlideProp {
   url: string;
 }
 
-interface Slides {
+export interface Slides {
   slides: SlideProp[];
 }

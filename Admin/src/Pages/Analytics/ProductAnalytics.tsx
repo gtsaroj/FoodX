@@ -1,5 +1,5 @@
-import AllCustomerAnalytics from "./AllCategories";
-import AllCategoryAnalytics from "./AllCustomers";
+import AllCustomerAnalytics from "./AllCategory.analytics";
+import AllCategoryAnalytics from "./AllUser.analytics";
 import AllProductAnalytics from "./AllProducts.analytics";
 
 const ProductAnalytics = () => {
