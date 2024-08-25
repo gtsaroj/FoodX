@@ -85,10 +85,20 @@ const CustomerList: React.FC = () => {
   };
 
   const handleChange = async (value: string) => {
-    if (value.length <= 0) return handleCustomerData();
-    const filterCustomer = SearchCustomer(initialCustomer, value);
-    if (filterCustomer.length <= 0) return setInitialCustomer([]);
-    setInitialCustomer(filterCustomer);
+    if (value.length <= 0)
+      return await handleCustomerData({
+        path:
+          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+        direction: "next",
+        filter: (isFilter?.sortFilter as keyof User) || "fullName",
+        pageSize: pagination.perPage,
+        sort: sortOrder || "asc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+      });
+    // const filterCustomer = SearchCustomer(initialCustomer, value);
+    // if (filterCustomer.length <= 0) return setInitialCustomer([]);
+    // setInitialCustomer(filterCustomer);
   };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
