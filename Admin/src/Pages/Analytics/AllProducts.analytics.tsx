@@ -1,28 +1,23 @@
 /* eslint-disable no-unsafe-optional-chaining */
 import { useCallback, useEffect, useState } from "react";
 import {
-  addLogs,
   bulkDeleteOfProduct,
   deleteProduct,
   getProducts,
-} from "../../Services";
-import {
-  ArrangedProduct,
-  GetProductModal,
-  ProductType,
-} from "../../models/productMode";
-import { FoodTable } from "../Food/FoodTable";
+} from "../../Services/product.services";
+import { addLogs } from "../../Services/log.services";
+import { Product, GetProductModal } from "../../models/product.model";
+import { FoodTable } from "../Product/Product.table.page";
 import Modal from "../../Components/Common/Popup/Popup";
-import UpdateFood from "../../Components/Upload/UpdateFood";
+import UpdateFood from "../../Components/Upload/Product.update.upload";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
-import { debounce } from "../../Utility/Debounce";
-import { SearchProduct } from "../../Utility/Search";
+import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
 import { searchProduct } from "../../Services/product.services";
 const AllProductAnalytics = () => {
-  const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState<boolean>(false);
   const [id, setId] = useState<string>();
@@ -34,7 +29,7 @@ const AllProductAnalytics = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
-  const [modalData, setModalData] = useState<ArrangedProduct>();
+  const [modalData, setModalData] = useState<Product>();
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
@@ -82,28 +77,29 @@ const AllProductAnalytics = () => {
       const specialProducts = products.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
-        products: ProductType[];
+        products: Product[];
         length: number;
       };
       setCurrentDoc({
         currentFirstDoc: specialProducts.currentFirstDoc,
         currentLastDoc: specialProducts.currentLastDoc,
       });
-      const arrangeNormalProducts: ArrangedProduct[] =
-        specialProducts.products?.map((product: ProductType) => ({
+      const arrangeNormalProducts: Product[] = specialProducts.products?.map(
+        (product: Product) => ({
           id: product.id,
           name: product.name,
           image: product.image,
           quantity: product.quantity as number,
           price: product.price as number,
-          category: product.tag,
+          tag: product.tag,
           order: 20,
           rating: 4.3,
           revenue: 15000,
           type: data.path,
-        }));
+        })
+      );
       setTotalData(specialProducts.length);
-      setFetchedProducts(arrangeNormalProducts as ArrangedProduct[]);
+      setFetchedProducts(arrangeNormalProducts as Product[]);
     } catch (error) {
       throw new Error(`Error while fetching products` + error);
     }
@@ -120,8 +116,8 @@ const AllProductAnalytics = () => {
       currentLastDoc: null,
       direction: "next",
       filter:
-        ((isFilter && isFilter.sortFilter) as keyof ProductType) ||
-        ("name" as keyof ProductType),
+        ((isFilter && isFilter.sortFilter) as keyof Product) ||
+        ("name" as keyof Product),
       sort: sortOrder,
     });
   }, [
@@ -145,7 +141,7 @@ const AllProductAnalytics = () => {
               (isFilter?.typeFilter as "products" | "specials") || "products",
             pageSize: pagination.perPage,
             direction: "next",
-            filter: (isFilter?.sortFilter as keyof ProductType) || "name",
+            filter: (isFilter?.sortFilter as keyof Product) || "name",
             sort: sortOrder,
             currentFirstDoc: currentDoc?.currentFirstDoc,
             currentLastDoc: currentDoc?.currentLastDoc,
@@ -154,7 +150,7 @@ const AllProductAnalytics = () => {
           const normalProducts = products.data as {
             currentFirstDoc: string;
             currentLastDoc: string;
-            products: ProductType[];
+            products: Product[];
           };
 
           const newProducts = normalProducts.products?.map((product) => ({
@@ -224,27 +220,25 @@ const AllProductAnalytics = () => {
         currentLastDoc: null,
         direction: "next",
         filter:
-          ((isFilter && isFilter.sortFilter) as keyof ProductType) ||
-          ("name" as keyof ProductType),
+          ((isFilter && isFilter.sortFilter) as keyof Product) ||
+          ("name" as keyof Product),
         sort: sortOrder,
       });
-    const filterProducts = (await searchProduct(value)) as ProductType[];
+    const filterProducts = (await searchProduct(value)) as Product[];
 
-    const aggregateProducts = filterProducts?.map(
-      (product): ArrangedProduct => {
-        return {
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          quantity: product.quantity as number,
-          price: product.price as number,
-          category: product.tag,
-          order: 20,
-          rating: 4.3,
-          revenue: 15000,
-        };
-      }
-    );
+    const aggregateProducts = filterProducts?.map((product): Product => {
+      return {
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        quantity: product.quantity as number,
+        price: product.price as number,
+        category: product.tag,
+        order: 20,
+        rating: 4.3,
+        revenue: 15000,
+      };
+    });
     setFetchedProducts(aggregateProducts);
   };
 
@@ -349,7 +343,12 @@ const AllProductAnalytics = () => {
       const allProducts = fetchedProducts?.map((product) => {
         return { category: product.type, id: product.id };
       });
-      setBulkSelectedProduct(allProducts);
+      setBulkSelectedProduct(
+        allProducts as {
+          category: "specials" | "products";
+          id: string;
+        }[]
+      );
     }
     if (!isChecked) {
       setBulkSelectedProduct([]);
@@ -497,7 +496,7 @@ const AllProductAnalytics = () => {
       />
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
         <UpdateFood
-          product={modalData as ArrangedProduct}
+          product={modalData as Product}
           closeModal={() => setIsEdit(true)}
         />
       </Modal>

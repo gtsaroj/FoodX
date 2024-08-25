@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { CardAnalyticsProp } from "../../models/order.model";
-import { getAllOrder, getOrders } from "../../Services";
-import { aggregateCurrentDayData } from "../../Utility/DateUtils";
-import { MoreVertical } from "lucide-react";
+import { getAllOrder } from "../../Services/order.services";
+import { aggregateCurrentDayData } from "./Analtytics";
+
 import Skeleton from "react-loading-skeleton";
-// import { getOrders } from "../../Services";
-// import { DailyAggregateData } from "../../models/order.model";
-// import { aggregateCurrentDayData } from "../../Utility/DateUtils";
+
 
 const Revenue: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 // import Overview from "./Overview";
 import Overview from "./Overview";
 import ProductAnalytics from "./ProductAnalytics";
-import Logs from "./Logs";
+import Logs from "./Logs.analytics";
 // import { MonthlyRevenueChart } from "../../Components/LineChart/LineChart";
 // import { MonthlyOrderChart } from "../../Components/BarChart/BarChart";
 // import { MonthlyAnalytics } from "../../Components/Analytics/MonthlyAnalytics";

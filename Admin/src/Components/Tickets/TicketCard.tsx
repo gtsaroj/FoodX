@@ -1,5 +1,5 @@
+import dayjs from "dayjs";
 import React from "react";
-import { getTimeDifference } from "../../Utility/DateUtils";
 
 interface TicketProp {
   date: string[];
@@ -21,7 +21,8 @@ const TicketCard: React.FC<TicketProp> = ({
 }) => {
   console.log(category, description, title, date);
 
-  const leftTime = getTimeDifference(date);
+  const leftTime =
+    dayjs().format("YYYY-MM-DD") - dayjs(date).format("YYYY-MM-DD");
 
   // console.log(tickeDate)
   // let hours = tickeDate.getUTCHours()
@@ -48,7 +49,7 @@ const TicketCard: React.FC<TicketProp> = ({
       </div>
       <h3 className="text-[14px] ">{description}</h3>
       <span className="text-[12px] text-[var(--dark-text)] ">
-        {`${leftTime?.hoursLeft} hrs ${leftTime?.minutesLeft} mins ago`}{" "}
+        {`${leftTime} mins ago`}{" "}
       </span>
     </div>
   );

@@ -18,10 +18,10 @@ import {
   X,
 } from "lucide-react";
 import Logout from "../Logout/Logout";
-import { signOut } from "../../Services";
+import { signOut } from "../../Services/user.services";
 import { Loader } from "../Common/Loader/Loader";
 import { useSelector } from "react-redux";
-import { RootState } from "../../Reducer/Store";
+import { RootState } from "../../Store";
 import Profile from "../../Auth/AuthProfile";
 
 interface DesktopSliderProp {
@@ -272,7 +272,7 @@ export const MobileSlider: React.FC = () => {
     };
   }, [isDark, isOpen]);
   const reference = useRef<HTMLDivElement>(null);
-  const user = useSelector((state: RootState) => state.root.auth.userInfo);
+  const user = useSelector((state: RootState) => state.root.user.userInfo);
 
   return (
     <div className="relative flex items-center justify-between w-full px-4 lg:shadow-none">

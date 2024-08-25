@@ -72,7 +72,7 @@ function Table<T extends { id: string }>({
     }
   };
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const isCheckedData = selectedData?.map((data) => data.id);
+  const isCheckedData = selectedData?.map((data) => data.id ? data.id : data.uid);
 
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
@@ -144,7 +144,7 @@ function Table<T extends { id: string }>({
                 currentData.map((item, index) => (
                   <tr
                     className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
-                    key={(item?.id && item.id) || index}
+                    key={(item.id ? item.id : item.uid) || index}
                   >
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">
@@ -170,7 +170,7 @@ function Table<T extends { id: string }>({
                       <td
                         className="w-[100px]"
                         onClick={() => {
-                          actions?.editFn && actions?.editFn(item.id);
+                          actions?.editFn && actions?.editFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
@@ -185,7 +185,7 @@ function Table<T extends { id: string }>({
                       <td
                         className="w-[100px]"
                         onClick={() => {
-                          actions?.deleteFn && actions?.deleteFn(item.id);
+                          actions?.deleteFn && actions?.deleteFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
@@ -200,7 +200,7 @@ function Table<T extends { id: string }>({
                       <td
                         className="table-body-content"
                         onClick={() => {
-                          actions?.viewFn && actions?.viewFn(item.id);
+                          actions?.viewFn && actions?.viewFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div

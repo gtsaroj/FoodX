@@ -1,7 +1,7 @@
 import { makeRequest } from "./makeRequest";
 import { useEffect, useState } from "react";
-import { ProductType } from "./models/productMode";
-import { RootState, Store } from "./Reducer/Store";
+import { ProductType } from "./models/product.model";
+import { RootState, Store } from "./Store";
 import { authLogout } from "./Reducer/Action";
 import { useSelector } from "react-redux";
 import Cookies from "js-cookie";

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LogCardProps } from "../../../models/logModel";
+import { LogCardProps } from "../../../models/log.model";
 import {
   AlignLeft,
   ChevronDown,

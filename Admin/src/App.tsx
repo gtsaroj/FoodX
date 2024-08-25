@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Dasboard from "./Pages/Dashboard/Dasboard";
-import collegeLogo from "./assets/logo/texas.png";
 import {
   BrowserRouter as Router,
   Route,
@@ -10,22 +9,22 @@ import {
 } from "react-router-dom";
 import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
 import Analytics from "./Pages/Analytics/Analytics";
-import OrderList from "./Pages/Order/OrderList";
-import CustomerList from "./Pages/Customers/CustomerList";
-import TicketPage from "./Pages/Tickets/TicketPage";
-import { AdminProfile } from "./Pages/Admin/AdminProfile";
-import BannerPage from "./Pages/BannerPage";
-import FoodPage from "./Pages/Food/FoodPage";
+import OrderList from "./Pages/Order/Order.page";
+import CustomerList from "./Pages/User/User.page";
+import TicketPage from "./Pages/Ticket/Ticket.page";
+import { AdminProfile } from "./Pages/Profile/AdminProfile";
+import BannerPage from "./Pages/Banner/Banner.page";
+import FoodPage from "./Pages/Product/Product.page";
 import Login from "./Auth/Login/Login";
 import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState } from "./Reducer/Store";
+import { RootState } from "./Store";
 import NotFoundPage from "./Pages/404Page/NotFoundPage";
-import Footer from "./Footer/Footer";
-import { CategoryPage } from "./Pages/Category/CategoryPage";
-import Navbar from "./Navbar/Navbar";
-import { Sun, User } from "lucide-react";
+import Footer from "./Components/Footer/Footer";
+import { CategoryPage } from "./Pages/Category/Category.page";
+import Navbar from "./Components/Navbar/Navbar";
+
 
 const MainPage = () => {
   return (
@@ -51,7 +50,7 @@ const MainPage = () => {
 
 const App: React.FC = () => {
   // persistor.purge()
-  const auth = useSelector((state: RootState) => state.root.auth);
+  const auth = useSelector((state: RootState) => state.root.user);
   const [showContent, setShowContent] = useState<boolean>(true);
 
   useEffect(() => {

@@ -1,29 +1,29 @@
 import { useEffect, useState } from "react";
 import { CustomerCard } from "../../Components/Common/Cards/CustomerCard";
-import { CustomerType } from "../../models/user.model";
-import { getTopCustomers } from "../../Utility/CustomerUtils";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
+import { User } from "../../models/user.model";
+import { getTopCustomers } from "../../Utility/user.utils";
+
 import Skeleton from "react-loading-skeleton";
 import { Filter } from "lucide-react";
 import { Button } from "../../Components/Common/Button/Button";
 
 export const TopCustomers = () => {
-  const [TopCustomer, setTopCustomer] = useState<CustomerType[]>([]);
-  const [originalData, setOriginalData] = useState<CustomerType[]>([]);
+  const [TopCustomer, setTopCustomer] = useState<User[]>([]);
+  const [originalData, setOriginalData] = useState<User[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleSelect = async (value: string | undefined) => {
-    console.log(value);
+
     let sortedCustomers;
     if (value === "totalOrders") {
-      sortedCustomers = TopCustomer?.sort((a: CustomerType, b: CustomerType) =>
+      sortedCustomers = TopCustomer?.sort((a: User, b: User) =>
         sortOrder === "desc"
           ? (((b.totalOrder as number) - a.totalOrder) as number)
           : (((a.totalOrder as number) - b.totalOrder) as number)
       );
     }
     if (value === "totalSpent") {
-      sortedCustomers = TopCustomer?.sort((a: CustomerType, b: CustomerType) =>
+      sortedCustomers = TopCustomer?.sort((a: User, b: User) =>
         sortOrder === "desc"
           ? (((b.amountSpent as number) - a.amountSpent) as number)
           : (((a.amountSpent as number) - b.amountSpent) as number)
@@ -32,14 +32,14 @@ export const TopCustomers = () => {
     if (value === undefined) {
       return setTopCustomer(originalData);
     }
-    setTopCustomer(sortedCustomers as CustomerType[]);
+    setTopCustomer(sortedCustomers as User[]);
   };
 
   useEffect(() => {
     (async () => {
       const customers = await getTopCustomers();
-      setOriginalData(customers as CustomerType[]);
-      if (customers) setTopCustomer(customers as CustomerType[]);
+      setOriginalData(customers as User[]);
+      if (customers) setTopCustomer(customers as User[]);
     })();
   }, []);
   console.log(originalData);
@@ -88,7 +88,7 @@ export const TopCustomers = () => {
       <div className="flex flex-col gap-3  w-full  flex-grow scrollbar-custom overflow-y-scroll">
         {TopCustomer?.length > 0 ? (
           TopCustomer?.map((customer, index) => (
-            <CustomerCard key={customer.id} prop={customer} index={index} />
+            <CustomerCard key={customer.uid} prop={customer} index={index} />
           ))
         ) : (
           <div className="w-full ">

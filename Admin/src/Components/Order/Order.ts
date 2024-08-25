@@ -1,5 +1,5 @@
-import { getAllOrder } from "../../Services";
-import { getUserInfo } from "../../Utility/Utils";
+import { getAllOrder } from "../../Services/order.services";
+import { getUserInfo } from "../../Utility/user.utils";
 import { Order } from "../../models/order.model";
 
 export const getRecentOrders = async () => {

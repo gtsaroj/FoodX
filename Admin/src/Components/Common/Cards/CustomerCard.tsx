@@ -1,7 +1,7 @@
-import { TopCustomerType } from "../../../models/user.model";
+import { User } from "../../../models/user.model";
 
 interface CustomerCardProp {
-  prop: TopCustomerType;
+  prop: User;
   index: number;
 }
 
@@ -12,13 +12,13 @@ export const CustomerCard: React.FC<CustomerCardProp> = ({ prop, index }) => {
         <div className="w-[50px] h-[50px] ">
           <img
             className="w-full h-full rounded-full"
-            src={prop.image}
+            src={prop.avatar}
             alt="img"
           ></img>
         </div>
         <div className="flex flex-col items-start justify-center gap-2 pl-2 pr-3">
           <div className="flex flex-col gap-0.5">
-            <p className="text-[var(--dark-text)] text-nowrap">{prop.Name}</p>
+            <p className="text-[var(--dark-text)] text-nowrap">{prop.fullName}</p>
             <p className="text-xs text-[var(--dark-secondary-text)]">
               {prop.email}
             </p>

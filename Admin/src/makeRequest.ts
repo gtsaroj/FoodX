@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie"
 import toast from "react-hot-toast";
-import { Store } from "./Reducer/Store";
-import { authLogout } from "./Reducer/Action";
+import { Store } from "./Store";
+import { authLogout } from "./Reducer/user.reducer";
 
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,

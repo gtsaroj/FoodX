@@ -1,5 +1,5 @@
 import { DailyOrders } from "../../models/chart.modal";
-import { getOrder, getRevenue } from "../../Utility/Utils";
+import { getOrder, getRevenue } from "../../Utility/order.utils";
 import dayjs from "dayjs";
 
 export const revenueData = (data: DailyOrders[]) => {
