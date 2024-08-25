@@ -16,7 +16,7 @@ export interface ArrangedProduct {
   rating: number;
   quantity: number;
   category?: string;
-  type: "products" | "specials";
+  type?: "products" | "specials";
 }
 
 export interface ProductModel {

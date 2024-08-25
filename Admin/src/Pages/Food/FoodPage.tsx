@@ -20,6 +20,7 @@ import UpdateFood from "../../Components/Upload/UpdateFood";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./FoodTable";
 import { Button } from "../../Components/Common/Button/Button";
+import { searchProduct } from "../../Services/product.services";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -319,12 +320,33 @@ const FoodPage: React.FC = () => {
 
   const closeModal = () => setIsModelOpen(true);
 
-  const handleChange = (value: string) => {
-    if (value.length <= 0) return getAllProducts();
-    const filterProducts = SearchProduct(fetchedProducts, value);
+  const handleChange = async (value: string) => {
+    if (value.length <= 0)
+      return getAllProducts({
+        path: (isFilter?.typeFilter as "products" | "specials") || "products",
+        pageSize: pagination.perPage,
+        currentLastDoc: null,
+        direction: "next",
+        filter: (isFilter?.sortFilter as keyof ProductType) || "name",
+        sort: sortOrder || "asc",
+      });
 
-    if (filterProducts.length <= 0) return setFetchedProducts([]);
-    setFetchedProducts(filterProducts);
+    const filterProducts = (await searchProduct(value)) as ProductType[];
+    const aggregateProducts = filterProducts?.map((product) => {
+      return {
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        quantity: product.quantity as number,
+        price: product.price as number,
+        category: product.tag,
+        order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
+        rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
+        revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+      };
+    });
+    setTotalData(aggregateProducts.length);
+    setFetchedProducts(aggregateProducts);
   };
 
   const debounceSearch = useCallback(debounce(handleChange, 300), []);
@@ -390,14 +412,14 @@ const FoodPage: React.FC = () => {
         <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
           {" "}
           <form action="" className="relative text-[var(--dark-text)] w-full ">
-              <input
-                id="search"
-                type="search"
-                onChange={(event) => debounceSearch(event?.target.value)}
-                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                placeholder="Search for products"
-              />
-            </form>
+            <input
+              id="search"
+              type="search"
+              onChange={(event) => debounceSearch(event?.target.value)}
+              className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+              placeholder="Search for products"
+            />
+          </form>
           <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
           <DeleteButton
             dataLength={bulkSelectedProduct.length}

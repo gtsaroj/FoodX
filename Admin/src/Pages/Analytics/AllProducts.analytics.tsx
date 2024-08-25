@@ -20,6 +20,7 @@ import toast from "react-hot-toast";
 import { debounce } from "../../Utility/Debounce";
 import { SearchProduct } from "../../Utility/Search";
 import { Button } from "../../Components/Common/Button/Button";
+import { searchProduct } from "../../Services/product.services";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ArrangedProduct[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -113,13 +114,14 @@ const AllProductAnalytics = () => {
     // call getAllProducts
     // setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
     getAllProducts({
-      path: isFilter?.typeFilter || "products",
+      path: (isFilter?.typeFilter as "products" | "specials") || "products",
       pageSize: pagination.perPage,
       currentFirstDoc: null,
       currentLastDoc: null,
       direction: "next",
       filter:
-        (isFilter && isFilter.sortFilter) || ("name" as keyof ProductType),
+        ((isFilter && isFilter.sortFilter) as keyof ProductType) ||
+        ("name" as keyof ProductType),
       sort: sortOrder,
     });
   }, [
@@ -213,12 +215,37 @@ const AllProductAnalytics = () => {
     setIsFilter((prev) => ({ ...prev, sortFilter: value }));
   };
 
-  const handleChange = (value: string) => {
-    if (value.length <= 0) return getAllProducts();
-    const filterProducts = SearchProduct(fetchedProducts, value);
+  const handleChange = async (value: string) => {
+    if (value.length <= 0)
+      return await getAllProducts({
+        path: (isFilter?.typeFilter as "products" | "specials") || "products",
+        pageSize: pagination.perPage,
+        currentFirstDoc: null,
+        currentLastDoc: null,
+        direction: "next",
+        filter:
+          ((isFilter && isFilter.sortFilter) as keyof ProductType) ||
+          ("name" as keyof ProductType),
+        sort: sortOrder,
+      });
+    const filterProducts = (await searchProduct(value)) as ProductType[];
 
-    if (filterProducts.length <= 0) return setFetchedProducts([]);
-    setFetchedProducts(filterProducts);
+    const aggregateProducts = filterProducts?.map(
+      (product): ArrangedProduct => {
+        return {
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          quantity: product.quantity as number,
+          price: product.price as number,
+          category: product.tag,
+          order: 20,
+          rating: 4.3,
+          revenue: 15000,
+        };
+      }
+    );
+    setFetchedProducts(aggregateProducts);
   };
 
   const debounceSearch = useCallback(debounce(handleChange, 300), []);
