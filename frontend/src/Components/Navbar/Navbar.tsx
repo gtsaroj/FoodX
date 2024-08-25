@@ -18,7 +18,10 @@ import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
 import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
-import { getNormalProducts } from "../../Services/product.services";
+import {
+  getNormalProducts,
+  searchProduct,
+} from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 const navbarItems = [
@@ -123,13 +126,10 @@ export const Navbar: React.FC = () => {
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
-    const filter = (await getAllProducts())?.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
-    );
-
+    const filter = await searchProduct(value);
     setSearchData(filter);
   };
-  console.log(searchData);
+
   const debounceSearch = debounce(handleSearch, 500);
 
   const dispatch = useDispatch<AppDispatch>();
