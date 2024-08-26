@@ -236,3 +236,15 @@ export const updateAccount = async (data: {
     throw new Error("Unable to update account" + error);
   }
 };
+
+export const deleteAccount = async () => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "users/delete-account",
+    });
+    return response.status;
+  } catch (error) {
+    throw new Error("Error while delete account " + error);
+  }
+};

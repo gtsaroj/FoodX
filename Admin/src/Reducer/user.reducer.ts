@@ -69,6 +69,12 @@ const authSlice = createSlice({
         const key = Object.keys(payload);
 
         state.userInfo[key[0]] = payload[key[0]];
+        if (key[1]) {
+          state.userInfo[key[1]] = payload[key[1]];
+        }
+        if (key[2]) {
+          state.userInfo[key[2]] = payload[key[2]];
+        }
       });
   },
 });
