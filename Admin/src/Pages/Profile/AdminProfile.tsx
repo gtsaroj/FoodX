@@ -1,39 +1,42 @@
-import { EditIcon, Eye, EyeOff, X } from "lucide-react";
+import { EditIcon, Flag } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import React, { FormEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import avatar from "../../assets/logo/avatar.png";
-import ReAuth from "../../Auth/Profile/ReAuth";
-import toast from "react-hot-toast";
-
-import { getUserData } from "../../firebase/db";
 import { AppDispatch, RootState, Store } from "../../Store";
-import { DbUser } from "../../models/user.model";
-import { authLogout } from "../../Reducer/user.reducer";
-import { updateUserPassword } from "../../firebase/utils";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { User } from "../../models/user.model";
 import Modal from "../../Components/Common/Popup/Popup";
 import { updateUserAction } from "../../Actions/user.actions";
+import Skeleton from "react-loading-skeleton";
+import { PasswordChange } from "../../Auth/Settings/Account.password";
+import ReAuth from "../../Auth/Profile/ReAuth";
+import { AccountDisable } from "../../Auth/Settings/Account.disable";
+import { AccountDelete } from "../../Auth/Settings/Account.delete";
+import toast from "react-hot-toast";
+import { updateAccount } from "../../Services/user.services";
 
 export const AdminProfile = () => {
   const authUser = useSelector(
     (state: RootState) => state.root.user.userInfo
   ) as User;
-  const [userData, setUserData] = useState<DbUser>();
+
+  const [userData, setUserData] = useState<User>();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await getUserData("admin", authUser?.uid as string);
-
-      setUserData(data);
-      return data;
-    };
-    fetchData();
-  }, [authUser.uid]);
-
-  useEffect(() => {}, [userData]);
-
-
+    setUserData({
+      fullName: authUser.fullName,
+      avatar: authUser.avatar,
+      email: authUser.email,
+      role: authUser.role,
+      phoneNumber: authUser.phoneNumber,
+    });
+  }, [
+    authUser.avatar,
+    authUser.email,
+    authUser.fullName,
+    authUser.role,
+    authUser.phoneNumber,
+  ]);
 
   return (
     <div className="flex flex-col items-center overflow-autojustify-center w-full  px-3 py-5 ">
@@ -50,7 +53,7 @@ export const AdminProfile = () => {
       </div>
       <div className="flex flex-col items-center justify-center max-w-[1200px] w-full gap-2 lg:p-0  p-3 rounded ">
         <PersonlInformation
-          fullName={userData?.fullName}
+          fullName={userData?.fullName as string}
           avatar={userData?.avatar}
           role={userData?.role}
           email={userData?.email}
@@ -77,51 +80,36 @@ interface ProfileCardType {
   phoneNumber?: string;
 }
 
+// My profile
 const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
   const uploadAvatarRef = useRef<HTMLInputElement | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
   const [updateAvatar, setUpdateAvatar] = useState<string>(avatar);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selected, setSelected] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
 
   const UpdateUserProfile = async () => {
-    const profile = {
-      avatar: updateAvatar,
-    };
+    setLoading(true);
     try {
-      setLoading(false);
-      await dispatch(updateUserAction({ avatar: profile.avatar }));
-
+      await dispatch(updateUserAction({ avatar: updateAvatar }));
     } catch (error) {
       throw new Error("Error while updating avatar" + error);
     }
-    setLoading(true)
+    setLoading(false);
   };
 
-  useEffect(() => {
-    if (
-      !props.avatar &&
-      !props.email &&
-      !props.fullName &&
-      !props.phoneNumber &&
-      !props.role
-    ) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
-  }, [props.avatar, props.email, props.fullName, props.phoneNumber, props.role]);
-
-
-
-  return (
+  return loading ? (
+    <div className="w-full">
+      <Skeleton
+        height={130}
+        baseColor="var(--light-background)"
+        highlightColor="var(--light-foreground) "
+        count={1}
+      />
+    </div>
+  ) : (
     <div
-      className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--dark-border)] rounded ${
-        loading
-          ? ""
-          : "bg-gradient-to-r from-gray-300 to-slate-400 animate-pulse "
-      } `}
+      className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--dark-border)] rounded`}
     >
       <div className="flex gap-5">
         <div className=" relative group/editable max-w-[80px] max-h-[80px] overflow-hidden rounded-full">
@@ -131,9 +119,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
             <img
               src={props?.avatar}
               alt="user profile"
-              className={`w-[80px] h-[80px] ${
-                loading ? "visible" : "invisible"
-              }`}
+              className={`w-[80px] h-[80px]`}
             />
           )}
           <div
@@ -148,22 +134,20 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
               onChange={async (event) => {
                 if (event.target.files) {
                   const file = event.target.files[0];
-                  setLoading(false);
+                  setLoading(true);
                   const imageUrl = await storeImageInFirebase(file, {
                     folder: "users",
                   });
                   setUpdateAvatar(imageUrl as string);
-                  setLoading(true);
-                  setSelected(true);
+                  setLoading(false);
                 }
               }}
               accept="image/*"
             />
             <div
               onClick={() => uploadAvatarRef.current?.click()}
-              className={` relative w-[80px] h-[80px]  rounded-full bg-[#86b1e75e] ${
-                selected ? "hidden" : ""
-              }`}
+              className={` relative w-[80px] h-[80px]  rounded-full bg-[#86b1e75e]
+              `}
             >
               <div className="absolute flex items-end justify-end  bottom-2 right-3">
                 <EditIcon className="size-4" />
@@ -173,23 +157,17 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
         </div>
         <div className="flex flex-col items-start justify-center gap-1">
           <p
-            className={`font-semibold tracking-wider text-[var(--dark-text)] ${
-              loading ? "visible" : "invisible"
-            }`}
+            className={`font-semibold tracking-wider text-[var(--dark-text)] `}
           >
             {props.fullName}
           </p>
           <p
-            className={`text-xs tracking-wider text-[var(--dark-secondary-text)] ${
-              loading ? "visible" : "invisible"
-            }`}
+            className={`text-xs tracking-wider text-[var(--dark-secondary-text)] *:`}
           >
             {props?.role?.charAt(0).toUpperCase() + props?.role?.slice(1)}
           </p>
           <p
-            className={`text-xs tracking-wider text-[var(--dark-secondary-text)] ${
-              loading ? "visible" : "invisible"
-            }`}
+            className={`text-xs tracking-wider text-[var(--dark-secondary-text)]`}
           >
             {props.email}
           </p>
@@ -210,51 +188,67 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
 
 export interface UpdateProfileInfo {
   avatar?: string;
-  firstName?: string;
-  lastName?: string;
+  fullName?: string;
   email?: string;
-  phoneNumber?: string;
+  phoneNumber?: number;
 }
 
-const PersonlInformation = (props: any) => {
-  const firstName = props?.fullName?.split(" ")[0];
-  const lastName = props?.fullName?.split(" ")[1];
+const PersonlInformation: React.FC<User> = ({
+  fullName,
+  email,
+  phoneNumber,
+  role,
+}) => {
+  console.log(fullName, email, phoneNumber);
+  const firstName = fullName?.split(" ")[0];
+  const lastName = fullName?.split(" ")[1];
 
   const [edit, setEdit] = useState<boolean>(false);
-  const [updateProfilInfo, setUpdateProfileInfo] =
-    useState<UpdateProfileInfo>();
+
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!props.email) setLoading(true);
-    else setLoading(false);
-    setUpdateProfileInfo((prev) => ({
-      ...prev,
-      email: props?.email,
-      firstName: firstName,
-      lastName: lastName,
-      phoneNumber: props.phoneNumber,
-    }));
-  }, [props]);
-
-  const UpdateProfile = async () => {
+  const [update, setUpdate] = useState({
+    firstName,
+    lastName,
+    phoneNumber,
+  });
+  console.log(update);
+  const dispatch = useDispatch<AppDispatch>();
+  const handleSubmit = async () => {
     setLoading(true);
-    await Store.dispatch(
-      UpdateProfileUser(updateProfilInfo as UpdateProfileInfo)
-    );
-
+    const toastLoader = toast.loading("Updating..., Please wait!");
+    try {
+      await dispatch(
+        updateUserAction({
+          fullName: `${update.firstName} ${update.lastName}`,
+          phoneNumber: parseInt(update.phoneNumber as string),
+        })
+      );
+      toast.dismiss(toastLoader);
+      toast.success("User update successfully!");
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Failed to update user account!");
+      throw new Error("Error while updating account " + error);
+    }
     setLoading(false);
   };
 
   return (
     <div className="flex-col items-center w-full lg:px-3">
-      <div className="flex justify-between w-full pt-3 pb-4 ">
+      <div className="flex  justify-between w-full pt-3 pb-4 ">
         <p className="text-xl font-semibold tracking-wide  text-[var(--dark-text)]">
           Personal Information
         </p>
+
         <div onClick={() => setEdit(!edit)} className="px-5 max-w-[1200px]">
           {edit ? (
-            <button onClick={() => UpdateProfile()}>
+            <button
+              onClick={handleSubmit}
+              disabled={
+                !update.firstName || !update.lastName || !update.phoneNumber
+              }
+            >
               <UpdateUser />
             </button>
           ) : (
@@ -262,178 +256,126 @@ const PersonlInformation = (props: any) => {
           )}
         </div>
       </div>
-      <div
-        className="max-w-[1200px] w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--dark-border)] rounded
+      {loading ? (
+        <div className="w-full">
+          {" "}
+          <Skeleton
+            height={100}
+            baseColor="var(--light-background)"
+            highlightColor="var(--light-foreground)"
+            count={1}
+          />
+        </div>
+      ) : (
+        <div
+          className="max-w-[1200px] w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--dark-border)] rounded
     "
-      >
-        <div
-          className={`grid  items-center grid-cols-2 grid-flow-cols gap-7 ${
-            loading
-              ? " py-1.5 px-2 rounded bg-gradient-to-r from-gray-300 to-slate-400  animate-pulse"
-              : ""
-          }`}
         >
           <div
-            className={`flex flex-col w-full gap-1 ${
-              loading ? "invisible" : ""
-            }`}
+            className={`grid  items-center grid-cols-2 grid-flow-cols gap-7 `}
           >
-            <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
-              First Name
-            </p>
-            {edit ? (
-              <input
-                type="text"
-                value={updateProfilInfo?.firstName}
-                onChange={(e) =>
-                  setUpdateProfileInfo((prev) => ({
-                    ...prev,
-                    firstName: e.target.value as string,
-                  }))
-                }
-                className="px-2 py-1 rounded-sm outline-none"
-              />
-            ) : (
-              <p className="text-[var(--dark-text)] font-medium ">
-                {firstName}
+            <div className={`flex flex-col w-full gap-1 `}>
+              <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
+                First Name
               </p>
-            )}
-          </div>
-          <div
-            className={`flex flex-col w-full gap-1 ${
-              loading ? "invisible" : ""
-            }`}
-          >
-            <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
-              Last Name
-            </p>
-            {edit ? (
-              <input
-                type="text"
-                value={updateProfilInfo?.lastName}
-                onChange={(e) =>
-                  setUpdateProfileInfo((prev) => ({
-                    ...prev,
-                    lastName: e.target.value as string,
-                  }))
-                }
-                className="px-2 py-1 rounded-sm outline-none"
-              />
-            ) : (
-              <p className="text-[var(--dark-text)] font-medium ">{lastName}</p>
-            )}
-          </div>
-        </div>
-        <div
-          className={`${
-            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded" : ""
-          } grid items-center grid-flow-col grid-cols-2 gap-7 `}
-        >
-          <div
-            className={`flex flex-col w-full gap-1 ${
-              loading ? "invisible" : ""
-            }`}
-          >
-            <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
-              Email
-            </p>
-            <p className="text-[var(--dark-text)] font-medium ">
-              {props.email}
-            </p>
-          </div>
-          <div
-            className={`flex flex-col w-full gap-1 ${
-              loading ? "invisible" : ""
-            }`}
-          >
-            <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
-              Phone Number
-            </p>
-            {edit ? (
-              <input
-                type="text"
-                value={updateProfilInfo?.phoneNumber}
-                onChange={(e) =>
-                  setUpdateProfileInfo((prev) => ({
-                    ...prev,
-                    phoneNumber: e.target.value as string,
-                  }))
-                }
-                className="px-2 py-1 rounded-sm outline-none"
-              />
-            ) : (
-              <p className="text-[var(--dark-text)] font-medium ">
-                {props.phoneNumber}
+              {edit ? (
+                <input
+                  type="text"
+                  value={update.firstName}
+                  onChange={(event) =>
+                    setUpdate((prev) => ({
+                      ...prev,
+                      firstName: event.target.value,
+                    }))
+                  }
+                  className="px-2 py-1.5 rounded border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] bg-[var(--light-foreground)]  outline-none"
+                />
+              ) : (
+                <p className="text-[var(--dark-text)] font-medium ">
+                  {firstName}
+                </p>
+              )}
+            </div>
+            <div className={`flex flex-col w-full gap-1 `}>
+              <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
+                Last Name
               </p>
-            )}
+              {edit ? (
+                <input
+                  value={update.lastName}
+                  onChange={(event) =>
+                    setUpdate((prev) => ({
+                      ...prev,
+                      lastName: event.target.value,
+                    }))
+                  }
+                  type="text"
+                  className="px-2 py-1.5 rounded border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] bg-[var(--light-foreground)]  outline-none"
+                />
+              ) : (
+                <p className="text-[var(--dark-text)] font-medium ">
+                  {lastName}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-        <div
-          className={` ${
-            loading ? " bg-slate-400 animate-pulse py-1.5 px-2 rounded" : ""
-          } grid items-center grid-flow-col grid-cols-2 gap-7`}
-        >
           <div
-            className={`flex flex-col w-full gap-1 ${
-              loading ? "invisible" : ""
-            }`}
+            className={` grid items-center grid-flow-col grid-cols-2 gap-7 `}
           >
-            <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
-              Role
-            </p>
-            <p className="text-[var(--dark-text)] font-medium ">
-              {props?.role?.charAt(0).toUpperCase() + props?.role?.slice(1)}
-            </p>
+            <div className={`flex flex-col w-full gap-1`}>
+              <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
+                Email
+              </p>
+              <p className="text-[var(--dark-text)] font-medium ">{email}</p>
+            </div>
+            <div className={`flex flex-col w-full gap-1`}>
+              <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
+                Phone Number
+              </p>
+              {edit ? (
+                <input
+                  type="text"
+                  value={update.phoneNumber}
+                  onChange={(event) =>
+                    setUpdate((prev) => ({
+                      ...prev,
+                      phoneNumber: event.target.value,
+                    }))
+                  }
+                  className="px-2 py-1.5 rounded border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] bg-[var(--light-foreground)]  outline-none"
+                />
+              ) : (
+                <p className="text-[var(--dark-text)] font-medium ">
+                  {phoneNumber}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className={` grid items-center grid-flow-col grid-cols-2 gap-7`}>
+            <div
+              className={`flex flex-col w-full gap-1 ${
+                loading ? "invisible" : ""
+              }`}
+            >
+              <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">
+                Role
+              </p>
+              <p className="text-[var(--dark-text)] font-medium ">
+                {role?.charAt(0).toUpperCase() + role?.slice(1)}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
 const ChangePasswordComponent = () => {
-  const [openChangePassword, setOpenChangePassword] = useState<boolean>(true);
-
-  const [newPassword, setNewpassword] = useState<string>();
-  const [newConfirmPassword, setConfirmNewpassword] = useState<string>();
-  const [show, setShow] = useState<boolean>(false);
-  const [passwordType, setPasswordType] = useState<"password" | "text">(
-    "password"
-  );
-  const [confirmDeleteAccount, setConfirmDeleteAccount] =
-    useState<boolean>(false);
-
-  const [submitNewPassword, setSubmitNewPassword] = useState<boolean>(false);
-
-  const [confirmToDisable, setConfirmToDisable] = useState<boolean>(false);
-
-  const showPassword = () => {
-    setShow((show) => !show);
-    setPasswordType(passwordType === "text" ? "password" : "text");
-  };
-
-  const SubmitNewPassword = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (newPassword === "" && newConfirmPassword === "")
-      return toast.error("Fields Are Required");
-    try {
-      setSubmitNewPassword(true);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const HandlePasswordChange = async () => {
-    try {
-      await updateUserPassword(newPassword as string).then(() => {
-        toast.success("Your password Changed SuccessFully");
-        setTimeout(() => {
-          Store.dispatch(authLogout());
-        }, 2000);
-      });
-    } catch (error) {
-      throw new Error("Password Change Failed =>" + error);
-    }
-  };
+  const [isChangePassword, setIsChangePassword] = useState<boolean>(true);
+  const [isDisable, setIsDisable] = useState<boolean>(true);
+  const [isDelete, setIsDelete] = useState<boolean>(true);
+  const [isVerified, setIsVerified] = useState<boolean>(false);
   return (
     <div className=" relative max-w-[1200px] w-full grow flex-col gap-8 flex items-center justify-center px-5 py-7 text-[var(--dark-text)]">
       <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]">
@@ -443,15 +385,16 @@ const ChangePasswordComponent = () => {
             Are you sure you want to change your password?
           </span>
         </p>
+        {/* passwordChange */}
         <div
-          onClick={() => setOpenChangePassword(!openChangePassword)}
+          onClick={() => setIsChangePassword(!isChangePassword)}
           className="border-[var(--danger-text)] border  p-3 rounded text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
         >
           <p className="w-full text-center">Change Password</p>
         </div>
       </div>
       <div
-        onClick={() => setConfirmToDisable(!confirmToDisable)}
+        onClick={() => setIsDisable(!isDisable)}
         className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]"
       >
         <p className="flex flex-col gap-1 font-semibold tracking-wide">
@@ -473,120 +416,34 @@ const ChangePasswordComponent = () => {
           </span>
         </p>
         <div
-          onClick={() => setConfirmDeleteAccount(!confirmDeleteAccount)}
+          onClick={() => setIsDelete(!isDelete)}
           className="border-[var(--danger-text)] border  p-3 rounded text-[var(--danger-text)] hover:bg-[var(--danger-bg)] hover:text-[var(--light-text)] cursor-pointer hover:border-[var(--danger-text)] ease-in-out duration-200 transition-all"
         >
           <p className="w-full text-center">Delete Account</p>
         </div>
       </div>
-      {confirmToDisable && (
-        <div
-          className={`fixed ${
-            confirmToDisable ? "visible" : "invisible"
-          } flex items-center px-4 justify-center top-16 w-full z-50  bg-[#5f5b6667] bottom-0 left-0 right-0`}
-        >
-          <DisableAccount />
-        </div>
-      )}{" "}
-      {confirmDeleteAccount && (
-        <div
-          className={`fixed ${
-            confirmDeleteAccount ? "visible" : "invisible"
-          } flex items-center px-4 z-50 justify-center top-16 w-full  bg-[#5f5b6667] bottom-0 left-0 right-0`}
-        >
-          <DeleteAccount />
-        </div>
-      )}
       <Modal
-        close={openChangePassword}
-        closeModal={() => setOpenChangePassword(true)}
+        close={isChangePassword}
+        closeModal={() => setIsChangePassword(true)}
       >
-        {" "}
-        {submitNewPassword ? (
-          <ReAuth reAuthUsers={HandlePasswordChange} />
+        {isVerified ? (
+          <PasswordChange />
         ) : (
-          <div
-            className={` h-[80vh] flex justify-center items-center px-5 z-30`}
-          >
-            <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
-              <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
-                <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
-                  <h1 className="md:hidden">Change Password</h1>
-                  <h1 className="hidden md:block">Change Password</h1>
-                </div>
-                <div className="px-3 py-4">
-                  <form
-                    className="flex flex-col gap-4 p-2"
-                    onSubmit={() =>
-                      SubmitNewPassword(
-                        event as unknown as FormEvent<HTMLFormElement>
-                      )
-                    }
-                  >
-                    <div className="relative flex flex-col gap-2">
-                      <label htmlFor="logEmail" className="text-[15px]">
-                        New Password
-                      </label>
-                      <input
-                        type="text"
-                        name="email"
-                        autoComplete="off"
-                        value={newPassword}
-                        onChange={(e) => setNewpassword(e.target.value)}
-                        required
-                        className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
-                      />
-                    </div>
-                    <div className="relative flex flex-col gap-2">
-                      <label htmlFor="logPassword" className="text-[15px]">
-                        Confirm New Password
-                      </label>
-                      <input
-                        type={passwordType}
-                        name="password"
-                        autoComplete="off"
-                        maxLength={25}
-                        value={newConfirmPassword}
-                        onChange={(e) => setConfirmNewpassword(e.target.value)}
-                        required
-                        className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded h-[40px] outline-none px-5 py-3 text-md"
-                      />
-
-                      {show ? (
-                        <div
-                          className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
-                          onClick={showPassword}
-                        >
-                          <Eye size={23} />
-                        </div>
-                      ) : (
-                        <div
-                          className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
-                          onClick={showPassword}
-                        >
-                          <EyeOff size={23} />
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      className="h-[40px] rounded bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
-                      type="submit"
-                    >
-                      Submit
-                    </button>
-                  </form>
-                </div>
-
-                <div
-                  onClick={() => setOpenChangePassword(!openChangePassword)}
-                  className="absolute top-0 right-0 p-3  rounded-tr-md text-[var(--secondary-color)] cursor-pointer hover:bg-[var(--secondary-light)] hover:text-[var(--light-text)] transition-all ease-in-out duration-150 "
-                >
-                  <X />
-                </div>
-              </div>
-            </div>
-          </div>
+          <ReAuth isVerified={() => setIsVerified(true)} />
+        )}
+      </Modal>
+      <Modal close={isDisable} closeModal={() => setIsDisable(true)}>
+        {isVerified ? (
+          <AccountDisable />
+        ) : (
+          <ReAuth isVerified={() => setIsVerified(true)} />
+        )}
+      </Modal>
+      <Modal close={isDelete} closeModal={() => setIsDelete(true)}>
+        {isVerified ? (
+          <AccountDelete />
+        ) : (
+          <ReAuth isVerified={() => setIsVerified(true)} />
         )}
       </Modal>
     </div>
