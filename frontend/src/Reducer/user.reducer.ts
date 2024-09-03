@@ -1,8 +1,59 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { authState } from "../models/user.model";
-import { singInAction, singUpAction, updateUserAction } from "../Actions/user.actions";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { authState, UpdateProfileInfo } from "../models/user.model";
+import { ValidationType } from "../models/register.model";
+import * as userAction from "../Services/user.services"
+import { SigninTypes } from "../Actions/user.actions";
 
-// const userToken = localStorage.getItem("userToken");
+
+
+
+const signInAction = createAsyncThunk(
+  "auth/signIn",
+  async (data: SigninTypes, { rejectWithValue }) => {
+    try {
+      const response = await userAction.signIn(
+        data.email,
+        data.password,
+        data.userRole
+      );
+      return response;
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error);
+      }
+    }
+  }
+);
+const signUpAction = createAsyncThunk(
+  "auth/signUp",
+  async (data: ValidationType, thunkApi) => {
+    try {
+      const response = await userAction.signUp({ ...data });
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(
+        `Error while action to sign up new user -> ${error}`
+      );
+    }
+  }
+);
+
+const updateUserAction = createAsyncThunk(
+  "auth/update-user",
+  async (data: UpdateProfileInfo, thunkApi) => {
+    try {
+      const response = await userAction.updateUser({ ...data });
+      return response;
+    } catch (error) {
+      return thunkApi.rejectWithValue(
+        `Error while action to update user -> ${error}`
+      );
+    }
+  }
+);
+// Define the initial state
 const initialState: authState = {
   error: null,
   loading: true,
@@ -15,61 +66,75 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     authLogout: (state) => {
-      (state.loading = false),
-        (state.success = false),
-        (state.userInfo = {}),
-        (state.error = null);
+      state.loading = false;
+      state.success = false;
+      state.userInfo = {};
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     // Sign up new user
-    builder.addCase(singUpAction?.pending, (state) => {
+    builder.addCase(signUpAction.pending, (state) => {
       state.loading = true;
-      state.userInfo = {}
-    }),
-      builder.addCase(singUpAction?.fulfilled, (state, action) => {
-        (state.loading = false),
-          (state.success = true),
-          (state.userInfo = action.payload);
-      }),
-      builder.addCase(singUpAction?.rejected, (state, action) => {
-        (state.loading = false),
-          (state.success = false),
-          (state.error = action.payload);
-      }),
-      // sign in existed user
-      builder.addCase(singInAction?.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.userInfo = {}
-      }),
-      builder.addCase(singInAction.fulfilled, (state, action) => {
-        (state.loading = false),
-          (state.success = true),
-          (state.error = null),
-         state.userInfo = action.payload
-      }),
-      builder.addCase(singInAction.rejected, (state, action) => {
-        (state.loading = false),
-          (state.success = false),
-          (state.error = action.payload);
-      });
-
-    // update existed user
-    builder.addCase(updateUserAction.fulfilled, (state, action) => {
-      if (state.userInfo) {
-        if (action.payload.avatar)
-          state.userInfo.avatar = action?.payload?.avatar;
-        if (action.payload.fullName)
-          state.userInfo.fullName = action?.payload?.fullName;
-        if (action.payload.phoneNumber)
-          state.userInfo.phoneNumber = action?.payload?.phoneNumber;
-        if (action.payload.email) state.userInfo.email = action.payload.email;
-      }
+      state.userInfo = {};
     });
+    builder.addCase(
+      signUpAction.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.success = true;
+        state.userInfo = action.payload;
+      }
+    );
+    builder.addCase(
+      signUpAction.rejected,
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.success = false;
+        state.error = action.payload;
+      }
+    );
+
+    // Sign in existing user
+    builder.addCase(signInAction.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+      state.userInfo = {};
+    });
+    builder.addCase(
+      signInAction.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.success = true;
+        state.error = null;
+        state.userInfo = action.payload;
+      }
+    );
+    builder.addCase(
+      signInAction.rejected,
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.success = false;
+        state.error = action.payload;
+      }
+    );
+
+    // Update existing user
+    builder.addCase(updateUserAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      updateUserAction.fulfilled,
+      (state, action: PayloadAction<any>) => {
+        const payload = action.payload;
+        const keys = Object.keys(payload);
+        keys.forEach((key) => {
+          state.userInfo[key] = payload[key];
+        });
+      }
+    );
   },
 });
 
-export  const userReducer =  authSlice.reducer;
-
+export const authReducer = authSlice.reducer;
 export const { authLogout } = authSlice.actions;

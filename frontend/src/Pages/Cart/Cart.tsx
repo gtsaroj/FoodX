@@ -1,5 +1,5 @@
 import React from "react";
-import { SingleCard } from "../../Components/Card/CardProductCart";
+import { SingleCard } from "../../Components/Card/Card.Product.Cart";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { ShoppingBag } from "lucide-react";

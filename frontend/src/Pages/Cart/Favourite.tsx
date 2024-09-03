@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
-import { FavouriteCard } from "../../Components/Card/FavouriteCard";
+import { FavouriteCard } from "../../Components/Card/Card.Favourite";
 
 const Favourite: React.FC = () => {
   const selectedProducts = useSelector(

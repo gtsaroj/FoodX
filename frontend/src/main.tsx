@@ -6,14 +6,17 @@ import { persistor, Store } from "./Store";
 import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import 'react-loading-skeleton/dist/skeleton.css'
+import { Suspense } from "react";
 
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Provider store={Store}>
+  <Suspense fallback={"loading..."}>
+      <Provider store={Store}>
     <PersistGate persistor={persistor} loading={"loading"}>
       <App />
       <Toaster/>
     </PersistGate>
     
   </Provider>
+ </Suspense>
 );

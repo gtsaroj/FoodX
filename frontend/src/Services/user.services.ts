@@ -5,6 +5,7 @@ import { signInUser, signUpNewUser } from "../firebase/Authentication";
 import { ValidationType } from "../models/register.model";
 import { UpdateProfileInfo, User } from "../models/user.model";
 import Cookies from "js-cookie";
+import { makeRequest } from "../makeRequest";
 
 export const signIn = async (
   email: string,
@@ -70,5 +71,17 @@ export const updateUser = async (data: UpdateProfileInfo) => {
   } catch (error) {
     toast.error("Unable to update user");
     throw new Error("Unable to update user");
+  }
+};
+
+export const deleteAccount = async () => {
+  try {
+    const response = await makeRequest({
+      method: "delete",
+      url: "users/delete-account",
+    });
+    return response.status;
+  } catch (error) {
+    throw new Error("Error while delete account " + error);
   }
 };

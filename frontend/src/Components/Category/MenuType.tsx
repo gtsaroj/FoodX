@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SpecialCards } from "../Card/ProductCard";
-import { UseFetch } from "../../UseFetch";
-import { Product, ProductType } from "../../models/product.model";
-import { getCategory } from "../../firebase/db";
+import React, { useEffect, useState } from "react";
+import { SpecialCards } from "../Card/Card.Product";
+import { Product } from "../../models/product.model";
 import { getCategories } from "../../Services/category.services";
 import { Selector } from "../Common/Selector/Selector";
-import { LoadingContent } from "../Loader/Loader";
 import Skeleton from "react-loading-skeleton";
 import { getProductsByTag } from "../../Services/product.services";
 import { Frown } from "lucide-react";
+
 
 export interface categoriesTagOption {
   name: string;
@@ -18,6 +16,8 @@ export interface categoriesTagOption {
 
 export const MenuType: React.FC = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
+
+
 
   const [loading, setLoading] = useState<boolean>(false);
 

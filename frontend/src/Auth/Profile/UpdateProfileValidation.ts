@@ -1,4 +1,4 @@
-import { UpdateProfileType } from "../UpdateProfile/UpdateProfile";
+import { ValidationType } from "../../models/register.model";
 
 export interface ChangePasswordType {
   newPassword: string;
@@ -6,13 +6,13 @@ export interface ChangePasswordType {
 }
 
 export const allFieldsRequired = (
-  RegisterValue: UpdateProfileType,
+  RegisterValue: ValidationType,
   error: Record<string, string>
 ) => {
   for (const inputValue in RegisterValue) {
     if (
-      RegisterValue.hasOwnProperty(inputValue) &&
-      RegisterValue[inputValue as keyof UpdateProfileType] === ""
+      Object.prototype.hasOwnProperty.call(RegisterValue, inputValue) &&
+      RegisterValue[inputValue as keyof ValidationType] === ""
     )
       error[inputValue] = `All are required`;
   }
@@ -23,13 +23,13 @@ export const allFieldsRequired = (
 };
 
 export const checkValidNumber = (
-  registervalue: UpdateProfileType,
+  registervalue: ValidationType,
   error: Record<string, string>
 ) => {
   if (registervalue.phoneNumber === "") {
     return (error.number = "*Required");
   }
-  if (registervalue.phoneNumber?.length < 10) {
+  if (registervalue.phoneNumber && registervalue.phoneNumber.length < 10) {
     return (error.number = "Invalid Number");
   }
 };
@@ -38,21 +38,15 @@ export const checkPassword = (
   password: ChangePasswordType,
   error: Record<string, string>
 ) => {
-  if (
-
-    !password.newPassword &&
-    !password.confirmNewPassword
-  ) {
+  if (!password.newPassword && !password.confirmNewPassword) {
     error.oldPassword = "*required";
     error.newPassword = "*required";
     error.confirmNewPassword = "*required";
     return;
   }
-  
-  const passkey = (
-    password.newPassword?.trim() &&
-    password.confirmNewPassword.trim()
-  )
+
+  const passkey =
+    password.newPassword?.trim() && password.confirmNewPassword.trim();
 
   //Regular Expression
   const lowerCase = new RegExp("(?=.*[a-z])");

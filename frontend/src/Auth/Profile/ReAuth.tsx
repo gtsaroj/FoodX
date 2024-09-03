@@ -1,11 +1,16 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, X } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import ClipLoader from "react-spinners/HashLoader";
-import { reAuthUser } from "../../firebase/utils";
-import toast from "react-hot-toast";
 
-const ReAuth = ({ reAuthUsers }: any) => {
+import toast from "react-hot-toast";
+import { reAuthUser } from "../../firebase/utils";
+
+interface ReAuthProp {
+  isVerified: () => void;
+}
+
+const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -14,51 +19,41 @@ const ReAuth = ({ reAuthUsers }: any) => {
     "password"
   );
 
-  const [dataSend, setDataSend] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const showPassword = () => {
     setShow((show) => !show);
     setPasswordType(passwordType === "text" ? "password" : "text");
   };
 
-  const LoginFormSubmit = async () => {
-    try {
-      setDataSend(false);
-    } catch (error) {
-      console.error(`Error occuring while sending form : ${error}`);
-      setDataSend(true);
-    }
-  };
-
   const HandleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!email && !password)
+      return toast.error("Email or Password are required.");
+    setLoading(true);
     try {
       await reAuthUser(email, password);
-      reAuthUsers();
+      isVerified();
     } catch (error) {
-      setDataSend(true);
-      return toast.error("Invalid Email or Password");
+      toast.error("Invalid Email or Password");
+      throw new Error("Error while verifying user" + error);
     }
+    setLoading(false);
   };
   return (
     <div
-      className={`w-[100vw] h-[80vh] flex justify-center items-center px-5 z-30`}
+      className={`w-full h-[80vh] flex justify-center items-center px-5 z-30`}
     >
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
-          <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
+          <div className="w-full flex flex-col items-center gap-3 px-3   text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
             <h1 className="md:hidden">ReAuthenticate</h1>
             <h1 className="hidden md:block">ReAuthenticate</h1>
           </div>
           <div className="px-3 py-4">
-            <form
-              className="flex flex-col gap-4 p-2"
-              onSubmit={() =>
-                HandleSubmit(event as unknown as FormEvent<HTMLFormElement>)
-              }
-            >
+            <form className="flex flex-col gap-5 p-2" onSubmit={HandleSubmit}>
               <div className="relative flex flex-col gap-2">
-                <label htmlFor="logEmail" className="text-[15px]">
+                <label htmlFor="logEmail" className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]">
                   Email
                 </label>
                 <input
@@ -72,7 +67,7 @@ const ReAuth = ({ reAuthUsers }: any) => {
                 />
               </div>
               <div className="relative flex flex-col gap-2">
-                <label htmlFor="logPassword" className="text-[15px]">
+                <label htmlFor="logPassword" className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]">
                   Password
                 </label>
                 <input
@@ -110,11 +105,10 @@ const ReAuth = ({ reAuthUsers }: any) => {
                 Forgot Password?
               </p>
               <button
-                className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
+                className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 "
                 type="submit"
-                onClick={LoginFormSubmit}
               >
-                {dataSend ? (
+                {!loading ? (
                   "Submit"
                 ) : (
                   <div className="flex items-center justify-center gap-2">

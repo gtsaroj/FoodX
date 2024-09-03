@@ -185,8 +185,6 @@ export const OrderHistory = () => {
     setLoading(false);
   };
 
-  console.log(initialOrder);
-
   useEffect(() => {
     if (pagination.currentPage === 1) {
       getUserOrders({
@@ -223,24 +221,30 @@ export const OrderHistory = () => {
   }, [initialOrder]);
 
   return (
-    <Table
-      actions={{
-        orderFn: (id: string) => console.log(id),
-        downloadFn: (id: string) => console.log(id),
-      }}
-      pagination={{
-        currentPage: pagination?.currentPage,
-        perPage: pagination?.perPage,
-      }}
-      onPageChange={(page: number) =>
-        setPagination((prev) => ({ ...prev, currentPage: page }))
-      }
-      headStyle={{ width: "100%" }}
-      bodyHeight={400}
-      columns={Columns}
-      data={initialOrder}
-      totalData={totalData || 1}
-      loading={loading}
-    />
+    <div className="w-full h-full flex flex-col gap-6 bg-white px-5 py-4   rounded items-start justify-center">
+      <h1 className="text-[25px] font-semibold tracking-wider ">
+        Order History
+      </h1>
+
+      <Table
+        actions={{
+          orderFn: (id: string) => console.log(id),
+          downloadFn: (id: string) => console.log(id),
+        }}
+        pagination={{
+          currentPage: pagination?.currentPage,
+          perPage: pagination?.perPage,
+        }}
+        onPageChange={(page: number) =>
+          setPagination((prev) => ({ ...prev, currentPage: page }))
+        }
+        headStyle={{ width: "100%" }}
+        bodyHeight={400}
+        columns={Columns}
+        data={initialOrder}
+        totalData={totalData || initialOrder?.length || 1}
+        loading={loading}
+      />
+    </div>
   );
 };

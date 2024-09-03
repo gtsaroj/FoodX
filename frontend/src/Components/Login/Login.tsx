@@ -6,9 +6,8 @@ import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { singInAction } from "../../Actions/user.actions";
+import { signInAction } from "../../Actions/user.actions";
 
 //Login container
 export const LoginContainer: React.FC = () => {
@@ -33,7 +32,7 @@ export const LoginContainer: React.FC = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      await dispatch(singInAction({ email, password, userRole: "customer" }));
+      await dispatch(signInAction({ email, password, userRole: "customer" }));
     } catch (error) {
       throw new Error("Error while loging" + error);
     }

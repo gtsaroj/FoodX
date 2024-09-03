@@ -1,19 +1,20 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { Frown, Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
-import { SingleCard } from "../Card/CardProductCart";
+import { SingleCard } from "../Card/Card.Product.Cart";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Store";
-import addNotification from "react-push-notification";
 import { order } from "../../Services/order.services";
 import { Product } from "../../models/product.model";
 import toast from "react-hot-toast";
 import Cart from "../../Pages/Cart/Cart";
-import { SpecialCards } from "../Card/ProductCard";
+import { SpecialCards } from "../Card/Card.Product";
 import { UseFetch } from "../../UseFetch";
 import { addToCart } from "../../Reducer/product.reducer";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { getSpecialProducts } from "../../Services/product.services";
+import { RecentProduct } from "../Card/Card.Recent.Product";
+import { RootState } from "../../Store";
+import { useSelector } from "react-redux";
 
 interface CartProp {
   prop: Product;
@@ -52,18 +53,7 @@ export const Payment: React.FC = () => {
         status: "Pending",
       });
       toast.dismiss(toasLoader);
-      addNotification({
-        title: "Order Confirmed",
-        subtitle: "Success!",
-        message:
-          "Your order has been successfully placed and is now being processed. You will receive an email confirmation with the details shortly. Thank you for shopping with us!",
-        theme: "darkblue",
-        native: true, 
-        duration: 5000,
-        icon : "https://static.vecteezy.com/system/resources/thumbnails/025/210/773/small/check-mark-icon-transparent-background-checkmark-icon-approved-symbol-confirmation-sign-design-elements-checklist-positive-thinking-sign-correct-answer-verified-badge-flat-icon-png.png",
-        vibrate: 2,
 
-      });
       toast.success("Order sent successfully! ");
     } catch (error) {
       toast.dismiss(toasLoader);
@@ -151,234 +141,10 @@ export const Payment: React.FC = () => {
   );
 };
 
-export const MobileCart: React.FC = () => {
-  const [initialData, setInitialData] = useState<Product[]>([]);
-  const { data } = UseFetch("products/all");
 
-  const authUser = useSelector((state: RootState) => state.root.auth.success);
 
-  useEffect(() => {
-    setInitialData(data as Product[]);
-  }, [data]);
-  const navigate = useNavigate();
 
-  return (
-    // Desktop
-    <div className="flex flex-col items-start  gap-10 w-full h-full py-6 px-3 justify-between ">
-      <div className="w-full h-full flex lg:flex-row flex-col gap-[7rem] sm:gap-7  bg-[var(--light-foreground)] px-5 py-8 rounded items-center lg:items-start justify-around">
-        <div className="lg:w-[600px] w-full p-2 py-4  px-5 rounded">
-          <Cart />
-        </div>
-        <div className="lg:w-[550px] w-full flex h-full flex-col gap-4 pt-3 px-4 border  rounded-lg">
-          <h3 className="w-full text-[25px] pl-4  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
-            Recent Products
-          </h3>
-          <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">
-            <div className="flex  flex-col w-full items-start h-[530px]  gap-3">
-              {authUser ? (
-                initialData?.length > 0 ? (
-                  initialData?.map((data) => (
-                    <Carts prop={data} key={data.id} />
-                  ))
-                ) : (
-                  <div className="w-full ">
-                    <Skeleton
-                      height={90}
-                      baseColor="var(--light-background)"
-                      highlightColor="var(--light-foreground)"
-                      count={5}
-                    />
-                  </div>
-                )
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
-                  <Frown className="size-32 text-[var(--dark-secondary-text)] " />
-                  <p className="text-lg text-[var(--dark-secondary-text)] mb-4">
-                    You are not logged in!
-                  </p>
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="bg-[var(--primary-light)] text-white py-2 px-4 rounded hover:bg-[var(--primary-color)] "
-                  >
-                    Log in to see your products
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full mx-4 h-full px-3 py-2 rounded-t-lg flex flex-col gap-3 bg-white ">
-        <h1 className="text-[23px] pl-5 pt-4 tracking-wider ">
-          Popular products
-        </h1>
-        <div className="w-full flex flex-col gap-3 bg-white px-5 py-4  overflow-auto  rounded items-start justify-center">
-          <div className=" overflow-hidden">
-            <div className="w-full h-full flex items-center gap-4 justify-start  ">
-              {initialData?.length > 0 ? (
-                initialData?.map((singleObject) => (
-                  <SpecialCards prop={singleObject} key={singleObject.id} />
-                ))
-              ) : (
-                <div className="w-full gap-4 flex ">
-                  <Skeleton
-                    height={230}
-                    width={330}
-                    baseColor="var(--light-background)"
-                    highlightColor="var(--light-foreground)"
-                    count={1}
-                  />
-                  <Skeleton
-                    height={230}
-                    width={330}
-                    baseColor="var(--light-background)"
-                    highlightColor="var(--light-foreground)"
-                    count={1}
-                  />
-                  <Skeleton
-                    height={230}
-                    width={330}
-                    baseColor="var(--light-background)"
-                    highlightColor="var(--light-foreground)"
-                    count={1}
-                  />
-                  <Skeleton
-                    height={230}
-                    width={330}
-                    baseColor="var(--light-background)"
-                    highlightColor="var(--light-foreground)"
-                    count={1}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-interface MenuProp {
-  prop: Product;
-}
 
 //recent products
 
-export const Carts: React.FC<MenuProp> = ({ prop }) => {
-  const [activeCart, setActiveCart] = useState<boolean>();
-  const [cartQuantity, setCartQuantity] = useState<number>(1);
 
-  const selectedProductsQuantity = useSelector(
-    (state: RootState) => state.root.cart.products
-  );
-
-  const dispatch = useDispatch<AppDispatch>();
-
-  const handleClick = () => {
-    setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
-
-    const findQuantity = selectedProductsQuantity?.find(
-      (singleProduct) => singleProduct.id == prop.id
-    );
-    if (findQuantity?.quantity) {
-      dispatch(
-        addToCart({
-          id: prop.id,
-          quantity: findQuantity.quantity <= 1 ? 1 : -1,
-        })
-      );
-    }
-  };
-
-  useEffect(() => {
-    const findQuantity = selectedProductsQuantity?.find(
-      (singleProduct) => singleProduct.id === prop.id
-    );
-    if (findQuantity) {
-      setCartQuantity(findQuantity.quantity);
-    }
-    if (findQuantity?.quantity === undefined || null) {
-      setActiveCart(false);
-    }
-  }, [selectedProductsQuantity]);
-
-  return (
-    <div className=" w-full  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)] h-[200px] ">
-      <div className="flex w-full items-stretch h-full justify-start gap-3">
-        <div className=" h-full ">
-          <img
-            src={prop.image}
-            className="  w-[120px] h-[105px] rounded-l-lg    "
-          ></img>
-        </div>
-        <div className="flex h-full  flex-col  items-start justify-evenly">
-          <p className="text-[var(--dark-text)] tracking-wide font-semibold text-[20px] w-full ">
-            {prop.name}
-          </p>
-          <span className="text-[18px] tracking-wide text-[var(--dark-text)] ">
-            Rs {prop.price}
-          </span>
-        </div>
-      </div>
-
-      <div
-        className={`p-2   ${
-          activeCart
-            ? ""
-            : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-        }   bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center  right-1 border  `}
-      >
-        {activeCart ? (
-          <div className="flex items-center gap-2 px-1 text-xs select-none ">
-            <button
-              onClick={() => handleClick()}
-              disabled={cartQuantity <= 1 ? true : false}
-            >
-              <Minus
-                size={20}
-                className={` hover:text-[var(--secondary-color)]`}
-                aria-disabled={"true"}
-              />
-            </button>
-
-            <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
-            <Plus
-              size={20}
-              className=" cursor-pointer hover:text-[var(--secondary-color)]"
-              onClick={() => {
-                setCartQuantity((prevValue) => prevValue + 1);
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    quantity: +1,
-                  })
-                );
-              }}
-            />
-          </div>
-        ) : (
-          <button>
-            <ShoppingCart
-              className=" size-7"
-              onClick={() => {
-                setActiveCart((prevValue) => !prevValue);
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    name: prop.name,
-                    image: prop.image,
-                    price: prop.price,
-                    quantity: 1,
-                    tag: prop.tag,
-                  })
-                );
-              }}
-            />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};

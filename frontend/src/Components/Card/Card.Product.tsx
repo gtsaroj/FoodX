@@ -8,6 +8,7 @@ import { addToFavourite } from "../../Reducer/favourite.reducer";
 import { Product } from "../../models/product.model";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
+import { createSwapy } from "swapy";
 
 interface MenuProp {
   prop: Product;
@@ -71,10 +72,20 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     return false;
   };
 
+  // useEffect(() => {
+  //   const card = document.querySelector(".card")! ;
+
+  //   const swapy = createSwapy(card);
+
+  //   swapy.onSwap((event) => {
+  //     console.log(event.data.object);
+  //   });
+  // }, []);
+
   return (
     <div
       className={
-        " h-full w-[250px] group/heart  rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
+        " card h-full w-[250px] group/heart  rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
       }
       key={prop.id}
     >

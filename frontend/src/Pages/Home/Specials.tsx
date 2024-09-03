@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SpecialCards } from "../../Components/Card/ProductCard";
+import { SpecialCards } from "../../Components/Card/Card.Product";
 import Cart from "../Cart/Cart";
 import { getSpecialProducts } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
@@ -12,7 +12,7 @@ const Specials: React.FC = () => {
     try {
       const response = await getSpecialProducts();
       const products = response.data as Product[];
-      console.log(products)
+      console.log(products);
       setInitialProducts(products);
     } catch (error) {
       throw new Error("Error while getting special products" + error);
@@ -33,10 +33,18 @@ const Specials: React.FC = () => {
       <div className="grid grid-cols-5 gap-8 " id="specials">
         <div className="  flex flex-col items-center justify-center rounded-md px-5 py-8 col-span-5 lg:col-span-3">
           <div className="w-full  h-full  overflow-y-hidden overflow-x-scroll">
-            <SpecialCardsContainer products={ initalProducts && initalProducts?.slice(0, 4)} />
+            <SpecialCardsContainer
+              products={
+                initalProducts?.length > 0 ? initalProducts?.slice(0, 4) : []
+              }
+            />
           </div>
           <div className="w-full h-full overflow-y-hidden overflow-x-scroll">
-            <SpecialCardsContainer1 products={ initalProducts && initalProducts?.slice(4)} />
+            <SpecialCardsContainer1
+              products={
+                initalProducts?.length > 0 ? initalProducts?.slice(4) : []
+              }
+            />
           </div>
         </div>
         <div className="bg-[var(--light-background)] h-full hidden lg:flex lg:col-span-2 w-full px-5 py-8 rounded-md">
