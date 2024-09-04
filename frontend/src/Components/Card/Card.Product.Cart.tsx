@@ -2,8 +2,7 @@ import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { Product, ProductType } from "../../models/product.model";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
-import { DeleteIcon, Trash2 } from "lucide-react";
-
+import { Trash2 } from "lucide-react";
 
 interface SingleCardProp {
   prop: Product;

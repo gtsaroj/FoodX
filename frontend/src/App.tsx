@@ -21,7 +21,7 @@ const Register = React.lazy(() =>
     default: module.Register,
   }))
 );
-const NotFoundPage = React.lazy(() => import("./Pages/404Page/NotFoundPage"));
+const NotFoundPage = React.lazy(() => import("./Pages/404/404.Page.tsx"));
 const Home = React.lazy(() => import("./Pages/Home/Home"));
 const ForgotPassword = React.lazy(() =>
   import("./Components/ForgotPassword/ForgotPassword").then((module) => ({
@@ -47,7 +47,10 @@ const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 
 const HomePage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
+    <div
+
+      className="flex items-center justify-center w-full h-full min-w-[100vw]  "
+    >
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
         <div className="mb-[100px] z-50">
           <Header />

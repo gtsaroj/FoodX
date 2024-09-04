@@ -15,7 +15,6 @@ export const LoadingText: React.FC<LoadingTextProp> = ({
   isLoading,
   loadingFn,
 }) => {
-  console.log(isLoading);
   useEffect(() => {
     const loadingTime = setTimeout(() => {
       if (isLoading) {

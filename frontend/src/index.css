@@ -80,3 +80,17 @@
     scroll-behavior: smooth;
   }
 }
+
+/* Regular CSS file or Tailwind CSS configuration */
+.dragging {
+  opacity: 0.7;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: scale(1.05); /* Slightly scale up the element */
+  z-index: 1000; /* Ensure it stays on top */
+}
+
+.dragging-placeholder {
+  opacity: 0.5;
+  border: 2px dashed #ccc;
+}
+
