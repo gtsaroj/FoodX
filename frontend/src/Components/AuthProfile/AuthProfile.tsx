@@ -44,14 +44,14 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
   };
 
   return (
-    <div className=" px-3 border shadow-md py-4 flex bg-[var(--light-text)] flex-col w-[350px]  rounded-md items-baseline justify-center gap-5">
+    <div className=" px-3 border border-[var(--dark-border)] shadow-md py-4 flex bg-[var(--light-foreground)] flex-col w-[350px]  rounded-md items-baseline justify-center gap-5">
       <div className="flex flex-col items-baseline justify-center gap-1 w-full">
         <p className="text-[17px] tracking-wide text-[var(--dark-text)]">
           Currently in
         </p>
         <div
           onClick={() => navigate("/profile")}
-          className="flex items-center justify-start gap-3 cursor-pointer w-full hover:bg-[#8080807c] p-1 rounded-md"
+          className="flex items-center justify-start gap-3 cursor-pointer w-full hover:bg-[var(--light-background)] p-1 rounded-md"
         >
           <div>
             <img

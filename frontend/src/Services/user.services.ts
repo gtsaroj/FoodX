@@ -60,17 +60,21 @@ export const signUp = async (data: ValidationType) => {
   }
 };
 
-export const updateUser = async (data: UpdateProfileInfo) => {
+export const updateAccount = async (data: {
+  avatar?: string;
+  phoneNumber?: number;
+  fullName?: string;
+  email?: string;
+}) => {
   try {
-    const response = await globalRequest({
+    const response = await makeRequest({
       method: "post",
-      url: "/users/update-user",
       data: { ...data },
+      url: "users/update-account",
     });
     return response.data.data;
   } catch (error) {
-    toast.error("Unable to update user");
-    throw new Error("Unable to update user");
+    throw new Error("Unable to update account" + error);
   }
 };
 

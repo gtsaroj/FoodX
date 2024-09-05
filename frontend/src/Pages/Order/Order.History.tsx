@@ -221,7 +221,7 @@ export const OrderHistory = () => {
   }, [initialOrder]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 bg-white px-5 py-4   rounded items-start justify-center">
+    <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var-(--light-foreground)] px-5 py-4   rounded items-start justify-center">
       <h1 className="text-[25px] font-semibold tracking-wider ">
         Order History
       </h1>

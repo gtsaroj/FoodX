@@ -46,7 +46,7 @@ const Favourite: React.FC = () => {
               });
               toast.success("Succesfully added!");
             }}
-            className="text-[var(--light-text)] tracking-wider text-xl font-bold"
+            className="text-white tracking-wider text-xl font-bold"
           >
             Add to cart
           </button>

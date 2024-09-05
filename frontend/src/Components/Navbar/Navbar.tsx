@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
   Heart,
@@ -24,6 +24,8 @@ import {
 } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
+import Loader, { LoadingContent } from "../Loader/Loader";
+import { RotatingLines } from "react-loader-spinner";
 const navbarItems = [
   {
     name: "Home",
@@ -50,7 +52,7 @@ export const NavbarContainer = () => {
             to={item.url}
             key={index}
             className={
-              "h-full px-5 py-4 hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)]  text-start w-full md:w-[100px] " +
+              "h-full px-5 py-4 text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)]  text-start w-full md:w-[100px] " +
               (location.pathname === item.url
                 ? " font-bold text-[var(--secondary-color)] "
                 : " ")
@@ -73,9 +75,8 @@ export const Navbar: React.FC = () => {
   const [searchData, setSearchData] = useState<Product[]>();
   const [closeProfile, setCloseProfile] = useState<boolean>(true);
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(searchValue.length);
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const getAllProducts = async (): Promise<Product[]> => {
@@ -126,8 +127,14 @@ export const Navbar: React.FC = () => {
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
-    const filter = await searchProduct(value);
-    setSearchData(filter);
+    setLoading(true);
+    try {
+      const filter = await searchProduct(value);
+      setSearchData(filter);
+    } catch (error) {
+      throw new Error("Error while search product" + error);
+    }
+    setLoading(false);
   };
 
   const debounceSearch = debounce(handleSearch, 500);
@@ -172,20 +179,20 @@ export const Navbar: React.FC = () => {
       </div>
       {/*  Product Search */}
       <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
-        <div className="flex items-center justify-center h-full space-x-3 place-items-center">
-          <div className=" w-full px-5 ">
+        <div className="flex items-center justify-center h-full space-x-4 place-items-center">
+          <div>
             <button
-              className={`py-2.5 rounded-r-lg duration-150  px-3`}
+              className={`py-2.5 rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
             >
-              {openSearch ? <X /> : <Search />}
+              {openSearch ? <X /> : <Search className="size-7 " />}
             </button>
             <div
-              className={`absolute md:right-3 px-3 md:px-0 flex  items-center justify-start ${
+              className={`absolute md:right-3 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
                 openSearch
                   ? "visible md:w-[500px] translate-y-0 opacity-100 "
                   : "w-0 invisible opacity-0  -translate-y-10 "
-              } duration-150 top-[100px] right-0 md:left-auto left-0 `}
+              } duration-150 top-[103px] right-0 md:left-auto left-0 `}
             >
               <input
                 value={searchValue}
@@ -194,7 +201,7 @@ export const Navbar: React.FC = () => {
                   setSearchValue(event.target.value);
                 }}
                 type="text"
-                className={` w-full border-[var(--dark-border)] duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-2`}
+                className={` w-full  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-2`}
               />
               <button
                 className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
@@ -211,48 +218,29 @@ export const Navbar: React.FC = () => {
               } w-full h-full top-[10rem]  flex justify-end right-0 px-3 absolute`}
             >
               <div className="w-full md:w-[500px] border-[var(--dark-border)] rounded-lg border-[1px] shadow  px-4 py-3 scrollbar-custom  overflow-y-auto bg-[var(--light-foreground)] h-[60vh] ">
-                {searchData?.map((data) => (
-                  <div
-                    key={data.id}
-                    className="w-full flex items-center gap-5 p-3 mb-4 bg-[var(--light-background)] border border-[var(--dark-border)] rounded-lg shadow-sm hover:shadow-md duration-150"
-                  >
-                    <img
-                      src={data.image}
-                      className="w-[60px] h-[60px] rounded-lg object-cover"
-                      alt={data.name}
-                    />
-                    <div className="flex-1">
-                      <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
-                        {data.name}
-                      </h1>
-                      <p className="text-[14px] text-[var(--dark-secondary-text)]">
-                        ${data.price} &bull; {data.quantity} left
-                      </p>
-                      {data.tag && (
-                        <span className="text-[12px] text-[var(--primary-color)]">
-                          {data.tag}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      className="bg-[var(--primary-color)] text-white py-1 px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 text-[14px]"
-                      onClick={() => {
-                        dispatch(
-                          addToCart({
-                            id: data.id,
-                            name: data.name,
-                            price: data.price,
-                            quantity: 1,
-                            image: data.image,
-                          })
-                        );
-                        toast.success("Product Added!");
-                      }}
-                    >
-                      Add to Cart
-                    </button>
+                {loading ? (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
+                      <RotatingLines
+                        strokeColor="var(--dark-secondary-text)"
+                        width="27"
+                      />{" "}
+                      <span> Loading...Please wait!</span>
+                    </p>
                   </div>
-                ))}
+                ) : (
+                  searchData?.map((data) => (
+                    <SearchProductCard
+                      id={data.id}
+                      image={data.image}
+                      name={data.name}
+                      price={data.price}
+                      quantity={data.quantity}
+                      key={data.id}
+                      tag={data.tag}
+                    />
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -375,5 +363,50 @@ export const Header: React.FC = () => {
         <Navbar />
       </div>
     </header>
+  );
+};
+
+export const SearchProductCard: React.FC<Product> = (data) => {
+  return (
+    <div
+      key={data.id}
+      className="w-full flex items-center gap-5 p-3 mb-4 bg-[var(--light-background)] border border-[var(--dark-border)] rounded-lg shadow-sm hover:shadow-md duration-150"
+    >
+      <img
+        src={data.image}
+        className="w-[60px] h-[60px] rounded-lg object-cover"
+        alt={data.name}
+      />
+      <div className="flex-1">
+        <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
+          {data.name}
+        </h1>
+        <p className="text-[14px] text-[var(--dark-secondary-text)]">
+          Rs.{data.price} &bull; {data.quantity} left
+        </p>
+        {data.tag && (
+          <span className="text-[12px] text-[var(--primary-color)]">
+            {data.tag}
+          </span>
+        )}
+      </div>
+      <button
+        className="bg-[var(--primary-color)] text-white py-1 px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 text-[14px]"
+        onClick={() => {
+          dispatch(
+            addToCart({
+              id: data.id,
+              name: data.name,
+              price: data.price,
+              quantity: 1,
+              image: data.image,
+            })
+          );
+          toast.success("Product Added!");
+        }}
+      >
+        Add to Cart
+      </button>
+    </div>
   );
 };

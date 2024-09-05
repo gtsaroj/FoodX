@@ -39,7 +39,7 @@ const Payment = React.lazy(() =>
   }))
 );
 const AdminProfile = React.lazy(() =>
-  import("./Pages/Profile/AdminProfile.tsx").then((module) => ({
+  import("./Pages/Profile/UserProfile.tsx").then((module) => ({
     default: module.AdminProfile,
   }))
 );
@@ -68,6 +68,20 @@ const HomePage: React.FC = () => {
 export const App: React.FC = () => {
   const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
+
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  },[isDark]);
 
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);

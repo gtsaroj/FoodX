@@ -46,7 +46,7 @@ const updateUserAction = createAsyncThunk(
   "auth/update-user",
   async (data: UpdateProfileInfo, thunkApi) => {
     try {
-      const response = await userAction.updateUser({ ...data });
+      const response = await userAction.updateAccount({ ...data });
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(

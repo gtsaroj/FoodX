@@ -40,7 +40,7 @@ export const AdminProfile = () => {
   return (
     <div className="flex flex-col items-center overflow-autojustify-center w-full  px-3 py-5 ">
       <div className="flex flex-col items-center justify-center flex-grow w-full p-3">
-        <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
+        <p className="flex items-start w-full text-start  text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
           My Profile
         </p>
         <ProfileCard
@@ -50,7 +50,7 @@ export const AdminProfile = () => {
           email={userData?.email as string}
         />
       </div>
-      <div className="flex flex-col items-center justify-center max-w-[1200px] w-full gap-2 lg:p-0  p-3 rounded ">
+      <div className="flex flex-col items-center justify-center  w-full gap-2 lg:p-0  p-3 rounded ">
         <PersonlInformation
           fullName={userData?.fullName as string}
           avatar={userData?.avatar}
@@ -60,7 +60,7 @@ export const AdminProfile = () => {
         />
       </div>
       <div className="flex flex-col items-center justify-center h-full flex-grow w-full p-3">
-        <p className="flex items-start w-full text-start max-w-[1200px] text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
+        <p className="flex items-start w-full text-start  text-xl font-semibold tracking-wide py-5 text-[var(--dark-text)]">
           Danger Zone
         </p>
         <div className="w-full  flex justify-center items-center border border-red-500 rounded">
@@ -108,7 +108,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
     </div>
   ) : (
     <div
-      className={`flex items-center justify-between w-full h-full gap-5 p-5 max-w-[1200px] border border-[var(--dark-border)] rounded`}
+      className={`flex items-center justify-between w-full h-full gap-5 p-5 border border-[var(--dark-border)] rounded`}
     >
       <div className="flex gap-5">
         <div className=" relative group/editable max-w-[80px] max-h-[80px] overflow-hidden rounded-full">
@@ -240,7 +240,7 @@ const PersonlInformation: React.FC<User> = ({
           Personal Information
         </p>
 
-        <div onClick={() => setEdit(!edit)} className="px-5 max-w-[1200px]">
+        <div onClick={() => setEdit(!edit)} className="px-5 ">
           {edit ? (
             <button
               onClick={handleSubmit}
@@ -267,7 +267,7 @@ const PersonlInformation: React.FC<User> = ({
         </div>
       ) : (
         <div
-          className="max-w-[1200px] w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--dark-border)] rounded
+          className=" w-full grid grid-rows-3 gap-8 px-5 py-7 border border-[var(--dark-border)] rounded
     "
         >
           <div
@@ -376,7 +376,7 @@ const ChangePasswordComponent = () => {
   const [isDelete, setIsDelete] = useState<boolean>(true);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   return (
-    <div className=" relative max-w-[1200px] w-full grow flex-col gap-8 flex items-center justify-center px-5 py-7 text-[var(--dark-text)]">
+    <div className=" relative  w-full grow flex-col gap-8 flex items-center justify-center px-5 py-7 text-[var(--dark-text)]">
       <div className="flex items-center justify-between w-full gap-5 px-3 py-5  border-b border-b-[var(--dark-border)]">
         <p className="flex flex-col gap-1 font-semibold tracking-wide ">
           Change your password
@@ -451,7 +451,7 @@ const ChangePasswordComponent = () => {
 
 export const EditProfileIcon: React.FC = () => {
   return (
-    <div className="bg-[var(--light-foreground)] dark:text-white p-2 rounded-full flex justify-center items-center gap-2 cursor-pointer text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] transition-all ease-in-out duration-250 border border-[var(--dark-border)] ">
+    <div className="bg-[var(--light-foreground)] ] p-2 rounded-full flex justify-center items-center gap-2 cursor-pointer text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:text-[var(--light-text)] transition-all ease-in-out duration-250 border border-[var(--dark-border)] ">
       <p className="text-xs ">Edit</p>
       <EditIcon size={15} />
     </div>

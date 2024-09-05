@@ -47,7 +47,7 @@ const Specials: React.FC = () => {
             />
           </div>
         </div>
-        <div className="bg-[var(--light-background)] h-full hidden lg:flex lg:col-span-2 w-full px-5 py-8 rounded-md">
+        <div className="bg-[var(--light-background)] h-full hidden lg:flex lg:col-span-2 w-full px-5 py-5 rounded-md">
           <Cart />
         </div>
       </div>

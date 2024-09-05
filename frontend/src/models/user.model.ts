@@ -26,7 +26,7 @@ export interface UpdateProfileInfo {
   avatar?: string;
   fullName?: string
   email?: string;
-  phoneNumber?: string;
+  phoneNumber?: number;
 }
 
 export interface DbUser {

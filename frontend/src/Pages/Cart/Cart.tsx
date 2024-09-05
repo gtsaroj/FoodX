@@ -8,6 +8,7 @@ import { addToCart } from "../../Reducer/product.reducer";
 
 const Cart: React.FC = () => {
   const [isDraggable, setIsDraggable] = useState<boolean>(false);
+  const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
 
   const selectedProducts = useSelector(
     (state: RootState) => state.root.cart.products
@@ -26,6 +27,8 @@ const Cart: React.FC = () => {
   return (
     // Desktop
     <div
+      onMouseEnter={() => setIsScrollbarVisible(true)}
+      onMouseLeave={() => setIsScrollbarVisible(false)}
       onDragOver={(event) => {
         event.preventDefault();
         setIsDraggable(true);
@@ -49,11 +52,13 @@ const Cart: React.FC = () => {
       className="flex flex-col w-full justify-between h-[580px] gap-3   sm:px-1 px-[30px]"
     >
       <div className="flex flex-col items-start ">
-        <h3 className="w-full py-2 text-3xl font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full py-2 text-[25px] font-semibold tracking-wide text-[var(--dark-text)]">
           My Cart
         </h3>
 
-        <div className="flex flex-col relative h-[420px] items-center gap-2 w-full py-5 scrollbar-custom  px-5 overflow-auto">
+        <div
+          className={`flex flex-col relative h-[420px] items-center gap-2 w-full py-5 scrollbar-custom duration-200  pr-3 overflow-auto`}
+        >
           {selectedProducts.length > 0 ? (
             selectedProducts?.map((singleSelectedProduct) => (
               <SingleCard
@@ -88,7 +93,7 @@ const Cart: React.FC = () => {
           onClick={() => navigate("/cart/checkout")}
           className="py-3   cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
         >
-          <button className="text-[var(--light-text)] cursor-pointer tracking-wider text-xl font-bold">
+          <button className="text-white cursor-pointer tracking-wider text-xl font-bold">
             Checkout
           </button>
         </div>

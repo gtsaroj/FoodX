@@ -9,7 +9,7 @@ interface MenuProp {
     prop: Product;
 }
   
-export const RecentProduct: React.FC<MenuProp> = ({ prop }) => {
+export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
     const [activeCart, setActiveCart] = useState<boolean>();
     const [cartQuantity, setCartQuantity] = useState<number>(1);
   
@@ -48,7 +48,7 @@ export const RecentProduct: React.FC<MenuProp> = ({ prop }) => {
     }, [selectedProductsQuantity]);
   
     return (
-      <div className=" w-full shadow-sm  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)] h-[200px] ">
+      <div className=" w-full shadow-sm shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)] h-[200px] ">
         <div className="flex w-full items-stretch h-full justify-start gap-3">
           <div className=" h-full ">
             <img
@@ -71,7 +71,7 @@ export const RecentProduct: React.FC<MenuProp> = ({ prop }) => {
             activeCart
               ? ""
               : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-          }   bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center  right-1 border  `}
+          }   bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center  right-1 border-[1px] border-[var(--dark-border)]  `}
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
@@ -104,7 +104,7 @@ export const RecentProduct: React.FC<MenuProp> = ({ prop }) => {
           ) : (
             <button>
               <ShoppingCart
-                className=" size-7"
+                className=" size-6"
                 onClick={() => {
                   setActiveCart((prevValue) => !prevValue);
                   dispatch(

@@ -1,5 +1,5 @@
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../Reducer/product.reducer";
 import { RootState } from "../../Store";
@@ -52,6 +52,19 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       );
     }
   };
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    const dragEle = e.target as HTMLDivElement;
+    const ghostEle = dragEle.cloneNode(true) as HTMLDivElement;
+    ghostEle.classList.add("dragging");
+    ghostEle.appendChild(dragEle);
+    const nodeRect = dragEle.getBoundingClientRect();
+    e.dataTransfer.setDragImage(
+      ghostEle,
+      e.clientX - nodeRect.left,
+      e.clientY - nodeRect.top
+    );
+  };
+
   useEffect(() => {
     const findQuantity = selectedProductsQuantity?.find(
       (singleProduct) => singleProduct.id === prop.id
@@ -76,20 +89,19 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     <>
       <div
         onDragEnd={(event) => {
+          event.preventDefault();
           setIsDragging(false);
           const target = event.target as HTMLElement;
-          target.classList.remove("dragging");
+          target.classList.remove("dragged");
         }}
         draggable
-        onDragStart={(event) => {
-          setIsDragging(true);
-          const target = event.target as HTMLElement;
-          target.classList.add("dragging");
-
+        onDragStart={(event: React.DragEvent<HTMLDivElement>) => {
+          const element = event.target as HTMLDivElement;
+          element.classList.add("dragged");
           event.dataTransfer.setData("product", JSON.stringify(prop));
         }}
         className={
-          " card h-full  w-[250px] group/heart  cursor-pointer rounded-xl border border-[var(--light-border)] pb-3 overflow-hidden  relative snap-start"
+          " card h-full  w-[250px] group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start"
         }
       >
         <div className="">
@@ -98,7 +110,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
             className="w-full h-[180px] object-cover object-center rounded-t-md"
           />
         </div>
-        <div className="flex items-center justify-between gap-1 px-5 pt-4 pb-2">
+        <div className="flex items-center text-[var(--dark-text)] justify-between gap-1 px-5 pt-4 pb-2">
           <div className="flex flex-col gap-1 pt-2">
             <h4 className="font-semibold tracking-wide">{prop.name}</h4>
             <p className="flex gap-2 tracking-wider">
@@ -111,8 +123,8 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           className={`p-2 ${
             activeCart
               ? ""
-              : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
-          }   bg-[var(--light-background)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border  `}
+              : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--dark-text)]"
+          }   bg-[var(--light-foreground)] rounded-full text-[var(--primary-color)]   shadow-sm flex justify-between items-center absolute top-[165px] right-1 border border-[var(--dark-border)]  `}
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
@@ -179,7 +191,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
               setIsNotAuthenticated(false);
             }
           }}
-          className="absolute bg-[var(--light-foreground)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--light-text)] right-2 top-2"
+          className="absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--dark-text)] right-2 top-2"
         >
           <Heart
             className={`size-6 hover:scale-[1.05] duration-150 hover:text-[var(--danger-bg)]  text-[var(--dark-text)] ${

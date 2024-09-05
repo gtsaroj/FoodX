@@ -78,7 +78,7 @@ export const RecentOrder = () => {
   }, [authUser.uid]);
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 bg-white px-5 py-4   rounded items-start justify-center">
+    <div className="w-full h-full flex text-[var(--dark-text)] flex-col gap-6 bg-[var--light-foreground] px-5 py-4   rounded items-start justify-center">
       <h1 className="text-[25px] tracking-wider font-semibold ">
         Recent Orders
       </h1>

@@ -103,7 +103,7 @@ export const LoginContainer: React.FC = () => {
             >
               Forgot Password?
             </p>
-            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />
