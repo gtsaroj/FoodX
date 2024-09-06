@@ -1,4 +1,3 @@
-import { id } from "date-fns/locale";
 import { createSlice } from "@reduxjs/toolkit";
 import { Favourite } from "../models/favourite.model";
 import toast from "react-hot-toast";

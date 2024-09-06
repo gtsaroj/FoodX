@@ -1,9 +1,5 @@
-import Footer from "./Components/Footer/Footer";
-import Login from "./Components/Login/Login";
-import { Header } from "./Components/Navbar/Navbar";
-import { Register } from "./Components/Register/Register";
-import NotFoundPage from "./Pages/404Page/NotFoundPage";
-import Home from "./Pages/Home/Home";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Routes,
   Route,
@@ -11,18 +7,50 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import { ForgotPassword } from "./Components/ForgotPassword/ForgotPassword";
-import { MobileCart, Payment } from "./Components/Payment/Payment.tsx";
-import { OrderComponent } from "./Pages/Order/Order.tsx";
-import { UserProfileComponent } from "./Pages/UpdateProfile/ProfileSection.tsx";
-import { useEffect, useState } from "react";
 import { RootState } from "./Store.ts";
-import { useSelector } from "react-redux";
 import PrivateRoute from "./PrivateRoute.tsx";
+const Footer = React.lazy(() => import("./Components/Footer/Footer"));
+const Login = React.lazy(() => import("./Components/Login/Login"));
+const Header = React.lazy(() =>
+  import("./Components/Navbar/Navbar").then((module) => ({
+    default: module.Header,
+  }))
+);
+const Register = React.lazy(() =>
+  import("./Components/Register/Register").then((module) => ({
+    default: module.Register,
+  }))
+);
+const NotFoundPage = React.lazy(() => import("./Pages/404/404.Page.tsx"));
+const Home = React.lazy(() => import("./Pages/Home/Home"));
+const ForgotPassword = React.lazy(() =>
+  import("./Components/ForgotPassword/ForgotPassword").then((module) => ({
+    default: module.ForgotPassword,
+  }))
+);
+const CartPage = React.lazy(() =>
+  import("./Pages/Cart/Cart.Page.tsx").then((module) => ({
+    default: module.CartPage,
+  }))
+);
+const Payment = React.lazy(() =>
+  import("./Components/Payment/Payment.tsx").then((module) => ({
+    default: module.Payment,
+  }))
+);
+const AdminProfile = React.lazy(() =>
+  import("./Pages/Profile/UserProfile.tsx").then((module) => ({
+    default: module.AdminProfile,
+  }))
+);
+const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return (
-    <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
+    <div
+
+      className="flex items-center justify-center w-full h-full min-w-[100vw]  "
+    >
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
         <div className="mb-[100px] z-50">
           <Header />
@@ -40,6 +68,20 @@ const HomePage = () => {
 export const App: React.FC = () => {
   const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
+
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  },[isDark]);
 
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);
@@ -61,14 +103,14 @@ export const App: React.FC = () => {
         <Route>
           <Route path="/" element={<HomePage />}>
             <Route index element={<Home />} />
-            <Route path="/cart" element={<MobileCart />}></Route>
-            <Route path="/profile" element={<UserProfileComponent />} />
+            <Route path="/cart" element={<CartPage />}></Route>
+            <Route path="/profile" element={<AdminProfile />} />
             <Route
               element={
                 <PrivateRoute userRole={["customer", "chef", "admin"]} />
               }
             >
-              <Route path="/orders" element={<OrderComponent />} />
+              <Route path="/orders" element={<Order />} />
             </Route>
             <Route
               element={

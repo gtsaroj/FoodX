@@ -2,8 +2,10 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss/components";
 
+
 @layer base {
   :root {
+    --color: #1ba13dd2;
     --primary-color: #2c398d;
     --primary-light: #00a3d9;
     --primary-dark: #0e76a8;
@@ -12,12 +14,18 @@
     --secondary-light: #ec008d;
     --secondary-dark: #ec008e;
 
+    /* f4f6f8 
+    f5f9ff
+    */
+    --body-bg: #f4f6f8;
     --light-foreground: #fbfbfb;
-    --light-background: #efeff1;
+    --light-background: #f4f6f8;
+    --light-secondary-background: #dadada;
     --light-border: #dedde2;
 
     --dark-foreground: #252329;
     --dark-background: #19181b;
+    --dark-secondary-background: #919191;
     --dark-border: #5d50772d;
 
     --light-text: #fefefe;
@@ -33,33 +41,52 @@
 
     --green-text: #177e1a;
   }
+  .dark {
+    --color: #1ba13dd2;
+    --primary-color: #2c398d;
+    --primary-light: #00a3d9;
+    --primary-dark: #0e76a8;
+
+    --secondary-color: #d90081;
+    --secondary-light: #ec008d;
+    --secondary-dark: #ec008e;
+
+    /* f4f6f8 
+    f5f9ff
+    */
+    --body-bg: #080e18;
+    --light-foreground: #10161f;
+    --light-background:   #283041;
+    --light-secondary-background: #dadada;
+    --light-border: #dedde2;
+
+    --dark-foreground: #fbfbfb;
+    --dark-background: #f4f6f8;
+    --dark-secondary-background: #dadada;
+    --dark-border: #2a3447;
+
+    --light-text: #131010;
+    --light-secondary-text: #d8d6dc;
+    --dark-text: #e4e4e4;
+    --dark-secondary-text: #b5b7c0;
+
+    --danger-text: #d91006;
+    --danger-bg: #e00b0b;
+    --popup-bg: #4b4a4a60;
+    --orange-bg: #ff9800;
+    --green-bg: #4caf50;
+
+    --green-text: #177e1a;
+  }
 
   ::-webkit-scrollbar {
     width: 0px;
   }
 
-  @layer components {
-    .scrollbar-custom {
-      @apply overflow-y-scroll; /* Enables scrolling */
-    }
-  
-    .scrollbar-custom::-webkit-scrollbar {
-      width: 8px; /* Adjust scrollbar width */
-    }
-  
-    .scrollbar-custom::-webkit-scrollbar-thumb {
-      @apply bg-gray-400 rounded-md; /* Customize the scrollbar thumb */
-    }
-  
-    .scrollbar-custom::-webkit-scrollbar-thumb:hover {
-      @apply bg-gray-600; /* Hover effect */
-    }
-  }
-
   body {
     font-family: "Poppins", sans-serif;
     overflow-x: hidden;
-    background: var(--light-background);
+    background: var(--body-bg);
     scroll-behavior: smooth;
   }
 
@@ -78,5 +105,60 @@
 
   #specials {
     scroll-behavior: smooth;
+  }
+}
+
+
+@layer components {
+  .scrollbar-invisible{
+    @apply overscroll-y-auto;
+    width: 9px;
+  
+    
+  }
+  .scrollbar-custom {
+    @apply overflow-y-scroll; /* Enables scrolling */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px; /* Adjust scrollbar width */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-md; /* Customize the scrollbar thumb */
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400; /* Hover effect */
+    @apply cursor-pointer
+  }
+}
+/* Regular CSS file or Tailwind CSS configuration */
+.dragging {
+  opacity: 100 !important;
+  border: 2px solid rgb(163, 152, 152);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: scale(1.05); /* Slightly scale up the element */
+  color: black;
+  z-index: 100;
+   width: 250px;
+  height: 165px;
+}
+.dragged {
+  transform: scale(1.03);
+  transition: 0.3s;
+}
+
+.dragging-placeholder {
+  opacity: 0.5;
+  border: 2px dashed #ccc;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

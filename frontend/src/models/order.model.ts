@@ -26,6 +26,7 @@ export interface GetOrderModal {
 }
 
 export interface UserOrder {
+  productImage?: string
   id: string;
   products: string[];
   time: string; // Date formatted as MM/DD/YYYY

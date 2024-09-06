@@ -2,8 +2,7 @@ import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { Product, ProductType } from "../../models/product.model";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
-import { DeleteIcon, Trash2 } from "lucide-react";
-
+import { Trash2 } from "lucide-react";
 
 interface SingleCardProp {
   prop: Product;
@@ -18,7 +17,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   return (
     <div
       key={prop.id}
-      className={`duration-1000  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] rounded-md `}
+      className={`duration-1000  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
       <div>
         <img
@@ -68,7 +67,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
               +
             </button>
           </div>
-          <p className=" text-sm  flex items-center justify-center  w-[60px] px-[3px] py-[2px] rounded-sm">
+          <p className=" text-sm  flex text-[var(--dark-secondary-text)] w-full items-center justify-center  px-[3px] py-[2px] rounded-sm">
             {" "}
             {prop.quantity} × {prop.price}
           </p>
@@ -80,7 +79,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         }}
         className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
-        <Trash2 className="text-[var(--light-text)]" />
+        <Trash2 className="text-white size-6 " />
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
-import { FavouriteCard } from "../../Components/Card/FavouriteCard";
+import { FavouriteCard } from "../../Components/Card/Card.Favourite";
 
 const Favourite: React.FC = () => {
   const selectedProducts = useSelector(
@@ -46,7 +46,7 @@ const Favourite: React.FC = () => {
               });
               toast.success("Succesfully added!");
             }}
-            className="text-[var(--light-text)] tracking-wider text-xl font-bold"
+            className="text-white tracking-wider text-xl font-bold"
           >
             Add to cart
           </button>

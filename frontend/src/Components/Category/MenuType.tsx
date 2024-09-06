@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SpecialCards } from "../Card/ProductCard";
-import { UseFetch } from "../../UseFetch";
-import { Product, ProductType } from "../../models/product.model";
-import { getCategory } from "../../firebase/db";
+import React, { useEffect, useState } from "react";
+import { SpecialCards } from "../Card/Card.Product";
+import { Product } from "../../models/product.model";
 import { getCategories } from "../../Services/category.services";
 import { Selector } from "../Common/Selector/Selector";
-import { LoadingContent } from "../Loader/Loader";
 import Skeleton from "react-loading-skeleton";
 import { getProductsByTag } from "../../Services/product.services";
 import { Frown } from "lucide-react";
+
 
 export interface categoriesTagOption {
   name: string;
@@ -18,6 +16,8 @@ export interface categoriesTagOption {
 
 export const MenuType: React.FC = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
+
+
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -62,7 +62,7 @@ export const MenuType: React.FC = () => {
 
       <div className="flex flex-col gap-8 rounded-md bg-[var(--light-foreground)] px-5 py-8">
         <div className="w-full ">
-          <p className="text-2xl font-bold tracking-wider">Category Title</p>
+          <p className="text-2xl text-[var(--dark-text)] font-bold tracking-wider">Category Title</p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-start  gap-[34px] p-8 rounded-md flex-shrink-0">
           {!loading ? (

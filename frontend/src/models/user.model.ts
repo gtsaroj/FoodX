@@ -10,7 +10,7 @@ export interface User {
   fullName?: string;
   email?: string;
   phoneNumber?: string;
-  role?: UserRole;
+  role?: UserRole["role"];
   refreshToken?: string;
 }
 
@@ -24,10 +24,9 @@ export interface ImageFolders {
 
 export interface UpdateProfileInfo {
   avatar?: string;
-  firstName?: string;
-  lastName?: string;
+  fullName?: string
   email?: string;
-  phoneNumber?: string;
+  phoneNumber?: number;
 }
 
 export interface DbUser {

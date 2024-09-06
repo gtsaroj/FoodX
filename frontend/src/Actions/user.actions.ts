@@ -1,19 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import  * as userAction from "../Services/user.services";
+import * as userAction from "../Services/user.services";
 import { ValidationType } from "../models/register.model";
 import { UpdateProfileInfo } from "../models/user.model";
 
-interface SigninTypes {
+export interface SigninTypes {
   email: string;
   password: string;
-  userRole : "customer"
+  userRole: "customer";
 }
 
-export const singInAction = createAsyncThunk(
-  "auth/signin",
+const signInAction = createAsyncThunk(
+  "auth/signIn",
   async (data: SigninTypes, { rejectWithValue }) => {
     try {
-      const response = await userAction.signIn(data.email, data.password,data.userRole);
+      const response = await userAction.signIn(
+        data.email,
+        data.password,
+        data.userRole
+      );
       return response;
     } catch (error: any) {
       if (error.response && error.response.data.message) {
@@ -24,12 +28,11 @@ export const singInAction = createAsyncThunk(
     }
   }
 );
-export const singUpAction = createAsyncThunk(
-  "auth/singup",
+const signUpAction = createAsyncThunk(
+  "auth/signUp",
   async (data: ValidationType, thunkApi) => {
     try {
       const response = await userAction.signUp({ ...data });
-      console.log(response);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(
@@ -38,12 +41,12 @@ export const singUpAction = createAsyncThunk(
     }
   }
 );
-export const updateUserAction = createAsyncThunk(
+
+const updateUserAction = createAsyncThunk(
   "auth/update-user",
   async (data: UpdateProfileInfo, thunkApi) => {
     try {
-      const response = await userAction.updateUser({ ...data });
-      console.log(response);
+      const response = await userAction.updateAccount({ ...data });
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(
@@ -52,3 +55,5 @@ export const updateUserAction = createAsyncThunk(
     }
   }
 );
+
+export { signInAction, signUpAction, updateUserAction };

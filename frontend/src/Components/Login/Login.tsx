@@ -6,9 +6,8 @@ import { AuthFooter } from "../Footer/AuthFooter";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { singInAction } from "../../Actions/user.actions";
+import { signInAction } from "../../Actions/user.actions";
 
 //Login container
 export const LoginContainer: React.FC = () => {
@@ -33,7 +32,7 @@ export const LoginContainer: React.FC = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      await dispatch(singInAction({ email, password, userRole: "customer" }));
+      await dispatch(signInAction({ email, password, userRole: "customer" }));
     } catch (error) {
       throw new Error("Error while loging" + error);
     }
@@ -104,7 +103,7 @@ export const LoginContainer: React.FC = () => {
             >
               Forgot Password?
             </p>
-            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-[var(--light-text)] text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />

@@ -12,7 +12,7 @@ import avatar from "../../assets/logo/avatar.png";
 import logo from "../../assets/logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { singUpAction } from "../../Actions/user.actions";
+import { signUpAction } from "../../Actions/user.actions";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -101,7 +101,7 @@ export const RegisterContainer: React.FC = () => {
           role: "customer",
         };
 
-        await dispatch(singUpAction(ConvertedForm as ValidationType));
+        await dispatch(signUpAction(ConvertedForm as ValidationType));
         RegisterValue.avatar = "";
         RegisterValue.firstName = "";
         RegisterValue.lastName = "";

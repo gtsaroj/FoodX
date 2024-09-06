@@ -9,13 +9,12 @@ export default Loader;
 
 interface LoadingTextProp {
   isLoading: boolean;
-  loadingFn: () => void;
+  loadingFn?: () => void;
 }
 export const LoadingText: React.FC<LoadingTextProp> = ({
   isLoading,
   loadingFn,
 }) => {
-  console.log(isLoading);
   useEffect(() => {
     const loadingTime = setTimeout(() => {
       if (isLoading) {
@@ -30,11 +29,11 @@ export const LoadingText: React.FC<LoadingTextProp> = ({
 
   return (
     <div
-      className={`w-screen h-screen bg-[var(--popup-bg)] backdrop-blur-sm  left-0 top-0  z-[100]   flex items-center justify-center fixed ${
+      className={`w-screen h-screen backdrop-blur-sm brightness-50   left-0 top-0  z-[100]   flex items-center justify-center fixed ${
         isLoading ? "visible" : "invisible"
       } `}
     >
-      <p className="text-[20px]  flex items-center justify-center gap-3 text-[#10161f] font-semibold ">
+      <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--dark-text)] font-semibold ">
         <RotatingLines strokeColor="#10161f" width="30" />{" "}
         <span> Loading...Please wait!</span>
       </p>
@@ -61,7 +60,7 @@ export const LoadingContent: React.FC<LoadingTextProp> = ({
 
   return (
     <div
-      className={`w-full h-[300px] bg-[var(--light-foreground)] backdrop-blur-sm  left-0 top-0  z-[100]   flex items-center justify-center  ${
+      className={`w-full  bg-[var(--light-foreground)] backdrop-blur-sm  left-0 top-0  z-[100]   flex items-center justify-center  ${
         isLoading ? "visible" : "invisible"
       } `}
     >

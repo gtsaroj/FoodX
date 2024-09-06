@@ -13,14 +13,14 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { userReducer } from "./Reducer/user.reducer";
+import { authReducer } from "./Reducer/user.reducer";
 import { cartReducer } from "./Reducer/product.reducer";
 
 const rootReducer = combineReducers({
-  auth: userReducer,
   cart: cartReducer,
   order: OrderReducer,
   favourite: favouriteReducer,
+  auth: authReducer,
 });
 
 const persistConfig = {
@@ -43,7 +43,7 @@ export const Store = configureStore({
     }),
 });
 
-export let persistor = persistStore(Store);
+export const persistor = persistStore(Store);
 
 export type RootState = ReturnType<typeof Store.getState>;
 export type AppDispatch = typeof Store.dispatch;
