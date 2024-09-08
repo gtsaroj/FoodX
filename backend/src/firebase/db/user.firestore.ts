@@ -164,7 +164,7 @@ const getUsersFromDatabase = async (
   }
 };
 
-export const findUserInDatabase = async (id: string) => {
+const findUserInDatabase = async (id: string) => {
   const collections = ["customer", "admin", "chef"];
   let foundUser: FirebaseFirestore.DocumentData | undefined = undefined;
   try {
@@ -196,4 +196,5 @@ export {
   getUserFromDatabase,
   bulkDeleteUserFromDatabase,
   getUsersFromDatabase,
+  findUserInDatabase
 };
