@@ -144,6 +144,23 @@ const updateProductInDatabase = async (
     );
   }
 };
+
+const updateTotalSold = async (collection: string, id: string) => {
+  try {
+    const productRef = db.collection(collection).doc(id);
+    await productRef.update({
+      totalSold: FieldValue.increment(1),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Unable to update total orders.",
+      null,
+      error as string[]
+    );
+  }
+};
 const bulkDeleteProductsFromDatabase = async (
   category: Collection["name"],
   id: string[]
@@ -264,4 +281,5 @@ export {
   deleteProductFromDatabase,
   searchProductInDatabase,
   findProductInDatabase,
+  updateTotalSold,
 };
