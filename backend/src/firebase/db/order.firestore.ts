@@ -3,6 +3,16 @@ import { Order, OrderInfo, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 import { paginateFnc } from "../utils.js";
+import {
+  findUserInDatabase,
+  updateTotalOrder,
+  updateUserDataInFirestore,
+} from "./user.firestore.js";
+import {
+  findProductInDatabase,
+  updateProductInDatabase,
+  updateTotalSold,
+} from "./product.firestore.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
@@ -50,6 +60,7 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
   const orderRef = db.collection("orders").doc(id);
   if (!orderRef) throw new ApiError(404, "No document found.");
   try {
+    const batch = db.batch();
     let doc;
     if (status !== "fullfilled") {
       doc = await orderRef.update({
@@ -63,8 +74,15 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
     });
     const orderData = await getOrder(id);
     const { uid, products } = orderData;
-    //update totalsold in product
-    //update totalOrders in user
+    const { role } = await findUserInDatabase(uid);
+    await updateTotalOrder(role, uid);
+    products.forEach(async (product) => {
+      const { collection } = await findProductInDatabase(product.id);
+      await updateTotalSold(collection, product.id);
+    });
+
+    await batch.commit();
+
     return doc;
   } catch (error) {
     throw new ApiError(440, "Error updating orders in database.");
