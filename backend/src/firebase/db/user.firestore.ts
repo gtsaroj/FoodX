@@ -74,6 +74,23 @@ const updateUserDataInFirestore = async (
   }
 };
 
+const updateTotalOrder = async (collection: string, uid: string) => {
+  try {
+    const userRef = db.collection(collection).doc(uid);
+    await userRef.update({
+      totalOrder: FieldValue.increment(1),
+      updatedt: FieldValue.serverTimestamp(),
+    });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Unable to update total orders.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 const getUserFromDatabase = async (
   uid: string,
   path: "customer" | "admin" | "chef"
@@ -166,7 +183,7 @@ const getUsersFromDatabase = async (
 
 const findUserInDatabase = async (id: string) => {
   const collections = ["customer", "admin", "chef"];
-  let foundUser: UserInfo| undefined = undefined;
+  let foundUser: UserInfo | undefined = undefined;
   try {
     for (const collection of collections) {
       const docRef = db.collection(collection).doc(id);
@@ -196,5 +213,6 @@ export {
   getUserFromDatabase,
   bulkDeleteUserFromDatabase,
   getUsersFromDatabase,
-  findUserInDatabase
+  findUserInDatabase,
+  updateTotalOrder,
 };
