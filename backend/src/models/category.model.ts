@@ -3,3 +3,8 @@ export interface Category {
   name: string;
   image: string;
 }
+
+export interface CategoryInfo extends Category {
+  createdAt: any;
+  updatedAt: any;
+}

@@ -1,4 +1,5 @@
-import { Category } from "../../models/category.model.js";
+import { FieldValue } from "firebase-admin/firestore";
+import { CategoryInfo } from "../../models/category.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 
@@ -7,15 +8,20 @@ const getAllCategoryFromDatabase = async () => {
   if (!categoryRef) throw new ApiError(404, "No category collection found.");
   try {
     const category = await categoryRef.get();
-    let categories: Category[] = [];
+    let categories: CategoryInfo[] = [];
     if (category.empty) throw new ApiError(404, "No category found");
     category.docs.forEach((doc) => {
-      const data = doc.data() as Category;
+      const data = doc.data() as CategoryInfo;
       categories.push(data);
     });
     return categories;
   } catch (error) {
-    throw new ApiError(401, "Unable to get category data from database.");
+    throw new ApiError(
+      500,
+      "Unable to get category data from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -29,10 +35,21 @@ const addNewCategoryInDatabase = async (name: string, image: string) => {
         name,
         image,
       })
-      .then((docRef) => docRef.update({ id: docRef.id }));
+      .then((docRef) =>
+        docRef.update({
+          id: docRef.id,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: null,
+        })
+      );
     return category;
   } catch (error) {
-    throw new ApiError(401, "Unable to add category data in database.");
+    throw new ApiError(
+      500,
+      "Unable to add category data in database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -43,7 +60,12 @@ const deleteCategoryFromDatabase = async (id: string) => {
     const category = await categoryRef.doc(id).delete();
     return category;
   } catch (error) {
-    throw new ApiError(401, "Unable to delete category data from database.");
+    throw new ApiError(
+      500,
+      "Unable to delete category data from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -57,10 +79,11 @@ const updateCategoryInDatabase = async (
   try {
     const category = await categoryRef.doc(id).update({
       [`${field}`]: newData,
+      updatedAt: FieldValue.serverTimestamp(),
     });
     return category;
   } catch (error) {
-    throw new ApiError(401, "Unable to update category data in database.");
+    throw new ApiError(500, "Unable to update category data in database.");
   }
 };
 const bulkDeleteCategoryFromDatabase = async (id: string[]) => {
@@ -75,7 +98,7 @@ const bulkDeleteCategoryFromDatabase = async (id: string[]) => {
     });
     await batch.commit();
   } catch (error) {
-    throw new ApiError(401, "Unable to bulk delete categories data.");
+    throw new ApiError(500, "Unable to bulk delete categories data.");
   }
 };
 export {
