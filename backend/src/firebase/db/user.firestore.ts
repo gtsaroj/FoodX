@@ -164,6 +164,31 @@ const getUsersFromDatabase = async (
   }
 };
 
+export const findUserInDatabase = async (id: string) => {
+  const collections = ["customer", "admin", "chef"];
+  let foundUser: FirebaseFirestore.DocumentData | undefined = undefined;
+  try {
+    for (const collection of collections) {
+      const docRef = db.collection(collection).doc(id);
+      const doc = await docRef.get();
+
+      if (doc.exists) {
+        foundUser = doc.data() as UserInfo;
+        break;
+      }
+    }
+    if (!foundUser) throw new ApiError(404, "User not found.");
+    return foundUser;
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error finding user in database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 export {
   addUserToFirestore,
   deleteUserFromFireStore,
