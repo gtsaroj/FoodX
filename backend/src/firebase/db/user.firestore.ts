@@ -166,7 +166,7 @@ const getUsersFromDatabase = async (
 
 const findUserInDatabase = async (id: string) => {
   const collections = ["customer", "admin", "chef"];
-  let foundUser: FirebaseFirestore.DocumentData | undefined = undefined;
+  let foundUser: UserInfo| undefined = undefined;
   try {
     for (const collection of collections) {
       const docRef = db.collection(collection).doc(id);

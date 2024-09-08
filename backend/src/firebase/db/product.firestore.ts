@@ -230,7 +230,7 @@ const searchProductInDatabase = async (query: string) => {
 
 const findProductInDatabase = async (id: string) => {
   const collections = ["products", "specials"];
-  let foundProduct: FirebaseFirestore.DocumentData | undefined = undefined;
+  let foundProduct: ProductInfo | undefined = undefined;
   try {
     for (const collection of collections) {
       const docRef = db.collection(collection).doc(id);
