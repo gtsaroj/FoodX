@@ -19,12 +19,16 @@ const addNewBanner = asyncHandler(
         .status(200)
         .json(new ApiResponse(200, "", "New banner added successfully", true));
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while adding banner.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Error while adding banner.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -42,12 +46,16 @@ const getAllBanners = asyncHandler(
           new ApiResponse(200, banners, "Banners fetched successfully", true)
         );
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while fetching banners.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Error while fetching banners.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
