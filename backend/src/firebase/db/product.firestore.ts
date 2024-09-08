@@ -248,6 +248,7 @@ const searchProductInDatabase = async (query: string) => {
 const findProductInDatabase = async (id: string) => {
   const collections = ["products", "specials"];
   let foundProduct: ProductInfo | undefined = undefined;
+  let collectionName: string = "products";
   try {
     for (const collection of collections) {
       const docRef = db.collection(collection).doc(id);
@@ -255,11 +256,12 @@ const findProductInDatabase = async (id: string) => {
 
       if (doc.exists) {
         foundProduct = doc.data() as ProductInfo;
+        collectionName = collection;
         break;
       }
     }
     if (!foundProduct) throw new ApiError(404, "Product not found.");
-    return foundProduct;
+    return { foundProduct, collection: collectionName };
   } catch (error) {
     throw new ApiError(
       500,
