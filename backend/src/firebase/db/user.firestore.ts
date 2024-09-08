@@ -79,7 +79,7 @@ const updateTotalOrder = async (collection: string, uid: string) => {
     const userRef = db.collection(collection).doc(uid);
     await userRef.update({
       totalOrder: FieldValue.increment(1),
-      updatedt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     throw new ApiError(
