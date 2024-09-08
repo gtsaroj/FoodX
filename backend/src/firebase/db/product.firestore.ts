@@ -228,6 +228,31 @@ const searchProductInDatabase = async (query: string) => {
   }
 };
 
+const findProductInDatabase = async (id: string) => {
+  const collections = ["products", "specials"];
+  let foundProduct: FirebaseFirestore.DocumentData | undefined = undefined;
+  try {
+    for (const collection of collections) {
+      const docRef = db.collection(collection).doc(id);
+      const doc = await docRef.get();
+
+      if (doc.exists) {
+        foundProduct = doc.data() as ProductInfo;
+        break;
+      }
+    }
+    if (!foundProduct) throw new ApiError(404, "Product not found.");
+    return foundProduct;
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error finding product in database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 export {
   addProductToFirestore,
   getProductByName,
@@ -238,4 +263,5 @@ export {
   getProductById,
   deleteProductFromDatabase,
   searchProductInDatabase,
+  findProductInDatabase,
 };
