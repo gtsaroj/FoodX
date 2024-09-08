@@ -1,5 +1,9 @@
 import jwt from "jsonwebtoken";
-import { getUserDataByEmail } from "../firebase/auth/Authentication.js";
+import {
+  bulkDeleteUsersFromFirebase,
+  deleteUserFromFirebase,
+  getUserDataByEmail,
+} from "../firebase/auth/userHandler.js";
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
 import {
   addUserToFirestore,
@@ -62,7 +66,9 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(400, `User login failed.`, null, error as string[]);
+    return res
+      .status(500)
+      .json(new ApiError(500, `User login failed.`, null, error as string[]));
   }
 });
 
@@ -81,6 +87,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       uid: uid || "",
       refreshToken: "",
       role,
+      totalOrders: 0,
     };
 
     await addUserToFirestore(userInfo, role);
@@ -104,12 +111,16 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      400,
-      "Error while adding new user in database.",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Error while adding new user in database.",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 
@@ -129,7 +140,9 @@ const logOutUser = asyncHandler(async (req: any, res: any) => {
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(200, {}, "User logged out successfully", true));
   } catch (error) {
-    throw new ApiError(400, "Error logging out.");
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error logging out.", null, error as string[]));
   }
 });
 
@@ -180,74 +193,18 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    res.status(403).clearCookie("accessToken").clearCookie("refreshToken");
-    res;
-    throw new ApiError(
-      403,
-      "Error  on refreshing the Access Token",
-      null,
-      error as string[]
-    );
-  }
-});
-
-const deleteAccount = asyncHandler(async (req: any, res: any) => {
-  try {
-    const user = req.user as User;
-    const foundUser = await getUserFromDatabase(user.uid, user.role);
-    if (!foundUser) throw new ApiError(404, "User not found.");
-
-    //
-    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
     return res
-      .status(200)
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
-      .json(new ApiResponse(200, {}, "User deleted successfully", true));
-  } catch (error) {
-    throw new ApiError(400, "Error deleting user from firestore.");
-  }
-});
-
-const deleteUser = asyncHandler(async (req: any, res: any) => {
-  try {
-    const { uid, role }: { uid: string; role: "customer" | "chef" | "admin" } =
-      req.body;
-    const foundUser = await getUserFromDatabase(uid, role);
-    if (!foundUser) throw new ApiError(404, "User not found.");
-
-    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
-    return res
-      .status(200)
-      .clearCookie("accessToken", options)
-      .clearCookie("refreshToken", options)
-      .json(new ApiResponse(200, {}, "User deleted successfully", true));
-  } catch (error) {
-    throw new ApiError(400, "Error deleting user from firestore.");
-  }
-});
-
-const updateUser = asyncHandler(async (req: any, res: any) => {
-  const { id, role, field, newData } = req.body;
-  try {
-    const updatedUser = await updateUserDataInFirestore(
-      id,
-      role,
-      field,
-      newData
-    );
-    res
-      .status(200)
+      .status(403)
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
       .json(
-        new ApiResponse(
-          200,
-          { updatedUser },
-          "Successfully updated user data.",
-          true
+        new ApiError(
+          403,
+          "Error  on refreshing the Access Token",
+          null,
+          error as string[]
         )
       );
-  } catch (error) {
-    throw new ApiError(500, "Error while updating user data.");
   }
 });
 
@@ -289,36 +246,62 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
     if (avatar) {
       await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
     }
+    const updatedUser = await getUserFromDatabase(user.uid, user.role);
     res
       .status(200)
       .json(
         new ApiResponse(
           200,
-          { fullName, phoneNumber, avatar },
+          { updatedUser },
           "Successfully updated user data.",
           true
         )
       );
   } catch (error) {
-    throw new ApiError(400, "Error updating user in database.");
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error updating user in database."));
   }
 });
 
-const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
-  const {
-    role,
-    ids,
-  }: {
-    role: "customer" | "admin" | "chef";
-    ids: string[];
-  } = req.body;
+const updateUser = asyncHandler(async (req: any, res: any) => {
+  const { id, role, fullName, phoneNumber, avatar } = req.body;
   try {
-    await bulkDeleteUserFromDatabase(role, ids);
-    return res
+    if (!id || !role)
+      throw new ApiError(
+        400,
+        "User id and role is required to update user data."
+      );
+    if (!fullName && !phoneNumber && !avatar)
+      throw new ApiError(400, "No data provided to update.");
+
+    if (fullName) {
+      await updateUserDataInFirestore(id, role, "fullName", fullName);
+    }
+
+    if (phoneNumber) {
+      await updateUserDataInFirestore(id, role, "phoneNumber", phoneNumber);
+    }
+
+    if (avatar) {
+      await updateUserDataInFirestore(id, role, "avatar", avatar);
+    }
+
+    const updatedUser = await getUserFromDatabase(id, role);
+    res
       .status(200)
-      .json(new ApiResponse(200, {}, "Users deleted successfully.", true));
+      .json(
+        new ApiResponse(
+          200,
+          { updatedUser },
+          "Successfully updated user data.",
+          true
+        )
+      );
   } catch (error) {
-    throw new ApiError(500, "Error while deleting users.");
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error while updating user data."));
   }
 });
 
@@ -345,7 +328,41 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
         new ApiResponse(200, user, "User's Role updated successfully.", true)
       );
   } catch (error) {
-    throw new ApiError(500, "Error while updating user role.");
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Error while updating user role.",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
+
+const getUser = asyncHandler(async (req: any, res: any) => {
+  const role = req.params.role;
+  const userId = req.query.userId;
+  try {
+    const user = await getUserFromDatabase(userId, role);
+    if (!user) throw new ApiError(404, "User not found.");
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, user, "User data fetched successfully.", true)
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching user information.",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 
@@ -389,12 +406,85 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while fetching users from database",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          401,
+          "Something went wrong while fetching users from database",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
+
+const deleteAccount = asyncHandler(async (req: any, res: any) => {
+  try {
+    const user = req.user as User;
+    const foundUser = await getUserFromDatabase(user.uid, user.role);
+    if (!foundUser) throw new ApiError(404, "User not found.");
+
+    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+    await deleteUserFromFirebase(foundUser.uid);
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User deleted successfully", true));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error deleting user from firestore."));
+  }
+});
+
+const deleteUser = asyncHandler(async (req: any, res: any) => {
+  try {
+    const { uid, role }: { uid: string; role: "customer" | "chef" | "admin" } =
+      req.body;
+    const foundUser = await getUserFromDatabase(uid, role);
+    if (!foundUser) throw new ApiError(404, "User not found.");
+
+    await deleteUserFromFireStore(foundUser.uid, foundUser.role);
+    await deleteUserFromFirebase(foundUser.uid);
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, {}, "User deleted successfully", true));
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error deleting user from firestore."));
+  }
+});
+
+const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
+  const {
+    role,
+    ids,
+  }: {
+    role: "customer" | "admin" | "chef";
+    ids: string[];
+  } = req.body;
+  try {
+    await bulkDeleteUserFromDatabase(role, ids);
+    const deletedUsers = await bulkDeleteUsersFromFirebase(ids);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { deletedUsers },
+          "Users deleted successfully.",
+          true
+        )
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error while deleting users."));
   }
 });
 
@@ -410,4 +500,5 @@ export {
   deleteUser,
   deleteUsersInBulk,
   fetchUsers,
+  getUser,
 };

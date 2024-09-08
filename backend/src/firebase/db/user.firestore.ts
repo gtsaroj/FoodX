@@ -1,4 +1,5 @@
-import { User, AccessType } from "../../models/user.model.js";
+import { FieldValue } from "firebase-admin/firestore";
+import { User, AccessType, UserInfo } from "../../models/user.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 import { paginateFnc } from "../utils.js";
@@ -7,17 +8,22 @@ const addUserToFirestore = async (
   user: User,
   access: AccessType["privilage"]
 ) => {
-  if (!user) throw new ApiError(401, "No data to update the database.");
   const customerDocRef = db.collection(access);
-  if (!customerDocRef) throw new ApiError(501, "No document found.");
+  if (!customerDocRef) throw new ApiError(404, "No document found.");
   try {
     const oldUser = await customerDocRef.where("uid", "==", user.uid).get();
-    if (oldUser.size !== 0) throw new ApiError(400, "User already exist.");
-    await customerDocRef.doc(user.uid).set(user);
+    if (oldUser.size !== 0) throw new ApiError(409, "User already exist.");
+    await customerDocRef.doc(user.uid).set({
+      ...user,
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: null,
+    });
   } catch (error) {
     throw new ApiError(
-      400,
-      "Something went wrong while adding user to the database."
+      500,
+      "Something went wrong while adding user to the database.",
+      null,
+      error as string[]
     );
   }
 };
@@ -35,31 +41,36 @@ const deleteUserFromFireStore = async (
     if (!doc.exists) throw new ApiError(404, "User not found.");
     doc.ref.delete();
   } catch (error) {
-    throw new ApiError(401, "Unable to delete user from database.");
+    throw new ApiError(
+      500,
+      "Unable to delete user from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
 const updateUserDataInFirestore = async (
   uid: string,
   access: AccessType["privilage"],
-  field: keyof User,
+  field: keyof UserInfo,
   data: string
 ) => {
-  const customerDocRef = db.collection(access).doc(uid);
-  if (!customerDocRef)
-    throw new ApiError(400, "User doesnt exist in the database.");
   try {
+    const customerDocRef = db.collection(access).doc(uid);
+    if (!customerDocRef)
+      throw new ApiError(404, "User doesnt exist in the database.");
     const userDoc = await customerDocRef.get();
     const docData = userDoc.data();
     if (!docData)
-      throw new ApiError(401, "Unable to fetch data from database.");
+      throw new ApiError(500, "Unable to fetch data from database.");
 
     await customerDocRef.update({
       [`${field}`]: data,
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
-    console.error(error);
-    throw new ApiError(400, "Unable to update data.");
+    throw new ApiError(500, "Unable to update data.", null, error as string[]);
   }
 };
 
@@ -72,11 +83,15 @@ const getUserFromDatabase = async (
     const userDoc = await userRef.get();
     if (!userDoc.exists)
       throw new ApiError(404, "No user found. Please sign up or login.");
-    const userData = userDoc.data() as User;
+    const userData = userDoc.data() as UserInfo;
     return userData;
   } catch (error) {
-    console.error(error);
-    throw new ApiError(500, "Error getting user from database.");
+    throw new ApiError(
+      500,
+      "Error getting user from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -85,7 +100,7 @@ const bulkDeleteUserFromDatabase = async (
   id: string[]
 ) => {
   const userRef = db.collection(path);
-  if (!userRef) throw new ApiError(400, "No collection available.");
+  if (!userRef) throw new ApiError(404, "No collection available.");
   try {
     const batch = db.batch();
 
@@ -95,7 +110,12 @@ const bulkDeleteUserFromDatabase = async (
     });
     await batch.commit();
   } catch (error) {
-    throw new ApiError(401, "Unable to bulk delete users data.");
+    throw new ApiError(
+      500,
+      "Unable to bulk delete users data.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -119,10 +139,10 @@ const getUsersFromDatabase = async (
       direction
     );
     const usersDoc = await query.get();
-    const users: User[] = [];
+    const users: UserInfo[] = [];
 
     usersDoc.docs.forEach((doc) => {
-      users.push(doc.data() as User);
+      users.push(doc.data() as UserInfo);
     });
 
     const firstDoc = usersDoc.docs[0]?.data().uid || null;

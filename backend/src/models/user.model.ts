@@ -17,8 +17,13 @@ export interface User {
   avatar: string;
   refreshToken: string;
   role: RoleType;
+  totalOrders: number;
 }
 
+export interface UserInfo extends User {
+  createdAt: any;
+  updatedAt: any;
+}
 export interface AccessType {
   privilage: RoleType;
 }
@@ -30,6 +35,5 @@ export interface DecodeToken {
   iat: number;
   exp: number;
 }
-
 
 export type RoleType = "customer" | "chef" | "admin";

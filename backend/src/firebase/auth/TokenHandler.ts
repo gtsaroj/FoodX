@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import { ApiError } from "../../utils/ApiError.js";
-import { getUserDataById } from "./Authentication.js";
 import {
   getUserFromDatabase,
   updateUserDataInFirestore,

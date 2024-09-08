@@ -4,6 +4,7 @@ import {
   deleteUser,
   deleteUsersInBulk,
   fetchUsers,
+  getUser,
   logOutUser,
   loginUser,
   refreshAccessToken,
@@ -19,7 +20,6 @@ import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const router = Router();
 
-// for end user
 router.route("/login").post(rateLimiter(60, 10), loginUser);
 router.route("/signIn").post(
   upload.fields([
@@ -31,6 +31,7 @@ router.route("/signIn").post(
   rateLimiter(30, 3),
   signUpNewUser
 );
+router.route("/:role").get(rateLimiter(60, 5), getUser);
 router.route("/refresh-token").post(rateLimiter(60, 5), refreshAccessToken);
 router
   .route("/delete-account")
@@ -40,7 +41,6 @@ router
   .post(verifyJwt, rateLimiter(60, 10), updateAccount);
 router.route("/logout").post(verifyJwt, rateLimiter(60, 10), logOutUser);
 
-// for admin dashboard only
 router
   .route("/get-users")
   .post(verifyJwt, verifyAdmin, rateLimiter(60, 10), fetchUsers);
