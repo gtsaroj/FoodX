@@ -6,11 +6,9 @@ import { paginateFnc } from "../utils.js";
 import {
   findUserInDatabase,
   updateTotalOrder,
-  updateUserDataInFirestore,
 } from "./user.firestore.js";
 import {
   findProductInDatabase,
-  updateProductInDatabase,
   updateTotalSold,
 } from "./product.firestore.js";
 
