@@ -1,28 +1,37 @@
+import { FieldValue } from "firebase-admin/firestore";
 import {
   Collection,
   Product,
+  ProductInfo,
   SearchResult,
 } from "../../models/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
-import { paginateFnc, searchItemInDatabase } from "../utils.js";
+import { searchItemInDatabase } from "../utils.js";
 
 const addProductToFirestore = async (
   product: Product,
   category: Collection["name"]
 ) => {
-  if (!product) throw new ApiError(401, "No data to update the database.");
+  if (!product) throw new ApiError(400, "No data to update the database.");
   const productRef = db.collection(category);
-  if (!productRef) throw new ApiError(501, "No document found.");
+  if (!productRef) throw new ApiError(404, "No document found.");
   try {
-    const { id, image, name, price, quantity, tag } = product;
+    const { id, image, name, price, quantity, tagId } = product;
     await productRef
-      .add({ id, name, price, image, quantity, tag: tag })
-      .then((docRef) => docRef.update({ id: docRef.id }));
+      .add({ id, name, price, image, quantity, tagId })
+      .then((docRef) =>
+        docRef.update({
+          id: docRef.id,
+          createdAt: FieldValue.serverTimestamp(),
+        })
+      );
   } catch (error) {
     throw new ApiError(
-      400,
-      "Something went wrong while adding product to the database."
+      500,
+      "Something went wrong while adding product to the database.",
+      null,
+      error as string[]
     );
   }
 };
@@ -35,10 +44,15 @@ const getProductByName = async (name: string, category: Collection["name"]) => {
     const res = await query.get();
     if (!res) throw new ApiError(404, "No item found with that name.");
     const doc = res.docs[0];
-    const data = doc.data() as Product;
+    const data = doc.data() as ProductInfo;
     return { data, doc: doc.id };
   } catch (error) {
-    throw new ApiError(401, "Unable to get product from database.");
+    throw new ApiError(
+      500,
+      "Unable to get product from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -47,31 +61,41 @@ const getProductById = async (id: string, category: Collection["name"]) => {
   try {
     const doc = await productRef.doc(id).get();
     if (!doc.exists) throw new ApiError(404, "No item found with that ");
-    const data = doc.data() as Product;
+    const data = doc.data() as ProductInfo;
     return { data, doc: id };
   } catch (error) {
-    throw new ApiError(401, "Unable to get product from database.");
+    throw new ApiError(
+      500,
+      "Unable to get product from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
 const getProductByTagFromDatabase = async (
-  tag: string,
+  tagId: string,
   category: Collection["name"]
 ) => {
   const productRef = db.collection(category);
-  if (!productRef) throw new ApiError(400, "No collection available.");
+  if (!productRef) throw new ApiError(404, "No collection available.");
   try {
-    const products: Product[] = [];
-    const query = productRef.where("tag", "==", tag);
+    const products: ProductInfo[] = [];
+    const query = productRef.where("tagId", "==", tagId);
     const snapshot = await query.get();
     snapshot.forEach((doc) => {
-      if (!doc.exists) throw new ApiError(401, "Document doesnt exist.");
-      const data = doc.data() as Product;
+      if (!doc.exists) throw new ApiError(404, "Document doesnt exist.");
+      const data = doc.data() as ProductInfo;
       products.push(data);
     });
     return products;
-  } catch (err) {
-    throw new ApiError(401, "Unable to get products  by tag.");
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Unable to get products  by tag.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -79,16 +103,21 @@ const getAllProductsFromDatabase = async (category: Collection["name"]) => {
   const productRef = db.collection(category);
   if (!productRef) throw new ApiError(400, "No collection available.");
   try {
-    const products: Product[] = [];
+    const products: ProductInfo[] = [];
     const documents = await productRef.get();
     documents.forEach((doc) => {
       if (!doc.exists) throw new ApiError(401, "Document doesnt exist.");
-      const data = doc.data() as Product;
+      const data = doc.data() as ProductInfo;
       products.push(data);
     });
     return products;
   } catch (error) {
-    throw new ApiError(401, "Unable to get product from database.");
+    throw new ApiError(
+      500,
+      "Unable to get product from database.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -99,15 +128,20 @@ const updateProductInDatabase = async (
   newData: string | number
 ) => {
   const productRef = db.collection(category);
-  if (!productRef) throw new ApiError(400, "No collection available.");
+  if (!productRef) throw new ApiError(404, "No collection available.");
   try {
     const document = await getProductById(id, category);
     await productRef.doc(document.doc).update({
       [`${field}`]: newData,
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
-    console.error(error);
-    throw new ApiError(401, "Unable to update product data.");
+    throw new ApiError(
+      500,
+      "Unable to update product data.",
+      null,
+      error as string[]
+    );
   }
 };
 const bulkDeleteProductsFromDatabase = async (
@@ -115,7 +149,7 @@ const bulkDeleteProductsFromDatabase = async (
   id: string[]
 ) => {
   const productRef = db.collection(category);
-  if (!productRef) throw new ApiError(400, "No collection available.");
+  if (!productRef) throw new ApiError(404, "No collection available.");
   try {
     const batch = db.batch();
 
@@ -125,7 +159,12 @@ const bulkDeleteProductsFromDatabase = async (
     });
     await batch.commit();
   } catch (error) {
-    throw new ApiError(401, "Unable to bulk delete product data.");
+    throw new ApiError(
+      500,
+      "Unable to bulk delete product data.",
+      null,
+      error as string[]
+    );
   }
 };
 const deleteProductFromDatabase = async (
@@ -133,11 +172,16 @@ const deleteProductFromDatabase = async (
   category: Collection["name"]
 ) => {
   const productRef = db.collection(category);
-  if (!productRef) throw new ApiError(400, "No collection available");
+  if (!productRef) throw new ApiError(404, "No collection available");
   try {
     await productRef.doc(uid).delete();
   } catch (error) {
-    throw new ApiError(401, "Unable to delete product.");
+    throw new ApiError(
+      500,
+      "Unable to delete product.",
+      null,
+      error as string[]
+    );
   }
 };
 
@@ -159,11 +203,11 @@ const searchProductInDatabase = async (query: string) => {
 
     let searchResult: SearchResult[] = [
       ...productSnapshot.docs.map((doc) => ({
-        ...(doc.data() as Product),
+        ...(doc.data() as ProductInfo),
         type: "products",
       })),
       ...specialSnapshot.docs.map((doc) => ({
-        ...(doc.data() as Product),
+        ...(doc.data() as ProductInfo),
         type: "specials",
       })),
     ];
@@ -175,55 +219,9 @@ const searchProductInDatabase = async (query: string) => {
 
     return searchResult;
   } catch (error) {
-    throw new ApiError(401, "Error while searching products");
-  }
-};
-
-const getProductsFromDatabase = async (
-  path: "products" | "specials",
-  pageSize: number,
-  filter: keyof Product,
-  sort: "asc" | "desc" = "asc",
-  startAfterDoc: any | null = null,
-  startAtDoc: any | null = null,
-  direction?: "prev" | "next",
-  category?: string
-) => {
-  try {
-    const { query, totalLength } = await paginateFnc(
-      path,
-      filter,
-      startAfterDoc,
-      startAtDoc,
-      pageSize,
-      sort,
-      direction
-    );
-    let productDoc;
-    if (category) {
-      productDoc = await query.where("tag", "==", category).get();
-    } else {
-      productDoc = await query.get();
-    }
-    const products: Product[] = [];
-
-    productDoc.docs.forEach((doc) => {
-      products.push(doc.data() as Product);
-    });
-
-    const firstDoc = productDoc.docs[0]?.data().id || null;
-    const lastDoc =
-      productDoc.docs[productDoc.docs.length - 1]?.data().id || null;
-    return {
-      products,
-      firstDoc,
-      lastDoc,
-      length: totalLength,
-    };
-  } catch (error) {
     throw new ApiError(
       500,
-      "Error fetching products from database.",
+      "Error while searching products",
       null,
       error as string[]
     );
@@ -239,6 +237,5 @@ export {
   bulkDeleteProductsFromDatabase,
   getProductById,
   deleteProductFromDatabase,
-  getProductsFromDatabase,
   searchProductInDatabase,
 };

@@ -1,14 +1,13 @@
 import { Router } from "express";
 import { verifyJwt } from "../middlewares/auth.middlewares.js";
 import {
-  addProducts,
+  addProduct,
   deleteProduct,
   deleteProductsInBulk,
-  fetchProducts,
   getNormalProducts,
   getProductByTag,
   getSpecialProducts,
-  updateProducts,
+  updateProduct,
 } from "../controllers/products.controller.js";
 import { verifyAdmin, verifyChef } from "../middlewares/role.middlewares.js";
 import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
@@ -16,10 +15,7 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const productRouter = Router();
 
-//routes for end users
-productRouter
-  .route("/all")
-  .get(getNormalProducts);
+productRouter.route("/all").get(cacheMiddleware("products"), getNormalProducts);
 
 productRouter
   .route("/specials")
@@ -34,21 +30,16 @@ productRouter.route("/get-product-by-tag/:tag").get(
   getProductByTag
 );
 
-// secured routes for chef dashboard
 productRouter
   .route("/add-product")
-  .post(verifyJwt, verifyChef, rateLimiter(60, 20), addProducts);
+  .post(verifyJwt, verifyChef, rateLimiter(60, 20), addProduct);
 productRouter
   .route("/update-product")
-  .put(verifyJwt, verifyChef, rateLimiter(60, 20), updateProducts);
+  .put(verifyJwt, verifyChef, rateLimiter(60, 20), updateProduct);
 productRouter
   .route("/delete-product")
   .delete(verifyJwt, verifyChef, rateLimiter(60, 20), deleteProduct);
-productRouter
-  .route("/get-products")
-  .post(verifyJwt, verifyChef, rateLimiter(60, 20), fetchProducts);
 
-// secured route for admin only for bulk delete
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteProductsInBulk);

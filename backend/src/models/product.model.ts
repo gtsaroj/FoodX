@@ -4,10 +4,11 @@ export interface Product {
   quantity: number;
   price: number;
   image: string;
-  tag: string;
+  tagId: string;
+  totalSold: number;
 }
 export interface UploadProductType {
-  products: Product;
+  product: Product;
   collection: Collection["name"];
 }
 
@@ -17,4 +18,9 @@ export interface Collection {
 
 export interface SearchResult extends Product {
   type: string;
+}
+
+export interface ProductInfo extends Product {
+  createdAt: any;
+  updatedAt: any;
 }

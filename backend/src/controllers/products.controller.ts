@@ -5,14 +5,13 @@ import {
   deleteProductFromDatabase,
   getAllProductsFromDatabase,
   getProductByTagFromDatabase,
-  getProductsFromDatabase,
   searchProductInDatabase,
   updateProductInDatabase,
 } from "../firebase/db/product.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { Product, UploadProductType } from "../models/product.model.js";
+import { UploadProductType } from "../models/product.model.js";
 import { redisClient } from "../utils/Redis.js";
 
 const getNormalProducts = asyncHandler(async (req: any, res: any) => {
@@ -24,6 +23,9 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
     } else {
       products = await getAllProductsFromDatabase("products");
     }
+    await redisClient.set("products", JSON.stringify(products), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json(
@@ -34,7 +36,7 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
           true
         )
       );
-  } catch (err) {
+  } catch (error) {
     return res
       .status(500)
       .json(
@@ -42,7 +44,7 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
           500,
           "Unable to fetch product information.",
           null,
-          err as string[]
+          error as string[]
         )
       );
   }
@@ -51,11 +53,10 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
 const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
   try {
     const products = await getAllProductsFromDatabase("specials");
-    if (!products) throw new ApiError(400, "No today's specials found.");
-    await redisClient
-      .set("specials", JSON.stringify(products), {
-        EX: 3600,
-      })
+    if (!products) throw new ApiError(404, "No today's specials found.");
+    await redisClient.set("specials", JSON.stringify(products), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json(
@@ -66,26 +67,26 @@ const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
           true
         )
       );
-  } catch (err) {
+  } catch (error) {
     return res
       .status(500)
       .json(
         new ApiError(
           500,
-          "Unable to fetch product information.",
+          "Unable to fetch special product information.",
           null,
-          err as string[]
+          error as string[]
         )
       );
   }
 });
 
 const getProductByTag = asyncHandler(async (req: any, res: any) => {
-  const { category }: { category: string } = req.params.tag;
+  const tag = req.params.tag;
   try {
-    const products = await getProductByTagFromDatabase(category, "products");
+    const products = await getProductByTagFromDatabase(tag, "products");
     if (!products)
-      throw new ApiError(400, "No product by categories data found");
+      throw new ApiError(404, "No product by categories data found");
     return res
       .status(200)
       .json(
@@ -96,45 +97,44 @@ const getProductByTag = asyncHandler(async (req: any, res: any) => {
           true
         )
       );
-  } catch (err) {
+  } catch (error) {
     return res
       .status(500)
       .json(
         new ApiError(
           500,
-          "Unable to fetch product information based on categories."
+          "Unable to fetch product information based on categories.",
+          null,
+          error as string[]
         )
       );
   }
 });
 
-const addProducts = asyncHandler(
+const addProduct = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     const response = req.body as UploadProductType;
     try {
-      const addingProducts = await addProductToFirestore(
-        response.products,
-        response.collection
-      );
+      await addProductToFirestore(response.product, response.collection);
       return res
         .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { addingProducts },
-            "Added Product successfully.",
-            true
-          )
-        );
+        .json(new ApiResponse(200, {}, "Added Product successfully.", true));
     } catch (error) {
       return res
         .status(500)
-        .json(new ApiError(500, "Error while adding new user in database."));
+        .json(
+          new ApiError(
+            500,
+            "Error while adding new user in database.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
 
-const updateProducts = asyncHandler(
+const updateProduct = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     const { category, id, field, newData } = req.body;
     try {
@@ -157,7 +157,14 @@ const updateProducts = asyncHandler(
     } catch (error) {
       return res
         .status(500)
-        .json(new ApiError(500, "Error while updating products."));
+        .json(
+          new ApiError(
+            500,
+            "Error while updating products.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -179,7 +186,14 @@ const deleteProductsInBulk = asyncHandler(
     } catch (error) {
       return res
         .status(500)
-        .json(new ApiError(500, "Error while deleting products."));
+        .json(
+          new ApiError(
+            500,
+            "Error while deleting products.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -196,77 +210,24 @@ const deleteProduct = asyncHandler(
     } catch (error) {
       return res
         .status(500)
-        .json(new ApiError(500, "Error while deleting product."));
+        .json(
+          new ApiError(
+            500,
+            "Error while deleting product.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
 
-const fetchProducts = asyncHandler(async (req: any, res: any) => {
-  let {
-    path,
-    pageSize,
-    filter,
-    sort,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-    category,
-  }: {
-    path: "products" | "specials";
-    pageSize: number;
-    filter: keyof Product;
-    sort: "asc" | "desc";
-    direction: "prev" | "next";
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-    category?: string;
-  } = req.body;
-
-  try {
-    let { products, firstDoc, lastDoc, length } = await getProductsFromDatabase(
-      path,
-      pageSize,
-      filter,
-      sort,
-      direction === "next" ? currentLastDoc : null,
-      direction === "prev" ? currentFirstDoc : null,
-      direction,
-      category ? category : undefined
-    );
-    res.status(200).json(
-      new ApiResponse(
-        200,
-        {
-          products,
-          currentFirstDoc: firstDoc,
-          currentLastDoc: lastDoc,
-          length,
-        },
-        "Successfully fetched products from database",
-        true
-      )
-    );
-  } catch (error) {
-    return res
-      .status(500)
-      .json(
-        new ApiError(
-          500,
-          "Something went wrong while fetching products from database",
-          null,
-          error as string[]
-        )
-      );
-  }
-});
-
 export {
   getNormalProducts,
   getSpecialProducts,
-  addProducts,
-  updateProducts,
+  addProduct,
+  updateProduct,
   getProductByTag,
   deleteProductsInBulk,
   deleteProduct,
-  fetchProducts,
 };
