@@ -15,3 +15,8 @@ export interface logProps {
   detail?: string;
   date: Date;
 }
+
+export interface LogsInfo extends logProps {
+  createdAt: any;
+  updatedAt: any;
+}

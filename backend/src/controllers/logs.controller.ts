@@ -1,8 +1,6 @@
 import {
   addLogToFirestore,
-  getLogsBasedOnActionFromFirestore,
   getLogsFromDatabase,
-  getLogsOfRolesFromFirestore,
 } from "../firebase/db/logs.firestore.js";
 import { getUserFromDatabase } from "../firebase/db/user.firestore.js";
 import { logProps } from "../models/logs.model.js";
@@ -10,69 +8,6 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-
-const getLogsBasedOnRoles = asyncHandler(async (req: any, res: any) => {
-  const { role }: { role: "customer" | "admin" | "chef" } = req.body;
-  try {
-    const response = await getLogsOfRolesFromFirestore(`${role}Logs`);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          response,
-          `${role} Logs fetched successfully`,
-          true
-        )
-      );
-  } catch (error) {
-    throw new ApiError(
-      501,
-      "Error fetching logs from database.",
-      null,
-      error as string[]
-    );
-  }
-});
-const getLogsBasedOnAction = asyncHandler(async (req: any, res: any) => {
-  const {
-    role,
-    action,
-  }: {
-    role: "customer" | "admin" | "chef";
-    action:
-      | "login"
-      | "register"
-      | "logout"
-      | "create"
-      | "update"
-      | "delete"
-      | "checkout";
-  } = req.body;
-  try {
-    const response = await getLogsBasedOnActionFromFirestore(
-      `${role}Logs`,
-      action
-    );
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          response,
-          "Logs fetched successfully based on actions.",
-          true
-        )
-      );
-  } catch (error) {
-    throw new ApiError(
-      501,
-      "Error fetching logs from database.",
-      null,
-      error as string[]
-    );
-  }
-});
 
 const addLogs = asyncHandler(async (req: any, res: any) => {
   const {
@@ -128,12 +63,16 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      501,
-      "Error adding logs in database.",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Error adding logs in database.",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 const fetchLogs = asyncHandler(async (req: any, res: any) => {
@@ -195,4 +134,4 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-export { getLogsBasedOnRoles, getLogsBasedOnAction, addLogs, fetchLogs };
+export { addLogs, fetchLogs };
