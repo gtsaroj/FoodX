@@ -145,11 +145,11 @@ const updateProductInDatabase = async (
   }
 };
 
-const updateTotalSold = async (collection: string, id: string) => {
+const updateTotalSold = async (collection: string, id: string, incrementBy: number) => {
   try {
     const productRef = db.collection(collection).doc(id);
     await productRef.update({
-      totalSold: FieldValue.increment(1),
+      totalSold: FieldValue.increment(incrementBy),
       updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {

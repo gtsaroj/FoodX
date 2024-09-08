@@ -3,14 +3,8 @@ import { Order, OrderInfo, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 import { paginateFnc } from "../utils.js";
-import {
-  findUserInDatabase,
-  updateTotalOrder,
-} from "./user.firestore.js";
-import {
-  findProductInDatabase,
-  updateTotalSold,
-} from "./product.firestore.js";
+import { findUserInDatabase, updateTotalOrder } from "./user.firestore.js";
+import { findProductInDatabase, updateTotalSold } from "./product.firestore.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
@@ -76,7 +70,7 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
     await updateTotalOrder(role, uid);
     products.forEach(async (product) => {
       const { collection } = await findProductInDatabase(product.id);
-      await updateTotalSold(collection, product.id);
+      await updateTotalSold(collection, product.id, product.quantity);
     });
 
     await batch.commit();
