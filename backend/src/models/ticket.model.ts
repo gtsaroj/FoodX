@@ -9,3 +9,8 @@ export interface Ticket {
 export interface NewTicket extends Ticket {
   id: string;
 }
+
+export interface TicketInfo extends Ticket {
+  createdAt: any;
+  upadtedAt: any;
+}

@@ -1,3 +1,4 @@
+import { FieldValue } from "firebase-admin/firestore";
 import { Ticket, NewTicket } from "../../models/ticket.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
@@ -12,7 +13,13 @@ const addTicketToFirestore = async (ticket: Ticket) => {
     const id = "";
     await ticketRef
       .add({ id, uid, title, description, status, category, date })
-      .then((docRef) => docRef.update({ id: docRef.id }));
+      .then((docRef) =>
+        docRef.update({
+          id: docRef.id,
+          createdAt: FieldValue.serverTimestamp(),
+          updatedAt: null,
+        })
+      );
   } catch (error) {
     throw new ApiError(
       400,
@@ -37,40 +44,6 @@ const getTicketByIdFromFirestore = async (id: string) => {
     return { tickets, doc: doc.id };
   } catch (error) {
     throw new ApiError(400, "No ticket found.");
-  }
-};
-
-const getAllTicketFromFirestore = async () => {
-  const ticketRef = db.collection("ticket");
-  try {
-    const tickets: NewTicket[] = [];
-    const docs = await ticketRef.get();
-    if (!docs) throw new ApiError(404, "No document found.");
-    docs.forEach((doc) => {
-      tickets.push(doc.data() as NewTicket);
-    });
-
-    return tickets as NewTicket[];
-  } catch (error) {
-    throw new ApiError(440, "No tickets found.");
-  }
-};
-
-const getTicketByStatusFromFirestore = async (
-  status: "Pending" | "Resolved" | "Rejected"
-) => {
-  const ticketRef = db.collection("ticket");
-  try {
-    const tickets: NewTicket[] = [];
-    const query = await ticketRef.where("status", "==", status).get();
-    if (query.empty) return tickets;
-    query.docs.forEach((doc) => {
-      const data = doc.data() as NewTicket;
-      tickets.push(data);
-    });
-    return tickets;
-  } catch (error) {
-    throw new ApiError(440, "No tickets found.");
   }
 };
 
@@ -135,6 +108,7 @@ const updateTicketInFirestore = async (
 
     await ticketRef.doc(res.doc).update({
       [`status`]: newData,
+      updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
     console.error(error);
@@ -156,9 +130,7 @@ const deleteTicketFromDatabase = async (id: string) => {
 };
 export {
   addTicketToFirestore,
-  getAllTicketFromFirestore,
   updateTicketInFirestore,
   deleteTicketFromDatabase,
-  getTicketByStatusFromFirestore,
   getTicketsFromFirestore,
 };

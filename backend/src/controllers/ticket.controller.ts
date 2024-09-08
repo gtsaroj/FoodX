@@ -1,12 +1,10 @@
 import {
   addTicketToFirestore,
   deleteTicketFromDatabase,
-  getAllTicketFromFirestore,
-  getTicketByStatusFromFirestore,
   getTicketsFromFirestore,
   updateTicketInFirestore,
 } from "../firebase/db/ticket.firestore.js";
-import { NewTicket } from "../models/ticket.model.js";
+import { Ticket } from "../models/ticket.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -14,103 +12,76 @@ import express from "express";
 
 const addNewTicket = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const ticket = req.body;
-    console.log(ticket);
+    const ticket: Ticket = req.body;
 
-    if (!ticket) throw new ApiError(400, "Ticket not found");
+    if (!ticket) throw new ApiError(404, "Ticket not found");
     try {
       await addTicketToFirestore(ticket);
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Ticket fetched successfully", true));
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while adding tickets to database.",
-        null,
-        error as string[]
-      );
-    }
-  }
-);
-const getAllTicket = asyncHandler(
-  async (_: express.Request, res: express.Response) => {
-    try {
-      const tickets = await getAllTicketFromFirestore();
-      if (!tickets) throw new ApiError(404, "Tickets not founds.");
       return res
-        .status(200)
+        .status(500)
         .json(
-          new ApiResponse(200, tickets, "Tickets fetched successfully", true)
+          new ApiError(
+            500,
+            "Error while adding tickets to database.",
+            null,
+            error as string[]
+          )
         );
-    } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while getting tickets from database.",
-        null,
-        error as string[]
-      );
     }
   }
 );
 
-const getTicketByStatus = asyncHandler(
-  async (req: express.Request, res: express.Response) => {
-    const { status } = req.body;
-
-    try {
-      const statusValue: "Pending" | "Resolved" | "Rejected" = status;
-
-      const response = await getTicketByStatusFromFirestore(statusValue);
-      if (!response) throw new ApiError(404, "Tickets not founds.");
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(200, response, "Ticket by status is fetched.", true)
-        );
-    } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while getting tickets sorted by status from database.",
-        null,
-        error as string[]
-      );
-    }
-  }
-);
 const updateTicket = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const ticket = req.body;
-    if (!ticket)
-      throw new ApiError(401, "Ticket id and data required to update ticket.");
+    const { id, newStatus } = req.body;
+    if (!id || !newStatus)
+      throw new ApiError(
+        400,
+        "Ticket id and status required to update ticket."
+      );
     try {
-      const { id, newStatus } = ticket;
       await updateTicketInFirestore(id, newStatus);
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Tickets updated successfully", true));
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while updating tickets in database.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Error while updating tickets in database.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
 
 const deleteTicket = asyncHandler(async (req: any, res: any) => {
   try {
-    const { id } = req.body;
-    if (!id) throw new ApiError(401, "ID required to delete ticket.");
+    const id = req.param.id;
+    if (!id) throw new ApiError(400, "ID required to delete ticket.");
     await deleteTicketFromDatabase(id);
-    //
     return res
       .status(200)
       .json(new ApiResponse(200, {}, "Ticket deleted successfully", true));
   } catch (error) {
-    throw new ApiError(400, "Error deleting ticket from firestore.");
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          400,
+          "Error deleting ticket from firestore.",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 
@@ -140,16 +111,19 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
       direction,
       status ? status : undefined
     );
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { tickets, currentFirstDoc: firstDoc, currentLastDoc: lastDoc, length },
-          "Successfully fetched tickets from database",
-          true
-        )
-      );
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          tickets,
+          currentFirstDoc: firstDoc,
+          currentLastDoc: lastDoc,
+          length,
+        },
+        "Successfully fetched tickets from database",
+        true
+      )
+    );
   } catch (error) {
     throw new ApiError(
       401,
@@ -162,9 +136,7 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
 
 export {
   addNewTicket,
-  getAllTicket,
   updateTicket,
   deleteTicket,
-  getTicketByStatus,
   fetchTickets,
 };
