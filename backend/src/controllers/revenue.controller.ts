@@ -22,12 +22,16 @@ const addRevenueData = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while adding revenue to database",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while adding revenue to database",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 const fetchRevenue = asyncHandler(async (req: any, res: any) => {
@@ -52,12 +56,16 @@ const fetchRevenue = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while fetching revenue from database",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching revenue from database",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 
