@@ -1,7 +1,6 @@
 import express from "express";
 import {
   addNewOrderToDatabase,
-  getAllOrders,
   getOrdersFromDatabase,
   updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
@@ -12,24 +11,6 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 import { redisClient } from "../utils/Redis.js";
 import { User } from "../models/user.model.js";
 
-const getAllOrdersFromDatabase = asyncHandler(async (_: any, res: any) => {
-  try {
-    const response = await getAllOrders();
-    console.log(response);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, response, "Orders fetched successfully", true)
-      );
-  } catch (error) {
-    throw new ApiError(
-      501,
-      "Error fetching orders from database.",
-      null,
-      error as string[]
-    );
-  }
-});
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: any, res: any) => {
     let {
@@ -109,12 +90,16 @@ const addNewOrder = asyncHandler(
         .status(200)
         .json(new ApiResponse(200, "", "Orders fetched successfully", true));
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while adding orders to database.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Error while adding orders to database.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -135,7 +120,16 @@ const updateOrder = asyncHandler(
           )
         );
     } catch (error) {
-      throw new ApiError(500, "Error while updating products.");
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Error while updating products.",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -202,7 +196,6 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
   }
 });
 export {
-  getAllOrdersFromDatabase,
   getOrderByUserIdFromDatabase,
   addNewOrder,
   updateOrder,

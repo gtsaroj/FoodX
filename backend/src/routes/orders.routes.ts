@@ -3,15 +3,13 @@ import { verifyJwt } from "../middlewares/auth.middlewares.js";
 import {
   addNewOrder,
   fetchOrders,
-  getAllOrdersFromDatabase,
-  getOrderByUserIdFromDatabase,
   updateOrder,
+  getOrderByUserIdFromDatabase,
 } from "../controllers/order.controller.js";
 import { verifyChef } from "../middlewares/role.middlewares.js";
 import { cacheListMiddleware } from "../middlewares/redis.middleware.js";
 
 const orderRoutes = Router();
-orderRoutes.route("/all-orders").get(verifyJwt, getAllOrdersFromDatabase);
 orderRoutes
   .route("/user-order")
   .post(

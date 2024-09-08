@@ -1,105 +1,75 @@
-import { nanoid } from "nanoid";
-import { Order, OrderStatus } from "../../models/order.model.js";
+import { FieldValue } from "firebase-admin/firestore";
+import { Order, OrderInfo, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
-import { Product } from "../../models/product.model.js";
 import { paginateFnc } from "../utils.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
   if (!orderDocRef) throw new ApiError(404, "Couldn't find order collection.");
   try {
-    const { orderFullFilled, orderRequest, products, uid, status } = order;
+    const { orderRequest, products, uid, status, note } = order;
     await orderDocRef
       .add({
-        orderFullFilled,
         orderId: "",
         orderRequest,
         products,
         status,
         uid,
+        note,
       })
       .then((docRef) => {
         docRef.update({
           orderId: docRef.id,
+          createdAt: FieldValue.serverTimestamp(),
         });
       });
-  } catch (err) {
-    throw new ApiError(400, "Unable to add order in database.");
-  }
-};
-const getOrdersByUserId = async (uid: string) => {
-  console.log(uid);
-  const orderDocRef = db.collection("orders");
-  try {
-    let orders: Order[] = [];
-    const query = await orderDocRef.where("uid", "==", uid).get();
-    if (query.empty) return orders;
-    query.docs.forEach((doc) => {
-      const data = doc.data() as Order;
-      orders.push(data);
-    });
-
-    console.log(orders);
-    return orders;
   } catch (error) {
-    throw new ApiError(400, "No orders found.");
+    throw new ApiError(
+      500,
+      "Unable to add order in database.",
+      null,
+      error as string[]
+    );
   }
 };
-const getOrders = async () => {};
 
-const getAllOrders = async () => {
-  const orderRef = db.collection("orders");
+const getOrder = async (id: string) => {
   try {
-    const orders: Order[] = [];
-    const docs = await orderRef.get();
-    if (!docs) throw new ApiError(404, "No document found.");
-    docs.forEach((doc) => {
-      orders.push(doc.data() as Order);
-    });
-
-    return orders as Order[];
+    const orderRef = db.collection("orders");
+    const doc = await orderRef.doc(id).get();
+    if (!doc.exists) throw new ApiError(404, "Couldn't find your order");
+    const docData = doc.data() as OrderInfo;
+    return docData;
   } catch (error) {
-    throw new ApiError(440, "No orders found.");
+    throw new ApiError(500, "Error searching order.", null, error as string[]);
   }
 };
+
 const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
-  const orderRef = db.collection("orders");
+  const orderRef = db.collection("orders").doc(id);
   if (!orderRef) throw new ApiError(404, "No document found.");
   try {
     let doc;
     if (status !== "fullfilled") {
-      doc = await orderRef.doc(id).update({
+      doc = await orderRef.update({
         status,
-      });
-    } else {
-      doc = await orderRef.doc(id).update({
-        status,
-        orderFullfilled: new Date().getTime(),
       });
       return doc;
     }
+    doc = await orderRef.update({
+      status,
+      orderFullfilled: new Date().getTime(),
+    });
+    const orderData = await getOrder(id);
+    const { uid, products } = orderData;
+    //update totalsold in product
+    //update totalOrders in user
+    return doc;
   } catch (error) {
     throw new ApiError(440, "Error updating orders in database.");
   }
 };
-
-// const updateOrderItemInDatabase = async (
-//   id: string,
-//   action: "add" | "delete",
-//   productId: string,
-//   prevData: Product[]
-// ) => {
-//   const orderRef = db.collection("orders");
-//   if (!orderRef) throw new ApiError(404, "No document found.");
-//   try {
-//     // const doc = orderRef.doc(id).update({
-//     //   [`products`]:
-//     // })
-//   } catch (error) {
-//     throw new ApiError(440, "Error updating orders in database.");
-//   }
-// };
 
 const getOrdersFromDatabase = async (
   pageSize: number,
@@ -112,7 +82,7 @@ const getOrdersFromDatabase = async (
   userId?: string
 ) => {
   try {
-    const {query, totalLength} =await paginateFnc(
+    const { query, totalLength } = await paginateFnc(
       "orders",
       filter,
       startAfterDoc,
@@ -147,7 +117,7 @@ const getOrdersFromDatabase = async (
       orders,
       firstDoc,
       lastDoc,
-      length: totalLength
+      length: totalLength,
     };
   } catch (error) {
     throw new ApiError(
@@ -160,9 +130,6 @@ const getOrdersFromDatabase = async (
 };
 export {
   addNewOrderToDatabase,
-  getAllOrders,
-  getOrders,
-  getOrdersByUserId,
   updateOrderStatusInDatabase,
   getOrdersFromDatabase,
 };
