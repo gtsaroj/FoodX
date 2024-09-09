@@ -12,7 +12,7 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 const bannerRouter = Router();
 
 bannerRouter
-  .route("/get-banners")
+  .route("/:path")
   .get(cacheMiddleware("banner"), getAllBanners);
 bannerRouter.route("/add-banner").post(verifyJwt, verifyChef, addNewBanner);
 bannerRouter

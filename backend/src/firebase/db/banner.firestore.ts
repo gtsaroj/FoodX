@@ -1,10 +1,14 @@
 import { FieldValue } from "firebase-admin/firestore";
-import { Banner, BannerInfo } from "../../models/banner.model.js";
+import { BannerInfo } from "../../models/banner.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 
-const addBannerToFirestore = async (title: string, image: string) => {
-  const bannerRef = db.collection("banners");
+const addBannerToFirestore = async (
+  title: string,
+  image: string,
+  collection: string
+) => {
+  const bannerRef = db.collection(collection);
   if (!bannerRef) throw new ApiError(404, "No banner collection found.");
   try {
     const banner = await bannerRef
@@ -20,13 +24,18 @@ const addBannerToFirestore = async (title: string, image: string) => {
           createdAt: FieldValue.serverTimestamp(),
         })
       );
-    return banner;
+    return { banner, collection };
   } catch (error) {
-    throw new ApiError(500, "Unable to add banner in database.", null, error as string[]);
+    throw new ApiError(
+      500,
+      "Unable to add banner in database.",
+      null,
+      error as string[]
+    );
   }
 };
-const getBannersFromDatabase = async () => {
-  const bannerRef = db.collection("banners");
+const getBannersFromDatabase = async (collection: string) => {
+  const bannerRef = db.collection(collection);
   if (!bannerRef) throw new ApiError(404, "No banner collection found.");
 
   try {
@@ -37,7 +46,7 @@ const getBannersFromDatabase = async () => {
       const data = doc.data() as BannerInfo;
       banners.push(data);
     });
-    return banners;
+    return { banners, collection };
   } catch (error) {
     throw new ApiError(
       500,
@@ -48,11 +57,12 @@ const getBannersFromDatabase = async () => {
   }
 };
 
-const deleteBannerFromDatabase = async (id: string) => {
-  const bannerRef = db.collection("banners");
+const deleteBannerFromDatabase = async (id: string, collection: string) => {
+  const bannerRef = db.collection(collection);
   if (!bannerRef) throw new ApiError(404, "No banner collection found.");
   try {
     await bannerRef.doc(id).delete();
+    return collection;
   } catch (error) {
     throw new ApiError(
       500,
@@ -63,7 +73,10 @@ const deleteBannerFromDatabase = async (id: string) => {
   }
 };
 
-const bulkDeleteBannersFromDatabase = async (id: string[]) => {
+const bulkDeleteBannersFromDatabase = async (
+  id: string[],
+  collection: string
+) => {
   const bannerRef = db.collection("banners");
   if (!bannerRef) throw new ApiError(404, "No banners collection available.");
   try {
@@ -74,6 +87,7 @@ const bulkDeleteBannersFromDatabase = async (id: string[]) => {
       batch.delete(docRef);
     });
     await batch.commit();
+    return collection;
   } catch (error) {
     throw new ApiError(
       401,
