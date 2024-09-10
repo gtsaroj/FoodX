@@ -1,7 +1,7 @@
-import { Product } from "./../../../../backend/src/models/product.model";
 import dayjs from "dayjs";
-import { Order } from "../../models/order.model";
-import { DailyOrders, OrderProduct } from "../../models/chart.modal";
+import { Product } from "../../models/product.model";
+import { DailyOrders } from "../../models/chart.modal";
+import { Revenue } from "../../models/revenue.model";
 
 //bardata
 // export const barData = async (data: Order[]) => {
@@ -67,7 +67,7 @@ import { DailyOrders, OrderProduct } from "../../models/chart.modal";
 //     return filterOrderData;
 //   };
 
-export const barData = (data: DailyOrders[]) => {
+export const barData = (data: Revenue[]) => {
   if (!data) throw new Error("No found data : file: barchart.ts => line:72");
   try {
     const allOrder = data.map((order) => {
@@ -86,12 +86,12 @@ export const barData = (data: DailyOrders[]) => {
   }
 };
 
-export const productWithQuantity = (orders: OrderProduct[]) => {
+export const productWithQuantity = (orders: Product[]) => {
   const datas: { [key: string]: number } = {};
   orders?.forEach((data) => {
     datas[data.name]
-      ? (datas[data.name] += data.quantity)
-      : (datas[data.name] = data.quantity);
+      ? (datas[data.name] += Number(data.quantity))
+      : (datas[data.name] = Number(data.quantity));
   });
 
   return datas;
