@@ -1,11 +1,13 @@
 /* eslint-disable no-empty */
 import { BarChart } from "@mui/x-charts";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
-import { barData, monthlyBarData } from "./BarChart";
-import { currentWeekData, previousWeekData } from "../../data.json";
+import { barData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
 import { Filter, MoveUp, X } from "lucide-react";
+import { AddRevenue, Revenue } from "../../models/revenue.model";
+import { getRevenue } from "../../Services/revenue.services";
+import { RotatingLines } from "react-loader-spinner";
 interface MonthlyOrderChartProps {
   height: number;
   dateRange: { startDate: Dayjs; endDate: Dayjs };
@@ -18,75 +20,79 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
   const [initialData, setInitialData] = useState<
     { [key: string]: number | string }[]
   >([]);
-  console.log(initialData);
   const [dataKey, setDataKey] = useState<string[]>([]);
   const [filter, setFilter] = useState<{
-    dateFilter?: string;
+    dateFilter?: { startDate: string; endDate: string };
     normalFilter?: string;
   }>();
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const getBarData = async ({ startDate, endDate }: AddRevenue) => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: startDate,
+        endDate: endDate,
+      });
+      const aggregateData = barData(response.data);
+      setInitialData(aggregateData);
+      const listOfKeys = extractUniqueKeys(aggregateData);
+      setDataKey(listOfKeys as string[]);
+    } catch (error) {
+      throw new Error("Error while fetching revenue" + error);
+    }
+    setLoading(false);
+  };
+
+  const getPreviousBarData = async ({ startDate, endDate }: AddRevenue) => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: startDate,
+        endDate: endDate,
+      });
+      const aggregateData = barData(response.data);
+      setInitialData(aggregateData);
+      const listOfKeys = extractUniqueKeys(aggregateData);
+      setDataKey(listOfKeys as string[]);
+    } catch (error) {
+      throw new Error("Error while fetching revenue" + error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    // const response = monthlyBarData(chartData);
-    // setInitialData(response);
-    // console.log(response);
+    getBarData({
+      startDate:
+        (filter?.dateFilter?.startDate as string) ||
+        dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    });
+  }, [filter?.dateFilter?.startDate, filter?.dateFilter?.endDate]);
 
-    // setDataKey(object1);
-    setInitialData(currentWeekData);
-    const allkeys: string[] = extractUniqueKeys(currentWeekData);
-    setDataKey(allkeys);
-  }, []);
-
-  // useEffect(() => {
-  //   const filterByDate = async () => {
-  //     // const startDate = dayjs(dateRange.startDate).format();
-  //     // const endDate = dayjs(dateRange.endDate);
-  //     const getOrder = await getAllOrder();
-  //     const filteredData = await filterBarData(getOrder, {
-  //       startDate: dateRange.startDate,
-  //       endDate: dateRange.endDate,
-  //     });
-  //     setInitialData(filteredData);
-  //     filteredData?.forEach((data) => {
-  //       const keys = Object.keys(data).filter((key) => key !== "time");
-  //       const ogDataKey = [...new Set(keys)];
-  //       setDataKey(ogDataKey);
-  //     });
-  //   };
-
-  //   if (
-  //     dateRange.startDate &&
-  //     dateRange.endDate &&
-  //     dateRange.startDate !== dateRange.endDate
-  //   ) {
-  //     filterByDate();
-  //   }
-  // }, [dateRange.startDate, dateRange.endDate]);
+  useEffect(() => {
+    if (filter?.normalFilter) {
+      getPreviousBarData({
+        startDate: dayjs()
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD"),
+        endDate: dayjs()
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD"),
+      });
+    }
+  }, [filter?.normalFilter]);
 
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
     const allKeys = new Set();
     data.forEach((item) => {
-      const labelKeys = Object.keys(item).filter((index) => index !== "date");
+      const labelKeys = Object.keys(item).filter((index) => index !== "time");
       labelKeys.forEach((key) => allKeys.add(key));
     });
     return [...allKeys];
   };
-
-  // Update series creation logic to filter out unused keys
-  // const series = dataKey.filter(isKeyRelevant).map((key) => ({
-  //   dataKey: key,
-  //   label: key,
-  //   valueFormattor,
-  // }));
-
-  useEffect(() => {
-    if (filter?.dateFilter?.length > 0 || filter?.normalFilter?.length > 0) {
-      setInitialData(previousWeekData);
-    } else {
-      setInitialData(currentWeekData);
-    }
-  }, [filter?.dateFilter?.length, filter?.normalFilter?.length]);
-
-  console.log(initialData);
 
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
@@ -110,14 +116,14 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
             }}
             parent={
               <div className="flex border-[1px] border-[var(--dark-border)]  px-4 py-1.5 rounded items-center justify-start gap-2">
-              <Filter
-                strokeWidth={2.5}
-                className="size-5 text-[var(--dark-secondary-text)]"
-              />
-              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                Filter
-              </p>
-            </div>
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
             }
             checkFn={{
               checkActionFn: (isChecked: boolean, value: string) => {
@@ -132,7 +138,10 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
                 if (firstDate && secondDate) {
                   setFilter((prev) => ({
                     ...prev,
-                    dateFilter: ` ${firstDate} to ${secondDate} `,
+                    dateFilter: {
+                      endDate: dayjs(secondDate).format("YYYY-MM-DD"),
+                      startDate: dayjs(firstDate).format("YYYY-MM-DD"),
+                    },
                   }));
                 }
               },
@@ -144,15 +153,22 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
         </div>
       </p>
       <div className="flex h-[20px] pt-1 items-center justify-start gap-2">
-        {filter?.dateFilter && (
+        {filter?.dateFilter?.startDate && filter.dateFilter.endDate && (
           <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] w-[110px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              <span className="text-[15px] w-[180px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.startDate +
+                  " to " +
+                  filter.dateFilter.endDate}
               </span>
             </div>
             <button
-              onClick={() => setFilter((prev) => ({ ...prev, dateFilter: "" }))}
+              onClick={() =>
+                setFilter((prev) => ({
+                  ...prev,
+                  dateFilter: { endDate: "", startDate: "" },
+                }))
+              }
               className=" "
             >
               <X className="text-[var(--danger-text)] " size={20} />
@@ -178,72 +194,82 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
         )}
       </div>
       <div className="w-full h-[400px]">
-        <BarChart
-                    sx={{
-                      "& .MuiLineElement-root": {
-                        strokeDasharray: "2 2",
-                        strokeWidth: 3,
-                      },
-                      "& .MuiAreaElement-series-Germany": {
-                        fill: "url('#myGradient')",
-                      },
-                      "& .MuiChartsHoverLine": {
-                        stroke: "var(--dark-text)", // Set the hover line color to white
-                        strokeWidth: 1, // Adjust the thickness as needed
-                      },
-                      "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-                        stroke: "var(--dark-text)", // Blue color for the X-axis line
-                        strokeWidth: 0.8,
-                      },
-                      "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                        stroke: "var(--dark-text)", // Blue color for the Y-axis line
-                        strokeWidth: 0.8,
-                      },
-                      "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                        letterSpacing: "2px",
-                        fill: "var(--dark-text)", // Blue color for the X-axis labels
-                        strokeWidth: "0.5",
-                      },
-          
-                      "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                        fill: "var(--dark-text)", // Red color for the Y-axis labels
-                        strokeWidth: "0.4",
-                        letterSpacing: "2px",
-                      },
-                    }}
-          grid={{ horizontal: true }}
-          colors={colorPallette}
-          slotProps={{
-            // loadingOverlay: { message: "Loading Data....." },
-            // noDataOverlay: { message: "No Data to display." },
-            // legend: {
-            //   hidden: true,
-            //   itemMarkHeight: 10,
-            //   labelStyle: { fontSize: "30px", alignItems: "center" },
-            //   direction: "row",
-            //   position: { vertical: "bottom", horizontal: "middle" },
-            // },
-            legend: {
-              hidden: true,
-              // labelStyle: {
-              //   fontSize: "12px",
+        {loading ? (
+          <div className="flex w-full h-full items-center justify-center gap-3">
+            <RotatingLines strokeColor="var(--dark-text)" width="27" />
+            <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
+              {" "}
+              loading...
+            </span>
+          </div>
+        ) : (
+          <BarChart
+            sx={{
+              "& .MuiLineElement-root": {
+                strokeDasharray: "2 2",
+                strokeWidth: 3,
+              },
+              "& .MuiAreaElement-series-Germany": {
+                fill: "url('#myGradient')",
+              },
+              "& .MuiChartsHoverLine": {
+                stroke: "var(--dark-text)", // Set the hover line color to white
+                strokeWidth: 1, // Adjust the thickness as needed
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)", // Blue color for the X-axis line
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)", // Blue color for the Y-axis line
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                letterSpacing: "2px",
+                fill: "var(--dark-text)", // Blue color for the X-axis labels
+                strokeWidth: "0.5",
+              },
+
+              "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                fill: "var(--dark-text)", // Red color for the Y-axis labels
+                strokeWidth: "0.4",
+                letterSpacing: "2px",
+              },
+            }}
+            grid={{ horizontal: true }}
+            colors={colorPallette}
+            slotProps={{
+              // loadingOverlay: { message: "Loading Data....." },
+              // noDataOverlay: { message: "No Data to display." },
+              // legend: {
+              //   hidden: true,
+              //   itemMarkHeight: 10,
+              //   labelStyle: { fontSize: "30px", alignItems: "center" },
+              //   direction: "row",
+              //   position: { vertical: "bottom", horizontal: "middle" },
               // },
-            },
-          }}
-          dataset={initialData}
-          borderRadius={6}
-          xAxis={[
-            {
-              scaleType: "band",
-              dataKey: "time",
-              data: initialData?.map((data) => data["date"]),
-            },
-          ]}
-          series={dataKey?.map((key) => ({
-            dataKey: key,
-            label: key,
-          }))}
-        />
+              legend: {
+                hidden: true,
+                // labelStyle: {
+                //   fontSize: "12px",
+                // },
+              },
+            }}
+            dataset={initialData}
+            borderRadius={6}
+            xAxis={[
+              {
+                scaleType: "band",
+                dataKey: "time",
+                data: initialData?.map((data) => data["date"]),
+              },
+            ]}
+            series={dataKey?.map((key) => ({
+              dataKey: key,
+              label: key,
+            }))}
+          />
+        )}
       </div>
     </div>
   );

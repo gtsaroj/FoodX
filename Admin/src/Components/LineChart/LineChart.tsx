@@ -1,19 +1,12 @@
 import { LineChart } from "@mui/x-charts";
 import { Filter, MoveUp, X } from "lucide-react";
 import "./LineChart.css";
-import { chartData, prevChartData } from "../../data.json";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import dayjs, { Dayjs } from "dayjs";
-import {
-  monthlyTotal,
-  orderData,
-  previousMonthOrder,
-  weeklyRevenue,
-} from "./LineChartData";
+import { orderData, weeklyRevenue } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";
-import Skeleton from "react-loading-skeleton";
 import { RotatingLines } from "react-loader-spinner";
 
 interface MonthlyLineChartProps {
@@ -23,8 +16,9 @@ export const WeekReveneuChart: React.FC = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
   const [prevData, setPrevData] = useState<any>([]);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const getLineChartData = async () => {
+    setLoading(true);
     try {
       const response = await getRevenue({
         startDate: dayjs().startOf("week").format("YYYY-MM-DD"),
@@ -35,6 +29,7 @@ export const WeekReveneuChart: React.FC = () => {
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -55,61 +50,71 @@ export const WeekReveneuChart: React.FC = () => {
         </div>
       </div>
       <div className="h-[400px] lg:h-[300px] w-full">
-        <LineChart
-          sx={{
-            "& .MuiLineElement-root": {
-              strokeDasharray: "2 2",
-              strokeWidth: 3,
-            },
-            "& .MuiAreaElement-series-Germany": {
-              fill: "url('#myGradient')",
-            },
-            "& .MuiChartsHoverLine": {
-              stroke: "var(--dark-text)", // Set the hover line color to white
-              strokeWidth: 1, // Adjust the thickness as needed
-            },
-            "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-              stroke: "var(--dark-text)", // Blue color for the X-axis line
-              strokeWidth: 0.8,
-            },
-            "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-              stroke: "var(--dark-text)", // Blue color for the Y-axis line
-              strokeWidth: 0.8,
-            },
-            "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-              letterSpacing: "2px",
-              fill: "var(--dark-text)", // Blue color for the X-axis labels
-              strokeWidth: "0.5",
-            },
+        {loading ? (
+          <div className="flex w-full h-full items-center justify-center gap-3">
+            <RotatingLines strokeColor="var(--dark-text)" width="27" />
+            <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
+              {" "}
+              loading...
+            </span>
+          </div>
+        ) : (
+          <LineChart
+            sx={{
+              "& .MuiLineElement-root": {
+                strokeDasharray: "2 2",
+                strokeWidth: 3,
+              },
+              "& .MuiAreaElement-series-Germany": {
+                fill: "url('#myGradient')",
+              },
+              "& .MuiChartsHoverLine": {
+                stroke: "var(--dark-text)", // Set the hover line color to white
+                strokeWidth: 1, // Adjust the thickness as needed
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)", // Blue color for the X-axis line
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)", // Blue color for the Y-axis line
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                letterSpacing: "2px",
+                fill: "var(--dark-text)", // Blue color for the X-axis labels
+                strokeWidth: "0.5",
+              },
 
-            "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-              fill: "var(--dark-text)", // Red color for the Y-axis labels
-              strokeWidth: "0.4",
-              letterSpacing: "2px",
-            },
-          }}
-          slotProps={{
-            legend: {
-              direction: "row",
-              labelStyle: { fontSize: "14px" },
-              position: { vertical: "bottom", horizontal: "middle" },
-            },
-          }}
-          xAxis={[
-            {
-              data: initialData?.map((order) => order["time"]),
-              scaleType: "point",
-            },
-          ]}
-          series={[
-            {
-              data: initialData?.map((order) => order["revenue"]),
-              type: "line",
-              color: "#45c241",
-            },
-          ]}
-          grid={{ vertical: true, horizontal: true }}
-        ></LineChart>
+              "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                fill: "var(--dark-text)", // Red color for the Y-axis labels
+                strokeWidth: "0.4",
+                letterSpacing: "2px",
+              },
+            }}
+            slotProps={{
+              legend: {
+                direction: "row",
+                labelStyle: { fontSize: "14px" },
+                position: { vertical: "bottom", horizontal: "middle" },
+              },
+            }}
+            xAxis={[
+              {
+                data: initialData?.map((order) => order["time"]),
+                scaleType: "point",
+              },
+            ]}
+            series={[
+              {
+                data: initialData?.map((order) => order["revenue"]),
+                type: "line",
+                color: "#45c241",
+              },
+            ]}
+            grid={{ vertical: true, horizontal: true }}
+          ></LineChart>
+        )}
       </div>
     </div>
   );
@@ -362,8 +367,9 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
 };
 
 export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
-  const [initialData, setInitialData] =
-    useState<{ time: string; orders: number }[]>([]);
+  const [initialData, setInitialData] = useState<
+    { time: string; orders: number }[]
+  >([]);
   const [filter, setIsFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
     normalFilter?: string;
@@ -394,7 +400,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
 
   const getPreviousOrders = async ({ startDate, endDate }: AddRevenue) => {
     setLoading(true);
-    
+
     try {
       const response = await getRevenue({
         startDate: startDate,
