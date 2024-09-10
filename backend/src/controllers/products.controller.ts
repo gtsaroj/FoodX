@@ -120,6 +120,7 @@ const addProduct = asyncHandler(
     const response = req.body as UploadProductType;
     try {
       await addProductToFirestore(response.product, response.collection);
+      await redisClient.del(response.collection);
       return res
         .status(200)
         .json(new ApiResponse(200, {}, "Added Product successfully.", true));
@@ -148,6 +149,7 @@ const updateProduct = asyncHandler(
         id,
         newData
       );
+      await redisClient.del(category);
       return res
         .status(200)
         .json(
@@ -184,6 +186,7 @@ const deleteProductsInBulk = asyncHandler(
     } = req.body;
     try {
       await bulkDeleteProductsFromDatabase(category, ids);
+      await redisClient.del(category);
       return res
         .status(200)
         .json(new ApiResponse(200, {}, "Products deleted successfully.", true));
@@ -208,6 +211,7 @@ const deleteProduct = asyncHandler(
       req.body;
     try {
       await deleteProductFromDatabase(id, type);
+      await redisClient.del(type);
       return res
         .status(200)
         .json(new ApiResponse(200, {}, "Product deleted successfully.", true));

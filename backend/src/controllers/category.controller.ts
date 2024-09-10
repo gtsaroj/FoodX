@@ -16,6 +16,7 @@ const addNewCategory = asyncHandler(
     const { name, image } = req.body;
     try {
       await addNewCategoryInDatabase(name, image);
+      await redisClient.del("category");
       return res
         .status(200)
         .json(
@@ -73,6 +74,7 @@ const updateCategory = asyncHandler(
     const { id, field, newData } = req.body;
     try {
       const updatedData = await updateCategoryInDatabase(id, field, newData);
+      await redisClient.del("category");
       return res
         .status(200)
         .json(
@@ -103,6 +105,7 @@ const deleteCategory = asyncHandler(
     const { id } = req.body;
     try {
       const deletedCategory = await deleteCategoryFromDatabase(id);
+      await redisClient.del("category");
       return res
         .status(200)
         .json(
@@ -135,6 +138,7 @@ const deleteCategoriesInBulk = asyncHandler(async (req: any, res: any) => {
   } = req.body;
   try {
     await bulkDeleteCategoryFromDatabase(ids);
+    await redisClient.del("category");
     return res
       .status(200)
       .json(new ApiResponse(200, {}, "Categories deleted successfully.", true));

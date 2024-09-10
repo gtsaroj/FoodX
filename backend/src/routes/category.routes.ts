@@ -13,23 +13,21 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const categoryRouter = Router();
 
-//for end users
 categoryRouter
   .route("/get-category")
   .get(rateLimiter(60, 10), cacheMiddleware("category"), getAllCategory);
 
-//for chef dashboard
 categoryRouter
   .route("/add-category")
-  .post(verifyJwt, verifyChef, rateLimiter(60, 20), addNewCategory);
+  .post(rateLimiter(60, 20), verifyJwt, verifyChef, addNewCategory);
 categoryRouter
   .route("/update-category")
-  .put(verifyJwt, verifyChef, rateLimiter(60, 10), updateCategory);
+  .put(rateLimiter(60, 20), verifyJwt, verifyChef, updateCategory);
 categoryRouter
   .route("/delete-category")
-  .delete(verifyJwt, verifyChef, rateLimiter(60, 10), deleteCategory);
+  .delete(rateLimiter(60, 5), verifyJwt, verifyChef, deleteCategory);
 categoryRouter
   .route("/bulk-delete")
-  .delete(verifyJwt, verifyChef, rateLimiter(60, 5), deleteCategoriesInBulk);
+  .delete(rateLimiter(60, 5), verifyJwt, verifyChef, deleteCategoriesInBulk);
 
 export { categoryRouter };

@@ -16,7 +16,6 @@ const rateLimiter = (limitTime: number, limitRequestAmount: number) => {
 
       const endpoint = req.originalUrl;
       const key = `${ip}:${endpoint}`;
-      console.log(key);
       const response = await redisClient
         .multi()
         .incr(key)

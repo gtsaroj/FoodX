@@ -15,6 +15,7 @@ const addNewBanner = asyncHandler(
     const { title, image, path } = req.body;
     try {
       const { collection } = await addBannerToFirestore(title, image, path);
+      await redisClient.del(path);
       return res
         .status(200)
         .json(
@@ -45,7 +46,7 @@ const getAllBanners = asyncHandler(
     try {
       const path = req.params.path;
       const { banners, collection } = await getBannersFromDatabase(path);
-      await redisClient.set("banners", JSON.stringify(banners), {
+      await redisClient.set(`${path}`, JSON.stringify(banners), {
         EX: 3600,
       });
       return res
@@ -83,6 +84,7 @@ const deleteBannersInBulk = asyncHandler(async (req: any, res: any) => {
   } = req.body;
   try {
     const collection = await bulkDeleteBannersFromDatabase(ids, path);
+    await redisClient.del(path);
     return res
       .status(200)
       .json(
@@ -97,6 +99,7 @@ const deleteBanner = asyncHandler(
     const { id, path } = req.body;
     try {
       const collection = await deleteBannerFromDatabase(id, path);
+      await redisClient.del(path);
       return res
         .status(200)
         .json(

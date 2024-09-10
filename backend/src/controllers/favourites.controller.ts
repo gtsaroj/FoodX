@@ -14,6 +14,7 @@ const addFavourite = asyncHandler(
     const { uid, productId } = req.body;
     try {
       await addProductInFavourite(uid, productId);
+      await redisClient.del("favourites");
       return res
         .status(200)
         .json(
@@ -44,6 +45,7 @@ const removeFavourites = asyncHandler(
     try {
       const { uid, productId } = req.body;
       await removeItemFromFavourite(uid, productId);
+      await redisClient.del("favourites");
       return res
         .status(200)
         .json(

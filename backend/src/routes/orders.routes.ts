@@ -7,25 +7,14 @@ import {
   getOrderByUserIdFromDatabase,
 } from "../controllers/order.controller.js";
 import { verifyChef } from "../middlewares/role.middlewares.js";
-import { cacheListMiddleware } from "../middlewares/redis.middleware.js";
+import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const orderRoutes = Router();
+orderRoutes.route("/user-order").post(verifyJwt, getOrderByUserIdFromDatabase);
 orderRoutes
-  .route("/user-order")
-  .post(
-    verifyJwt,
-    cacheListMiddleware("latest_orders", 0, -1),
-    getOrderByUserIdFromDatabase
-  );
-orderRoutes.route("/add-order").post(verifyJwt, addNewOrder);
+  .route("/add-order")
+  .post(rateLimiter(60, 5), verifyJwt, addNewOrder);
 orderRoutes.route("/update-order").put(verifyJwt, updateOrder);
-orderRoutes
-  .route("/get-orders")
-  .post(
-    verifyJwt,
-    verifyChef,
-    cacheListMiddleware("fetched_orders", 0, -1),
-    fetchOrders
-  );
+orderRoutes.route("/get-orders").post(verifyJwt, verifyChef, fetchOrders);
 
 export { orderRoutes };

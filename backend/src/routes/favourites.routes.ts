@@ -6,13 +6,23 @@ import {
   removeFavourites,
 } from "../controllers/favourites.controller.js";
 import { cacheMiddleware } from "../middlewares/redis.middleware.js";
+import { rateLimiter } from "../middlewares/rateLimiter.middleware.js";
 
 const favouriteRouter = Router();
 
-favouriteRouter.route("/add").post(addFavourite);
-favouriteRouter.route("/remove").delete(removeFavourites);
+favouriteRouter
+  .route("/add")
+  .post(rateLimiter(60, 20), verifyJwt, addFavourite);
+favouriteRouter
+  .route("/remove")
+  .delete(rateLimiter(60, 20), verifyJwt, removeFavourites);
 favouriteRouter
   .route("/:uid")
-  .get(cacheMiddleware("favourites"), getFavourites);
+  .get(
+    rateLimiter(60, 20),
+    verifyJwt,
+    cacheMiddleware("favourites"),
+    getFavourites
+  );
 
 export default favouriteRouter;
