@@ -121,9 +121,26 @@ const addProduct = asyncHandler(
     try {
       await addProductToFirestore(response.product, response.collection);
       await redisClient.del(response.collection);
+      const updatedProductData = await getAllProductsFromDatabase(
+        response.collection
+      );
+      await redisClient.set(
+        response.collection,
+        JSON.stringify(updatedProductData),
+        {
+          EX: 3600,
+        }
+      );
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Added Product successfully.", true));
+        .json(
+          new ApiResponse(
+            200,
+            { updatedProductData },
+            "Added Product successfully.",
+            true
+          )
+        );
     } catch (error) {
       return res
         .status(500)
@@ -150,12 +167,16 @@ const updateProduct = asyncHandler(
         newData
       );
       await redisClient.del(category);
+      const updatedProductData = await getAllProductsFromDatabase(category);
+      await redisClient.set(category, JSON.stringify(updatedProductData), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            { updatedProduct },
+            { updatedProduct, updatedProductData },
             "Product updated successfully.",
             true
           )
@@ -187,9 +208,20 @@ const deleteProductsInBulk = asyncHandler(
     try {
       await bulkDeleteProductsFromDatabase(category, ids);
       await redisClient.del(category);
+      const updatedProductData = await getAllProductsFromDatabase(category);
+      await redisClient.set(category, JSON.stringify(updatedProductData), {
+        EX: 3600,
+      });
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Products deleted successfully.", true));
+        .json(
+          new ApiResponse(
+            200,
+            { updatedProductData },
+            "Products deleted successfully.",
+            true
+          )
+        );
     } catch (error) {
       return res
         .status(500)
@@ -212,9 +244,13 @@ const deleteProduct = asyncHandler(
     try {
       await deleteProductFromDatabase(id, type);
       await redisClient.del(type);
+      const updatedProductData = await getAllProductsFromDatabase(type);
+      await redisClient.set(type, JSON.stringify(updatedProductData), {
+        EX: 3600,
+      });
       return res
         .status(200)
-        .json(new ApiResponse(200, {}, "Product deleted successfully.", true));
+        .json(new ApiResponse(200, {updatedProductData}, "Product deleted successfully.", true));
     } catch (error) {
       return res
         .status(500)

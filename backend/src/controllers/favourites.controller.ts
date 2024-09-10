@@ -15,12 +15,16 @@ const addFavourite = asyncHandler(
     try {
       await addProductInFavourite(uid, productId);
       await redisClient.del("favourites");
+      const updatedFavourites = await getFavouritesFromFirestore(uid);
+      await redisClient.set("favourites", JSON.stringify(updatedFavourites), {
+        EX: 600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            "",
+            updatedFavourites,
             "Item successfully added into favourites.",
             true
           )
@@ -46,12 +50,16 @@ const removeFavourites = asyncHandler(
       const { uid, productId } = req.body;
       await removeItemFromFavourite(uid, productId);
       await redisClient.del("favourites");
+      const updatedFavourites = await getFavouritesFromFirestore(uid);
+      await redisClient.set("favourites", JSON.stringify(updatedFavourites), {
+        EX: 600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            "",
+            updatedFavourites,
             "Item successfully removed from favourites.",
             true
           )
@@ -78,7 +86,7 @@ const getFavourites = asyncHandler(
       const favouritesData = await getFavouritesFromFirestore(uid);
       await redisClient.setEx(
         "favourites",
-        3600,
+        600,
         JSON.stringify(favouritesData)
       );
       return res

@@ -17,10 +17,19 @@ const addNewCategory = asyncHandler(
     try {
       await addNewCategoryInDatabase(name, image);
       await redisClient.del("category");
+      const updatedCategory = await getAllCategoryFromDatabase();
+      await redisClient.set("category", JSON.stringify(updatedCategory), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
-          new ApiResponse(200, "", "New category added successfully", true)
+          new ApiResponse(
+            200,
+            { updatedCategory },
+            "New category added successfully",
+            true
+          )
         );
     } catch (error) {
       return res
@@ -75,12 +84,16 @@ const updateCategory = asyncHandler(
     try {
       const updatedData = await updateCategoryInDatabase(id, field, newData);
       await redisClient.del("category");
+      const updatedCategoryData = await getAllCategoryFromDatabase();
+      await redisClient.set("category", JSON.stringify(updatedCategoryData), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            { updatedData },
+            { updatedData, updatedCategoryData },
             "Category fetched successfully",
             true
           )
@@ -106,12 +119,16 @@ const deleteCategory = asyncHandler(
     try {
       const deletedCategory = await deleteCategoryFromDatabase(id);
       await redisClient.del("category");
+      const updatedCategoryData = await getAllCategoryFromDatabase();
+      await redisClient.set("category", JSON.stringify(updatedCategoryData), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            { deletedCategory },
+            { deletedCategory, updatedCategoryData },
             "Category deleted successfully",
             true
           )
@@ -139,9 +156,20 @@ const deleteCategoriesInBulk = asyncHandler(async (req: any, res: any) => {
   try {
     await bulkDeleteCategoryFromDatabase(ids);
     await redisClient.del("category");
+    const updatedCategoryData = await getAllCategoryFromDatabase();
+    await redisClient.set("category", JSON.stringify(updatedCategoryData), {
+      EX: 3600,
+    });
     return res
       .status(200)
-      .json(new ApiResponse(200, {}, "Categories deleted successfully.", true));
+      .json(
+        new ApiResponse(
+          200,
+          { updatedCategoryData },
+          "Categories deleted successfully.",
+          true
+        )
+      );
   } catch (error) {
     return res
       .status(500)

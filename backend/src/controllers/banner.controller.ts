@@ -16,12 +16,16 @@ const addNewBanner = asyncHandler(
     try {
       const { collection } = await addBannerToFirestore(title, image, path);
       await redisClient.del(path);
+      const getBanners = await getBannersFromDatabase(collection);
+      await redisClient.set(collection, JSON.stringify(getBanners), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            collection,
+            { banner: getBanners, collection },
             "New banner added successfully",
             true
           )
@@ -85,10 +89,19 @@ const deleteBannersInBulk = asyncHandler(async (req: any, res: any) => {
   try {
     const collection = await bulkDeleteBannersFromDatabase(ids, path);
     await redisClient.del(path);
+    const getBanners = await getBannersFromDatabase(collection);
+    await redisClient.set(collection, JSON.stringify(getBanners), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json(
-        new ApiResponse(200, collection, "Banners deleted successfully.", true)
+        new ApiResponse(
+          200,
+          { banner: getBanners, collection },
+          "Banners deleted successfully.",
+          true
+        )
       );
   } catch (error) {
     throw new ApiError(500, "Error while deleting banners.");
@@ -100,10 +113,19 @@ const deleteBanner = asyncHandler(
     try {
       const collection = await deleteBannerFromDatabase(id, path);
       await redisClient.del(path);
+      const getBanners = await getBannersFromDatabase(collection);
+      await redisClient.set(collection, JSON.stringify(getBanners), {
+        EX: 3600,
+      });
       return res
         .status(200)
         .json(
-          new ApiResponse(200, collection, "Banner deleted successfully", true)
+          new ApiResponse(
+            200,
+            { banner: getBanners, collection },
+            "Banner deleted successfully",
+            true
+          )
         );
     } catch (error) {
       throw new ApiError(
