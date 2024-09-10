@@ -87,6 +87,10 @@ const getProductByTag = asyncHandler(async (req: any, res: any) => {
     const products = await getProductByTagFromDatabase(tag, "products");
     if (!products)
       throw new ApiError(404, "No product by categories data found");
+
+    await redisClient.set(`product:${tag}`, JSON.stringify(products), {
+      EX: 3600,
+    });
     return res
       .status(200)
       .json(

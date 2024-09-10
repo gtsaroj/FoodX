@@ -15,14 +15,16 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 
 const productRouter = Router();
 
-productRouter.route("/all").get(cacheMiddleware("products"), getNormalProducts);
+productRouter
+  .route("/all")
+  .get(rateLimiter(60, 20), cacheMiddleware("products"), getNormalProducts);
 
 productRouter
   .route("/specials")
-  .get(rateLimiter(60, 10), cacheMiddleware("specials"), getSpecialProducts);
+  .get(rateLimiter(60, 20), cacheMiddleware("specials"), getSpecialProducts);
 
 productRouter.route("/get-product-by-tag/:tag").get(
-  rateLimiter(60, 10),
+  rateLimiter(60, 20),
   (req, res, next) => {
     const tag = req?.params.tag;
     cacheMiddleware(`product:${tag}`)(req, res, next);
