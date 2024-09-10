@@ -9,7 +9,7 @@ import { asyncHandler } from "../utils/AsyncHandler.js";
 
 const addRevenueData = asyncHandler(async (req: any, res: any) => {
   try {
-    const order: Revenue[] = req.body;
+    const order: Revenue = req.body;
     const revenueData = await addRevenueDataToFirestore(order);
     return res
       .status(200)

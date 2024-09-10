@@ -1,7 +1,7 @@
 import { Product } from "./product.model.js";
 
 export interface Revenue {
-  id: string;
+  id: string; // date only.. do not include time
   orders: Product[];
 }
 

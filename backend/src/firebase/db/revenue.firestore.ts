@@ -3,26 +3,24 @@ import { Revenue, RevenueInfo } from "../../models/revenue.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 
-const addRevenueDataToFirestore = async (ordersArray: Revenue[]) => {
+const addRevenueDataToFirestore = async (ordersArray: Revenue) => {
   const revenueRef = db.collection("revenue");
   try {
     if (!revenueRef) throw new ApiError(404, "Revenue collection not found.");
 
-    //add all the orders to revenue collection with date set as doc id
-    for (const order of ordersArray) {
-      const docRef = await revenueRef.doc(order.id).get();
-      if (docRef.exists) {
-        await revenueRef.doc(order.id).update({
-          orders: FieldValue.arrayUnion(...order.orders),
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-      } else {
-        await revenueRef.doc(order.id).set({
-          id: order.id,
-          orders: order.orders,
-          createdAt: FieldValue.serverTimestamp(),
-        });
-      }
+    const revenueDoc = await revenueRef.doc(ordersArray.id).get();
+
+    if (revenueDoc.exists) {
+      await revenueRef.doc(ordersArray.id).update({
+        orders: FieldValue.arrayUnion(...ordersArray.orders),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    } else {
+      await revenueRef.doc(ordersArray.id).set({
+        id: ordersArray.id,
+        orders: ordersArray.orders,
+        createdAt: FieldValue.serverTimestamp(),
+      });
     }
   } catch (error) {
     throw new ApiError(
