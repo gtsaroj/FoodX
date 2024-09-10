@@ -9,7 +9,6 @@ export const order = async (data: Order) => {
       url: "/orders/add-order",
       data: { ...data },
     });
-    console.log(response.statusText);
     return response.data.data;
   } catch (error) {
     toast.error("Unable to Order");

@@ -1,5 +1,5 @@
 import { addToCart, removeCart } from "../../Reducer/product.reducer";
-import { Product, ProductType } from "../../models/product.model";
+import { Product } from "../../models/product.model";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { Trash2 } from "lucide-react";
@@ -8,11 +8,14 @@ interface SingleCardProp {
   prop: Product;
 }
 
+
 export const SingleCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
   // const [InitialQuantity, setInitialQuantity] = useState<number>(1);
   const dispatch = useDispatch<AppDispatch>();
+
+
 
   return (
     <div
