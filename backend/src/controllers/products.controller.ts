@@ -129,7 +129,7 @@ const addProduct = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while adding new user in database.",
+            "Error while adding new product in database.",
             null,
             error as string[]
           )
@@ -164,7 +164,7 @@ const updateProduct = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while updating products.",
+            "Error while updating product.",
             null,
             error as string[]
           )
