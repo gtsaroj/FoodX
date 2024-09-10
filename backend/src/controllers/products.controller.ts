@@ -97,7 +97,7 @@ const getProductByTag = asyncHandler(async (req: any, res: any) => {
         new ApiResponse(
           200,
           { products },
-          "All today's specials fetched successfully.",
+          "Product based on tags are fetched successfully.",
           true
         )
       );
