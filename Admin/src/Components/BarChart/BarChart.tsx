@@ -61,14 +61,6 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
     setLoading(false);
   };
 
-  useEffect(() => {
-    getBarData({
-      startDate:
-        (filter?.dateFilter?.startDate as string) ||
-        dayjs().startOf("month").format("YYYY-MM-DD"),
-      endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-    });
-  }, [filter?.dateFilter?.startDate, filter?.dateFilter?.endDate]);
 
   useEffect(() => {
     if (filter?.normalFilter) {
@@ -83,7 +75,15 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
           .format("YYYY-MM-DD"),
       });
     }
-  }, [filter?.normalFilter]);
+    else {
+      getBarData({
+        startDate:
+          (filter?.dateFilter?.startDate as string) ||
+          dayjs().startOf("month").format("YYYY-MM-DD"),
+        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+      });
+    }
+  }, [filter?.normalFilter, filter?.dateFilter?.startDate, filter?.dateFilter?.endDate]);
 
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
     const allKeys = new Set();
