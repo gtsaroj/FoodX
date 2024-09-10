@@ -1,21 +1,16 @@
 import { DailyCategoryAgrregateData, Order } from "../../models/order.model";
+import { Revenue } from "../../models/revenue.model";
 
-export const aggregateDailyCategoryOrder = (orders: Order[]) => {
-  // let category: DailyCategoryAgrregateData[];
-
+export const aggregateDailyCategoryOrder = (orders: Revenue[]) => {
   const categoryMap: { [key: string]: number } = {};
-  // let currentWeekOrders: Order[] = [];
-  // if (options === "current week")
-  //   currentWeekOrders = aggregateDataCurrentWeek(orders);
-  // if (options === "previous week")
-  //   currentWeekOrders = aggregateDataPreviousWeek(orders);
 
   orders.forEach((order) => {
-    order?.products?.forEach((product: any) => {
-      if (categoryMap[product.tag]) {
-        categoryMap[product?.tag] += product?.quantity;
+     console.log(order)
+    order?.orders?.forEach((product: any) => {
+      if (categoryMap[product.name]) {
+        categoryMap[product?.name] += product?.quantity;
       } else {
-        categoryMap[product?.tag] = product?.quantity;
+        categoryMap[product?.name] = product?.quantity;
       }
     });
   });

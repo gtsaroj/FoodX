@@ -1,24 +1,81 @@
 import { PieChart } from "@mui/x-charts";
-import { categoryCurrentData, categoryPreviousData } from "../../data.json";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import { Filter, MoveUp, X } from "lucide-react";
+import dayjs from "dayjs";
+import { getRevenue } from "../../Services/revenue.services";
+import { AddRevenue } from "../../models/revenue.model";
+import { aggregateDailyCategoryOrder } from "./PieData";
+import { RotatingLines } from "react-loader-spinner";
 
 export const PieChartAnalytics = () => {
   const [initialData, setInitialData] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [filter, setIsFilter] = useState<{
-    dateFilter?: string;
+    dateFilter?: { startDate: string; endDate: string };
     normalFilter?: string;
   }>();
 
-  useEffect(() => {
-    if (filter?.dateFilter || filter?.normalFilter) {
-      setInitialData(categoryPreviousData);
-    } else {
-      setInitialData(categoryCurrentData);
+  const getPiechartData = async ({ startDate, endDate }: AddRevenue) => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: startDate,
+        endDate: endDate,
+      });
+      const aggregateData = aggregateDailyCategoryOrder(response.data);
+      console.log(aggregateData);
+      setInitialData(aggregateData);
+    } catch (error) {
+      throw new Error("Error while fetching revenue" + error);
     }
-  }, [filter?.dateFilter, filter?.normalFilter]);
+    setLoading(false);
+  };
+
+  const getPreviousPiechartData = async ({
+    startDate,
+    endDate,
+  }: AddRevenue) => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: startDate,
+        endDate: endDate,
+      });
+      const aggregateData = aggregateDailyCategoryOrder(response.data);
+      setInitialData(aggregateData);
+    } catch (error) {
+      throw new Error("Error while fetching revenue" + error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (filter?.normalFilter) {
+      getPiechartData({
+        startDate: dayjs()
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD"),
+        endDate: dayjs()
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD"),
+      });
+    } else {
+      getPiechartData({
+        startDate:
+          (filter?.dateFilter?.startDate as string) ||
+          dayjs().startOf("month").format("YYYY-MM-DD"),
+        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+      });
+    }
+  }, [
+    filter?.normalFilter,
+    filter?.dateFilter?.endDate,
+    filter?.dateFilter?.startDate,
+  ]);
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
@@ -65,7 +122,10 @@ export const PieChartAnalytics = () => {
               if (firstDate && secondDate) {
                 setIsFilter((prev) => ({
                   ...prev,
-                  dateFilter: `${firstDate} to ${secondDate} `,
+                  dateFilter: {
+                    startDate: dayjs(firstDate).format("YYYY-MM-DD"),
+                    endDate: dayjs(secondDate).format("YYYY-MM-DD"),
+                  },
                 }));
               }
             },
@@ -73,16 +133,21 @@ export const PieChartAnalytics = () => {
         />
       </div>
       <div className="flex pt-1  h-[10px] my-1 w-full    items-center justify-start gap-2">
-        {filter?.dateFilter && (
+        {filter?.dateFilter?.startDate && filter.dateFilter.endDate && (
           <div className="flex px-1   overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] w-[115px] text-[var(--dark-secondary-text)]">
-                {filter.dateFilter?.toLocaleLowerCase().slice(0, 15)}
+              <span className="text-[15px] w-[180px] text-[var(--dark-secondary-text)]">
+                {filter.dateFilter?.startDate +
+                  " to " +
+                  filter.dateFilter.endDate}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({ ...prev, dateFilter: "" }))
+                setIsFilter((prev) => ({
+                  ...prev,
+                  dateFilter: { endDate: "", startDate: "" },
+                }))
               }
               className=" "
             >
@@ -109,43 +174,53 @@ export const PieChartAnalytics = () => {
         )}
       </div>
       <div className="w-full h-full ">
-        <PieChart
-          sx={{
-            cursor: "pointer",
-            color: "white",
-            "& .MuiChartsLabel": {
-              fill: "white", // Set the label color to white
-            },
-          }}
-          series={[
-            {
-              data: initialData?.map((data, index) => ({
-                value: data.value,
-                label: data.name,
-                id: index,
-              })),
-              highlightScope: { fade: "series", highlight: "item" },
-              innerRadius: 30,
-              outerRadius: 100,
-              paddingAngle: 5,
-              cornerRadius: 5,
-              startAngle: -90,
-              endAngle: 180,
-            },
-          ]}
-          slotProps={{
-            legend: {
-              position: { horizontal: "right", vertical: "middle" },
-              itemMarkWidth: 15,
-              itemMarkHeight: 15,
-              labelStyle: {
-                fill: "var(--dark-text)",
-                fontSize: 17,
-                letterSpacing: 2,
+        {loading ? (
+          <div className="flex w-full h-full items-center justify-center gap-3">
+            <RotatingLines strokeColor="var(--dark-text)" width="27" />
+            <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
+              {" "}
+              loading...
+            </span>
+          </div>
+        ) : (
+          <PieChart
+            sx={{
+              cursor: "pointer",
+              color: "white",
+              "& .MuiChartsLabel": {
+                fill: "white", // Set the label color to white
               },
-            },
-          }}
-        ></PieChart>
+            }}
+            series={[
+              {
+                data: initialData?.map((data, index) => ({
+                  value: data.value,
+                  label: data.name,
+                  id: index,
+                })),
+                highlightScope: { fade: "series", highlight: "item" },
+                innerRadius: 30,
+                outerRadius: 100,
+                paddingAngle: 5,
+                cornerRadius: 5,
+                startAngle: -90,
+                endAngle: 180,
+              },
+            ]}
+            slotProps={{
+              legend: {
+                position: { horizontal: "right", vertical: "middle" },
+                itemMarkWidth: 15,
+                itemMarkHeight: 15,
+                labelStyle: {
+                  fill: "var(--dark-text)",
+                  fontSize: 17,
+                  letterSpacing: 2,
+                },
+              },
+            }}
+          ></PieChart>
+        )}
       </div>
     </div>
   );
