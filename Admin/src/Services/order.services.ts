@@ -1,6 +1,4 @@
 import { GetOrderModal } from "../../../backend/src/models/order.model";
-import { authLogout } from "../Reducer/Action";
-import { Store } from "../Store";
 import { makeRequest } from "../makeRequest";
 
 export const getOrders = async (data: GetOrderModal) => {
@@ -16,18 +14,7 @@ export const getOrders = async (data: GetOrderModal) => {
   }
 };
 
-export const getAllOrder = async () => {
-  try {
-    const response = await makeRequest({
-      method: "get",
-      url: "orders/all-orders",
-    });
 
-    return response.data.data;
-  } catch (error) {
-    throw new Error(`Error while getting orders : ${error}`);
-  }
-};
 
 export const getOrderByUser = async (id: string) => {
   try {

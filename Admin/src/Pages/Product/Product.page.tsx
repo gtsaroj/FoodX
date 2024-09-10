@@ -3,11 +3,12 @@ import React, { useCallback, useEffect, useState } from "react";
 import UploadFood from "../../Components/Upload/Product.upload";
 import Modal from "../../Components/Common/Popup/Popup";
 import { debounce } from "../../Utility/debounce";
-import { Product, GetProductModal } from "../../models/product.model";
+import { Product } from "../../models/product.model";
 import {
   bulkDeleteOfProduct,
   deleteProduct,
-  getProducts,
+  getNormalProducts,
+  getSpecialProducts,
 } from "../../Services/product.services";
 import { addLogs } from "../../Services/log.services";
 
@@ -36,69 +37,61 @@ const FoodPage: React.FC = () => {
     currentPage: number;
     perPage: number;
   }>({ currentPage: 1, perPage: 5 });
-  const [currentDoc, setCurrentDoc] = useState<{
-    currentFirstDoc: string;
-    currentLastDoc: string;
-  }>();
 
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
   const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "products" | "specials" | string;
+    typeFilter?: "products" | "specials";
     sortFilter?: string;
   }>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [totalData, setTotalData] = useState<number>();
 
   // get all products
-  const getAllProducts = async (data: GetProductModal) => {
+  const getProducts = async () => {
     setLoading(true);
     try {
-      let products;
-      if (pagination.currentPage === 1) {
-        products = await getProducts({
-          path: data.path,
-          pageSize: data.pageSize,
-          direction: data.direction,
-          filter: data.filter,
-          sort: data.sort,
-          currentFirstDoc: data.currentFirstDoc || null,
-          currentLastDoc: data.currentLastDoc || null,
-        });
-      }
-      // const special = await getSpecialProducts();
-      const normalProducts = products.data as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        products: Product[];
-        length: number;
-      };
-      setCurrentDoc(() => ({
-        currentFirstDoc: normalProducts.currentFirstDoc,
-        currentLastDoc: normalProducts.currentLastDoc,
-      }));
-      setTotalData(normalProducts.length);
-      const arrangeNormalProducts: Product[] = normalProducts?.products.map(
-        (product: Product) => ({
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          quantity: product.quantity as number,
-          price: product.price as number,
-          tag: product.tag,
-          order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
-          rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
-          revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-          type: "products",
-        })
+      const normalProducts = await getNormalProducts();
+      const specialProducts = await getSpecialProducts();
+
+      const agrregateNormalProducts = normalProducts?.data?.map(
+        (data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: "products",
+          };
+        }
       );
-      const getAllProducts = [
-        ...arrangeNormalProducts,
-        // ...arrangeSpecialProducts,
-      ];
-      setFetchedProducts(getAllProducts as Product[]);
+
+      const agrregateSpecialProducts = specialProducts?.data?.map(
+        (data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: "specials",
+          };
+        }
+      );
+      const products = [...agrregateNormalProducts, agrregateSpecialProducts];
+      setFetchedProducts(products);
     } catch (error) {
-      throw new Error(`Error while fetching products` + error);
+      throw new Error("Error while getting products " + error);
     }
     setLoading(false);
   };
@@ -168,23 +161,6 @@ const FoodPage: React.FC = () => {
     setIsFilter((prev) => ({ ...prev, sortFilter: value }));
   };
 
-  useEffect(() => {
-    // call getAllProducts
-    getAllProducts({
-      path: (isFilter?.typeFilter as "products" | "specials") || "products",
-      pageSize: pagination.perPage,
-      currentLastDoc: null,
-      direction: "next",
-      filter: (isFilter?.sortFilter as keyof Product) || "name",
-      sort: sortOrder || "asc",
-    });
-  }, [
-    pagination.perPage,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
-    sortOrder,
-  ]);
-
   // delete products
   const handleDelete = async (id: string, type: "specials" | "products") => {
     if (!id && !type) return toast.error(`${id} || ${type} not found`);
@@ -246,91 +222,10 @@ const FoodPage: React.FC = () => {
     }
   };
 
-  // fetch next page
-  useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.currentLastDoc &&
-      currentDoc.currentLastDoc
-    ) {
-      const fetchNextPage = async () => {
-        setLoading(true);
-        try {
-          const products = await getProducts({
-            path:
-              (isFilter?.typeFilter as "products" | "specials") || "products",
-            pageSize: pagination.perPage,
-            direction: "next",
-            filter: (isFilter?.sortFilter as keyof ProductType) || "price",
-            sort: sortOrder || "asc",
-            currentLastDoc: currentDoc.currentLastDoc,
-          });
-
-          const normalProducts = products.data as {
-            currentFirstDoc: string;
-            currentLastDoc: string;
-            products: ProductType[];
-            length: number;
-          };
-          // const number: number = normalProducts.length;
-
-          setCurrentDoc({
-            currentFirstDoc: normalProducts.currentFirstDoc,
-            currentLastDoc: normalProducts.currentLastDoc,
-          });
-          setTotalData(normalProducts.length);
-
-          const newProducts = normalProducts.products?.map((product) => ({
-            id: product.id,
-            name: product.name,
-            image: product.image,
-            quantity: product.quantity as number,
-            price: product.price as number,
-            category: product.tag,
-            order: 20,
-            rating: 4.3,
-            revenue: 15000,
-            type: "products",
-          }));
-
-          setFetchedProducts((prev) => {
-            return [
-              ...prev,
-              ...newProducts.filter(
-                (product) => !prev.some((p) => p.id === product.id)
-              ),
-            ];
-          });
-        } catch (error) {
-          throw new Error(`Error while fetching products: ${error}`);
-        }
-        setLoading(false);
-      };
-
-      fetchNextPage();
-    }
-  }, [
-    pagination.currentPage,
-    currentDoc?.currentLastDoc,
-    pagination.perPage,
-    currentDoc?.currentFirstDoc,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
-    sortOrder,
-  ]);
-
   const closeModal = () => setIsModelOpen(true);
 
   const handleChange = async (value: string) => {
-    if (value.length <= 0)
-      return getAllProducts({
-        path: (isFilter?.typeFilter as "products" | "specials") || "products",
-        pageSize: pagination.perPage,
-        currentLastDoc: null,
-        direction: "next",
-        filter: (isFilter?.sortFilter as keyof Product) || "name",
-        sort: sortOrder || "asc",
-      });
+    if (value.length <= 0) return getProducts();
 
     const filterProducts = (await searchProduct(value)) as Product[];
     const aggregateProducts = filterProducts?.map((product) => {
@@ -352,6 +247,78 @@ const FoodPage: React.FC = () => {
 
   const debounceSearch = useCallback(debounce(handleChange, 300), []);
 
+  useEffect(() => {
+    getProducts();
+  }, []);
+
+  useEffect(() => {
+    const filterAndSortProducts = async () => {
+      let filteredProducts = [...fetchedProducts];
+
+      // Filter products based on type
+      if (isFilter?.typeFilter) {
+        const specialProducts = await getSpecialProducts(
+          `${isFilter.typeFilter === "products" ? "all" : isFilter.typeFilter}`
+        );
+        filteredProducts = specialProducts?.data?.map((data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: isFilter?.typeFilter,
+          };
+        });
+      } else {
+        // Fetch all products if no filter is applied
+        getProducts();
+        return;
+      }
+
+      setFetchedProducts(filteredProducts);
+    };
+
+    filterAndSortProducts();
+  }, [isFilter?.typeFilter]);
+
+  useEffect(() => {
+    let filterProducts = fetchedProducts as Product[];
+    // Sort products based on sortFilter
+    if (isFilter?.sortFilter || sortOrder) {
+      filterProducts = [...fetchedProducts]?.sort((a, b) => {
+        const aValue = a[isFilter?.sortFilter as keyof Product];
+        const bValue = b[isFilter?.sortFilter as keyof Product];
+
+        // Ascending Order
+        if (sortOrder === "asc") {
+          if (typeof aValue === "number" && typeof bValue === "number") {
+            return aValue - bValue; // Numeric comparison
+          } else if (typeof aValue === "string" && typeof bValue === "string") {
+            return aValue.localeCompare(bValue); // Lexical comparison for strings
+          }
+        }
+
+        // Descending Order
+        if (sortOrder === "desc") {
+          if (typeof aValue === "number" && typeof bValue === "number") {
+            return bValue - aValue; // Numeric comparison
+          } else if (typeof aValue === "string" && typeof bValue === "string") {
+            return bValue.localeCompare(aValue); // Lexical comparison for strings
+          }
+        }
+
+        return 0; // Fallback when types don't match or sort order is invalid
+      });
+    }
+    setFetchedProducts(filterProducts);
+  }, [isFilter?.sortFilter, sortOrder]);
+
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7 ">
       <div className="flex items-center justify-between w-full">
@@ -360,7 +327,7 @@ const FoodPage: React.FC = () => {
             All Products
           </h4>
           <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
-            {totalData || 0} entries found
+            {fetchedProducts?.length || 0} entries found
           </p>
         </div>
         <div className="flex items-center justify-center gap-5 ">
@@ -454,7 +421,7 @@ const FoodPage: React.FC = () => {
               </div>
               <button
                 onClick={() =>
-                  setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                  setIsFilter((prev) => ({ ...prev, typeFilter: undefined }))
                 }
                 className=" "
               >
@@ -466,7 +433,7 @@ const FoodPage: React.FC = () => {
       </div>
 
       <FoodTable
-        totalData={totalData as number}
+        totalData={(fetchedProducts?.length as number) || 1}
         onPageChange={(page: number) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }

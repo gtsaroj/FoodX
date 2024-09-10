@@ -1,11 +1,11 @@
 export interface Register {
-  avatar: string;
+  avatar: string | File;
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   password: string;
-  confirmpassword: string;
+  confirmpassword?: string;
   role?: UserRole["role"];
 }
 
@@ -36,8 +36,8 @@ export interface User {
   email?: string;
   phoneNumber?: string;
   role?: UserRole["role"];
-  amountSpent?: number;
-  totalOrder?: number;
+  amountSpent: number;
+  totalOrder: number;
   refreshToken?: string;
 }
 export interface DeleteUser {

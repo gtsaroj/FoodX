@@ -2,8 +2,8 @@ import { authLogout } from "../Reducer/user.reducer";
 import { Store } from "../Store";
 import { makeRequest } from "../makeRequest";
 import { UpdateCategory } from "../models/category.model";
-import { GetProductModal } from "../models/product.model";
-import { Product } from "../models/product.model";
+import {  UploadProduct } from "../models/product.model";
+
 
 export const searchProduct = async (search: string) => {
   try {
@@ -17,23 +17,22 @@ export const searchProduct = async (search: string) => {
   }
 };
 
-export const getProducts = async (data: GetProductModal) => {
+export const getNormalProducts = async () => {
   try {
     const response = await makeRequest({
-      method: "post",
-      url: "products/get-products",
-      data: { ...data },
+      method: "get",
+      url: "products/all",
     });
     return response.data;
   } catch (error) {
     throw new Error(`Error while adding banners : ${error}`);
   }
 };
-export const getSpecialProducts = async () => {
+export const getSpecialProducts = async (url: "all" | "specials" = "specials") => {
   try {
     const response = await makeRequest({
       method: "get",
-      url: "products/specials",
+      url: `products/${url}`,
     });
     return response.data;
   } catch (error) {
@@ -41,7 +40,7 @@ export const getSpecialProducts = async () => {
   }
 };
 
-export const addProducts = async (data: Product) => {
+export const addProducts = async (data: UploadProduct) => {
   try {
     const response = await makeRequest({
       method: "post",

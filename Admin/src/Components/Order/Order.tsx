@@ -1,49 +1,64 @@
-import { ChevronRight } from "lucide-react";
-import { OrderCard } from "../Common/Cards/ OrderCard";
+import { ChevronRight, Frown } from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
-import { getRecentOrders } from "./Order";
-import { RecentOrderType } from "../../models/order.model";
+import {
+  GetOrderModal,
+  Order,
+  OrderModal,
+  RecentOrder,
+} from "../../models/order.model";
 import Skeleton from "react-loading-skeleton";
+import { getOrders } from "../../Services/order.services";
+import { OrderCard } from "../Common/Cards/ OrderCard";
+import EmptyLogo from "../../assets/empty.png";
+import { Empty } from "../Common/Empty/Empty";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
-  const [recentOrder, setRecentOrder] = useState<RecentOrderType[]>([]);
+  const [recentOrder, setRecentOrder] = useState<RecentOrder[]>([]);
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
   }>({ currentPage: 1, perPage: 3 });
-  const [currentDoc, setCurrentDoc] = useState<{
-    currentFirstDoc: string;
-    currentLastDoc: string;
-  }>();
-
-  //  scroller check
-  // const [scroll, setScroll] = useState<boolean>(false);
-  // const orderReference = useRef<HTMLDivElement>();
-  // const handleScroll = () => {
-  //   if (orderReference.current) {
-  //     if (orderReference.current.scrollTop > 0) {
-  //       setScroll(true);
-  //     } else {
-  //       setScroll(false);
-  //     }
-  //   }
-  // };
-  // const reference = orderReference.current;
-  // reference?.addEventListener("scroll", handleScroll);
-
-  // return () => {
-  //   reference?.removeEventListener("scroll", handleScroll);
-  // };
-
+  const [loading, setLoading] = useState<boolean>(false);
+  const getRecentOrder = async ({
+    pageSize,
+    filter,
+    sort,
+    currentFirstDoc,
+    currentLastDoc,
+    direction,
+    status,
+  }: GetOrderModal) => {
+    setLoading(true);
+    try {
+      const response = await getOrders({
+        pageSize: pageSize,
+        sort: sort,
+        currentFirstDoc: currentFirstDoc,
+        currentLastDoc: currentLastDoc,
+        direction: direction,
+        status: status,
+        filter: filter as keyof Order,
+      });
+      console.log(response);
+    } catch (error) {
+      throw new Error("Error while fetching recent orders" + error);
+    }
+    setLoading(false);
+  };
+  const [isClicked, setIsClicked] = useState<boolean>(false);
   useEffect(() => {
-    (async () => {
-      const recentOrders = await getRecentOrders();
-
-      if (recentOrders) setRecentOrder(recentOrders as RecentOrderType[]);
-    })();
-  }, []);
+    getRecentOrder({
+      pageSize: pagination.perPage,
+      sort: "desc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+      direction: "next",
+      filter: "orderRequest",
+    });
+  }, [pagination.perPage, isClicked]);
 
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">
@@ -63,18 +78,25 @@ export const RecentOrders = () => {
          `}
       >
         <div className="flex flex-col items-center justify-center gap-2 py-2 scroll-smooth ">
-          {recentOrder?.length > 0 ? (
-            recentOrder?.map((order, index) => (
-              <OrderCard
-                image={order.image}
-                orderId={order.orderId}
-                price={order.price}
-                orderRequest={order.orderRequest}
-                products={order.products}
-                status={order.status}
-                key={index}
+          {!loading ? (
+            recentOrder.length > 0 ? (
+              recentOrder?.map((order, index) => (
+                <OrderCard
+                  image={order.image}
+                  orderId={order.orderId}
+                  price={order.price}
+                  orderRequest={order.orderRequest}
+                  products={order.products}
+                  status={order.status}
+                  key={index}
+                />
+              ))
+            ) : (
+              <Empty
+                action={() => setIsClicked(!isClicked)}
+                children="No recent orders available"
               />
-            ))
+            )
           ) : (
             <div className="w-full ">
               <Skeleton

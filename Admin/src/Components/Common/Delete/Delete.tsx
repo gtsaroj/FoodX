@@ -3,6 +3,7 @@ import React from "react";
 
 interface DeleteProp {
   id: string;
+  path?: "banners"|"sponsors"|string
   type?: "specials" | "products";
   isClose: boolean;
   setDelete: (id: string, type: "specials" | "products") => void;

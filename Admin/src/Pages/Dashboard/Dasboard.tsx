@@ -24,18 +24,14 @@ const Dasboard: React.FC = () => {
         <RecentTickets />
       </div>
       <div className="flex flex-col items-center justify-between w-full px-5 gap-7 md:flex-row">
-        <div className="flex flex-grow border-[var(--dark-border)] border-[1px] rounded-lg">
+        <div className="flex  w-full border-[var(--dark-border)] border-[1px] rounded-lg">
           <WeekReveneuChart />
         </div>
-        <div className="hidden lg:block">
+        <div className="hidden min-w-[350px] lg:block">
           <TopCustomers />
         </div>
       </div>
-      {/* <div className="flex flex-col items-center w-full gap-2 lg:flex-row lg:justify-between lg:px-9 xl:px-0 justify-evenly ">
-        <PieChartComponent />
-        <BarChartOfWeeklyOrder />
-      </div>
-      <WeekReveneuChart /> */}
+
     </div>
   );
 };

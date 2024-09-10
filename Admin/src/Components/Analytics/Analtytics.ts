@@ -1,17 +1,16 @@
 import dayjs from "dayjs";
-import { Order } from "../../models/order.model";
 import { CardAnalytic } from "../../models/product.model";
-import { totalRevenue } from "../../Utility/product.utils";
+import { Revenue } from "../../models/revenue.model";
 
-export const aggregateCurrentDayData = (orders: Order[]) => {
+export const aggregateCurrentDayData = (orders: Revenue[]) => {
   try {
-    // const today = new Date();
-    // const todayString = today.toISOString().split("T")[0];
-
     const currentDayOrder = orders.filter((order) => {
-      const orderDate = dayjs(order.orderFullfilled).format("YYYY-MM-DD");
-      return "2024-04-07" === orderDate;
+      const today = dayjs().format("YYYY-MM-DD");
+      const orderDate = dayjs(order.id).format("YYYY-MM-DD");
+      return today === orderDate;
     });
+
+    console.log(currentDayOrder);
 
     if (currentDayOrder.length === 0) {
       return [
@@ -38,26 +37,26 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
 
     const totalOrders = currentDayOrder.length;
     const totalDelivered = currentDayOrder?.reduce(
-      (_, order) => order.products.length,
+      (_, order) => order.orders.length,
       0
     );
-    const revenue = totalRevenue(currentDayOrder);
+    const revenue = getRevenue(currentDayOrder);
 
     const dailAnalyticsData: CardAnalytic[] = [
       {
         title: "Orders Delivered",
         total: totalDelivered,
-        percentage: ` ${Math.round((totalDelivered / totalOrders) * 100)}`,
+        percentage: Math.round((totalDelivered / totalOrders) * 100),
       },
       {
         title: "Orders Recieved",
         total: totalOrders,
-        percentage: ` ${Math.round((totalDelivered / totalOrders) * 100)}`,
+        percentage: Math.round((totalDelivered / totalOrders) * 100),
       },
       {
         title: "Revenue",
         total: revenue,
-        percentage: ` ${Math.round((revenue / totalOrders) * 100)}`,
+        percentage: Math.round((revenue / totalOrders) * 100) as number,
       },
     ];
 
@@ -65,4 +64,19 @@ export const aggregateCurrentDayData = (orders: Order[]) => {
   } catch (error) {
     throw new Error(`Failed to aggregate analytics card data ${error}`);
   }
+};
+
+const getRevenue = (revenue: Revenue[]) => {
+  const total = revenue.reduce(
+    (acc, rev) =>
+      acc +
+      rev.orders.reduce(
+        (innerAcc, product) =>
+          innerAcc + Number(product.quantity) * Number(product.price),
+        0
+      ),
+    0
+  );
+
+  return total; // Ensure the total is returned
 };

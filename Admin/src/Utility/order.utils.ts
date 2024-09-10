@@ -1,10 +1,14 @@
+import dayjs from 'dayjs';
 import { getAllOrder } from "../Services/order.services";
 import { OrderProduct } from "../models/chart.modal";
-import { Order, OrderModal, Product } from "../models/order.model";
+import { Order, OrderModal } from "../models/order.model";
+import { Product } from "../models/product.model";
+import { getRevenue as getRevenues } from "../Services/revenue.services";
+dayjs
 
 export const getOrderId = async () => {
-  const orders = await getAllOrder();
-  const totalOrders = orders.data as Order[];
+  const orders = await getRevenues({startDate: dayjs().startOf("month").toISOString(),endDate: dayjs().toISOString()})
+  const totalOrders = orders as Order[];
   const orderId = totalOrders?.map((order) => order.orderId);
   return orderId;
 };

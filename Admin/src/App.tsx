@@ -25,7 +25,6 @@ import Footer from "./Components/Footer/Footer";
 import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
 
-
 const MainPage = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full overflow-hidden ">

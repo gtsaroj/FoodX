@@ -21,7 +21,7 @@ interface ButtonProp {
   parent: React.ReactNode;
   sort?: { label: ReactNode | string; value: string; id: string }[];
   types?: { label: ReactNode | string; value: string; id: string }[];
-  sortFn: (type: "asc" | "desc") => void;
+  sortFn?: (type: "asc" | "desc") => void;
   checkFn?: {
     checkTypeFn?: (isChecked: boolean, type: any) => void;
     checkSortFn?: (isChecked: boolean, type: any) => void;
@@ -71,7 +71,6 @@ export const Button: React.FC<ButtonProp> = ({
 
   const firstCalenderReference = useRef<HTMLDivElement>();
   const secondCalenderReference = useRef<HTMLDivElement>();
-  console.log(firstCalenderReference.current);
 
   useEffect(() => {
     if (to && from) {

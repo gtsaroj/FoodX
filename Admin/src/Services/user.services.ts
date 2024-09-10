@@ -38,6 +38,7 @@ export const signIn = async (
       url: "users/login",
       data: { email, userRole },
     });
+
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
@@ -49,7 +50,7 @@ export const signIn = async (
       date: new Date(),
       detail: `${user.fullName} was logged in ${new Date()} `,
       userId: user.uid,
-      userRole: user.role as UserRole,
+      userRole: user.role as UserRole["role"],
     });
     toast.dismiss(toastLoader);
     toast.success("User logged in successfully");
@@ -67,24 +68,29 @@ export const signUp = async (data: Register) => {
       data.lastName,
       data.email,
       data.password,
-      data.avatar
+      data.avatar as string
     );
     const response = await globalRequest({
       method: "post",
       url: "users/signIn",
       data: { ...data },
     });
+
+    const ressponseData = response.data.data;
+    Cookies.set("accessToken", ressponseData.accessToken);
+    Cookies.set("refreshToken", ressponseData.refreshToken);
+    const role = await getRoleFromAccessToken();
+    ressponseData.userInfo.role = await role;
     await addLogs({
       action: "create",
       date: new Date(),
       detail: `${
-        response.data.userInfo.fullName
+        ressponseData.userInfo.fullName
       } created new Account at ${new Date()} `,
-      userId: response.data.userInfo.uid,
-      userRole: "admin",
+      userId: ressponseData.userInfo.uid,
+      userRole: ressponseData.userInfo.role,
     });
-    await signIn(data.email, data.password);
-    return response.data.data.userInfo;
+    return ressponseData.userInfo;
   } catch (error) {
     throw new Error("Unable to create new user");
   }

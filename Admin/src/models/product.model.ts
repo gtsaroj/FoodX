@@ -2,12 +2,14 @@ export interface Product {
   id: string;
   image: string;
   name: string;
-  price: number;
+  price: number | string;
   order?: number;
   revenue?: number;
   rating?: number;
-  quantity: number;
+  quantity: number | string;
   tag?: string;
+  tagId?: string;
+  category?: string;
   type?: "products" | "specials";
 }
 
@@ -15,7 +17,7 @@ export interface GetProductModal {
   page?: number;
   path: "specials" | "products";
   pageSize: number;
-  filter?: keyof ProductType;
+  filter?: keyof Product;
   sort?: "asc" | "desc";
   direction?: "next" | "prev";
   currentFirstDoc?: string | null;
@@ -34,7 +36,7 @@ export interface ProductTable {
   rating?: number;
 }
 export interface UploadProduct {
-  products: Product;
+  product: Product;
   collection: Collection["name"];
 }
 
@@ -45,5 +47,5 @@ export interface Collection {
 export interface CardAnalytic {
   title: string;
   total: number;
-  percentage: string;
+  percentage: number | string;
 }

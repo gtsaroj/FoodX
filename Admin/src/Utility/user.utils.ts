@@ -87,6 +87,7 @@ export const aggregateCustomerData = async (
 export const getTopCustomers = async () => {
   try {
     const getCustomer = await getCustomerData("customer");
+    if (getCustomer.length <= 0) return [];
     const customerList = await aggregateCustomerData(getCustomer);
     const sortBySpent = customerList.sort(
       (a: User, b: User) => b.amountSpent - a.amountSpent
