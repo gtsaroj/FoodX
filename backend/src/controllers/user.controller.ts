@@ -60,7 +60,7 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { userDataFromDatabase, accessToken, refreshToken },
+          { user: userDataFromDatabase, accessToken, refreshToken },
           "User logged In Successfully",
           true
         )
@@ -107,7 +107,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           201,
-          { userFromDatabase, accessToken, refreshToken },
+          { userInfo: userFromDatabase, accessToken, refreshToken },
           "User successfully added",
           true
         )
