@@ -43,12 +43,12 @@ const getRevenueDataFromFirestore = async (
     let querySnapShot;
     if (startDate && endDate) {
       querySnapShot = await query
-        .where("id", ">=", new Date(startDate).toDateString())
-        .where("id", "<=", new Date(endDate).toDateString())
+        .where("id", ">=", startDate)
+        .where("id", "<=", endDate)
         .get();
     } else {
       querySnapShot = await query
-        .where("id", "==", new Date(startDate).toDateString())
+        .where("id", "==", startDate)
         .get();
     }
     const revenue: RevenueInfo[] = [];
