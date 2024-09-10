@@ -12,6 +12,9 @@ export interface User {
   phoneNumber?: string;
   role?: UserRole["role"];
   refreshToken?: string;
+  totalOrder?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface UserRole {
@@ -24,7 +27,7 @@ export interface ImageFolders {
 
 export interface UpdateProfileInfo {
   avatar?: string;
-  fullName?: string
+  fullName?: string;
   email?: string;
   phoneNumber?: number;
 }

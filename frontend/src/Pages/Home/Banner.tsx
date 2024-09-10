@@ -11,9 +11,8 @@ const Banner: React.FC = () => {
   const getBanner = async () => {
     setLoading(true);
     try {
-      const response = await getBanners();
-
-      setInitialData(response.data);
+      const response = await getBanners("banners");
+      setInitialData(response.data.banners);
     } catch (error) {
       throw new Error("Error while fetching banners" + error);
     }
@@ -53,10 +52,10 @@ export const Sponsor: React.FC = () => {
       <div className="lg:h-[540px]  h-[300px] w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         <img
           src={
-            "https://scontent.fktm17-1.fna.fbcdn.net/v/t39.30808-6/455241091_891604229672861_3450889822564373310_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeH7biGgMeg0Mk9nGglRrphEWCxh4ht_9g1YLGHiG3_2DUA657J3JJ42ixga20HbzZrH_ABDPoFG_XnjBhmHRCFH&_nc_ohc=dWpUA191YpcQ7kNvgHFs1p2&_nc_ht=scontent.fktm17-1.fna&oh=00_AYDHoo9D3Ou-y5R3yoYPNbnupVnycvxUebmJmMFCS2UHNQ&oe=66DF5207"
+            "https://scontent.fktm17-1.fna.fbcdn.net/v/t39.30808-6/457438715_904198338413450_2795824119028535313_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_ohc=iSmoNyk59TIQ7kNvgGk2IIf&_nc_ht=scontent.fktm17-1.fna&oh=00_AYCS92pmjytDovvbjVgii_2LEgA0l-j-izFIiJNAV1cEcw&oe=66E5EB18"
           }
           className="w-full rounded-xl h-full"
-          alt=""
+          alt="Hello"
         />
       </div>
     </div>

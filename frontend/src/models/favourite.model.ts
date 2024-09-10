@@ -1,5 +1,9 @@
-import { Product } from "./order.model";
+import { Product } from "./product.model";
 
 export interface Favourite {
-    favourite: Product[];
-  }
+  id: string; //pk
+  uid: string;
+  products?: Product[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}

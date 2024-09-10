@@ -90,6 +90,7 @@ export const signUp = async (data: Register) => {
       userId: ressponseData.userInfo.uid,
       userRole: ressponseData.userInfo.role,
     });
+    
     return ressponseData.userInfo;
   } catch (error) {
     throw new Error("Unable to create new user");
