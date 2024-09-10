@@ -2,26 +2,31 @@ import { ChevronRight } from "lucide-react";
 import TicketCard from "./TicketCard";
 import { useEffect, useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
-import { getTicket } from "../../Services/ticket.services";
+import TicketLogo from "../../assets/tickets.png";
 import toast from "react-hot-toast";
 import { TicketType } from "../../models/ticket.model";
 
 import Skeleton from "react-loading-skeleton";
+import { Empty } from "../Common/Empty/Empty";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
   // const [scroll, setScroll] = useState<boolean>(false);
   const [tickets, setTickets] = useState<TicketType[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
   const fetchTickets = async () => {
     try {
-      const tickets = (await getTicket("Pending")) as TicketType[];
-      // const sortingTicket = tickets?.sort((a, b) => {
-      //   const timeLeft = getTimeDifference(a.date as any) as any;
-      //   const timeLeft1 = getTimeDifference(b.date as any) as any;
-      //   return timeLeft1 - timeLeft;
-      // });
-      setTickets(tickets);
+      // const tickets = (await getTickets({
+      //   pageSize: 5,
+      //   direction: "next",
+      //   sort: "desc",
+      //   currentFirstDoc: null,
+      //   currentLastDoc: null,
+      //   status: "Pending",
+      // })) as TicketType[];
+      // setTickets(tickets);
     } catch (error) {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
@@ -31,26 +36,11 @@ export const RecentTickets = () => {
   const orderReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
-    // const handleScroll = () => {
-    //   if (orderReference.current) {
-    //     if (orderReference.current.scrollTop > 0) {
-    //       setScroll(true);
-    //     } else {
-    //       setScroll(false);
-    //     }
-    //   }
-    // };
-    // const reference = orderReference.current;
-    // reference?.addEventListener("scroll", handleScroll);
-
-    // return () => {
-    //   reference?.removeEventListener("scroll", handleScroll);
-    // };
     fetchTickets();
-  }, []);
+  }, [isRefresh]);
 
   return (
-    <div className="flex flex-col text-[var(--dark-text)] w-full h-full p-4 border-[var(--dark-border)] border-[1px] rounded-lg lg:max-w-[420px]">
+    <div className="flex  flex-col text-[var(--dark-text)] w-full h-full p-4 border-[var(--dark-border)] border-[1px] rounded-lg lg:max-w-[420px]">
       <div className="flex items-center justify-between gap-3 pb-7">
         <h2 className="text-2xl tracking-wide text-nowrap">Recent Tickets</h2>
         <p className="flex items-center justify-center text-[12px] cursor-pointer hover:underline text-[var(--primary-color)] flex-nowrap">
@@ -65,20 +55,30 @@ export const RecentTickets = () => {
       </div>
       <div
         ref={orderReference as any}
-        className={`max-h-[550px] scrollbar-custom scroll-smooth px-6 overflow-y-scroll`}
+        className={`max-h-[550px]  scrollbar-custom scroll-smooth px-6 overflow-y-scroll`}
       >
-        <div className="flex flex-col items-center justify-center gap-2 py-2  ">
-          {tickets.length > 0 ? (
-            tickets?.map((ticket) => (
-              <TicketCard
-                category={ticket.category}
-                date={ticket.date as any}
-                description={ticket.description}
-                title={ticket.title}
-                id={`${ticket.id}`}
-                key={ticket.id}
+        <div className="flex flex-col w-full h-full items-center justify-center gap-2 py-2  ">
+          {!loading ? (
+            tickets?.length > 0 ? (
+              tickets?.map((ticket) => (
+                <TicketCard
+                  category={ticket.category}
+                  date={ticket.date as any}
+                  description={ticket.description}
+                  title={ticket.title}
+                  id={`${ticket.id}`}
+                  key={ticket.id}
+                />
+              ))
+            ) : (
+              <Empty
+                actionText="Refresh ticket"
+                parent={TicketLogo}
+                style={{ width: "15rem", height: "12rem" }}
+                action={() => setIsRefresh(!isRefresh)}
+                children="No recent tickets available"
               />
-            ))
+            )
           ) : (
             <div className="w-full ">
               <Skeleton
