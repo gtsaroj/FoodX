@@ -16,7 +16,7 @@ const UploadBanner: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
-  const [banner, setBanner] = useState<"banner" | "sponsor">("banner");
+  const [banner, setBanner] = useState<"banners" | "sponsors">("banners");
 
   const scroller = () => {
     if (reference.current && reference.current?.scrollTop > 0) {
@@ -34,11 +34,11 @@ const UploadBanner: React.FC = () => {
     event.preventDefault();
     if (!image && !name) return toast.error("All files are required");
     try {
-      if (banner === "banner") {
+      if (banner === "banners") {
         await addBanner({
           name: name as string,
           img: image as string,
-          path: "banner",
+          path: "banners",
         });
         await addLogs({
           action: "create",
@@ -46,11 +46,11 @@ const UploadBanner: React.FC = () => {
           detail: `Banner : ${name} `,
         });
       }
-      if (banner === "sponsor") {
+      if (banner === "sponsors") {
         await addBanner({
           name: name as string,
           img: image as string,
-          path: "sponsor",
+          path: "sponsors",
         });
         await addLogs({
           action: "create",
@@ -81,10 +81,10 @@ const UploadBanner: React.FC = () => {
           {/* First Row */}
           <Selector
             categoryOption={[
-              { label: "Banner", value: "banner" },
-              { label: "Sponsor", value: "sponsor" },
+              { label: "Banner", value: "banners" },
+              { label: "Sponsor", value: "sponsors" },
             ]}
-            setField={(value) => setBanner(value as "banner" | "sponsor")}
+            setField={(value) => setBanner(value as "banners" | "sponsors")}
           />
           <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
             <label

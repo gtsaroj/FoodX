@@ -8,6 +8,9 @@ import { addToFavourite } from "../../Reducer/favourite.reducer";
 import { Product } from "../../models/product.model";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
+import { addFavourite, getFavourites } from "../../Services/favourite.services";
+import toast from "react-hot-toast";
+import { Favourite } from "../../models/favourite.model";
 
 interface MenuProp {
   prop: Product;
@@ -18,18 +21,40 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [loader, setLoader] = useState<boolean>(false);
   const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
   const [isDragging, setIsDragging] = useState(false);
-
+  const [favourites, setFavourites] = useState<Favourite[]>([]);
   const dispatch = useDispatch();
+
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+
+  const addFavouriteProduct = async () => {
+    try {
+      await addFavourite({ uid: authUser.uid as string, productId: prop.id });
+      toast.success("Product added succussfully!");
+    } catch (error) {
+      toast.error("Error while adding products");
+      throw new Error("Error while adding favourite products" + error);
+    }
+  };
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
   );
-  const favourite = useSelector(
-    (state: RootState) => state.root.favourite.favourite
-  );
+
+  const getFavouireProducts = async () => {
+    try {
+      const response = await getFavourites(authUser.uid as string);
+      setFavourites(response.data.favourites);
+    } catch (error) {
+      throw new Error("Error while adding favourite products" + error);
+    }
+  };
+
+  useEffect(() => {
+    getFavouireProducts();
+  }, []);
 
   const isFavourite = (id: string) => {
-    return favourite?.some((singleProduct) => singleProduct.id === id);
+    return favourites?.some((singleProduct) => singleProduct.id === id);
   };
   const isAuthUser = useSelector((state: RootState) => state.root.auth.success);
 
@@ -177,16 +202,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           onClick={() => {
             if (isAuthUser) {
               setLoader(true);
-              dispatch(
-                addToFavourite({
-                  id: prop.id,
-                  name: prop.name,
-                  image: prop.image,
-                  price: prop.price,
-                  quantity: 1,
-                  tag: prop.tag,
-                })
-              );
+              addFavouriteProduct();
             } else {
               setIsNotAuthenticated(false);
             }

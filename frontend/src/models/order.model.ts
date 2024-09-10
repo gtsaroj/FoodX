@@ -7,6 +7,8 @@ export interface Order {
   orderRequest: Date;
   orderFullFilled?: string;
   status?: string;
+  updateAt?: string;
+  note?: string;
 }
 export interface GetOrderModal {
   pageSize: number;
@@ -26,7 +28,7 @@ export interface GetOrderModal {
 }
 
 export interface UserOrder {
-  productImage?: string
+  productImage?: string;
   id: string;
   products: string[];
   time: string; // Date formatted as MM/DD/YYYY
@@ -34,4 +36,3 @@ export interface UserOrder {
   amount: number;
   payment: "esewa" | "cash" | "credit_card" | "other"; // Enum-like for payment methods
 }
-

@@ -15,6 +15,8 @@ import { getSpecialProducts } from "../../Services/product.services";
 import { RecentProduct } from "../Card/Card.Recent.Product";
 import { RootState } from "../../Store";
 import { useSelector } from "react-redux";
+import { addRevenue } from "../../Services/revenue.services";
+import dayjs from "dayjs";
 
 interface CartProp {
   prop: Product;
@@ -51,9 +53,13 @@ export const Payment: React.FC = () => {
         orderRequest: today,
         orderFullFilled: "",
         status: "Pending",
+        note: "Ordered",
+      });
+      await addRevenue({
+        id: dayjs().format("YYYY-MM-DD"),
+        orders: products,
       });
       toast.dismiss(toasLoader);
-
       toast.success("Order sent successfully! ");
     } catch (error) {
       toast.dismiss(toasLoader);
@@ -141,10 +147,4 @@ export const Payment: React.FC = () => {
   );
 };
 
-
-
-
-
 //recent products
-
-

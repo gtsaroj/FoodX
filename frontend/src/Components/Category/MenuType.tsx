@@ -7,7 +7,6 @@ import Skeleton from "react-loading-skeleton";
 import { getProductsByTag } from "../../Services/product.services";
 import { Frown } from "lucide-react";
 
-
 export interface categoriesTagOption {
   name: string;
   id?: string;
@@ -16,8 +15,6 @@ export interface categoriesTagOption {
 
 export const MenuType: React.FC = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
-
-
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -41,7 +38,7 @@ export const MenuType: React.FC = () => {
       try {
         const response = await getCategories();
         setCategoriesTag(response.data);
-        setInitialTag(response.data[0].name);
+        setInitialTag(response.data[0].id);
       } catch (error) {
         throw new Error("Error fetching tags:" + error);
       }
@@ -57,19 +54,21 @@ export const MenuType: React.FC = () => {
     <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
       <Selector
         children={categoriesTag as categoriesTagOption[]}
-        action={(tag) => setInitialTag(tag)}
+        action={(tagId) => setInitialTag(tagId)}
       />
 
       <div className="flex flex-col gap-8 rounded-md bg-[var(--light-foreground)] px-5 py-8">
         <div className="w-full ">
-          <p className="text-2xl text-[var(--dark-text)] font-bold tracking-wider">Category Title</p>
+          <p className="text-2xl text-[var(--dark-text)] font-bold tracking-wider">
+            Category Title
+          </p>
         </div>
         <div className="flex flex-wrap items-center justify-center md:justify-start  gap-[34px] p-8 rounded-md flex-shrink-0">
           {!loading ? (
             initialData?.length <= 0 ? (
               <div className="w-full flex flex-col items-center justify-center text-center p-4">
                 <Frown className="size-32 text-[var(--dark-secondary-text)] " />
-                <h2 className="text-xl font-semibold mb-2">
+                <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
                   No Products Found
                 </h2>
                 <p className="text-gray-500">
