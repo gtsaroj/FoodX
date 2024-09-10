@@ -82,40 +82,55 @@ const FoodPage: React.FC = () => {
 
   const getAllBanners = async () => {
     setLoading(true);
+    const banners = [];
     try {
       const normalBanner = (await getBanners({
         path: "banners",
-      })) as BannerModel[];
+      })) as { banners: BannerModel[] };
+
       const sponsorBanner = (await getBanners({
         path: "sponsors",
-      })) as BannerModel[];
-      const fetchNormalBanner: BannerModel[] = normalBanner?.map((banner) => {
-        return {
-          id: banner.id,
-          title: banner.title,
-          image: banner.image,
-          date: dayjs(
-            banner.date &&
-              banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
-          ).format("DD/MM/YYYY"),
-          path: "banners",
-        };
-      });
-      const fetchSponsorBanner: BannerModel[] = sponsorBanner?.map((banner) => {
-        return {
-          id: banner.id,
-          title: banner.title,
-          image: banner.image,
-          date: dayjs(
-            banner.date &&
-              banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
-          ).format("DD/MM/YYYY"),
-          path: "sponsors",
-        };
-      });
-      setInitialBanner([...fetchNormalBanner, ...fetchSponsorBanner]);
+      })) as { banners: BannerModel[] };
+      if (normalBanner) {
+        const fetchNormalBanner: BannerModel[] = normalBanner?.banners?.map(
+          (banner) => {
+            return {
+              id: banner.id,
+              title: banner.title,
+              image: banner.image,
+              date: dayjs(
+                banner.date &&
+                  banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
+              ).format("DD/MM/YYYY"),
+              path: "banners",
+            };
+          }
+        );
+        if (fetchNormalBanner.length > 0) banners.push(...fetchNormalBanner);
+      }
+      if (sponsorBanner) {
+  
+        const fetchSponsorBanner: BannerModel[] = sponsorBanner?.banners?.map(
+          (banner) => {
+            return {
+              id: banner.id,
+              title: banner.title,
+              image: banner.image,
+              date: dayjs(
+                banner.date &&
+                  banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
+              ).format("DD/MM/YYYY"),
+              path: "sponsors",
+            };
+          }
+        );
+        if (fetchSponsorBanner.length > 0) banners.push(...fetchSponsorBanner);
+}
+      setInitialBanner(banners);
+
+      console.log(banners);
     } catch (error) {
-      throw new Error("Unable to fetch banners");
+      throw new Error("Unable to fetch banners" + error);
     }
     setLoading(false);
   };
@@ -276,7 +291,7 @@ const FoodPage: React.FC = () => {
       </div>
       <Table
         loading={loading}
-        totalData={4}
+        totalData={initialBanner?.length}
         selectedData={bulkSelectedBanner}
         columns={columns}
         data={initialBanner}

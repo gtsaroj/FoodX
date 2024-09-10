@@ -4,7 +4,7 @@ import { makeRequest } from "../makeRequest";
 export const addBanner = async (data: {
   name: string;
   img: string;
-  path: "sponsor" | "banner";
+  path: "sponsors" | "banners";
 }) => {
   try {
     const response = await makeRequest({
@@ -21,18 +21,21 @@ export const getBanners = async (data: { path: "sponsors" | "banners" }) => {
   try {
     const response = await makeRequest({
       method: "get",
-      url: `banners/get-banners?path=${data.path}`,
+      url: `banners/${data.path}`,
     });
     return response.data.data;
   } catch (error) {
     throw new Error("Unable to fetch banners" + error);
   }
 };
-export const deleteBanner = async (data: { id: string, path: "banners"|"sponsors" }) => {
+export const deleteBanner = async (data: {
+  id: string;
+  path: "banners" | "sponsors";
+}) => {
   try {
     const response = await makeRequest({
       method: "delete",
-      data: { id: data.id },
+      data: { id: data.id, path: data.path },
       url: "banners/delete-banner",
     });
     return response.data.data;
