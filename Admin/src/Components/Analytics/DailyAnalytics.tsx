@@ -2,34 +2,38 @@ import React, { useEffect, useState } from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
 import { CardAnalyticsProp } from "../../models/order.model";
-import { getAllOrder } from "../../Services/order.services";
-import { aggregateCurrentDayData } from "./Analtytics";
 
 import Skeleton from "react-loading-skeleton";
-
+import { getRevenue } from "../../Services/revenue.services";
+import dayjs from "dayjs";
+import { Product } from "../../models/product.model";
+import { aggregateCurrentDayData } from "./Analtytics";
+import { Revenue } from "../../models/revenue.model";
 
 const Revenue: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  const getDailyData = async () => {
     setLoading(true);
-    getAllOrder()
-      .then((order) => {
-        const currentData = aggregateCurrentDayData(order);
-        if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        throw new Error(
-          "Unable to aggregate current data file: dailAnalytics " + error
-        );
+    try {
+      const response = await getRevenue({
+        startDate: dayjs().format("YYYY-MM-DD"),
       });
+      const responseData = response.data as Revenue[];
+      const analyticsData = aggregateCurrentDayData(responseData);
+      setTotalOrder(analyticsData as CardAnalyticsProp[]);
+    } catch (error) {
+      throw new Error("Error while fetching revenue " + error);
+    }
+    setLoading(false)
+  };
 
-    setLoading(false);
+  useEffect(() => {
+    getDailyData();
   }, []);
-  // console.log(`Daily Aggregate data: ${totalOrder}`);
-  console.log(loading);
+
+  console.log(totalOrder)
 
   return (
     <React.Fragment>
@@ -39,7 +43,7 @@ const Revenue: React.FC = () => {
 
         {/* })} */}
         <div className="flex md:flex-row md:flex-wrap flex-nowrap flex-col  items-center justify-start w-full gap-7 ">
-          {totalOrder?.length > 0 ? (
+          {!loading ? (
             totalOrder?.map((order, index) => (
               <CardAnalytics
                 title={order.title}

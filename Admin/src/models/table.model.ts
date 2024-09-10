@@ -10,6 +10,7 @@ export interface ColumnProps {
 }
 
 export interface updateComponentProp {
+  path?:"banners"| "sponsors"|string
   status?: string;
   id: string;
   closeModal?: (isOpen: boolean) => void;

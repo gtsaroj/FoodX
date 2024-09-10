@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
-import { Register as RegisterModal } from "../../models/user.model";
+import { Register as RegisterModal, UserRole } from "../../models/user.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
@@ -12,7 +12,7 @@ import avatar from "../../assets/logo/avatar.png";
 import logo from "../../assets/logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import {  signUpAction } from "../../Actions/user.actions";
+import { signUpAction } from "../../Actions/user.actions";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -77,52 +77,35 @@ export const RegisterContainer: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const {
-          avatar,
-          password,
-          email,
-          lastName,
-          firstName,
-          phoneNumber,
-
-        } = RegisterValue;
+        const { avatar, password, email, lastName, firstName, phoneNumber } =
+          RegisterValue;
         SetDataSend(false);
-        const imageUrl = await storeImageInFirebase(avatar, {
+        const imageUrl = await storeImageInFirebase(avatar as File, {
           folder: "users",
         });
-
-        const ConvertedForm = {
+        const ConvertedForm: RegisterModal = {
           firstName,
           lastName,
           phoneNumber,
           email,
           password,
           avatar: imageUrl,
-          role: "admin",
+          role: "admin" as UserRole["role"],
         };
         await dispatch(signUpAction(ConvertedForm));
-        RegisterValue.avatar = "";
-        RegisterValue.firstName = "";
-        RegisterValue.lastName = "";
-        RegisterValue.password = "";
-        RegisterValue.confirmpassword = "";
-        RegisterValue.email = "";
-        (RegisterValue.phoneNumber = ""), SetDataSend(true);
-
-        SetDataSend(true);
         toast.success("Congratulations!, You logged in");
       }
     } catch (error) {
-      // RegisterValue.avatar = "";
-      // RegisterValue.firstName = "";
-      // RegisterValue.lastName = "";
-      // RegisterValue.password = "";
-      // RegisterValue.confirmpassword = "";
-      // RegisterValue.email = "";
-      // RegisterValue.phoneNumber = "";
       toast.error(`User already logged in`);
-      SetDataSend(true);
     }
+    RegisterValue.avatar = "";
+    RegisterValue.firstName = "";
+    RegisterValue.lastName = "";
+    RegisterValue.password = "";
+    RegisterValue.confirmpassword = "";
+    RegisterValue.email = "";
+    RegisterValue.phoneNumber = "";
+    SetDataSend(false);
   };
 
   return (

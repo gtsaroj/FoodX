@@ -5,28 +5,33 @@ import { CardAnalyticsProp } from "../../models/order.model";
 import { EllipsisVertical } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
-import { aggregateCurrentDayData } from "./Analtytics";
-import { getAllOrder } from "../../Services/order.services";
 import toast from "react-hot-toast";
+import Revenue from "./DailyAnalytics";
+import { getRevenue } from "../../Services/revenue.services";
+import dayjs from "dayjs";
+import { aggregateCurrentDayData } from "./Analtytics";
 
 export const MonthlyAnalytics: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
+  const getDailyData = async () => {
     setLoading(true);
-    getAllOrder()
-      .then((order) => {
-        const currentData = aggregateCurrentDayData(order);
-        if (currentData) setTotalOrder(currentData as CardAnalyticsProp[]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        throw new Error(
-          "Unable to aggregate current data file: dailAnalytics " + error
-        );
+    try {
+      const response = await getRevenue({
+        startDate: dayjs().format("YYYY-MM-DD"),
       });
-    setLoading(false);
+      const responseData = response.data as Revenue[];
+      const analyticsData = aggregateCurrentDayData(responseData);
+      setTotalOrder(analyticsData as CardAnalyticsProp[]);
+    } catch (error) {
+      throw new Error("Error while fetching revenue " + error);
+    }
+    setLoading(false)
+  };
+
+  useEffect(() => {
+    getDailyData();
   }, []);
 
   function handleSelect(value: string) {

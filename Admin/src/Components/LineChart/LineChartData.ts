@@ -1,8 +1,10 @@
 import { DailyOrders } from "../../models/chart.modal";
+import { Product } from "../../models/product.model";
+import { Revenue, RevenueInfo } from "../../models/revenue.model";
 import { getOrder, getRevenue } from "../../Utility/order.utils";
 import dayjs from "dayjs";
 
-export const revenueData = (data: DailyOrders[]) => {
+export const revenueData = (data: RevenueInfo[]) => {
   if (!data) throw new Error("data not found");
   try {
     const orders = data.map((order): { revenue: number; time: string } => {
@@ -18,7 +20,7 @@ export const revenueData = (data: DailyOrders[]) => {
   }
 };
 
-export const weeklyRevenue = (data: DailyOrders[]) => {
+export const weeklyRevenue = (data: RevenueInfo[]) => {
   if (!data)
     throw new Error(
       "data not found in weekly revenue : file=> linchartdata.ts"
@@ -33,7 +35,7 @@ export const weeklyRevenue = (data: DailyOrders[]) => {
   }
 };
 
-export const monthlyRevenue = (data: DailyOrders[]) => {
+export const monthlyRevenue = (data: RevenueInfo[]) => {
   if (!data)
     throw new Error(
       "data not found in weekly revenue : file=> linchartdata.ts"
@@ -93,11 +95,13 @@ export const getWeekTotal = (
   return weeklyOrders;
 };
 
-export const orderData = (data: DailyOrders[]) => {
+export const orderData = (data: Revenue[]) => {
+   console.log(data)
   if (!data) throw new Error("data not found");
   try {
     const orders = data.map((order): { orders: number; time: string } => {
-      const orders = getOrder(order.orders);
+      const orders = totalOrder(order.orders);
+       console.log(orders)
       return {
         orders: orders,
         time: order.id,
@@ -105,8 +109,16 @@ export const orderData = (data: DailyOrders[]) => {
     });
     return orders;
   } catch (error) {
-    throw new Error("Unable to aggregate daily revenue data" + error);
+    throw new Error("Unable to aggregate daily orders data" + error);
   }
+};
+
+const totalOrder = (products: Product[]) => {
+  const total = products.reduce(
+    (acc, order) => acc + Number(order.quantity as number),
+    0
+  );
+  return total;
 };
 
 export const monthlyTotal = (data: DailyOrders[]) => {

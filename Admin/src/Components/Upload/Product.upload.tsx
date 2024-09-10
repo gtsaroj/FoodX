@@ -1,51 +1,79 @@
 import { UploadIcon } from "lucide-react";
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { UploadProduct } from "../../models/product.model";
 import { nanoid } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 import { addProducts } from "../../Services/product.services";
 import { addLogs } from "../../Services/log.services";
 
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
 import { Selector } from "../Selector/Selector";
 import { storeImageInFirebase } from "../../firebase/storage";
+import { getCategories } from "../../Services/category.services";
+import { Category } from "../../models/category.model";
 
 const UploadFood: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
   const [addFood, setAddFood] = useState<UploadProduct>({
-    products: {
+    product: {
       id: nanoid(),
       name: "",
       image: "",
-      price: 0,
-      quantity: 0,
-      tag: "",
+      price: "",
+      quantity: "",
+      tagId: "",
     },
     collection: "products",
   });
-  const categories = useSelector(
-    (state: RootState) => state.root.category.categories
-  );
+  const [initialCategory, setIntitialCategory] = useState<Category[]>([]);
+
+  const categories = async () => {
+    try {
+      const response = await getCategories();
+      setIntitialCategory(response);
+    } catch (error) {
+      throw new Error("Error while fetching category " + error);
+    }
+  };
 
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const handleClick = async (event: FormEvent, data: UploadProduct) => {
+  const handleClick = async (event: FormEvent) => {
     event.preventDefault();
-    if (!data) return toast.error("Product are unavailable");
+    if (!addFood) return toast.error("Product are unavailable");
+    const convertOGProduct = {
+      collection: addFood.collection,
+      product: {
+        id: addFood.product.id,
+        name: addFood.product.name,
+        image: addFood.product.image,
+        price: parseInt(addFood.product.price as string),
+        quantity: parseInt(addFood.product.quantity as string),
+        tagId: addFood.product.tagId,
+      },
+    };
     try {
-      const addProduct = await addProducts(data);
+      const addProduct = await addProducts(convertOGProduct);
       await addLogs({
         action: "create",
-        detail: ` Product :  ${data.products.id}`,
+        detail: ` Product :  ${addFood.product.id}`,
         date: new Date(),
       });
       if (addProduct) return toast.success("Succesfully Added");
-      addFood.products.image = "";
+      addFood.product.image = "";
     } catch (error) {
-      return toast.error("Unable to add product");
+      toast.error("Error while adding product ");
+      throw new Error("Error while uploading products" + error);
     }
   };
+  useEffect(() => {
+    categories();
+  }, []);
 
   return (
     <React.Fragment>
@@ -58,7 +86,7 @@ const UploadFood: React.FC = () => {
         </h3>
 
         <form
-          onSubmit={(event) => handleClick(event, addFood)}
+          onSubmit={(event) => handleClick(event)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
@@ -77,7 +105,7 @@ const UploadFood: React.FC = () => {
                 onChange={(event) =>
                   setAddFood((prev) => ({
                     ...prev,
-                    products: { ...prev.products, name: event.target.value },
+                    product: { ...prev.product, name: event.target.value },
                   }))
                 }
                 placeholder="Pizza"
@@ -96,9 +124,9 @@ const UploadFood: React.FC = () => {
                 onChange={(event) =>
                   setAddFood((prev) => ({
                     ...prev,
-                    products: {
-                      ...prev.products,
-                      price: parseInt(event.target.value),
+                    product: {
+                      ...prev.product,
+                      price: event.target.value,
                     },
                   }))
                 }
@@ -117,14 +145,14 @@ const UploadFood: React.FC = () => {
                 Category
               </label>
               <Selector
-                categoryOption={categories.map((category) => ({
-                  label: category,
-                  value: category,
+                categoryOption={initialCategory?.map((category) => ({
+                  label: category.name,
+                  value: category.id,
                 }))}
                 setField={(value) =>
                   setAddFood((prev) => ({
                     ...prev,
-                    products: { ...prev.products, tag: value },
+                    product: { ...prev.product, tagId: value },
                   }))
                 }
               />
@@ -142,9 +170,9 @@ const UploadFood: React.FC = () => {
                   onChange={(event) =>
                     setAddFood((prev) => ({
                       ...prev,
-                      products: {
-                        ...prev.products,
-                        quantity: parseInt(event.target.value),
+                      product: {
+                        ...prev.product,
+                        quantity: event.target.value,
                       },
                     }))
                   }
@@ -155,12 +183,12 @@ const UploadFood: React.FC = () => {
             </div>
           </div>
           {/* Third Row */}
-          {addFood.products.image ? (
+          {addFood.product.image ? (
             <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px]">
               {" "}
               <img
                 className="w-full h-[230px] object-fill"
-                src={addFood?.products.image as string}
+                src={addFood?.product.image as string}
               />
             </div>
           ) : (
@@ -179,8 +207,8 @@ const UploadFood: React.FC = () => {
                   );
                   setAddFood((prev) => ({
                     ...prev,
-                    products: {
-                      ...prev.products,
+                    product: {
+                      ...prev.product,
                       image: imageUrl,
                     },
                   }));

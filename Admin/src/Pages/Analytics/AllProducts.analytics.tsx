@@ -3,10 +3,12 @@ import { useCallback, useEffect, useState } from "react";
 import {
   bulkDeleteOfProduct,
   deleteProduct,
+  getNormalProducts,
   getProducts,
+  getSpecialProducts,
 } from "../../Services/product.services";
 import { addLogs } from "../../Services/log.services";
-import { Product, GetProductModal } from "../../models/product.model";
+import { Product } from "../../models/product.model";
 import { FoodTable } from "../Product/Product.table.page";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/Product.update.upload";
@@ -23,8 +25,8 @@ const AllProductAnalytics = () => {
   const [id, setId] = useState<string>();
   const [type, setType] = useState<"specials" | "products">();
   const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "products" | "specials" | string;
-    sortFilter?: string;
+    typeFilter?: "products" | "specials";
+    sortFilter?: keyof Product;
   }>();
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
@@ -34,165 +36,66 @@ const AllProductAnalytics = () => {
     currentPage: number;
     perPage: number;
   }>({ currentPage: 1, perPage: 5 });
-  const [currentDoc, setCurrentDoc] = useState<{
-    currentFirstDoc: string;
-    currentLastDoc: string;
-  }>();
-  const [totalData, setTotalData] = useState<number>();
+
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
       category: "specials" | "products";
       id: string;
     }[]
   >([]);
-  // get all products
-  const getAllProducts = async (data: GetProductModal) => {
+
+  const getProducts = async () => {
     setLoading(true);
-
     try {
-      let products;
-      if (pagination.currentPage > 1) {
-        products = await getProducts({
-          path: data.path,
-          pageSize: data.pageSize,
-          direction: data.direction,
-          filter: data.filter,
-          sort: data.sort,
-          currentFirstDoc: currentDoc?.currentFirstDoc,
-          currentLastDoc: currentDoc?.currentLastDoc,
-        });
-      }
-      if (pagination.currentPage === 1) {
-        products = await getProducts({
-          path: data.path,
-          pageSize: data.pageSize,
-          direction: data.direction,
-          filter: data.filter,
-          sort: data.sort,
-          currentFirstDoc: data?.currentFirstDoc || null,
-          currentLastDoc: data?.currentLastDoc || null,
-        });
-      }
+      const normalProducts = await getNormalProducts();
+      const specialProducts = await getSpecialProducts();
 
-      const specialProducts = products.data as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        products: Product[];
-        length: number;
-      };
-      setCurrentDoc({
-        currentFirstDoc: specialProducts.currentFirstDoc,
-        currentLastDoc: specialProducts.currentLastDoc,
-      });
-      const arrangeNormalProducts: Product[] = specialProducts.products?.map(
-        (product: Product) => ({
-          id: product.id,
-          name: product.name,
-          image: product.image,
-          quantity: product.quantity as number,
-          price: product.price as number,
-          tag: product.tag,
-          order: 20,
-          rating: 4.3,
-          revenue: 15000,
-          type: data.path,
-        })
+      const agrregateNormalProducts = normalProducts?.data?.map(
+        (data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: "products",
+          };
+        }
       );
-      setTotalData(specialProducts.length);
-      setFetchedProducts(arrangeNormalProducts as Product[]);
+
+      const agrregateSpecialProducts = specialProducts?.data?.map(
+        (data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: "specials",
+          };
+        }
+      );
+      const products = [...agrregateNormalProducts, agrregateSpecialProducts];
+      setFetchedProducts(products);
     } catch (error) {
-      throw new Error(`Error while fetching products` + error);
+      throw new Error("Error while getting products " + error);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    // call getAllProducts
-    // setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-    getAllProducts({
-      path: (isFilter?.typeFilter as "products" | "specials") || "products",
-      pageSize: pagination.perPage,
-      currentFirstDoc: null,
-      currentLastDoc: null,
-      direction: "next",
-      filter:
-        ((isFilter && isFilter.sortFilter) as keyof Product) ||
-        ("name" as keyof Product),
-      sort: sortOrder,
-    });
-  }, [
-    isFilter?.typeFilter,
-    isFilter?.sortFilter,
-    pagination.perPage,
-    sortOrder,
-  ]);
-
-  useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.currentFirstDoc &&
-      currentDoc.currentFirstDoc.length > 0
-    ) {
-      const fetchNextPage = async () => {
-        setLoading(true);
-        try {
-          const products = await getProducts({
-            path:
-              (isFilter?.typeFilter as "products" | "specials") || "products",
-            pageSize: pagination.perPage,
-            direction: "next",
-            filter: (isFilter?.sortFilter as keyof Product) || "name",
-            sort: sortOrder,
-            currentFirstDoc: currentDoc?.currentFirstDoc,
-            currentLastDoc: currentDoc?.currentLastDoc,
-          });
-
-          const normalProducts = products.data as {
-            currentFirstDoc: string;
-            currentLastDoc: string;
-            products: Product[];
-          };
-
-          const newProducts = normalProducts.products?.map((product) => ({
-            id: product.id,
-            name: product.name,
-            image: product.image,
-            quantity: product.quantity as number,
-            price: product.price as number,
-            category: product.tag,
-            order: 20,
-            rating: 4.3,
-            revenue: 15000,
-            type: isFilter,
-          }));
-          setCurrentDoc({
-            currentFirstDoc: normalProducts.currentFirstDoc,
-            currentLastDoc: normalProducts.currentLastDoc,
-          });
-          setFetchedProducts((prev) => {
-            return [
-              ...prev,
-              ...newProducts.filter(
-                (product) => !prev.some((p) => p.id === product.id)
-              ),
-            ];
-          });
-        } catch (error) {
-          throw new Error("Error fetching next page:" + error);
-        }
-        setLoading(false);
-      };
-
-      fetchNextPage();
-    }
-  }, [
-    currentDoc?.currentLastDoc,
-    pagination.currentPage,
-    currentDoc?.currentFirstDoc,
-    pagination.perPage,
-    isFilter,
-    sortOrder,
-  ]);
+    getProducts();
+  }, []);
 
   //Sorting
   const handleTypeCheck = async (
@@ -211,19 +114,78 @@ const AllProductAnalytics = () => {
     setIsFilter((prev) => ({ ...prev, sortFilter: value }));
   };
 
-  const handleChange = async (value: string) => {
-    if (value.length <= 0)
-      return await getAllProducts({
-        path: (isFilter?.typeFilter as "products" | "specials") || "products",
-        pageSize: pagination.perPage,
-        currentFirstDoc: null,
-        currentLastDoc: null,
-        direction: "next",
-        filter:
-          ((isFilter && isFilter.sortFilter) as keyof Product) ||
-          ("name" as keyof Product),
-        sort: sortOrder,
+  useEffect(() => {
+    const filterAndSortProducts = async () => {
+      let filteredProducts = fetchedProducts;
+
+      // Filter products based on type
+      if (isFilter?.typeFilter) {
+        const specialProducts = await getSpecialProducts(
+          `${isFilter.typeFilter === "products" ? "all" : isFilter.typeFilter}`
+        );
+        filteredProducts = specialProducts?.data?.map((data: Product) => {
+          return {
+            id: data.id,
+            image: data.image,
+            name: data.name,
+            price: data.price,
+            order: 45,
+            revenue: 203,
+            rating: 3,
+            quantity: data.quantity,
+            tag: data.tag,
+            categoryId: "lkdf",
+            type: isFilter?.typeFilter,
+          };
+        });
+      } else {
+        // Fetch all products if no filter is applied
+        getProducts();
+        return;
+      }
+
+      setFetchedProducts(filteredProducts);
+    };
+
+    filterAndSortProducts();
+  }, [isFilter?.typeFilter]);
+
+  useEffect(() => {
+    let filteredProducts = fetchedProducts;
+    // Sort products based on sortFilter
+    if (isFilter?.sortFilter || sortOrder) {
+      filteredProducts = [...fetchedProducts]?.sort((a, b) => {
+        const aValue = a[isFilter?.sortFilter as keyof Product];
+        const bValue = b[isFilter?.sortFilter as keyof Product];
+
+        // Ascending Order
+        if (sortOrder === "asc") {
+          if (typeof aValue === "number" && typeof bValue === "number") {
+            return aValue - bValue; // Numeric comparison
+          } else if (typeof aValue === "string" && typeof bValue === "string") {
+            return aValue.localeCompare(bValue); // Lexical comparison for strings
+          }
+        }
+
+        // Descending Order
+        if (sortOrder === "desc") {
+          if (typeof aValue === "number" && typeof bValue === "number") {
+            return bValue - aValue; // Numeric comparison
+          } else if (typeof aValue === "string" && typeof bValue === "string") {
+            return bValue.localeCompare(aValue); // Lexical comparison for strings
+          }
+        }
+
+        return 0; // Fallback when types don't match or sort order is invalid
       });
+    }
+    setFetchedProducts(filteredProducts);
+  }, [isFilter, sortOrder]);
+
+  useEffect(() => {});
+
+  const handleChange = async (value: string) => {
+    if (value.length <= 0) return await getProducts();
     const filterProducts = (await searchProduct(value)) as Product[];
 
     const aggregateProducts = filterProducts?.map((product): Product => {
@@ -355,6 +317,8 @@ const AllProductAnalytics = () => {
     }
   };
 
+  console.log(fetchedProducts);
+
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex sm:items-center justify-between  sm:flex-row flex-col items-start flex-grow w-full gap-5 px-3 pb-6">
@@ -364,7 +328,7 @@ const AllProductAnalytics = () => {
               All Products
             </h4>
             <p className="text-[15px] tracking-wider text-[var(--dark-secondary-text)] text-nowrap ">
-              {totalData || 0} entries found
+              {fetchedProducts?.length || 0} entries found
             </p>
           </div>
 
@@ -396,7 +360,7 @@ const AllProductAnalytics = () => {
                 </div>
                 <button
                   onClick={() =>
-                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                    setIsFilter((prev) => ({ ...prev, sortFilter: undefined }))
                   }
                   className=" "
                 >
@@ -413,7 +377,7 @@ const AllProductAnalytics = () => {
                 </div>
                 <button
                   onClick={() =>
-                    setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                    setIsFilter((prev) => ({ ...prev, typeFilter: undefined }))
                   }
                   className=" "
                 >
@@ -463,7 +427,7 @@ const AllProductAnalytics = () => {
         </div>
       </div>
       <FoodTable
-        totalData={totalData as number}
+        totalData={fetchedProducts?.length as number}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

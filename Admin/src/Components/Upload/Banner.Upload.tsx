@@ -10,12 +10,13 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { addBanner } from "../../Services/banner.services";
 import { addLogs } from "../../Services/log.services";
+import { Selector } from "../Selector/Selector";
 
 const UploadBanner: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
-
+  const [banner, setBanner] = useState<"banner" | "sponsor">("banner");
 
   const scroller = () => {
     if (reference.current && reference.current?.scrollTop > 0) {
@@ -33,17 +34,30 @@ const UploadBanner: React.FC = () => {
     event.preventDefault();
     if (!image && !name) return toast.error("All files are required");
     try {
-      await addBanner({ name: name as string, img: image as string });
-      await addLogs({
-        action: "update",
-        date: new Date(),
-        detail: ` Banner : $${name} `,
-      });
-      await addLogs({
-        action: "create",
-        date: new Date(),
-        detail: `Banner : ${name} `,
-      });
+      if (banner === "banner") {
+        await addBanner({
+          name: name as string,
+          img: image as string,
+          path: "banner",
+        });
+        await addLogs({
+          action: "create",
+          date: new Date(),
+          detail: `Banner : ${name} `,
+        });
+      }
+      if (banner === "sponsor") {
+        await addBanner({
+          name: name as string,
+          img: image as string,
+          path: "sponsor",
+        });
+        await addLogs({
+          action: "create",
+          date: new Date(),
+          detail: `sponsor : ${name} `,
+        });
+      }
     } catch (error) {
       throw new Error("Unable to add new banner" + error);
     }
@@ -65,6 +79,13 @@ const UploadBanner: React.FC = () => {
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
           {/* First Row */}
+          <Selector
+            categoryOption={[
+              { label: "Banner", value: "banner" },
+              { label: "Sponsor", value: "sponsor" },
+            ]}
+            setField={(value) => setBanner(value as "banner" | "sponsor")}
+          />
           <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
             <label
               className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"

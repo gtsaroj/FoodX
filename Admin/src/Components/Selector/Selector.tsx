@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 interface SelectorPop {
   setField: (value: string) => void;
-  categoryOption?: { value: string; label: string }[];
+  categoryOption?: { value: string; label: string }[] | any;
 }
 
 export const Selector: React.FC<SelectorPop> = ({

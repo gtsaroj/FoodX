@@ -23,11 +23,10 @@ export const signInAction = createAsyncThunk(
   }
 );
 export const signUpAction = createAsyncThunk(
-  "auth/singup",
+  "auth/signup",
   async (data: Register, thunkApi) => {
     try {
       const response = await userService.signUp({ ...data });
-      console.log(response);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(

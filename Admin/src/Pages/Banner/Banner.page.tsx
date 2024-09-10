@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
-import UploadBanner from "../../Components/Upload/UploadBanner";
+import UploadBanner from "../../Components/Upload/Banner.Upload";
 import Table from "../../Components/Common/Table/Table";
 import { BannerModel } from "../../models/banner.model";
 import { ColumnProps } from "../../models/table.model";
@@ -22,10 +22,13 @@ const FoodPage: React.FC = () => {
   const [initialBanner, setInitialBanner] = useState<BannerModel[]>([]);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
-  const [id, setId] = useState<string>();
+  const [idAndPath, setIdAndPath] = useState<{
+    id: string;
+    path: string | "banners" | "sponsors";
+  }>({ id: "", path: "" });
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
-    { id: string }[]
+    { id: string; path: "sponsors" | "banners" }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -71,8 +74,7 @@ const FoodPage: React.FC = () => {
       colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
       render: (item: BannerModel) => (
         <div className="flex flex-col items-start w-[150px]  ">
-          <span>{item.date && item.date.fulldate + ","}</span>
-          <span>{item.date && item.date.time}</span>
+          <span>{item.date as any}</span>
         </div>
       ),
     },
@@ -81,16 +83,37 @@ const FoodPage: React.FC = () => {
   const getAllBanners = async () => {
     setLoading(true);
     try {
-      const response = (await getBanners()) as BannerModel[];
-      const fetchedBanners: BannerModel[] = response?.map((banner) => {
+      const normalBanner = (await getBanners({
+        path: "banners",
+      })) as BannerModel[];
+      const sponsorBanner = (await getBanners({
+        path: "sponsors",
+      })) as BannerModel[];
+      const fetchNormalBanner: BannerModel[] = normalBanner?.map((banner) => {
         return {
           id: banner.id,
           title: banner.title,
           image: banner.image,
-          date: dayjs(banner.date).format("YYYY-MM-DD"),
+          date: dayjs(
+            banner.date &&
+              banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
+          ).format("DD/MM/YYYY"),
+          path: "banners",
         };
       });
-      setInitialBanner(fetchedBanners);
+      const fetchSponsorBanner: BannerModel[] = sponsorBanner?.map((banner) => {
+        return {
+          id: banner.id,
+          title: banner.title,
+          image: banner.image,
+          date: dayjs(
+            banner.date &&
+              banner.date._seconds * 1000 + banner.date._nanoseconds / 1e6
+          ).format("DD/MM/YYYY"),
+          path: "sponsors",
+        };
+      });
+      setInitialBanner([...fetchNormalBanner, ...fetchSponsorBanner]);
     } catch (error) {
       throw new Error("Unable to fetch banners");
     }
@@ -107,17 +130,19 @@ const FoodPage: React.FC = () => {
           const newBanner = prev?.filter((banner) => banner.id !== id);
           const findBanner = initialBanner?.find((banner) => banner.id === id);
           return newBanner
-            ? [...newBanner, { id: findBanner?.id }]
-            : [{ id: findBanner?.id }];
+            ? [...newBanner, { id: findBanner?.id, path: findBanner?.path }]
+            : [{ id: findBanner?.id, path: findBanner?.path }];
         })
       : setBulkSelectedBanner(refreshIds);
   };
   const handleAllSelected = (isChecked: boolean) => {
     if (isChecked) {
       const AllCategories = initialBanner?.map((banner) => {
-        return { id: banner.id };
+        return { id: banner.id, path: banner.path };
       });
-      setBulkSelectedBanner(AllCategories as { id: string }[]);
+      setBulkSelectedBanner(
+        AllCategories as { id: string; path: "banners" | "sponsors" }[]
+      );
     }
     if (!isChecked) {
       setBulkSelectedBanner([]);
@@ -126,11 +151,34 @@ const FoodPage: React.FC = () => {
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting category...");
+
     try {
+      const { banners, sponsors } = bulkSelectedBanner.reduce<{
+        banners: string[];
+        sponsors: string[];
+      }>(
+        (acc, data) => {
+          if (data.path === "banners") {
+            acc.banners.push(data.id);
+          } else if (data.path === "sponsors") {
+            acc.sponsors.push(data.id);
+          }
+          return acc;
+        },
+        { banners: [], sponsors: [] }
+      );
+
+      if (banners.length > 0) {
+        await bulkDeleteBanner({ id: banners, path: "banners" });
+      }
+      if (sponsors.length > 0) {
+        await bulkDeleteBanner({ id: sponsors, path: "sponsors" });
+      }
+
       const AllCategoriesId = bulkSelectedBanner?.map(
         (category) => category.id
       );
-      await bulkDeleteBanner({ id: [...AllCategoriesId] });
+
       toast.dismiss(toastLoader);
       const refreshCategory = initialBanner.filter((category) => {
         return !AllCategoriesId.includes(category.id as string);
@@ -149,8 +197,12 @@ const FoodPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     if (!id) return toast.error("Banner not exist in database");
     const toastLoader = toast.loading("Deleting banner...");
+    const findBanner = initialBanner?.find((banner) => banner.id === id);
     try {
-      await deleteBanner({ id: id });
+      await deleteBanner({
+        id: findBanner?.id as string,
+        path: findBanner?.path as "sponsors" | "banners",
+      });
       toast.dismiss(toastLoader);
       toast.success("Successfully deleted");
       const refreshBanner = initialBanner?.filter((banner) => banner.id !== id);
@@ -168,8 +220,6 @@ const FoodPage: React.FC = () => {
     const filterCategory = SearchBanner(initialBanner, value);
     setInitialBanner(filterCategory);
   };
-
-  const handleSelect = () => {};
 
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     initialBanner,
@@ -221,31 +271,6 @@ const FoodPage: React.FC = () => {
               <Plus strokeWidth={2.5} className="size-5" />
               <p className="text-[16px] tracking-widest ">Item</p>
             </button>
-            {/* <Button
-              sortFn={(value) => setSortOrder(value)}
-              bodyStyle={{
-                width: "400px",
-                top: "3.5rem",
-                left: "-18rem",
-              }}
-              parent={
-                <div className="flex border px-4 py-2 rounded items-center justify-start gap-2">
-                  <Filter
-                    strokeWidth={2.5}
-                    className="size-5 text-[var(--dark-secondary-text)]"
-                  />
-                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                    Filter
-                  </p>
-                </div>
-              }
-              sort={[
-                { label: "Price", value: "price", id: "jfhkdj" },
-                { label: "Orders", value: "orders", id: "fkdsj" },
-                { label: "Revenue", value: "revenue", id: "flkjdsf" },
-              ]}
-
-            /> */}
           </div>
         </div>
       </div>
@@ -258,11 +283,23 @@ const FoodPage: React.FC = () => {
         actions={{
           deleteFn: (value: string) => {
             setIsDelete(true);
-            setId(value);
+            const findBanner = initialBanner?.find(
+              (banner) => banner.id === value
+            );
+            setIdAndPath({
+              id: findBanner?.id as string,
+              path: findBanner?.path as "sponsors" | "banners",
+            });
           },
           editFn: (value: string) => {
             setIsEdit(false);
-            setId(value);
+            const findBanner = initialBanner?.find(
+              (banner) => banner.id === value
+            );
+            setIdAndPath({
+              id: findBanner?.id as string,
+              path: findBanner?.path as "sponsors" | "banners",
+            });
           },
           checkFn: (id: string, isChecked: boolean) =>
             handleBulkSelected(id, isChecked),
@@ -276,19 +313,24 @@ const FoodPage: React.FC = () => {
       </Modal>
 
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
-        <UpdateBanner id={id as string} closeModal={() => setIsEdit(true)} />
+        <UpdateBanner
+          id={idAndPath.id}
+          path={idAndPath.path}
+          closeModal={() => setIsEdit(true)}
+        />
       </Modal>
       {isDelete && (
         <Delete
           closeModal={() => setIsDelete(false)}
-          id={id as string}
+          id={idAndPath.id as string}
+          path={idAndPath.path}
           isClose={isDelete}
           setDelete={(id) => handleDelete(id as string)}
         />
       )}
       {isBulkDelete && (
         <Delete
-          id={id as string}
+          id={idAndPath}
           setDelete={() => handleSelectedDelete()}
           isClose={isBulkDelete}
           closeModal={() => setIsBulkDelete(false)}
