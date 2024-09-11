@@ -83,8 +83,6 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
 
 const getOrdersFromDatabase = async (
   pageSize: number,
-  filter: keyof Order,
-  sort: "asc" | "desc" = "asc",
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
   direction?: "prev" | "next",
@@ -94,11 +92,11 @@ const getOrdersFromDatabase = async (
   try {
     const { query, totalLength } = await paginateFnc(
       "orders",
-      filter,
+      "createdAt",
       startAfterDoc,
       startAtDoc,
       pageSize,
-      sort,
+      "desc",
       direction
     );
     let orderDoc;
@@ -120,9 +118,9 @@ const getOrdersFromDatabase = async (
       orders.push(doc.data() as Order);
     });
 
-    const firstDoc = orderDoc.docs[0]?.data().orderId || null;
-    const lastDoc =
-      orderDoc.docs[orderDoc.docs.length - 1]?.data().orderId || null;
+    const firstDoc = orderDoc.docs[0] || null;
+    const lastDoc = orderDoc.docs[orderDoc.docs.length - 1] || null;
+
     return {
       orders,
       firstDoc,
@@ -138,8 +136,82 @@ const getOrdersFromDatabase = async (
     );
   }
 };
+
+const getOrderDataInBatches = async (limit: number) => {
+  try {
+    const query = db.collection("orders").orderBy("createdAt", "desc").limit(limit);
+    const orderDoc = await query.get();
+    const orders: OrderInfo[] = [];
+    orderDoc.docs.forEach((doc) => {
+      orders.push(doc.data() as OrderInfo);
+    });
+    const lastVisibleDoc = orderDoc.docs[orderDoc.docs.length - 1];
+    const firstVisibleDoc = orderDoc.docs[0];
+    return { orders, lastVisibleDoc, firstVisibleDoc };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching first batch of orders.",
+      null,
+      error as string[]
+    );
+  }
+};
+
+const getNextBatchOfData = async (lastVisible: any, limit: number) => {
+  try {
+    const query = db
+      .collection("orders")
+      .orderBy("createdAt", "desc")
+      .startAfter(lastVisible)
+      .limit(limit);
+    const orderDoc = await query.get();
+    const orders: OrderInfo[] = [];
+    orderDoc.docs.forEach((doc) => {
+      orders.push(doc.data() as OrderInfo);
+    });
+    const lastVisibleDoc = orderDoc.docs[orderDoc.docs.length - 1];
+    const firstVisibleDoc = orderDoc.docs[0];
+    return { orders, lastVisibleDoc, firstVisibleDoc };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching next batch of orders.",
+      null,
+      error as string[]
+    );
+  }
+};
+
+const getPrevBatch = async (firstVisible: any, limit: number) => {
+  try {
+    const query = db
+      .collection("orders")
+      .orderBy("createdAt", "desc")
+      .endBefore(firstVisible)
+      .limitToLast(limit);
+    const orderDoc = await query.get();
+    const orders: OrderInfo[] = [];
+    orderDoc.docs.forEach((doc) => {
+      orders.push(doc.data() as OrderInfo);
+    });
+    const lastVisibleDoc = orderDoc.docs[orderDoc.docs.length - 1];
+    const firstVisibleDoc = orderDoc.docs[0];
+    return { orders, lastVisibleDoc, firstVisibleDoc };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error fetching previous batch of orders.",
+      null,
+      error as string[]
+    );
+  }
+};
 export {
   addNewOrderToDatabase,
   updateOrderStatusInDatabase,
   getOrdersFromDatabase,
+  getOrderDataInBatches,
+  getNextBatchOfData,
+  getPrevBatch,
 };

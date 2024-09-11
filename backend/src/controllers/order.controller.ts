@@ -1,10 +1,12 @@
 import express from "express";
 import {
   addNewOrderToDatabase,
+  getNextBatchOfData,
+  getOrderDataInBatches,
   getOrdersFromDatabase,
+  getPrevBatch,
   updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
-import { Order } from "../models/order.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
@@ -15,16 +17,12 @@ const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: any, res: any) => {
     let {
       pageSize,
-      filter,
-      sort,
       direction,
       currentFirstDoc,
       currentLastDoc,
       status,
     }: {
       pageSize: number;
-      filter: keyof Order;
-      sort: "asc" | "desc";
       currentFirstDoc: any | null;
       currentLastDoc: any | null;
       direction?: "prev" | "next";
@@ -36,8 +34,6 @@ const getOrderByUserIdFromDatabase = asyncHandler(
 
       let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
         pageSize,
-        filter,
-        sort,
         direction === "next" ? currentLastDoc : null,
         direction === "prev" ? currentFirstDoc : null,
         direction,
@@ -136,8 +132,6 @@ const updateOrder = asyncHandler(
 const fetchOrders = asyncHandler(async (req: any, res: any) => {
   let {
     pageSize,
-    filter,
-    sort,
     direction,
     currentFirstDoc,
     currentLastDoc,
@@ -145,8 +139,6 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     userId,
   }: {
     pageSize: number;
-    filter: keyof Order;
-    sort: "asc" | "desc";
     currentFirstDoc: any | null;
     currentLastDoc: any | null;
     direction?: "prev" | "next";
@@ -157,22 +149,12 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
   try {
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       pageSize,
-      filter,
-      sort,
       direction === "next" ? currentLastDoc : null,
       direction === "prev" ? currentFirstDoc : null,
       direction,
       status,
       userId
     );
-    const pipeline = redisClient.multi();
-
-    orders.forEach((order) => {
-      pipeline.lPush(`fetched_orders`, JSON.stringify(order));
-    });
-
-    await pipeline.exec();
-
     res.status(200).json(
       new ApiResponse(
         200,
@@ -195,9 +177,64 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     );
   }
 });
+
+const getOrderInBatch = asyncHandler(async (req: any, res: any) => {
+  try {
+    const { direction, currentLastDoc, currentFirstDoc, limit} = req.body;
+
+    if (direction === "next") {
+      const orderData = await getNextBatchOfData(currentLastDoc, limit);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { orderData },
+            "Order data fetched successfully.",
+            true
+          )
+        );
+    } else if (direction === "prev") {
+      const orderData = await getPrevBatch(currentFirstDoc, limit);
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            { orderData },
+            "Order data fetched successfully.",
+            true
+          )
+        );
+    }
+    const orderData = await getOrderDataInBatches(limit);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          { orderData },
+          "Order data fetched successfully.",
+          true
+        )
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching user order",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
 export {
   getOrderByUserIdFromDatabase,
   addNewOrder,
   updateOrder,
   fetchOrders,
+  getOrderInBatch,
 };
