@@ -108,8 +108,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
       colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
       render: (item: OrderModal) => (
         <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.orderRequest.fulldate + ", "}</span>
-          <span>{item.orderRequest.time}</span>
+          <span>{item.orderRequest + ", "}</span>
         </div>
       ),
     },
@@ -118,8 +117,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
       colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
       render: (item: OrderModal) => (
         <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.orderRequest.fulldate + ", "}</span>
-          <span>{item.orderRequest.time}</span>
+          <span>{item.orderFullfilled + ", "}</span>
         </div>
       ),
     },
@@ -149,7 +147,8 @@ export const OrderTable: React.FC<orderTableProp> = ({
               setId(item.id);
             }}
           >
-            {item.status}
+            {item.status &&
+              item.status?.charAt(0).toUpperCase() + item.status?.slice(1)}
           </button>
           <div className="absolute lg:left-[45rem] md:left-[30rem] left-[15rem] sm:left-[30rem] z-[1000]">
             {" "}
@@ -251,20 +250,20 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
         >
           <span
             className={` w-2 rounded-full h-2 ${
-              status === "Received"
-                ? "bg-[var(--primary-color)] "
-                : status === "Delivered"
-                ? "bg-[var(--green-bg)] "
-                : status === "Pending"
-                ? "bg-[var(--primary-light)] "
-                : status === "Canceled"
-                ? "bg-[var(--danger-bg)]"
-                : status === "Preparing"
-                ? "bg-[var(--orange-bg)] "
+              status === "prepared"
+                ? "bg-[var(--prepared)] "
+                : status === "pending"
+                ? "bg-[var(--pending)] "
+                : status === "preparing"
+                ? "bg-[var(--preparing)] "
+                : status === "cancelled"
+                ? "bg-[var(--cancelled)]"
+                : status === "completed"
+                ? "bg-[var(--completed)] "
                 : ""
-            }`}
+            } `}
           ></span>
-          <span> {status}</span>
+          <span> {status.charAt(0).toUpperCase() + status.slice(1)  }</span>
         </button>
       ))}
     </div>
