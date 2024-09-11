@@ -54,7 +54,7 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
   try {
     const batch = db.batch();
     let doc;
-    if (status !== "fullfilled") {
+    if (status !== "completed") {
       doc = await orderRef.update({
         status,
       });
