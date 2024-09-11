@@ -31,7 +31,7 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { products },
+          products,
           "All products fetched successfully.",
           true
         )
@@ -62,7 +62,7 @@ const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { products },
+          products,
           "All today's specials fetched successfully.",
           true
         )
@@ -96,7 +96,7 @@ const getProductByTag = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           200,
-          { products },
+          products,
           "Product based on tags are fetched successfully.",
           true
         )
