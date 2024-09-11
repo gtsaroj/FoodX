@@ -7,10 +7,10 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Suspense } from "react";
-import { LoadingText } from "./Components/Loader/Loader";
+import  { Loader } from "./Components/Loader/Loader";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <Suspense fallback={<LoadingText isLoading={true} />}>
+  <Suspense fallback={<Loader isLoading={true}  loadingFn={()=>false}  />}>
     <Provider store={Store}>
       <PersistGate persistor={persistor} loading={"loading"}>
         <App />

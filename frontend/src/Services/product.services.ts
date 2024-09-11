@@ -48,3 +48,15 @@ export const searchProduct = async (search: string) => {
     throw new Error("Unable to get products while searching" + error);
   }
 };
+
+export const getPopularProducts = async () => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: "products/popular",
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error while fetching popular products" + error);
+  }
+};
