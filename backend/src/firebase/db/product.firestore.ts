@@ -19,7 +19,7 @@ const addProductToFirestore = async (
   try {
     const { id, image, name, price, quantity, tagId } = product;
     await productRef
-      .add({ id, name, price, image, quantity, tagId })
+      .add({ id, name, price, image, quantity, tagId, totalSold: 0 })
       .then((docRef) =>
         docRef.update({
           id: docRef.id,
@@ -145,7 +145,11 @@ const updateProductInDatabase = async (
   }
 };
 
-const updateTotalSold = async (collection: string, id: string, incrementBy: number) => {
+const updateTotalSold = async (
+  collection: string,
+  id: string,
+  incrementBy: number
+) => {
   try {
     const productRef = db.collection(collection).doc(id);
     await productRef.update({
