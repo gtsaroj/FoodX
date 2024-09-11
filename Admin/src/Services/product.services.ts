@@ -11,7 +11,7 @@ export const searchProduct = async (search: string) => {
       method: "get",
       url: `products/all?search=${search}`,
     });
-    return response.data.data.products;
+    return response.data.data;
   } catch (error) {
     throw new Error("Unable to get products while searching" + error);
   }

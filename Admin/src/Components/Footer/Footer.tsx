@@ -1,9 +1,9 @@
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
-import CollegeLogo from "../../assets/logo/texas.png"
+import CollegeLogo from "../../assets/logo/texas.png";
 
 const Footer: React.FC = () => {
   return (
-    <div className="w-full flex text-white flex-col items-center justify-center">
+    <div className="w-full  flex text-white flex-col items-center justify-center">
       <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-white place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[white] rounded">
@@ -108,27 +108,27 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </footer>
-      <div className="w-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
-        <p>Copyright © 2024 All Rights Reserved.</p>
-        <p className="cursor-pointer">
-          Developed By:{" "}
-          <a
-            href=""
-            target="_blank"
-            className="hover:text-[var(--primary-color)]  hover:underline "
-          >
-            Saroj
-          </a>{" "}
-          and{" "}
-          <a
-            href="https://aayush-al.web.app/"
-            target="_blank"
-            className="hover:text-[var(--primary-color)]  hover:underline"
-          >
-            Aayush.
-          </a>
-        </p>
-      </div>
+        <div className="w-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
+          <p>Copyright © 2024 All Rights Reserved.</p>
+          <p className="cursor-pointer">
+            Developed By:{" "}
+            <a
+              href="https://saroj-gt.web.app/"
+              target="_blank"
+              className="hover:text-[var(--primary-color)]  hover:underline "
+            >
+              Saroj
+            </a>{" "}
+            and{" "}
+            <a
+              href="https://aayush-al.web.app/"
+              target="_blank"
+              className="hover:text-[var(--primary-color)]  hover:underline"
+            >
+              Aayush.
+            </a>
+          </p>
+        </div>
     </div>
   );
 };

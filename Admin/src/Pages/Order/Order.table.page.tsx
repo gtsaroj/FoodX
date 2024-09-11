@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { OrderModal } from "../../models/order.model";
+import { OrderModal, status } from "../../models/order.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
@@ -130,16 +130,16 @@ export const OrderTable: React.FC<orderTableProp> = ({
         <div className=" w-[140px]  gap-2 flex  items-center justify-start  text-[var(--dark-text)]  ">
           <div
             className={`w-2 h-2 rounded-full ${
-              item.status === "Received"
-                ? "bg-[var(--primary-color)] "
-                : item.status === "Delivered"
-                ? "bg-[var(--green-bg)] "
-                : item.status === "Pending"
-                ? "bg-[var(--primary-light)] "
-                : item.status === "Cancelled"
-                ? "bg-[var(--danger-bg)]"
-                : item.status === "Preparing"
-                ? "bg-[var(--orange-bg)] "
+              item.status === "prepared"
+                ? "bg-[var(--prepared)] "
+                : item.status === "pending"
+                ? "bg-[var(--pending)] "
+                : item.status === "preparing"
+                ? "bg-[var(--preparing)] "
+                : item.status === "cancelled"
+                ? "bg-[var(--cancelled)]"
+                : item.status === "completed"
+                ? "bg-[var(--completed)] "
                 : ""
             } `}
           ></div>
@@ -156,7 +156,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
             {isChangeStatus && id === item.id && (
               <StatusChanger
                 isChangeStatus={() => setIsChangeStatus(false)}
-                status={item.status}
+                status={item.status!}
                 statusFn={(status) => statusChangeFn(status)}
               />
             )}
@@ -204,7 +204,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
 };
 
 interface StatusChangerProp {
-  status: "Received" | "Preparing" | "Delivered" | "Canceled" | "Pending";
+  status: "prepared" | "preparing" | "completed" | "cancelled" | "pending";
   statusFn: (status: string, id?: string) => void;
   isChangeStatus: () => void;
 }
@@ -217,7 +217,7 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
   const [showModal, setShowModal] = useState(true);
 
   const reference = useRef<HTMLDivElement>();
-  const Status = ["Preparing", "Received", "Delivered", "Canceled"];
+  const Status = ["preparing", "prepared", "pending", "cancelled", "completed"];
   const updateStatus = Status.filter((sts) => sts !== status);
 
   useEffect(() => {

@@ -6,9 +6,7 @@ import { CardAnalyticsProp } from "../../models/order.model";
 import Skeleton from "react-loading-skeleton";
 import { getRevenue } from "../../Services/revenue.services";
 import dayjs from "dayjs";
-import { Product } from "../../models/product.model";
 import { aggregateCurrentDayData } from "./Analtytics";
-import { Revenue } from "../../models/revenue.model";
 
 const Revenue: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
@@ -20,20 +18,19 @@ const Revenue: React.FC = () => {
       const response = await getRevenue({
         startDate: dayjs().format("YYYY-MM-DD"),
       });
-      const responseData = response.data as Revenue[];
+      const responseData = response.data;
       const analyticsData = aggregateCurrentDayData(responseData);
       setTotalOrder(analyticsData as CardAnalyticsProp[]);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
     }
-    setLoading(false)
+    setLoading(false);
   };
 
   useEffect(() => {
     getDailyData();
   }, []);
-
-  console.log(totalOrder)
+   
 
   return (
     <React.Fragment>

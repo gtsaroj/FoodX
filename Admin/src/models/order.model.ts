@@ -61,6 +61,10 @@ export interface OrderModal {
   products?: string[];
   rank?: string;
   orderRequest: string;
-  status: "Received" | "Preparing" | "Cancelled" | "Pending";
+  status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
   orderFullfilled: string;
+}
+
+export interface status{
+  status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
 }

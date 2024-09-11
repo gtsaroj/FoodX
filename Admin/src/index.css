@@ -55,7 +55,7 @@
     */
     --body-bg: #080e18;
     --light-foreground: #10161f;
-    --light-background:   #283041;
+    --light-background: #283041;
     --light-secondary-background: #dadada;
     --light-border: #dedde2;
 
@@ -75,6 +75,11 @@
     --orange-bg: #ff9800;
     --green-bg: #4caf50;
 
+    --pending: #f29339;
+    --preparing: #ff9800;
+    --prepared: #2c398d;
+    --completed: #4caf50;
+    --cancelled: #e00b0b;
     --green-text: #177e1a;
   }
 
@@ -108,11 +113,9 @@
 }
 
 @layer components {
-  .scrollbar-invisible{
+  .scrollbar-invisible {
     @apply overscroll-y-auto;
     width: 9px;
-  
-    
   }
   .scrollbar-custom {
     @apply overflow-y-scroll; /* Enables scrolling */
@@ -128,7 +131,7 @@
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400; /* Hover effect */
-    @apply cursor-pointer
+    @apply cursor-pointer;
   }
 }
 
