@@ -26,7 +26,6 @@ export const RecentProduct = () => {
         userId: authUser.userInfo.uid,
         direction: "next",
       });
-      console.log(response);
       setInitialData(response.data);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);

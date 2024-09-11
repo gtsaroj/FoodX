@@ -11,6 +11,7 @@ import { AppDispatch, RootState } from "./Store.ts";
 import PrivateRoute from "./PrivateRoute.tsx";
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
+import { Loader } from "./Components/Loader/Loader.tsx";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>

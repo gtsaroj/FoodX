@@ -1,7 +1,7 @@
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../Reducer/product.reducer";
+import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { RootState } from "../../Store";
 import { LoadingText } from "../Loader/Loader";
 import { Product } from "../../models/product.model";
@@ -31,11 +31,14 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
 
   const addFavouriteProduct = async () => {
     setLoader(true);
+    const toastId = toast.loading("Processing, please wait...");
     try {
       await addFavourite({ uid: authUser.uid as string, productId: prop.id });
       dispatch(addToFavourite(prop.id));
-      toast.success("Item added to the favourite cart successfully!");
+      toast.dismiss(toastId);
+      toast.success("Item added!");
     } catch (error) {
+      toast.dismiss(toastId);
       toast.error("Failed to add the item. Please try again.");
       throw new Error("Error while adding favourite products" + error);
     }
@@ -44,17 +47,19 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
 
   const removeFavouriteProduct = async () => {
     setLoader(true);
+    const toastId = toast.loading("Processing, please wait...");
 
     try {
       await removeFavourites({
         uid: authUser.uid as string,
         productId: prop.id,
       });
-      toast.success("Item removed from the cart successfully!");
+      toast.dismiss(toastId);
+      toast.success("Item removed ");
       dispatch(removeFavourite(prop.id));
     } catch (error) {
       setLoader(false);
-
+      toast.dismiss(toastId);
       toast.error("Failed to remove the item. Please try again.");
       throw new Error("Error while removing favourite cart product" + error);
     }
@@ -83,11 +88,13 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     const findQuantity = selectedProductsQuantity?.find(
       (singleProduct) => singleProduct.id == prop.id
     );
-    if (findQuantity?.quantity) {
+    if (findQuantity?.quantity && findQuantity?.quantity <= 1) {
+      dispatch(removeCart(prop.id));
+    } else {
       dispatch(
         addToCart({
           id: prop.id,
-          quantity: findQuantity.quantity <= 1 ? 1 : -1,
+          quantity: -1,
         })
       );
     }
@@ -150,10 +157,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
-              <button
-                onClick={() => handleClick()}
-                disabled={cartQuantity <= 1 ? true : false}
-              >
+              <button onClick={() => handleClick()}>
                 <Minus
                   size={20}
                   className={` hover:text-[var(--secondary-color)]`}
@@ -214,7 +218,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           />
         </div>
       </div>
-      <LoadingText isLoading={loader} />
       <Modal
         close={isNotAuthenticated}
         closeModal={() => setIsNotAuthenticated(true)}

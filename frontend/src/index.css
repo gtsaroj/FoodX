@@ -2,7 +2,6 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss/components";
 
-
 @layer base {
   :root {
     --color: #1ba13dd2;
@@ -43,9 +42,9 @@
   }
   .dark {
     --color: #1ba13dd2;
-    --primary-color: #2c398d;
-    --primary-light: #00a3d9;
-    --primary-dark: #0e76a8;
+    --primary-color: #007fff;
+    --primary-light: #0076ce;
+    --primary-dark: #004792;
 
     --secondary-color: #d90081;
     --secondary-light: #ec008d;
@@ -56,7 +55,7 @@
     */
     --body-bg: #080e18;
     --light-foreground: #10161f;
-    --light-background:   #283041;
+    --light-background: #283041;
     --light-secondary-background: #dadada;
     --light-border: #dedde2;
 
@@ -108,16 +107,27 @@
   }
 }
 
-
 @layer components {
-  .scrollbar-invisible{
+  .scrollbar-invisible {
     @apply overscroll-y-auto;
     width: 9px;
-  
-    
   }
   .scrollbar-custom {
     @apply overflow-y-scroll; /* Enables scrolling */
+  }
+
+  .item-scrollbar {
+    @apply overflow-x-auto;
+  }
+  .item-scrollbar::-webkit-scrollbar {
+    width: 3px;
+    height: 6px;
+    cursor: pointer;
+  }
+  .item-scrollbar::-webkit-scrollbar-thumb {
+    cursor: pointer;
+    width: 3px;
+    @apply bg-gray-500 rounded-md; /* Customize the scrollbar thumb */
   }
 
   .scrollbar-custom::-webkit-scrollbar {
@@ -130,7 +140,7 @@
 
   .scrollbar-custom::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400; /* Hover effect */
-    @apply cursor-pointer
+    @apply cursor-pointer;
   }
 }
 /* Regular CSS file or Tailwind CSS configuration */
@@ -141,7 +151,7 @@
   transform: scale(1.05); /* Slightly scale up the element */
   color: black;
   z-index: 100;
-   width: 250px;
+  width: 250px;
   height: 165px;
 }
 .dragged {
