@@ -34,7 +34,7 @@ export const LoadingText: React.FC<LoadingTextProp> = ({
       } `}
     >
       <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--dark-text)] font-semibold ">
-        <RotatingLines strokeColor="#10161f" width="30" />{" "}
+        <RotatingLines strokeColor="var(--dark-text) " width="30" />{" "}
         <span> Loading...Please wait!</span>
       </p>
     </div>

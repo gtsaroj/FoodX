@@ -8,14 +8,11 @@ interface SingleCardProp {
   prop: Product;
 }
 
-
 export const SingleCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
   // const [InitialQuantity, setInitialQuantity] = useState<number>(1);
   const dispatch = useDispatch<AppDispatch>();
-
-
 
   return (
     <div
@@ -39,15 +36,18 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         <div className="flex gap-[40px]   items-center ">
           <div className="flex gap-2 text-md text-[var(--primary-color)]">
             <button
-              disabled={prop.quantity <= 1 ? true : false}
-              onClick={() =>
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    quantity: prop.quantity <= 1 ? 1 : -1,
-                  })
-                )
-              }
+              onClick={() => {
+                if (prop.quantity <= 1) {
+                  dispatch(removeCart(prop.id));
+                } else {
+                  dispatch(
+                    addToCart({
+                      id: prop.id,
+                      quantity: -1,
+                    })
+                  );
+                }
+              }}
               className=" h-[25px] flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
             >
               -

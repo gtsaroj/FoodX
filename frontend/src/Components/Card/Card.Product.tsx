@@ -4,13 +4,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../Reducer/product.reducer";
 import { RootState } from "../../Store";
 import { LoadingText } from "../Loader/Loader";
-import { addToFavourite } from "../../Reducer/favourite.reducer";
 import { Product } from "../../models/product.model";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
-import { addFavourite, getFavourites } from "../../Services/favourite.services";
+import {
+  addFavourite,
+  removeFavourites,
+} from "../../Services/favourite.services";
 import toast from "react-hot-toast";
-import { Favourite } from "../../models/favourite.model";
+import {
+  addToFavourite,
+  removeFavourite,
+} from "../../Reducer/favourite.reducer";
 
 interface MenuProp {
   prop: Product;
@@ -20,42 +25,51 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [cartQuantity, setCartQuantity] = useState<number>(1);
   const [loader, setLoader] = useState<boolean>(false);
   const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const [favourites, setFavourites] = useState<Favourite[]>([]);
   const dispatch = useDispatch();
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const addFavouriteProduct = async () => {
+    setLoader(true);
     try {
       await addFavourite({ uid: authUser.uid as string, productId: prop.id });
-      toast.success("Product added succussfully!");
+      dispatch(addToFavourite(prop.id));
+      toast.success("Item added to the favourite cart successfully!");
     } catch (error) {
-      toast.error("Error while adding products");
+      toast.error("Failed to add the item. Please try again.");
       throw new Error("Error while adding favourite products" + error);
     }
+    setLoader(false);
+  };
+
+  const removeFavouriteProduct = async () => {
+    setLoader(true);
+
+    try {
+      await removeFavourites({
+        uid: authUser.uid as string,
+        productId: prop.id,
+      });
+      toast.success("Item removed from the cart successfully!");
+      dispatch(removeFavourite(prop.id));
+    } catch (error) {
+      setLoader(false);
+
+      toast.error("Failed to remove the item. Please try again.");
+      throw new Error("Error while removing favourite cart product" + error);
+    }
+    setLoader(false);
   };
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
   );
-
-  const getFavouireProducts = async () => {
-    try {
-      const response = await getFavourites(authUser.uid as string);
-      setFavourites(response.data.favourites);
-    } catch (error) {
-      throw new Error("Error while adding favourite products" + error);
-    }
-  };
-
-  useEffect(() => {
-    if(!authUser.uid) return;
-    getFavouireProducts();
-  }, []);
+  const favourites = useSelector(
+    (state: RootState) => state.root.favourite.favourite
+  );
 
   const isFavourite = (id: string) => {
-    return favourites?.some((singleProduct) => singleProduct.id === id);
+    return favourites?.some((singleProduct) => singleProduct === id);
   };
   const isAuthUser = useSelector((state: RootState) => state.root.auth.success);
 
@@ -79,7 +93,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     }
   };
 
-
   useEffect(() => {
     const findQuantity = selectedProductsQuantity?.find(
       (singleProduct) => singleProduct.id === prop.id
@@ -95,17 +108,11 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     }
   }, [selectedProductsQuantity, isAuthUser]);
 
-  const closeLoader = () => {
-    setLoader(false);
-    return false;
-  };
-
   return (
     <>
       <div
         onDragEnd={(event) => {
           event.preventDefault();
-          setIsDragging(false);
           const target = event.target as HTMLElement;
           target.classList.remove("dragged");
         }}
@@ -191,8 +198,9 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         <div
           onClick={() => {
             if (isAuthUser) {
-              setLoader(true);
-              addFavouriteProduct();
+              isFavourite(prop.id)
+                ? removeFavouriteProduct()
+                : addFavouriteProduct();
             } else {
               setIsNotAuthenticated(false);
             }
@@ -206,7 +214,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           />
         </div>
       </div>
-      <LoadingText isLoading={loader} loadingFn={() => closeLoader()} />
+      <LoadingText isLoading={loader} />
       <Modal
         close={isNotAuthenticated}
         closeModal={() => setIsNotAuthenticated(true)}

@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Favourite } from "../models/favourite.model";
 import toast from "react-hot-toast";
 
-const favouriteState: Favourite = {
+interface favourie {
+  favourite: string[];
+}
+const favouriteState: favourie = {
   favourite: [],
 };
 
@@ -11,22 +13,21 @@ const favouriteSlice = createSlice({
   initialState: favouriteState,
   reducers: {
     addToFavourite: (state, action) => {
+      console.log(action);
       const productId = state.favourite.find(
-        (product) => product.id === action.payload.id
+        (product) => product === action.payload
       );
       if (productId) {
         state.favourite = state.favourite.filter(
-          (product) => product.id !== action.payload.id
+          (product) => product == action.payload
         );
-        toast.success("Product removed!")
       } else {
         state.favourite.push(action.payload);
-        toast.success("Product added!")
       }
     },
     removeFavourite: (state, action) => {
       state.favourite = state.favourite.filter(
-        (product) => product.id !== action.payload
+        (product) => product !== action.payload
       );
     },
     resetFavourite: (state, action) => {
