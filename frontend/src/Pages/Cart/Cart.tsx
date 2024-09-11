@@ -49,7 +49,7 @@ const Cart: React.FC = () => {
         );
         setIsDraggable(false);
       }}
-      className="flex flex-col w-full justify-between h-[580px] gap-3   sm:px-1 px-[30px]"
+      className="flex flex-col w-full justify-between h-full gap-3   sm:px-1 px-[30px]"
     >
       <div className="flex flex-col items-start ">
         <h3 className="w-full py-2 text-[25px] font-semibold tracking-wide text-[var(--dark-text)]">
@@ -57,7 +57,7 @@ const Cart: React.FC = () => {
         </h3>
 
         <div
-          className={`flex flex-col relative h-[420px] items-center gap-2 w-full py-5 scrollbar-custom duration-200  pr-3 overflow-auto`}
+          className={`flex flex-col relative h-[400px] items-center gap-2 w-full py-5 scrollbar-custom duration-200  pr-3 overflow-auto`}
         >
           {selectedProducts.length > 0 ? (
             selectedProducts?.map((singleSelectedProduct) => (
@@ -68,9 +68,11 @@ const Cart: React.FC = () => {
             ))
           ) : (
             <div className="flex flex-col  py-16 items-center justify-center gap-2">
-              <ShoppingBag className=" cursor-pointer size-16" />
+              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-16" />
 
-              <h1 className="text-[25px]">Your cart is empty</h1>
+              <h1 className="text-[25px] text-[var(--dark-text)] ">
+                Your cart is empty
+              </h1>
             </div>
           )}
           <div
@@ -82,21 +84,19 @@ const Cart: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex border-t   flex-col w-full gap-5">
+      <div className="flex border-t    flex-col w-full gap-5">
         <div className="flex justify-between p-2  text-[var(--dark-text)]">
           <p className="text-lg font-bold tracking-wide">Total Amount:</p>
           <p className="text-lg">
             Rs <span>{Total()}</span>
           </p>
         </div>
-        <div
+        <button
           onClick={() => navigate("/cart/checkout")}
-          className="py-3   cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
+          className="py-3 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider text-xl font-bold"
         >
-          <button className="text-white cursor-pointer tracking-wider text-xl font-bold">
-            Checkout
-          </button>
-        </div>
+          Checkout
+        </button>
       </div>
     </div>
   );

@@ -7,7 +7,6 @@ import Skeleton from "react-loading-skeleton";
 
 const Specials: React.FC = () => {
   const [initalProducts, setInitialProducts] = useState<Product[]>([]);
-
   const specialProducts = async () => {
     try {
       const response = await getSpecialProducts();
@@ -31,15 +30,19 @@ const Specials: React.FC = () => {
         </h2>
       </div>
       <div className="grid grid-cols-5 gap-8 " id="specials">
-        <div className="  flex flex-col items-center justify-center rounded-md px-5 py-8 col-span-5 lg:col-span-3">
-          <div className="w-full  h-full  overflow-y-hidden overflow-x-scroll">
+        <div className="  flex flex-col gap-9 items-center justify-center rounded-md px-5   col-span-5 lg:col-span-3">
+          <div
+            className="w-full  h-full  item-scrollbar  overflow-y-hidden  overflow-x-scroll"
+          >
             <SpecialCardsContainer
               products={
                 initalProducts?.length > 0 ? initalProducts?.slice(0, 4) : []
               }
             />
           </div>
-          <div className="w-full h-full overflow-y-hidden overflow-x-scroll">
+          <div
+            className={`w-full h-full item-scrollbar  overflow-y-hidden overflow-x-scroll`}
+          >
             <SpecialCardsContainer1
               products={
                 initalProducts?.length > 0 ? initalProducts?.slice(4) : []
@@ -64,7 +67,7 @@ interface SpecialProductProp {
 const SpecialCardsContainer: React.FC<SpecialProductProp> = ({ products }) => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex pb-4  gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
+      <div className="flex gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
         {products.length > 0 ? (
           products.map((item) => <SpecialCards prop={item} key={item.id} />)
         ) : (
@@ -102,7 +105,7 @@ export const SpecialCardsContainer1: React.FC<SpecialProductProp> = ({
 }) => {
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex  pb-4 gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
+      <div className="flex  gap-5 pl-3 pr-5 overflow-x-scroll justify-evenly w-fit">
         {products.length > 0 ? (
           products.map((item) => <SpecialCards prop={item} key={item.id} />)
         ) : (

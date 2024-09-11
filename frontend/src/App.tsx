@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Routes,
   Route,
@@ -7,8 +7,11 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import { RootState } from "./Store.ts";
+import { AppDispatch, RootState } from "./Store.ts";
 import PrivateRoute from "./PrivateRoute.tsx";
+import { getFavourites } from "./Services/favourite.services.ts";
+import { addToFavourite } from "./Reducer/favourite.reducer.ts";
+import { Loader } from "./Components/Loader/Loader.tsx";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -46,11 +49,27 @@ const AdminProfile = React.lazy(() =>
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 
 const HomePage: React.FC = () => {
-  return (
-    <div
+  const dispatch = useDispatch<AppDispatch>();
 
-      className="flex items-center justify-center w-full h-full min-w-[100vw]  "
-    >
+  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+
+  const getFavouireProducts = async () => {
+    try {
+      const response = await getFavourites(authUser.uid as string);
+      response.data.products?.forEach((data: string) => {
+        dispatch(addToFavourite(data));
+      });
+    } catch (error) {
+      throw new Error("Error while adding favourite products" + error);
+    }
+  };
+
+  useEffect(() => {
+    if (!authUser.uid) return;
+    getFavouireProducts();
+  }, [authUser.uid]);
+  return (
+    <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
         <div className="mb-[100px] z-50">
           <Header />
@@ -81,7 +100,7 @@ export const App: React.FC = () => {
     } else {
       document.body.classList.remove("dark");
     }
-  },[isDark]);
+  }, [isDark]);
 
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);

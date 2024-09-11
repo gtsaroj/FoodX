@@ -10,6 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { Favourite } from "../../models/favourite.model";
 import toast from "react-hot-toast";
+import { removeFavourite } from "../../Reducer/favourite.reducer";
 
 interface SingleCardProp {
   prop: Product;
@@ -18,9 +19,11 @@ interface SingleCardProp {
 export const FavouriteCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [favourites, setFavourites] = useState<Favourite[]>([]);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  
   const getFavouireProducts = async () => {
     try {
       const response = await getFavourites(authUser.uid as string);
@@ -30,20 +33,20 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
     }
   };
 
-  const deleteProductsFromFavourite = async (productId: string) => {
+  const removeFavouriteProduct = async (id: string) => {
+    const toastId = toast.loading("Removing from favorites...");
     try {
-      const response = await removeFavourites({
+      await removeFavourites({
         uid: authUser.uid as string,
-        productId: productId,
+        productId: id,
       });
-      setFavourites(response.data.favourites);
-      const filterProducts = await favourites?.filter(
-        (data) => data.id !== productId
-      );
-      setFavourites(filterProducts);
-      toast.success("Delete successfully!");
+      toast.dismiss(toastId)
+      toast.success("Item removed from the cart successfully!");
+      dispatch(removeFavourite(id));
     } catch (error) {
-      throw new Error("Error while adding favourite products" + error);
+      toast.dismiss(toastId)
+      toast.error("Failed to remove the item. Please try again.");
+      throw new Error("Error while removing favourite cart product" + error);
     }
   };
 
@@ -72,7 +75,7 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
         </p>
       </div>
       <div
-        onClick={() => deleteProductsFromFavourite(prop.id)}
+        onClick={() => removeFavouriteProduct(prop.id)}
         className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
         <Trash2 className="text-[var(--light-text)]" />

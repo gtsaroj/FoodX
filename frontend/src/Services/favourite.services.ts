@@ -16,7 +16,7 @@ export const removeFavourites = async (data:{uid: string, productId: string}) =>
     const response = await makeRequest({
       method: "delete",
       data: { ...data },
-      url: `favourites/delete`,
+      url: `favourites/remove`,
     });
     return response.data;
   } catch (error) {

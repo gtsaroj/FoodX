@@ -1,17 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "../../Store";
 import { useDispatch, useSelector } from "react-redux";
 import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { FavouriteCard } from "../../Components/Card/Card.Favourite";
+import {
+  getNormalProducts,
+  getSpecialProducts,
+} from "../../Services/product.services";
+import { Product } from "../../models/product.model";
 
 const Favourite: React.FC = () => {
   const selectedProducts = useSelector(
     (state: RootState) => state.root.favourite.favourite
   );
+  const [initialProducts, setInitialProducts] = useState<Product[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const getAllProducts = async () => {
+    try {
+      const response = await getNormalProducts();
+      const specialsProduct = await getSpecialProducts();
+      console.log(response.data);
+      const products = [...response.data, ...specialsProduct.data] as Product[];
+      console.log(selectedProducts);
+      const aggregateProducts = products?.filter((data) =>
+        selectedProducts.includes(data.id)
+      );
+      setInitialProducts(aggregateProducts);
+    } catch (error) {
+      throw new Error("Error while fetching  all products" + error);
+    }
+  };
+
+  useEffect(() => {
+    getAllProducts();
+  }, [selectedProducts]);
 
   return (
     <div className="flex flex-col  h-[580px]   rounded-sm  pb-7 justify-between    bg-[var(--light-foreground)] w-[450px]    ">
@@ -21,8 +47,8 @@ const Favourite: React.FC = () => {
         </h3>
       </div>
       <div className="flex h-full px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
-        {selectedProducts.length > 0 ? (
-          selectedProducts?.map((singleSelectedProduct) => (
+        {initialProducts.length > 0 ? (
+          initialProducts?.map((singleSelectedProduct) => (
             <FavouriteCard
               prop={singleSelectedProduct}
               key={singleSelectedProduct.id}
@@ -41,8 +67,17 @@ const Favourite: React.FC = () => {
         <div className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
           <button
             onClick={() => {
-              selectedProducts?.forEach((product) => {
-                dispatch(addToCart(product));
+              initialProducts?.forEach((prop) => {
+                dispatch(
+                  addToCart({
+                    id: prop.id,
+                    name: prop.name,
+                    image: prop.image,
+                    price: prop.price,
+                    quantity: 1,
+                    tag: prop.tag,
+                  })
+                );
               });
               toast.success("Succesfully added!");
             }}

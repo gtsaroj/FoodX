@@ -1,16 +1,21 @@
 import { Heart, Minus, Plus, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToCart } from "../../Reducer/product.reducer";
+import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { RootState } from "../../Store";
 import { LoadingText } from "../Loader/Loader";
-import { addToFavourite } from "../../Reducer/favourite.reducer";
 import { Product } from "../../models/product.model";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
-import { addFavourite, getFavourites } from "../../Services/favourite.services";
+import {
+  addFavourite,
+  removeFavourites,
+} from "../../Services/favourite.services";
 import toast from "react-hot-toast";
-import { Favourite } from "../../models/favourite.model";
+import {
+  addToFavourite,
+  removeFavourite,
+} from "../../Reducer/favourite.reducer";
 
 interface MenuProp {
   prop: Product;
@@ -20,42 +25,56 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [cartQuantity, setCartQuantity] = useState<number>(1);
   const [loader, setLoader] = useState<boolean>(false);
   const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const [favourites, setFavourites] = useState<Favourite[]>([]);
   const dispatch = useDispatch();
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const addFavouriteProduct = async () => {
+    setLoader(true);
+    const toastId = toast.loading("Processing, please wait...");
     try {
       await addFavourite({ uid: authUser.uid as string, productId: prop.id });
-      toast.success("Product added succussfully!");
+      dispatch(addToFavourite(prop.id));
+      toast.dismiss(toastId);
+      toast.success("Item added!");
     } catch (error) {
-      toast.error("Error while adding products");
+      toast.dismiss(toastId);
+      toast.error("Failed to add the item. Please try again.");
       throw new Error("Error while adding favourite products" + error);
     }
+    setLoader(false);
+  };
+
+  const removeFavouriteProduct = async () => {
+    setLoader(true);
+    const toastId = toast.loading("Processing, please wait...");
+
+    try {
+      await removeFavourites({
+        uid: authUser.uid as string,
+        productId: prop.id,
+      });
+      toast.dismiss(toastId);
+      toast.success("Item removed ");
+      dispatch(removeFavourite(prop.id));
+    } catch (error) {
+      setLoader(false);
+      toast.dismiss(toastId);
+      toast.error("Failed to remove the item. Please try again.");
+      throw new Error("Error while removing favourite cart product" + error);
+    }
+    setLoader(false);
   };
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
   );
-
-  const getFavouireProducts = async () => {
-    try {
-      const response = await getFavourites(authUser.uid as string);
-      setFavourites(response.data.favourites);
-    } catch (error) {
-      throw new Error("Error while adding favourite products" + error);
-    }
-  };
-
-  useEffect(() => {
-    if(!authUser.uid) return;
-    getFavouireProducts();
-  }, []);
+  const favourites = useSelector(
+    (state: RootState) => state.root.favourite.favourite
+  );
 
   const isFavourite = (id: string) => {
-    return favourites?.some((singleProduct) => singleProduct.id === id);
+    return favourites?.some((singleProduct) => singleProduct === id);
   };
   const isAuthUser = useSelector((state: RootState) => state.root.auth.success);
 
@@ -69,16 +88,17 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     const findQuantity = selectedProductsQuantity?.find(
       (singleProduct) => singleProduct.id == prop.id
     );
-    if (findQuantity?.quantity) {
+    if (findQuantity?.quantity && findQuantity?.quantity <= 1) {
+      dispatch(removeCart(prop.id));
+    } else {
       dispatch(
         addToCart({
           id: prop.id,
-          quantity: findQuantity.quantity <= 1 ? 1 : -1,
+          quantity: -1,
         })
       );
     }
   };
-
 
   useEffect(() => {
     const findQuantity = selectedProductsQuantity?.find(
@@ -95,17 +115,11 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     }
   }, [selectedProductsQuantity, isAuthUser]);
 
-  const closeLoader = () => {
-    setLoader(false);
-    return false;
-  };
-
   return (
     <>
       <div
         onDragEnd={(event) => {
           event.preventDefault();
-          setIsDragging(false);
           const target = event.target as HTMLElement;
           target.classList.remove("dragged");
         }}
@@ -143,10 +157,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
-              <button
-                onClick={() => handleClick()}
-                disabled={cartQuantity <= 1 ? true : false}
-              >
+              <button onClick={() => handleClick()}>
                 <Minus
                   size={20}
                   className={` hover:text-[var(--secondary-color)]`}
@@ -191,8 +202,9 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         <div
           onClick={() => {
             if (isAuthUser) {
-              setLoader(true);
-              addFavouriteProduct();
+              isFavourite(prop.id)
+                ? removeFavouriteProduct()
+                : addFavouriteProduct();
             } else {
               setIsNotAuthenticated(false);
             }
@@ -206,7 +218,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           />
         </div>
       </div>
-      <LoadingText isLoading={loader} loadingFn={() => closeLoader()} />
       <Modal
         close={isNotAuthenticated}
         closeModal={() => setIsNotAuthenticated(true)}
