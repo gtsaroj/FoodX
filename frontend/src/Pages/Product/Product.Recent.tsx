@@ -7,16 +7,26 @@ import { RootState } from "../../Store";
 import { Frown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { RecentProductCard } from "../../Components/Card/Card.Recent.Product";
+import { getOrderByUser } from "../../Services/order.services";
 
 export const RecentProduct = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const authUser = useSelector((state: RootState) => state.root.auth.success);
+  const authUser = useSelector((state: RootState) => state.root.auth);
 
   const getProducts = async () => {
     setLoading(true);
     try {
-      const response = await getSpecialProducts();
+      const response = await getOrderByUser({
+        pageSize: 5,
+        filter: "orderRequest",
+        sort: "asc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+        userId: authUser.userInfo.uid,
+        direction: "next",
+      });
+      console.log(response);
       setInitialData(response.data);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
@@ -37,9 +47,10 @@ export const RecentProduct = () => {
       </h3>
       <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">
         <div className="flex  flex-col w-full items-start h-[530px]  gap-5">
-          {authUser ? (
+          {authUser.success ? (
             !loading ? (
-             initialData &&   initialData?.map((data) => (
+              initialData &&
+              initialData?.map((data) => (
                 <RecentProductCard prop={data} key={data.id} />
               ))
             ) : (

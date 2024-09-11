@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Product } from "../../models/product.model";
 import Skeleton from "react-loading-skeleton";
 import { SpecialCards } from "../../Components/Card/Card.Product";
-import { getSpecialProducts } from "../../Services/product.services";
+import { getPopularProducts, getSpecialProducts } from "../../Services/product.services";
 
 export const PopularProduct = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
@@ -11,7 +11,7 @@ export const PopularProduct = () => {
   const getProducts = async () => {
     setLoading(true);
     try {
-      const response = await getSpecialProducts();
+      const response = await getPopularProducts();
       setInitialData(response.data);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
