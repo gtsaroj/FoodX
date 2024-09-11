@@ -4,7 +4,10 @@ import { Product } from "../../models/product.model";
 import { getCategories } from "../../Services/category.services";
 import { Selector } from "../Common/Selector/Selector";
 import Skeleton from "react-loading-skeleton";
-import { getProductsByTag } from "../../Services/product.services";
+import {
+  getProductsByTag,
+  getSpecialProducts,
+} from "../../Services/product.services";
 import { Frown } from "lucide-react";
 
 export interface categoriesTagOption {
@@ -25,7 +28,11 @@ export const MenuType: React.FC = () => {
     setLoading(true);
     try {
       const response = await getProductsByTag(initialTag);
-      setInitialData(response.data);
+      const specialProducts = await getSpecialProducts();
+      const aggregateSpecialData = specialProducts?.data?.filter(
+        (product: Product) => product.tagId === initialTag
+      );
+      setInitialData([...response.data, ...aggregateSpecialData]);
     } catch (error) {
       throw new Error("Error while getting products by tag" + error);
     }
@@ -47,7 +54,7 @@ export const MenuType: React.FC = () => {
   }, []);
 
   useEffect(() => {
-     console.log(initialTag)
+    console.log(initialTag);
     getMenuProducts();
   }, [initialTag]);
 
