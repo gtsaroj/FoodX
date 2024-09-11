@@ -25,7 +25,7 @@ export const MenuType: React.FC = () => {
     setLoading(true);
     try {
       const response = await getProductsByTag(initialTag);
-      setInitialData(response.products);
+      setInitialData(response.data);
     } catch (error) {
       throw new Error("Error while getting products by tag" + error);
     }
@@ -47,6 +47,7 @@ export const MenuType: React.FC = () => {
   }, []);
 
   useEffect(() => {
+     console.log(initialTag)
     getMenuProducts();
   }, [initialTag]);
 

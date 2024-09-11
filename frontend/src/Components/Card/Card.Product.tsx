@@ -50,6 +50,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   };
 
   useEffect(() => {
+    if(!authUser.uid) return;
     getFavouireProducts();
   }, []);
 
@@ -77,18 +78,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       );
     }
   };
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    const dragEle = e.target as HTMLDivElement;
-    const ghostEle = dragEle.cloneNode(true) as HTMLDivElement;
-    ghostEle.classList.add("dragging");
-    ghostEle.appendChild(dragEle);
-    const nodeRect = dragEle.getBoundingClientRect();
-    e.dataTransfer.setDragImage(
-      ghostEle,
-      e.clientX - nodeRect.left,
-      e.clientY - nodeRect.top
-    );
-  };
+
 
   useEffect(() => {
     const findQuantity = selectedProductsQuantity?.find(
