@@ -1,18 +1,11 @@
-import React, { FormEvent, useEffect, useState } from "react";
-import { Frown, Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
+import React, { FormEvent } from "react";
+import { ShoppingBag } from "lucide-react";
 import { SingleCard } from "../Card/Card.Product.Cart";
 import { useNavigate } from "react-router-dom";
 import { order } from "../../Services/order.services";
 import { Product } from "../../models/product.model";
 import toast from "react-hot-toast";
-import Cart from "../../Pages/Cart/Cart";
-import { SpecialCards } from "../Card/Card.Product";
-import { UseFetch } from "../../UseFetch";
-import { addToCart } from "../../Reducer/product.reducer";
-import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { getSpecialProducts } from "../../Services/product.services";
-import { RecentProduct } from "../Card/Card.Recent.Product";
 import { RootState } from "../../Store";
 import { useSelector } from "react-redux";
 import { addRevenue } from "../../Services/revenue.services";
@@ -52,7 +45,7 @@ export const Payment: React.FC = () => {
         uid: userId as string,
         orderRequest: today,
         orderFullFilled: "",
-        status: "Pending",
+        status: "pending",
         note: "Ordered",
       });
       await addRevenue({

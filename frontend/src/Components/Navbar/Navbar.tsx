@@ -24,7 +24,6 @@ import {
 } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
-import Loader, { LoadingContent } from "../Loader/Loader";
 import { RotatingLines } from "react-loader-spinner";
 const navbarItems = [
   {
@@ -79,15 +78,6 @@ export const Navbar: React.FC = () => {
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const getAllProducts = async (): Promise<Product[]> => {
-    try {
-      const response = await getNormalProducts();
-      return response.data;
-    } catch (error) {
-      throw new Error("unable to fetch normal products" + error);
-    }
-  };
-
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const favouriteReference = useRef<HTMLDivElement>();
@@ -130,6 +120,7 @@ export const Navbar: React.FC = () => {
     setLoading(true);
     try {
       const filter = await searchProduct(value);
+       console.log(filter)
       setSearchData(filter);
     } catch (error) {
       throw new Error("Error while search product" + error);
@@ -139,12 +130,10 @@ export const Navbar: React.FC = () => {
 
   const debounceSearch = debounce(handleSearch, 500);
 
-  const dispatch = useDispatch<AppDispatch>();
-
   return (
     <nav
       ref={FilterRef}
-      className="w-full  backdrop-blur  min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
+      className="w-full  backdrop-blur bg-[var(--body-bg)]  min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
       <div className="flex  items-center justify-start gap-4">
         <div ref={menuReference as any} className="w-full  flex md:hidden ">

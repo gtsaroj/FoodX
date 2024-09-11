@@ -5,7 +5,7 @@ export interface Product {
   price: number;
   quantity: number;
   tag?: string;
-  categoryId?: string;
+  tagId?: string;
   totalSold?: number,
   createdAt?: Date;
   updatedAt?: Date;
