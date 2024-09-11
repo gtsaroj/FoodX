@@ -1,5 +1,5 @@
-import { GetOrderModal } from "../../../backend/src/models/order.model";
 import { makeRequest } from "../makeRequest";
+import { GetOrderModal } from "../models/order.model";
 
 export const getOrders = async (data: GetOrderModal) => {
   try {
@@ -8,13 +8,12 @@ export const getOrders = async (data: GetOrderModal) => {
       url: "orders/get-orders",
       data: { ...data },
     });
+     
     return response.data;
   } catch (error) {
     throw new Error(`Error while getting orders : ${error}`);
   }
 };
-
-
 
 export const getOrderByUser = async (id: string) => {
   try {
