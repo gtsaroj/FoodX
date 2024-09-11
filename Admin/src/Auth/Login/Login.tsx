@@ -51,6 +51,8 @@ const LoginContainer: React.FC = () => {
       toast.error("Invalid email or password");
       throw new Error(`Error occuring while sending form : ${error}`);
     }
+    setPassword("");
+    setEmail("");
     setDataSend(false);
   };
 
@@ -145,11 +147,11 @@ const LoginContainer: React.FC = () => {
 
 const Login: React.FC = () => {
   return (
-    <div className=" min-w-[100vw] w-full  h-full bg-[var(--light-background)] overflow-x-hidden">
+    <div className=" min-w-[100vw] w-full  h-full overflow-x-hidden">
       {/* Mobile */}
       <div className="flex flex-col items-center w-full h-full lg:hidden min-h-[90vh] gap-8">
         <AuthNavbar />
-        <div className="flex items-center justify-center w-full sm:w-[600px] h-full">
+        <div className="flex bg-[var(--light-foreground)] items-center justify-center w-full sm:w-[600px] h-full">
           <LoginContainer />
         </div>
       </div>
