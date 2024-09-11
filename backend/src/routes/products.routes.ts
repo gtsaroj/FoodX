@@ -5,6 +5,7 @@ import {
   deleteProduct,
   deleteProductsInBulk,
   getNormalProducts,
+  getPopularProducts,
   getProductByTag,
   getSpecialProducts,
   updateProduct,
@@ -31,6 +32,13 @@ productRouter.route("/get-product-by-tag/:tag").get(
   },
   getProductByTag
 );
+productRouter
+  .route("/popular")
+  .get(
+    rateLimiter(60, 20),
+    cacheMiddleware("popular_products"),
+    getPopularProducts
+  );
 
 productRouter
   .route("/add-product")

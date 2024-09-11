@@ -4,6 +4,7 @@ import {
   bulkDeleteProductsFromDatabase,
   deleteProductFromDatabase,
   getAllProductsFromDatabase,
+  getPopularProductsFromDatabase,
   getProductByTagFromDatabase,
   searchProductInDatabase,
   updateProductInDatabase,
@@ -13,6 +14,36 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { UploadProductType } from "../models/product.model.js";
 import { redisClient } from "../utils/Redis.js";
+
+const getPopularProducts = asyncHandler(async (req: any, res: any) => {
+  try {
+    const products = await getPopularProductsFromDatabase();
+    await redisClient.set("popular_products", JSON.stringify(products), {
+      EX: 3600,
+    });
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          products,
+          "Popular products fetched successfully.",
+          true
+        )
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Unable to fetch popular products.",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
 
 const getNormalProducts = asyncHandler(async (req: any, res: any) => {
   const search = req.query.search;
@@ -250,7 +281,14 @@ const deleteProduct = asyncHandler(
       });
       return res
         .status(200)
-        .json(new ApiResponse(200, {updatedProductData}, "Product deleted successfully.", true));
+        .json(
+          new ApiResponse(
+            200,
+            { updatedProductData },
+            "Product deleted successfully.",
+            true
+          )
+        );
     } catch (error) {
       return res
         .status(500)
@@ -274,4 +312,5 @@ export {
   getProductByTag,
   deleteProductsInBulk,
   deleteProduct,
+  getPopularProducts,
 };

@@ -276,6 +276,47 @@ const findProductInDatabase = async (id: string) => {
   }
 };
 
+const getPopularProductsFromDatabase = async () => {
+  try {
+    const normalProductRef = db
+      .collection("products")
+      .orderBy("totalSold", "desc")
+      .limit(5);
+    const specialProductRef = db
+      .collection("specials")
+      .orderBy("totalSold", "desc")
+      .limit(5);
+
+    const normalProducts = await normalProductRef.get();
+    const specialProducts = await specialProductRef.get();
+    if (normalProducts.empty && specialProducts.empty)
+      throw new ApiError(500, "No products found");
+
+    let result: ProductInfo[] = [
+      ...normalProducts.docs.map((doc) => ({
+        ...(doc.data() as ProductInfo),
+      })),
+      ...specialProducts.docs.map((doc) => ({
+        ...(doc.data() as ProductInfo),
+      })),
+    ];
+
+    result.sort((a, b) => {
+      if (a.totalSold === b.totalSold) return 0;
+      return a.totalSold > b.totalSold ? -1 : 1;
+    });
+
+    return result;
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error getting popular product from database.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 export {
   addProductToFirestore,
   getProductByName,
@@ -288,4 +329,5 @@ export {
   searchProductInDatabase,
   findProductInDatabase,
   updateTotalSold,
+  getPopularProductsFromDatabase,
 };
