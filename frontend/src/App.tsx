@@ -11,7 +11,6 @@ import { AppDispatch, RootState } from "./Store.ts";
 import PrivateRoute from "./PrivateRoute.tsx";
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
-import { Loader } from "./Components/Loader/Loader.tsx";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -36,9 +35,9 @@ const CartPage = React.lazy(() =>
     default: module.CartPage,
   }))
 );
-const Payment = React.lazy(() =>
-  import("./Components/Payment/Payment.tsx").then((module) => ({
-    default: module.Payment,
+const CheckoutPage = React.lazy(() =>
+  import("./Pages/Checkout/Page.Checkout.tsx").then((module) => ({
+    default: module.CheckoutPage,
   }))
 );
 const AdminProfile = React.lazy(() =>
@@ -136,7 +135,7 @@ export const App: React.FC = () => {
                 <PrivateRoute userRole={["customer", "chef", "admin"]} />
               }
             >
-              <Route path="/cart/checkout" element={<Payment />} />
+              <Route path="/cart/checkout" element={<CheckoutPage />} />
             </Route>
           </Route>
         </Route>
