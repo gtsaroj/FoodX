@@ -1,12 +1,11 @@
-import { QueryDocumentSnapshot } from "firebase-admin/firestore";
 import { db } from "./index.js";
 import { ApiError } from "../utils/ApiError.js";
 
 export const paginateFnc = async (
   collection: string,
   orderBy: string,
-  startAfterDoc: QueryDocumentSnapshot | null = null,
-  startAtDoc: QueryDocumentSnapshot | null = null,
+  startAfterDoc: any | null = null,
+  startAtDoc: any | null = null,
   pageSize: number = 10,
   sort: "asc" | "desc" = "asc",
   direction?: "prev" | "next"
@@ -16,9 +15,14 @@ export const paginateFnc = async (
   const totalLength = lengthOfDoc.size;
   console.log(`Length in number : -> ${totalLength}`);
   if (direction === "next" && startAfterDoc) {
-    query = query.startAfter(startAfterDoc).limit(pageSize);
+    const getStartAfterDoc = await db
+      .collection(collection)
+      .doc(startAfterDoc)
+      .get();
+    query = query.startAfter(getStartAfterDoc).limit(pageSize);
   } else if (direction === "prev" && startAtDoc) {
-    query = query.endBefore(startAtDoc).limitToLast(pageSize);
+    const getStartAtDoc = await db.collection(collection).doc(startAtDoc).get();
+    query = query.endBefore(getStartAtDoc).limitToLast(pageSize);
   } else {
     query = query.limit(pageSize);
   }
