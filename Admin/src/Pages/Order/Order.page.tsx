@@ -20,8 +20,8 @@ const OrderList = () => {
     perPage: number;
   }>({ currentPage: 1, perPage: 3 });
   const [currentDoc, setCurrentDoc] = useState<{
-    currentFirstDoc: string;
-    currentLastDoc: string;
+    firstVisibleDoc: any;
+    lastVisibleDoc: any;
   }>();
   const [isFilter, setIsFilter] = useState<{
     dateFilter?: any;
@@ -35,24 +35,23 @@ const OrderList = () => {
       let orders;
       if (pagination.currentPage === 1) {
         orders = await getOrders({
-          pageSize: data.pageSize,
-          filter: data.filter as keyof OrderModal | "uid",
-          sort: data.sort,
-          direction: data.direction,
-          currentFirstDoc: data.currentFirstDoc || null,
-          currentLastDoc: data.currentLastDoc || null,
+          limit: data.limit,
+          firstVisibleDoc: data.firstVisibleDoc || null,
+          lastVisibleDoc: data.lastVisibleDoc || null,
         });
       }
-      const allOrder = (await orders.data) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
+
+      const allOrder = (await orders.data.orderData ) as {
+        firstVisibleDoc: string;
+        lastVisibleDoc: string;
         orders: Order[];
         length: number;
       };
+       console.log(allOrder)
       setTotalData(allOrder.length);
       setCurrentDoc({
-        currentFirstDoc: allOrder.currentFirstDoc,
-        currentLastDoc: allOrder.currentLastDoc,
+        firstVisibleDoc: allOrder.firstVisibleDoc,
+        lastVisibleDoc: allOrder.lastVisibleDoc,
       });
       const aggregateData = allOrder?.orders.map(async (item) => {
         let getUserName = await getFullName(item?.uid);
@@ -72,7 +71,9 @@ const OrderList = () => {
         };
       });
 
-      const getaggregateDataPromises : OrderModal[] = await Promise.all(aggregateData);
+      const getaggregateDataPromises: OrderModal[] = await Promise.all(
+        aggregateData
+      );
       setInitialOrders(getaggregateDataPromises);
     } catch (error) {
       setLoading(false);
@@ -81,23 +82,13 @@ const OrderList = () => {
     setLoading(false);
   };
 
+
+
   const handleChange = (value: string) => {
     const filterOrder = SearchOrder(initialOrders, value);
     if (value?.length === 0) getAllOrders();
     setInitialOrders(filterOrder);
   };
-
-  // const handleEdit = async (value: string, uid?: string) => {
-  //   try {
-  //     const toastLoading = toast.loading("Status updating");
-  //     await updateOrderStatus(value, uid);
-  //     await getAllOrders();
-  //     toast.dismiss(toastLoading);
-  //     toast.success("Updated status");
-  //   } catch (error) {
-  //     throw new Error("Unable to update order status");
-  //   }
-  // };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialOrders,
@@ -105,44 +96,34 @@ const OrderList = () => {
 
   useEffect(() => {
     getAllOrders({
-      filter: (isFilter?.sortFilter as keyof OrderModal) || "uid",
-      pageSize: pagination.perPage,
-      sort: sortOrder || "asc",
-      direction: "next",
-      currentFirstDoc: null,
-      currentLastDoc: null,
+      limit: pagination.perPage,
+      firstVisibleDoc: null,
+      lastVisibleDoc: null,
     });
-  }, [pagination.perPage, sortOrder, isFilter?.sortFilter]);
+  }, [pagination.perPage]);
 
   useEffect(() => {
     if (
       pagination.currentPage > 1 &&
-      currentDoc?.currentFirstDoc &&
-      currentDoc?.currentLastDoc
+      currentDoc?.firstVisibleDoc &&
+      currentDoc?.lastVisibleDoc
     ) {
-      console.log(
-        pagination.currentPage,
-        currentDoc.currentFirstDoc,
-        currentDoc.currentLastDoc
-      );
       const fetchNextPage = async () => {
         const orders = await getOrders({
-          filter: (isFilter?.sortFilter as keyof Order) || "uid",
-          pageSize: pagination.perPage,
-          sort: sortOrder || "asc",
-          currentFirstDoc: currentDoc.currentFirstDoc,
-          currentLastDoc: currentDoc.currentLastDoc,
+          limit: pagination.perPage,
+          firstVisibleDoc: currentDoc.firstVisibleDoc,
+          lastVisibleDoc: currentDoc.lastVisibleDoc,
           direction: "next",
         });
         const getAllOrder = orders.data as {
-          currentFirstDoc: string;
-          currentLastDoc: string;
+          firstVisibleDoc: any;
+          lastVisibleDocc: any;
           orders: Order[];
           length: number;
         };
         setCurrentDoc({
-          currentFirstDoc: getAllOrder.currentFirstDoc,
-          currentLastDoc: getAllOrder.currentLastDoc,
+          firstVisibleDoc: getAllOrder.firstVisibleDoc,
+          lastVisibleDoc: getAllOrder.lastVisibleDocc,
         });
         setTotalData(getAllOrder.length);
 
@@ -185,10 +166,8 @@ const OrderList = () => {
       fetchNextPage();
     }
   }, [
-    isFilter?.sortFilter,
-    sortOrder,
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
+    currentDoc?.firstVisibleDoc,
+    currentDoc?.lastVisibleDoc,
     pagination.currentPage,
     pagination.perPage,
   ]);
@@ -283,7 +262,7 @@ const OrderList = () => {
         )}
       </div>
       <OrderTable
-        totalData={totalData as number || 1}
+        totalData={(totalData as number) || 15}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

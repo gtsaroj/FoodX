@@ -29,7 +29,9 @@ export const Selector: React.FC<SelectorPop> = ({
         <ChevronDown className="text-[var(--dark-text)] cursor-pointer " />
       </div>
       <div
-        className={` bg-[var(--light-foreground)] overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
+        className={` bg-[var(--light-foreground)] ${
+          categoryOption.length > 4 ? "h-[150px] " : ""
+        } scrollbar-custom overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
           show
             ? "max-h-64 opacity-100"
             : "max-h-0 opacity-0 transform -translate-y-2"
@@ -38,8 +40,8 @@ export const Selector: React.FC<SelectorPop> = ({
         {categoryOption?.map((option) => (
           <p
             onClick={() => {
-              setField(option.value  ? option.value : option as any);
-              setShowField(option.label ? option.label :option as any);
+              setField(option.value ? option.value : (option as any));
+              setShowField(option.label ? option.label : (option as any));
               setShow(false);
             }}
             key={option.label}

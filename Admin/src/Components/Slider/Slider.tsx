@@ -83,7 +83,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <img className="w-full h-full " src={collegeLogo} alt="" />
             </div>
             <button onClick={closeFn} className="hover:text-red-600">
-              <X className="size-9" />
+              <X className="size-9 text-[var(--dark-text)] " />
             </button>
           </div>
         </div>

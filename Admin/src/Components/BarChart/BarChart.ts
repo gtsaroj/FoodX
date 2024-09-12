@@ -72,9 +72,9 @@ export const barData = (data: Revenue[]) => {
   try {
     const allOrder = data.map((order) => {
       const products = productWithQuantity(order.orders);
-
+      const processedProducts = combineSmallCategories(products, 5);
       return {
-        ...products,
+        ...processedProducts,
         time: order.id,
       };
     });
@@ -197,4 +197,29 @@ export const getOrderWeeklyTotal = (
   }
 
   return weeklyOrders;
+};
+
+export const combineSmallCategories = (
+  data: { [key: string]: number },
+  minCount: number
+) => {
+  const entries = Object.entries(data);
+
+  if (entries.length <= minCount) return data;
+
+  // Sort categories by quantity in descending order
+  const sortedEntries = entries.sort((a, b) => b[1] - a[1]);
+
+  // Keep the top categories and combine the rest as "Others"
+  const topCategories = sortedEntries.slice(0, minCount);
+  const others = sortedEntries.slice(minCount);
+
+  // Calculate the total for "Others"
+  const othersTotal = others.reduce((acc, [_, quantity]) => acc + quantity, 0);
+
+  // Return a new object with the top categories and "Others"
+  const result = Object.fromEntries(topCategories);
+  result["Others"] = othersTotal;
+
+  return result;
 };

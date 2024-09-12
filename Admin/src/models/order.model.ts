@@ -14,9 +14,9 @@ export interface Order {
   updatedAt?: Date;
 }
 
-export interface RecentOrder extends Order{
-  image: string,
-  price: string
+export interface RecentOrder extends Order {
+  image: string;
+  price: string;
 }
 
 export interface DailyAggregateData {
@@ -26,11 +26,11 @@ export interface DailyAggregateData {
 }
 
 export interface GetOrderModal {
-  pageSize: number;
+  limit: number;
   filter?: keyof Order;
-  sort: "asc" | "desc";
-  currentFirstDoc?: any | null;
-  currentLastDoc?: any | null;
+  sort?: "asc" | "desc";
+  firstVisibleDoc?: any | null;
+  lastVisibleDoc?: any | null;
   direction?: "prev" | "next";
   status?:
     | "Recieved"
@@ -65,6 +65,6 @@ export interface OrderModal {
   orderFullfilled: string;
 }
 
-export interface status{
+export interface status {
   status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
 }
