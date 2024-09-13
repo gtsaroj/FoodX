@@ -83,7 +83,7 @@ const Pagination: React.FC<PaginationProps> = ({
             typeof page === "number" ? "pagination-page" : "not-btn"
           } ${
             page === currentPage
-              ? " text-[var(--dark-text)] bg-red-500 hover:!bg-red-600  "
+              ? " text-[white] bg-red-500 hover:!bg-red-600  "
               : ""
           }`}
           style={{

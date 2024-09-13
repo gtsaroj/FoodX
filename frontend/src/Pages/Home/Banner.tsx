@@ -62,11 +62,9 @@ export const Sponsor: React.FC = () => {
     getBanner();
   }, []);
 
-  console.log(initialData);
-
   return (
     <div className="md:flex hidden items-center justify-center w-full h-full">
-      <div className="lg:h-[540px]  h-[300px] w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
+      <div className="lg:h-[540px]  h-[300px] max-w-md md:w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         {loading ? (
           <div className="w-full rounded-xl  gap-4 flex ">
             <Skeleton
@@ -82,7 +80,7 @@ export const Sponsor: React.FC = () => {
           <img
             src={initialData[0]?.image}
             className="w-full rounded-xl h-full"
-            alt="Hello"
+            alt="sponsor banner"
           />
         )}
       </div>
