@@ -17,7 +17,8 @@ export interface User {
   avatar: string;
   refreshToken: string;
   role: RoleType;
-  totalOrders: number;
+  totalOrder: number;
+  totalSpent: number;
 }
 
 export interface UserInfo extends User {

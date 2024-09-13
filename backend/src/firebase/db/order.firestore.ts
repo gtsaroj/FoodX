@@ -3,7 +3,11 @@ import { Order, OrderInfo, OrderStatus } from "../../models/order.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
 import { paginateFnc } from "../utils.js";
-import { findUserInDatabase, updateTotalOrder } from "./user.firestore.js";
+import {
+  findUserInDatabase,
+  updateTotalOrder,
+  updateTotalSpent,
+} from "./user.firestore.js";
 import { findProductInDatabase, updateTotalSold } from "./product.firestore.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
@@ -48,7 +52,11 @@ const getOrder = async (id: string) => {
   }
 };
 
-const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
+const updateOrderStatusInDatabase = async (
+  id: string,
+  status: OrderStatus,
+  price: number
+) => {
   const orderRef = db.collection("orders").doc(id);
   if (!orderRef) throw new ApiError(404, "No document found.");
   try {
@@ -67,6 +75,10 @@ const updateOrderStatusInDatabase = async (id: string, status: OrderStatus) => {
     const orderData = await getOrder(id);
     const { uid, products } = orderData;
     const { role } = await findUserInDatabase(uid);
+    if (price <= 0) {
+      throw new ApiError(500, "Total price of order can't be 0 or less.");
+    }
+    await updateTotalSpent(role, uid, price);
     await updateTotalOrder(role, uid);
     products.forEach(async (product) => {
       const { collection } = await findProductInDatabase(product.id);

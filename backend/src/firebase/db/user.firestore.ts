@@ -91,6 +91,27 @@ const updateTotalOrder = async (collection: string, uid: string) => {
   }
 };
 
+const updateTotalSpent = async (
+  collection: string,
+  uid: string,
+  price: number
+) => {
+  try {
+    const userRef = db.collection(collection).doc(uid);
+    await userRef.update({
+      totalSpent: FieldValue.increment(price),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Unable to update total orders.",
+      null,
+      error as string[]
+    );
+  }
+};
+
 const getUserFromDatabase = async (
   uid: string,
   path: "customer" | "admin" | "chef"
@@ -139,7 +160,7 @@ const bulkDeleteUserFromDatabase = async (
 const getUsersFromDatabase = async (
   path: "customer" | "admin" | "chef",
   pageSize: number,
-  filter: keyof User,
+  filter: keyof UserInfo = "createdAt",
   sort: "asc" | "desc" = "asc",
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
@@ -215,4 +236,5 @@ export {
   getUsersFromDatabase,
   findUserInDatabase,
   updateTotalOrder,
+  updateTotalSpent,
 };

@@ -87,7 +87,8 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       uid: uid || "",
       refreshToken: "",
       role,
-      totalOrders: 0,
+      totalOrder: 0,
+      totalSpent: 0,
     };
 
     await addUserToFirestore(userInfo, role);
@@ -412,7 +413,7 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
       .status(500)
       .json(
         new ApiError(
-          401,
+          500,
           "Something went wrong while fetching users from database",
           null,
           error as string[]

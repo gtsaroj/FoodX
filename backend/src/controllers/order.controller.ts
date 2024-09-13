@@ -91,9 +91,14 @@ const addNewOrder = asyncHandler(
 
 const updateOrder = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const { id, status } = req.body;
+    const { id, status, price } = req.body;
     try {
-      const updatedProduct = await updateOrderStatusInDatabase(id, status);
+      const totalPrice = +price;
+      const updatedProduct = await updateOrderStatusInDatabase(
+        id,
+        status,
+        totalPrice
+      );
       return res
         .status(200)
         .json(
@@ -125,7 +130,7 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     currentFirstDoc,
     currentLastDoc,
     status,
-    userId,  
+    userId,
   }: {
     pageSize: number;
     currentFirstDoc: any | null;
