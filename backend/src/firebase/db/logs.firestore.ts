@@ -41,11 +41,11 @@ const addLogToFirestore = async (
 const getLogsFromDatabase = async (
   path: "adminLogs" | "chefLogs" | "customerLogs",
   pageSize: number,
-  filter: keyof logProps,
   sort: "asc" | "desc" = "asc",
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
   direction?: "prev" | "next",
+  uid?: string,
   action?:
     | "login"
     | "register"
@@ -58,19 +58,17 @@ const getLogsFromDatabase = async (
   try {
     const { query, totalLength } = await paginateFnc(
       path,
-      filter,
+      "createdAt",
       startAfterDoc,
       startAtDoc,
       pageSize,
       sort,
-      direction
+      direction,
+      uid,
+      undefined,
+      action
     );
-    let logsDoc;
-    if (action) {
-      logsDoc = await query.where("action", "==", action).get();
-    } else {
-      logsDoc = await query.get();
-    }
+    const logsDoc = await query.get();
     const logs: logProps[] = [];
 
     logsDoc.docs.forEach((doc) => {

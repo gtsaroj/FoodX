@@ -125,7 +125,7 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     currentFirstDoc,
     currentLastDoc,
     status,
-    userId,
+    userId,  
   }: {
     pageSize: number;
     currentFirstDoc: any | null;

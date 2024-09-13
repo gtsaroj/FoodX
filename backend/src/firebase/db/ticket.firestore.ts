@@ -53,24 +53,27 @@ const getTicketsFromFirestore = async (
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
   direction?: "prev" | "next",
-  status?: "Pending" | "Resolved" | "Rejected"
+  status?: "pending" | "resolved" | "cancelled",
+  uid?: string,
+  category?: string
 ) => {
   try {
     const { query, totalLength } = await paginateFnc(
       "ticket",
-      "date",
+      "createdAt",
       startAfterDoc,
       startAtDoc,
       pageSize,
       sort,
-      direction
+      direction,
+      uid,
+      undefined,
+      undefined,
+      status,
+      category
     );
-    let ticketsDoc;
-    if (status) {
-      ticketsDoc = await query.where("status", "==", status).get();
-    } else {
-      ticketsDoc = await query.get();
-    }
+    const ticketsDoc = await query.get();
+
     const tickets: NewTicket[] = [];
 
     ticketsDoc.docs.forEach((doc) => {

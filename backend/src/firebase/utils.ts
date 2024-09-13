@@ -8,9 +8,41 @@ export const paginateFnc = async (
   startAtDoc: any | null = null,
   pageSize: number = 10,
   sort: "asc" | "desc" = "asc",
-  direction?: "prev" | "next"
+  direction?: "prev" | "next",
+  uid?: string,
+  orderStatus?:
+    | "pending"
+    | "preparing"
+    | "prepared"
+    | "completed"
+    | "cancelled",
+  action?:
+    | "login"
+    | "register"
+    | "logout"
+    | "create"
+    | "update"
+    | "delete"
+    | "checkout",
+  ticketStatus?: "pending" | "resolved" | "cancelled",
+  category?: string
 ) => {
   let query = db.collection(collection).orderBy(orderBy, sort);
+  if (uid) {
+    query = query.where("uid", "==", uid);
+  }
+  if (orderStatus) {
+    query = query.where("status", "==", orderStatus);
+  }
+  if (action) {
+    query = query.where("action", "==", action);
+  }
+  if (ticketStatus) {
+    query = query.where("status", "==", ticketStatus);
+  }
+  if (category) {
+    query = query.where("category", "==", category);
+  }
   const lengthOfDoc = await query.get();
   const totalLength = lengthOfDoc.size;
   console.log(`Length in number : -> ${totalLength}`);

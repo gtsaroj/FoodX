@@ -3,7 +3,7 @@ export interface Ticket {
   title: string;
   description: string;
   category: string;
-  status: string;
+  status: "pending" | "resolved" | "cancelled";
   date: Date;
 }
 export interface NewTicket extends Ticket {

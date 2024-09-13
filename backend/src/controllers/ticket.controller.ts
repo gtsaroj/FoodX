@@ -93,13 +93,17 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
     currentFirstDoc,
     currentLastDoc,
     status,
+    category,
+    uid,
   }: {
     pageSize: number;
     sort: "asc" | "desc";
     direction: "prev" | "next";
     currentFirstDoc: any | null;
     currentLastDoc: any | null;
-    status?: "Pending" | "Resolved" | "Rejected";
+    status?: "pending" | "resolved" | "cancelled";
+    uid?: string;
+    category?: string;
   } = req.body;
 
   try {
@@ -109,7 +113,9 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
       direction === "next" ? currentLastDoc : null,
       direction === "prev" ? currentFirstDoc : null,
       direction,
-      status ? status : undefined
+      status ? status : undefined,
+      uid ? uid : undefined,
+      category ? category : undefined
     );
     res.status(200).json(
       new ApiResponse(
@@ -125,18 +131,17 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
       )
     );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while fetching tickets from database",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching tickets from database",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 
-export {
-  addNewTicket,
-  updateTicket,
-  deleteTicket,
-  fetchTickets,
-};
+export { addNewTicket, updateTicket, deleteTicket, fetchTickets };

@@ -79,11 +79,11 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
   let {
     path,
     pageSize,
-    filter,
     sort,
     direction,
     currentFirstDoc,
     currentLastDoc,
+    uid,
     action,
   }: {
     path: "adminLogs" | "chefLogs" | "customerLogs";
@@ -93,6 +93,7 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
     currentFirstDoc: any | null;
     currentLastDoc: any | null;
     direction?: "prev" | "next";
+    uid?: string;
     action?:
       | "login"
       | "register"
@@ -107,11 +108,11 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
     let { logs, firstDoc, lastDoc, length } = await getLogsFromDatabase(
       path,
       pageSize,
-      filter,
       sort,
       direction === "next" ? currentLastDoc : null,
       direction === "prev" ? currentFirstDoc : null,
       direction,
+      uid ? uid : undefined,
       action ? action : undefined
     );
     res
@@ -125,12 +126,16 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while fetching logs from database",
-      null,
-      error as string[]
-    );
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching logs from database",
+          null,
+          error as string[]
+        )
+      );
   }
 });
 

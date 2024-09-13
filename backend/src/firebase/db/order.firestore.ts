@@ -97,21 +97,11 @@ const getOrdersFromDatabase = async (
       startAtDoc,
       pageSize,
       "desc",
-      direction
+      direction,
+      userId,
+      status
     );
-    let orderDoc;
-    if (status && !userId) {
-      orderDoc = await query.where("status", "==", status).get();
-    } else if (!status && userId) {
-      orderDoc = await query.where("userId", "==", userId).get();
-    } else if (userId && status) {
-      orderDoc = await query
-        .where("userId", "==", userId)
-        .where("status", "==", status)
-        .get();
-    } else {
-      orderDoc = await query.get();
-    }
+    const orderDoc = await query.get();
     const orders: Order[] = [];
 
     orderDoc.docs.forEach((doc) => {
