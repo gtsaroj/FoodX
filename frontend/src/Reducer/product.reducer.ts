@@ -24,7 +24,7 @@ const productSlice = createSlice({
         (product) => product.id !== action.payload
       );
     },
-    resetCart: (state, action) => {
+    resetCart: (state) => {
       state.products = [];
     },
   },

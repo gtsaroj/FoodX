@@ -1,18 +1,23 @@
-import { ChevronRight, Flag } from "lucide-react";
-import { ColumnProps, OrderModal } from "../../models/table.model";
+import { ChevronRight } from "lucide-react";
+import { ColumnProps } from "../../models/table.model";
 import { useEffect, useState } from "react";
 import Table from "../../Components/Common/Table/Table";
 import { GetOrderModal, Order, UserOrder } from "../../models/order.model";
 import { getOrderByUser } from "../../Services/order.services";
-import dayjs from "dayjs";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
-import { nanoid } from "@reduxjs/toolkit";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Store";
+import { aggregateUserOrder } from "./order";
+import { useNavigate, useRouteLoaderData } from "react-router-dom";
+import {
+  addToCart,
+  removeCart,
+  resetCart,
+} from "../../Reducer/product.reducer";
+import toast from "react-hot-toast";
 
 export const OrderHistory = () => {
-  const [selectedProducts, setSelectedProducts] = useState<string[] | string>(
-    []
-  );
+  const navigate = useNavigate();
+
   const [initialOrder, setInitialOrder] = useState<UserOrder[]>([]);
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
@@ -54,8 +59,10 @@ export const OrderHistory = () => {
         <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
           <p>
             {item.id == selectedId && isCollapsed
-              ? item.products
-              : selectedProducts}
+              ? item.products.map(
+                  (product) => `${product.name}* ${product.quantity}`
+                )
+              : item.products[0].name + " * " + item.products[0].quantity}
           </p>
           <span
             onClick={() => {
@@ -126,64 +133,57 @@ export const OrderHistory = () => {
     },
   ];
 
+  const dispatch = useDispatch<AppDispatch>();
+
   const getUserOrders = async ({
     pageSize,
-    filter,
-    sort,
     currentFirstDoc,
     currentLastDoc,
     direction,
-    status,
-    userId,
   }: GetOrderModal) => {
     setLoading(true);
     try {
       const response = await getOrderByUser({
         pageSize: pageSize,
-        filter: filter,
-        sort: sort,
         direction: direction,
-        userId: userId,
-        currentFirstDoc: currentFirstDoc,
-        currentLastDoc: currentLastDoc,
+        currentFirstDoc: currentFirstDoc || null,
+        currentLastDoc: currentLastDoc || null,
       });
       const userOrder = response as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        data: Order[];
-        length: number;
+        data: {
+          length: number;
+          orders: Order[];
+          currentFirstDoc: string;
+          currentLastDoc: string;
+        };
       };
       setCurrentDoc({
-        currentFirstDoc: userOrder.currentFirstDoc,
-        currentLastDoc: userOrder.currentLastDoc,
+        currentFirstDoc: userOrder.data.currentFirstDoc,
+        currentLastDoc: userOrder.data.currentLastDoc,
       });
+      setTotalData(userOrder.data.length);
+      const orderHistory = aggregateUserOrder(userOrder.data.orders);
+      setInitialOrder((prevOrders) => {
+        if (!prevOrders || prevOrders.length === 0) {
+          return orderHistory; // Set the initial order if none exists
+        }
 
-      setTotalData(userOrder.length);
-      const aggregateData = userOrder?.data?.map((order): UserOrder => {
-        const productNames = order.products?.map(
-          (product) =>
-            (product.name as string) + " × " + product.quantity + ", "
-        );
-        const totalAmount = order?.products?.reduce(
-          (productQuantity, product) =>
-            productQuantity + product.quantity * product.price,
-          1
-        );
-        return {
-          id: nanoid().substring(0, 15) as string,
-          products: productNames,
-          time: dayjs(order.orderRequest).format("MM/DD/YYYY"),
-          status: order.status as string,
-          amount: totalAmount,
-          payment: "esewa",
-        };
+        // Combine existing orders with new ones, ensuring no duplicate IDs
+        const updatedOrders = [
+          ...prevOrders,
+          ...orderHistory.filter(
+            (data) => !prevOrders.some((orderData) => orderData.id === data.id)
+          ),
+        ];
+
+        return updatedOrders;
       });
-      setInitialOrder(aggregateData);
     } catch (error) {
       throw new Error("Error while fetching user-order");
     }
     setLoading(false);
   };
+  console.log(useRouteLoaderData);
 
   useEffect(() => {
     if (pagination.currentPage === 1) {
@@ -199,37 +199,30 @@ export const OrderHistory = () => {
     if (pagination.currentPage > 1 && currentDoc?.currentLastDoc) {
       getUserOrders({
         pageSize: pagination.perPage,
-        sort: "asc",
-        filter: "orderId",
         currentFirstDoc: currentDoc.currentFirstDoc,
         currentLastDoc: currentDoc.currentLastDoc,
         direction: "next",
-        userId: authUser.uid,
       });
     }
-  }, [
-    pagination.currentPage,
-    pagination.perPage,
-    currentDoc?.currentLastDoc,
-    authUser.uid,
-  ]);
-
-  useEffect(() => {
-    initialOrder.forEach((order) => {
-      setSelectedProducts(order.products[0]);
-    });
-  }, [initialOrder]);
+  }, [pagination.perPage, pagination.currentPage]);
 
   return (
-    <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var-(--light-foreground)] px-5 py-4   rounded items-start justify-center">
+    <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var(--light-foreground)] px-5 py-4   rounded items-start justify-center">
       <h1 className="text-[25px] font-semibold tracking-wider ">
         Order History
       </h1>
 
       <Table
         actions={{
-          orderFn: (id: string) => console.log(id),
-          downloadFn: (id: string) => console.log(id),
+          orderFn: async (id: string) => {
+            const findProduct = initialOrder.find((order) => order.id === id);
+            dispatch(resetCart());
+            findProduct?.products.forEach((product) => {
+              dispatch(addToCart({ ...product }));
+            });
+            navigate("/cart/checkout");
+          },
+          downloadFn: (id: string) => toast.success("We will integrate soon!"),
         }}
         pagination={{
           currentPage: pagination?.currentPage,
@@ -242,7 +235,7 @@ export const OrderHistory = () => {
         bodyHeight={400}
         columns={Columns}
         data={initialOrder}
-        totalData={totalData || initialOrder?.length || 1}
+        totalData={totalData as number || 1}
         loading={loading}
       />
     </div>

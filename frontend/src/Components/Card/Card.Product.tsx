@@ -192,7 +192,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
                     image: prop.image,
                     price: prop.price,
                     quantity: 1,
-                    tag: prop.tag,
+                    tagId: prop.tagId,
                   })
                 );
               }}
