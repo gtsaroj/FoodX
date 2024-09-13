@@ -2,7 +2,7 @@ import toast from "react-hot-toast";
 import { makeRequest } from "../makeRequest";
 import { GetOrderModal, Order } from "../models/order.model";
 
-export const order = async (data: Order) => {
+export const addOrder = async (data: Order) => {
   try {
     const response = await makeRequest({
       method: "post",

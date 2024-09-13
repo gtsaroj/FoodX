@@ -4,7 +4,6 @@ import {
   bulkDeleteOfProduct,
   deleteProduct,
   getNormalProducts,
-  getProducts,
   getSpecialProducts,
 } from "../../Services/product.services";
 import { addLogs } from "../../Services/log.services";
@@ -18,6 +17,7 @@ import toast from "react-hot-toast";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
 import { searchProduct } from "../../Services/product.services";
+import { aggregateProducts } from "../Product/product";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -47,45 +47,12 @@ const AllProductAnalytics = () => {
   const getProducts = async () => {
     setLoading(true);
     try {
-      const normalProducts = await getNormalProducts();
-      const specialProducts = await getSpecialProducts();
-
-      const agrregateNormalProducts = normalProducts?.data?.map(
-        (data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: "products",
-          };
-        }
-      );
-
-      const agrregateSpecialProducts = specialProducts?.data?.map(
-        (data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: "specials",
-          };
-        }
-      );
-      const products = [...agrregateNormalProducts, agrregateSpecialProducts];
+      const [normalProducts, specialProducts] = await Promise.all([
+        getNormalProducts(),
+        getSpecialProducts(),
+      ]);
+      const allProducts = [...normalProducts.data, specialProducts.data];
+      const products = await aggregateProducts(allProducts);
       setFetchedProducts(products);
     } catch (error) {
       throw new Error("Error while getting products " + error);
@@ -102,7 +69,8 @@ const AllProductAnalytics = () => {
     isChecked: boolean,
     value: "specials" | "products"
   ) => {
-    if (!isChecked) return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+    if (!isChecked)
+      return setIsFilter((prev) => ({ ...prev, typeFilter: undefined }));
     setIsFilter((prev) => ({ ...prev, typeFilter: value }));
   };
 
@@ -110,8 +78,9 @@ const AllProductAnalytics = () => {
     isChecked: boolean,
     value: "price" | "orders" | "revenue"
   ) => {
-    if (!isChecked) return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
-    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+    if (!isChecked)
+      return setIsFilter((prev) => ({ ...prev, sortFilter: undefined }));
+    setIsFilter((prev) => ({ ...prev, sortFilter: value as keyof Product }));
   };
 
   useEffect(() => {
@@ -123,21 +92,7 @@ const AllProductAnalytics = () => {
         const specialProducts = await getSpecialProducts(
           `${isFilter.typeFilter === "products" ? "all" : isFilter.typeFilter}`
         );
-        filteredProducts = specialProducts?.data?.map((data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: isFilter?.typeFilter,
-          };
-        });
+        filteredProducts = await aggregateProducts(specialProducts.data);
       } else {
         // Fetch all products if no filter is applied
         getProducts();
@@ -188,23 +143,11 @@ const AllProductAnalytics = () => {
     if (value.length <= 0) return await getProducts();
     const filterProducts = (await searchProduct(value)) as Product[];
 
-    const aggregateProducts = filterProducts?.map((product): Product => {
-      return {
-        id: product.id,
-        name: product.name,
-        image: product.image,
-        quantity: product.quantity as number,
-        price: product.price as number,
-        category: product.tag,
-        order: 20,
-        rating: 4.3,
-        revenue: 15000,
-      };
-    });
-    setFetchedProducts(aggregateProducts);
+    const products = await aggregateProducts(filterProducts);
+    setFetchedProducts(products);
   };
 
-  const debounceSearch = useCallback(debounce(handleChange, 300), []);
+  const debounceSearch = useCallback(debounce(handleChange, 500), []);
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");

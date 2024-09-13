@@ -8,7 +8,7 @@ export const getOrders = async (data: GetOrderModal) => {
       url: "orders/get-orders",
       data: { ...data },
     });
-     
+
     return response.data;
   } catch (error) {
     throw new Error(`Error while getting orders : ${error}`);

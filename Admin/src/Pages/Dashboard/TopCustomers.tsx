@@ -41,15 +41,20 @@ export const TopCustomers = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const customers = await getTopCustomers(); 
-      console.log(customers)
-      setOriginalData(customers as User[]);
-      if (customers) setTopCustomer(customers as User[]);
+      try {
+        const customers = await getTopCustomers();
+        console.log(customers);
+        setOriginalData(customers as User[]);
+        if (customers) setTopCustomer(customers as User[]);
+      } catch (error) {
+        setLoading(false);
+        setOriginalData([]);
+        throw new Error("Error while fetching customer data" + error);
+      }
       setLoading(false);
     })();
   }, [isRefresh]);
 
-  console.log(TopCustomer)
   return (
     <div className="w-full border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] h-[400px] flex flex-col justify-start  items-start px-2 rounded-md py-3 ">
       <div className="flex items-center text-[var(--dark-text)] justify-between w-full gap-3 px-3 pt-3 pb-5">

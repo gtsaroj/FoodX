@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { OrderModal, status } from "../../models/order.model";
+import { Order, OrderModal, status } from "../../models/order.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
@@ -21,23 +21,27 @@ export const OrderTable: React.FC<orderTableProp> = ({
   onPageChange,
   pagination,
 }) => {
-  const [selectedProducts, setSelectedProducts] = useState<string[] | string>(
-    []
-  );
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
-  const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
-
+  const [initialOrder, setInitialOrder] = useState<OrderModal[]>([]);
   const statusChangeFn = async (newStatus: string) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
     try {
-      const response = await updateOrderStatus({
+      await updateOrderStatus({
         id: id as string,
         status: newStatus,
       });
-      console.log(response);
+      const refreshProducts = orders?.map((order) => {
+        if (order.id === id) {
+          return { ...order, status: newStatus };
+        }
+
+        return order;
+      }) as OrderModal[];
+      setInitialOrder(refreshProducts);
       toast.dismiss(toastLoader);
       toast.success("Succussfully updated");
     } catch (error) {
@@ -83,11 +87,11 @@ export const OrderTable: React.FC<orderTableProp> = ({
       render: (item: OrderModal) => (
         <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
           <p>
-            {item.id == selectedId && isCollapsed
+            {!isCollapsed && item.id == selectedId
               ? item.products
-              : selectedProducts}
+              : item.products && item.products[0]}
           </p>
-          <span
+          <button
             onClick={() => {
               setSelectedId(item.id);
               setIsCollapsed(!isCollapsed);
@@ -95,11 +99,10 @@ export const OrderTable: React.FC<orderTableProp> = ({
           >
             <ChevronRight
               className={`size-5 ${
-                selectedId === item.id && isCollapsed ? "rotate-90" : ""
+                selectedId === item.id && !isCollapsed ? "rotate-90" : ""
               }  duration-200 cursor-pointer `}
             />
-            {}{" "}
-          </span>
+          </button>
         </div>
       ),
     },
@@ -108,7 +111,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
       colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
       render: (item: OrderModal) => (
         <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.orderRequest + ", "}</span>
+          <span>{item.orderRequest}</span>
         </div>
       ),
     },
@@ -117,7 +120,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
       colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
       render: (item: OrderModal) => (
         <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.orderFullfilled + ", "}</span>
+          <span>{item.orderFullfilled}</span>
         </div>
       ),
     },
@@ -174,17 +177,17 @@ export const OrderTable: React.FC<orderTableProp> = ({
     },
   ];
 
+   console
+
   useEffect(() => {
-    orders?.forEach((order) => {
-      if (!order.products) return "Not available";
-      setSelectedProducts(order.products[0]);
-    });
+    setInitialOrder(orders);
   }, [orders]);
+
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
         totalData={totalData}
-        data={orders as any}
+        data={initialOrder as any}
         columns={Columns}
         actionIconColor="red"
         disableActions={false}
@@ -263,7 +266,7 @@ export const StatusChanger: React.FC<StatusChangerProp> = ({
                 : ""
             } `}
           ></span>
-          <span> {status.charAt(0).toUpperCase() + status.slice(1)  }</span>
+          <span> {status.charAt(0).toUpperCase() + status.slice(1)}</span>
         </button>
       ))}
     </div>

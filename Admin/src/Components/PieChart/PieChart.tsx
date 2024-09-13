@@ -24,7 +24,7 @@ export const PieChartAnalytics = () => {
         startDate: startDate,
         endDate: endDate,
       });
-      const aggregateData = aggregateDailyCategoryOrder(response.data);
+      const aggregateData =  await aggregateDailyCategoryOrder(response.data);
       console.log(aggregateData);
       setInitialData(aggregateData);
     } catch (error) {
@@ -76,6 +76,8 @@ export const PieChartAnalytics = () => {
     filter?.dateFilter?.endDate,
     filter?.dateFilter?.startDate,
   ]);
+
+   console.log(initialData)
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
@@ -195,7 +197,7 @@ export const PieChartAnalytics = () => {
               {
                 data: initialData?.map((data, index) => ({
                   value: data.value,
-                  label: data.name,
+                  label: data.label.slice(0,6),
                   id: index,
                 })),
                 highlightScope: { fade: "series", highlight: "item" },

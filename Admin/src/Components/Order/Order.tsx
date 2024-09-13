@@ -1,17 +1,11 @@
-import { ChevronRight, Frown } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
-import {
-  GetOrderModal,
-  Order,
-  OrderModal,
-  RecentOrder,
-} from "../../models/order.model";
+import { GetOrderModal, Order, RecentOrder } from "../../models/order.model";
 import Skeleton from "react-loading-skeleton";
 import { getOrders } from "../../Services/order.services";
 import { OrderCard } from "../Common/Cards/ OrderCard";
-import EmptyLogo from "../../assets/empty.png";
 import { Empty } from "../Common/Empty/Empty";
 
 export const RecentOrders = () => {
@@ -23,7 +17,7 @@ export const RecentOrders = () => {
   }>({ currentPage: 1, perPage: 3 });
   const [loading, setLoading] = useState<boolean>(false);
   const getRecentOrder = async ({
-    pageSize,
+    limit,
     filter,
     sort,
     currentFirstDoc,
@@ -34,7 +28,7 @@ export const RecentOrders = () => {
     setLoading(true);
     try {
       const response = await getOrders({
-        pageSize: pageSize,
+        limit: limit,
         sort: sort,
         currentFirstDoc: currentFirstDoc,
         currentLastDoc: currentLastDoc,
@@ -51,7 +45,7 @@ export const RecentOrders = () => {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   useEffect(() => {
     getRecentOrder({
-      pageSize: pagination.perPage,
+      limit: pagination.perPage,
       sort: "desc",
       currentFirstDoc: null,
       currentLastDoc: null,

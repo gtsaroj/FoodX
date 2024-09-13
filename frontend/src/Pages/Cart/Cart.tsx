@@ -5,10 +5,12 @@ import { AppDispatch, RootState } from "../../Store";
 import { CopyPlus, Plus, ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../../Reducer/product.reducer";
+import { Loader } from "../../Components/Loader/Loader";
 
 const Cart: React.FC = () => {
   const [isDraggable, setIsDraggable] = useState<boolean>(false);
   const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const selectedProducts = useSelector(
     (state: RootState) => state.root.cart.products
@@ -92,11 +94,15 @@ const Cart: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => navigate("/cart/checkout")}
+          onClick={() => {
+            setLoading(true);
+            navigate("/cart/checkout");
+          }}
           className="py-3 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider text-xl font-bold"
         >
           Checkout
         </button>
+        <Loader isLoading={loading} loadingFn={() => setLoading(false)} />
       </div>
     </div>
   );

@@ -62,7 +62,7 @@ export const LoginContainer: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] border-[1px]  bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
             </div>
             <div className="relative flex flex-col gap-2">
@@ -77,7 +77,7 @@ export const LoginContainer: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] border-[1px] bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (
