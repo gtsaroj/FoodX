@@ -7,17 +7,19 @@ import Skeleton from "react-loading-skeleton";
 import { getOrders } from "../../Services/order.services";
 import { OrderCard } from "../Common/Cards/ OrderCard";
 import { Empty } from "../Common/Empty/Empty";
+import { getRecentOrders } from "./Order";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrder[]>([]);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
   }>({ currentPage: 1, perPage: 3 });
   const [loading, setLoading] = useState<boolean>(false);
   const getRecentOrder = async ({
-    limit,
+    pageSize,
     filter,
     sort,
     currentFirstDoc,
@@ -27,25 +29,28 @@ export const RecentOrders = () => {
   }: GetOrderModal) => {
     setLoading(true);
     try {
-      const response = await getOrders({
-        limit: limit,
+      const response = (await getOrders({
+        pageSize: pageSize,
         sort: sort,
         currentFirstDoc: currentFirstDoc,
         currentLastDoc: currentLastDoc,
         direction: direction,
         status: status,
         filter: filter as keyof Order,
-      });
-      console.log(response);
+      })) as { data: { orders: Order[] }; length: number };
+      const recentOrders = await getRecentOrders(response.data.orders);
+      setRecentOrder(recentOrders);
     } catch (error) {
+      setRecentOrder([])
       throw new Error("Error while fetching recent orders" + error);
     }
     setLoading(false);
   };
-  const [isClicked, setIsClicked] = useState<boolean>(false);
+  console.log(recentOrder);
+
   useEffect(() => {
     getRecentOrder({
-      limit: pagination.perPage,
+      pageSize: pagination.perPage,
       sort: "desc",
       currentFirstDoc: null,
       currentLastDoc: null,

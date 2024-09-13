@@ -4,8 +4,10 @@ export interface TicketType {
   title: string;
   description: string;
   date: Date | string;
-  status?: "Pending" | "Progress" | "Resolved" | "Rejected";
+  status?: TicketStatus["status"];
   uid: string;
+  createdAt?: any;
+  updateAt?: any;
 }
 export interface GetTicketModal {
   pageSize: number;
@@ -13,7 +15,9 @@ export interface GetTicketModal {
   direction: "prev" | "next";
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
-  status?: "Pending" | "Progress" | "Resolved" | "Rejected";
+  status?: TicketStatus["status"];
 }
 
-export type TicketState = "Pending" | "Progress" | "Resolved" | "Rejected";
+export interface TicketStatus {
+  status: "pending" | "progress" | "resolved" | "rejected";
+}

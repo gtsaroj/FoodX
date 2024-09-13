@@ -12,7 +12,7 @@ export interface Register {
 export interface GetUserModal {
   path: "customer" | "admin" | "chef";
   pageSize: number;
-  filter: keyof User;
+  filter?: keyof User;
   sort: "asc" | "desc";
   direction: "prev" | "next";
   currentFirstDoc?: any | null;
