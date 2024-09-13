@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { FilterButton } from "../../Components/Common/Sorting/Sorting";
 import { CategoryTable } from "../Category/Category.table";
-import { CategoryType } from "../../models/category.model";
+import { Category } from "../../models/category.model";
 import {
   bulkDeleteOfCategory,
   deleteCategory,
@@ -19,9 +18,10 @@ import { Filter, X } from "lucide-react";
 import { SearchCategory } from "../../Utility/category.utils";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
+import { aggregateCategories } from "../Category/category";
 
 const AllCategories = () => {
-  const [initialCategory, setInitialCategory] = useState<CategoryType[]>([]);
+  const [initialCategory, setInitialCategory] = useState<Category[]>([]);
   const [isFilter, setIsFilter] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
@@ -38,17 +38,9 @@ const AllCategories = () => {
     setLoading(true);
     try {
       const categories = await getCategories();
-      const categorydata: CategoryType[] = categories.map((category) => ({
-        id: category.id,
-        name: category.name,
-        item: 55,
-        order: 100,
-        rank: Math.floor(Math.random() * (50 - 10 + 1)) + 10,
-        revenue: 15000,
-        image: category.image,
-      }));
-      setInitialCategory(categorydata);
-      categorydata?.forEach((data) => dispatch(categoryAdd(data.name)));
+      const allCategory = await aggregateCategories(categories);
+      allCategory?.forEach((data) => dispatch(categoryAdd(data.name)));
+      setInitialCategory(allCategory);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error found while fetching category` + error);
@@ -153,7 +145,7 @@ const AllCategories = () => {
       let sortedCustomers;
       if (value === "item") {
         sortedCustomers = [...initialCategory].sort(
-          (a: CategoryType, b: CategoryType) =>
+          (a: Category, b: Category) =>
             sortOrder === "desc"
               ? (((b.item as number) - a.item) as number)
               : (((a.item as number) - b.item) as number)
@@ -177,7 +169,7 @@ const AllCategories = () => {
       if (value.length <= 0 || undefined) {
         getAllCategories();
       }
-      setInitialCategory(sortedCustomers as CategoryType[]);
+      setInitialCategory(sortedCustomers as Category[]);
     };
     handleSelect(isFilter as string);
   }, [isFilter, sortOrder]);
@@ -196,7 +188,7 @@ const AllCategories = () => {
           </div>
 
           <div className="flex   items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
-            <div className="flex w-full items-center justify-start gap-2 ">
+            <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
               {" "}
               <form
                 action=""

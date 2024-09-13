@@ -49,7 +49,6 @@ const MainPage = () => {
 };
 
 const App: React.FC = () => {
-  // persistor.purge()
   const auth = useSelector((state: RootState) => state.root.user);
   const [showContent, setShowContent] = useState<boolean>(true);
 
