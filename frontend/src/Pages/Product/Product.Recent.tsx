@@ -20,13 +20,13 @@ export const RecentProduct = () => {
       const response = await getOrderByUser({
         pageSize: 5,
         filter: "orderRequest",
-        sort: "asc",
+        sort: "desc",
         currentFirstDoc: null,
         currentLastDoc: null,
-        userId: authUser.userInfo.uid,
         direction: "next",
       });
-      setInitialData(response.data);
+      const aggregateProducts = response.data.orders?.flatMap((order) => order.products);
+      setInitialData(aggregateProducts);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
     }
@@ -36,6 +36,8 @@ export const RecentProduct = () => {
   useEffect(() => {
     getProducts();
   }, []);
+
+  console.log(initialData);
 
   const navigate = useNavigate();
 
@@ -48,10 +50,14 @@ export const RecentProduct = () => {
         <div className="flex  flex-col w-full items-start h-[530px]  gap-5">
           {authUser.success ? (
             !loading ? (
-              initialData &&
-              initialData?.map((data) => (
-                <RecentProductCard prop={data} key={data.id} />
-              ))
+              initialData?.length > 0 ? (
+                initialData &&
+                initialData?.map((data) => (
+                  <RecentProductCard prop={data} key={data.id} />
+                ))
+              ) : (
+                <div>Product not found</div>
+              )
             ) : (
               <div className="w-full ">
                 <Skeleton

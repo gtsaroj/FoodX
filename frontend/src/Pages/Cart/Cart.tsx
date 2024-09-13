@@ -8,8 +8,6 @@ import { addToCart } from "../../Reducer/product.reducer";
 import { Loader } from "../../Components/Loader/Loader";
 
 const Cart: React.FC = () => {
-  const [isDraggable, setIsDraggable] = useState<boolean>(false);
-  const [isScrollbarVisible, setIsScrollbarVisible] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const selectedProducts = useSelector(
@@ -29,15 +27,13 @@ const Cart: React.FC = () => {
   return (
     // Desktop
     <div
-      onMouseEnter={() => setIsScrollbarVisible(true)}
-      onMouseLeave={() => setIsScrollbarVisible(false)}
       onDragOver={(event) => {
         event.preventDefault();
-        setIsDraggable(true);
+    
       }}
       onDrop={(event) => {
         const productData = event.dataTransfer.getData("product");
-        setIsDraggable(false);
+        
         const product = JSON.parse(productData);
         dispatch(
           addToCart({
@@ -49,7 +45,7 @@ const Cart: React.FC = () => {
             tag: product.tag,
           })
         );
-        setIsDraggable(false);
+        
       }}
       className="flex flex-col w-full justify-between h-full gap-3   sm:px-1 px-[30px]"
     >
@@ -77,13 +73,6 @@ const Cart: React.FC = () => {
               </h1>
             </div>
           )}
-          <div
-            className={`w-full ${
-              isDraggable ? "visible  " : "invisible opacity-0"
-            } opacity-55 z-[100] h-full duration-150  flex items-center justify-center  backdrop-brightness-50 absolute left-0 top-0`}
-          >
-            <CopyPlus className="size-20 text-[var(--light-text)] " />
-          </div>
         </div>
       </div>
       <div className="flex border-t    flex-col w-full gap-5">

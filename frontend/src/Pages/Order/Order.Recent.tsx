@@ -4,15 +4,14 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { RecentCard } from "../../Components/Card/Card.Recent.Order";
 import { getOrderByUser } from "../../Services/order.services";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
-import { nanoid } from "@reduxjs/toolkit";
-import dayjs from "dayjs";
+import { aggregateUserOrder } from "./order";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../Store";
 
 export const RecentOrder = () => {
   const [initialData, setInitialData] = useState<UserOrder[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const recentOrder = async ({
     pageSize,
@@ -36,46 +35,29 @@ export const RecentOrder = () => {
         status: status,
         userId: userId,
       });
-      const userOrder = response.data as Order[];
-      const aggregateData = userOrder.map((order): UserOrder => {
-        const productNames = order.products?.map(
-          (product) =>
-            (product.name as string) + " × " + product.quantity + ", "
-        );
-        const totalAmount = order?.products?.reduce(
-          (productQuantity, product) =>
-            productQuantity + product.quantity * product.price,
-          1
-        );
-
-        return {
-          id: nanoid().substring(0, 15) as string,
-          products: productNames,
-          time: dayjs(order.orderRequest).format("MM-DD-YYYY h:mm A"),
-          status: order.status as string,
-          amount: totalAmount,
-          productImage: order?.products[0]?.image,
-          payment: "esewa",
-        };
-      });
-      setInitialData(aggregateData.slice(0, 5));
+      const userOrder = response.data.orders as Order[];
+      const aggregateOrder = aggregateUserOrder(userOrder);
+      setInitialData(aggregateOrder);
     } catch (error) {
       throw new Error("Error while fetching recent order" + error);
     }
     setLoading(false);
   };
 
+
+
   useEffect(() => {
     recentOrder({
       filter: "orderRequest",
       pageSize: 5,
-      sort: "asc",
+      sort: "desc",
       currentFirstDoc: null,
       currentLastDoc: null,
       direction: "next",
-      userId: authUser.uid,
     });
-  }, [authUser.uid]);
+  }, []);
+
+  console.log(initialData);
 
   return (
     <div className="w-full h-full flex text-[var(--dark-text)] flex-col gap-6 bg-[var--light-foreground] px-5 py-4   rounded items-start justify-center">
@@ -83,42 +65,40 @@ export const RecentOrder = () => {
         Recent Orders
       </h1>
       <div className="flex items-center w-full  gap-5 overflow-x-auto ">
-        {!loading ? 
-          initialData?.map((order) => (
-          <RecentCard item={order} />
-          ))
-          :
+        {!loading ? (
+          initialData?.map((order) => <RecentCard item={order} />)
+        ) : (
           <div className="w-full gap-4 flex ">
-          <Skeleton
-            height={230}
-            width={330}
-            baseColor="var(--light-background)"
-            highlightColor="var(--light-foreground)"
-            count={1}
-          />
-          <Skeleton
-            height={230}
-            width={330}
-            baseColor="var(--light-background)"
-            highlightColor="var(--light-foreground)"
-            count={1}
-          />
-          <Skeleton
-            height={230}
-            width={330}
-            baseColor="var(--light-background)"
-            highlightColor="var(--light-foreground)"
-            count={1}
-          />
-          <Skeleton
-            height={230}
-            width={330}
-            baseColor="var(--light-background)"
-            highlightColor="var(--light-foreground)"
-            count={1}
-          />
-        </div>
-      }
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+            <Skeleton
+              height={230}
+              width={330}
+              baseColor="var(--light-background)"
+              highlightColor="var(--light-foreground)"
+              count={1}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

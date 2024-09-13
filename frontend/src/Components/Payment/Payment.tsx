@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import dayjs from "dayjs";
 import { MoonLoader } from "react-spinners";
+import { addRevenue } from "../../Services/revenue.services";
 
 interface CartProp {
   prop: Product;
@@ -37,7 +38,15 @@ export const Payment: React.FC = () => {
         uid: store.auth.userInfo.uid as string,
         note: note,
         orderFullFilled: "",
+        revenue: store.cart.products.reduce(
+          (acc, product) => acc + product.price * product.quantity,
+          0
+        ),
         status: "pending",
+      });
+      await addRevenue({
+        id: dayjs().format("YYYY-MM-DD"),
+        orders: store.cart.products,
       });
       toast.success("Ordered Sucessfully!");
     } catch (error) {
@@ -126,7 +135,10 @@ export const Payment: React.FC = () => {
           >
             Pay Now
             {loading && (
-              <MoonLoader size={20} className=" size-3 text-[var(--primary-color)] " />
+              <MoonLoader
+                size={20}
+                className=" size-3 text-[var(--primary-color)] "
+              />
             )}
           </button>
         </div>

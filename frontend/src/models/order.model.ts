@@ -1,6 +1,7 @@
 import { Product } from "./product.model";
 
 export interface Order {
+  revenue?: number;
   orderId?: string;
   uid: string;
   products: Product[];
@@ -12,8 +13,8 @@ export interface Order {
 }
 export interface GetOrderModal {
   pageSize: number;
-  filter: keyof Order;
-  sort: "asc" | "desc";
+  filter?: keyof Order;
+  sort?: "asc" | "desc";
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
   direction?: "prev" | "next";
@@ -21,14 +22,14 @@ export interface GetOrderModal {
   userId?: string;
 }
 
-export interface OrderStatus{
+export interface OrderStatus {
   status: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
 }
 
 export interface UserOrder {
   productImage?: string;
   id: string;
-  products: string[];
+  products: Product[];
   time: string; // Date formatted as MM/DD/YYYY
   status: string;
   amount: number;
