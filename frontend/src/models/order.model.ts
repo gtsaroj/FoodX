@@ -4,9 +4,9 @@ export interface Order {
   orderId?: string;
   uid: string;
   products: Product[];
-  orderRequest: Date;
+  orderRequest: string;
   orderFullFilled?: string;
-  status?: string;
+  status?: OrderStatus["status"];
   updateAt?: string;
   note?: string;
 }
@@ -19,6 +19,10 @@ export interface GetOrderModal {
   direction?: "prev" | "next";
   status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
   userId?: string;
+}
+
+export interface OrderStatus{
+  status: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
 }
 
 export interface UserOrder {

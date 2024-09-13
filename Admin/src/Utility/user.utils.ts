@@ -1,4 +1,5 @@
 import { getOrderByUser } from "../Services/order.services";
+import { getUser } from "../Services/user.services";
 import { getCustomerData, getUserData } from "../firebase/db";
 import { Order } from "../models/order.model";
 import { Product } from "../models/product.model";
@@ -13,19 +14,26 @@ export const SearchCustomer = (customers: User[], value: string) => {
 };
 export const getFullName = async (uid: string): Promise<string | null> => {
   try {
-    const customerData = await getUserData("customer", uid);
-    if (customerData && customerData.fullName) {
-      return customerData.fullName;
+    const customerData = (await getUser({ role: "customer" }, uid)) as {
+      data: { data: User };
+      statusText: string;
+    };
+    if (customerData.data.data && customerData.data.data.fullName) {
+      return customerData.data.data.fullName;
     }
 
+    // If chef name is not found, try to get the admin's full name
+    const chefData = await getUser({ role: "chef" }, uid);
+    if (chefData.data.data && chefData.data.data.fullName) {
+      return chefData.data.data.fullName;
+    }
     // If customer name is not found, try to get the admin's full name
-    const adminData = await getUserData("admin", uid);
-    if (adminData && adminData.fullName) {
-      return adminData.fullName;
+    const adminData = await getUser({ role: "admin" }, uid);
+    if (adminData.data.data && adminData.data.data.fullName) {
+      return adminData.data.data.fullName;
     }
     return null;
   } catch (error) {
-    throw new Error("Error fetching user data:", error);
     return null;
   }
 };

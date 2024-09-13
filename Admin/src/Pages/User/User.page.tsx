@@ -4,7 +4,7 @@ import { aggregateCustomerData } from "../../Utility/user.utils";
 import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
-import { getUser } from "../../Services/user.services";
+import { getUsers } from "../../Services/user.services";
 import { DbUser, GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
 
@@ -37,7 +37,7 @@ const CustomerList: React.FC = () => {
   }: GetUserModal) => {
     setLoading(true);
     try {
-      const user = await getUser({
+      const user = await getUsers({
         path: path,
         pageSize: pageSize,
         filter: filter,
@@ -47,22 +47,22 @@ const CustomerList: React.FC = () => {
         currentLastDoc: currentLastDoc || null,
       });
 
-      const getUsers = user.data as {
+      const users = user.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
         users: DbUser[];
         length: number;
       };
       setCurrentDoc({
-        currentFirstDoc: getUsers.currentFirstDoc,
-        currentLastDoc: getUsers.currentLastDoc,
+        currentFirstDoc: users.currentFirstDoc,
+        currentLastDoc: users.currentLastDoc,
       });
-      setTotalData(getUser.length);
+      setTotalData(user.length);
       if (getUsers.length <= 0) {
         setLoading(false);
         return setInitialCustomer([]);
       }
-      const customerList = await aggregateCustomerData(getUsers.users);
+      const customerList = await aggregateCustomerData(users.users);
       console.log(customerList);
       setInitialCustomer(customerList);
     } catch (error) {
@@ -124,8 +124,7 @@ const CustomerList: React.FC = () => {
       currentDoc?.currentLastDoc.length > 1
     ) {
       (async () => {
-        console.log("nextpage");
-        const customers = await getUser({
+        const customers = await getUsers({
           path:
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
             "customer",

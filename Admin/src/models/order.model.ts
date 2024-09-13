@@ -1,4 +1,3 @@
-import { extend } from "dayjs";
 import { Product } from "./product.model";
 
 export interface Order {
@@ -14,9 +13,9 @@ export interface Order {
   updatedAt?: Date;
 }
 
-export interface RecentOrder extends Order{
-  image: string,
-  price: string
+export interface RecentOrder extends Order {
+  image: string;
+  price: string;
 }
 
 export interface DailyAggregateData {
@@ -28,7 +27,7 @@ export interface DailyAggregateData {
 export interface GetOrderModal {
   pageSize: number;
   filter?: keyof Order;
-  sort: "asc" | "desc";
+  sort?: "asc" | "desc";
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
   direction?: "prev" | "next";
@@ -65,6 +64,6 @@ export interface OrderModal {
   orderFullfilled: string;
 }
 
-export interface status{
+export interface status {
   status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
 }

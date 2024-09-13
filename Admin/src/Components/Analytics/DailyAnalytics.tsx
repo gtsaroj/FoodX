@@ -16,7 +16,8 @@ const Revenue: React.FC = () => {
     setLoading(true);
     try {
       const response = await getRevenue({
-        startDate: dayjs().format("YYYY-MM-DD"),
+        startDate: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
+        endDate: dayjs().format("YYYY-MM-DD")
       });
       const responseData = response.data;
       const analyticsData = aggregateCurrentDayData(responseData);

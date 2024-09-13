@@ -35,6 +35,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
         endDate: endDate,
       });
       const aggregateData = barData(response.data);
+       console.log(aggregateData)
       setInitialData(aggregateData);
       const listOfKeys = extractUniqueKeys(aggregateData);
       setDataKey(listOfKeys as string[]);
@@ -261,7 +262,7 @@ export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
               {
                 scaleType: "band",
                 dataKey: "time",
-                data: initialData?.map((data) => data["date"]),
+                data: initialData?.map((data) => data["time"]),
               },
             ]}
             series={dataKey?.map((key) => ({
