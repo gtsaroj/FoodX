@@ -1,4 +1,3 @@
-import { extend } from "dayjs";
 import { Product } from "./product.model";
 
 export interface Order {
@@ -26,11 +25,11 @@ export interface DailyAggregateData {
 }
 
 export interface GetOrderModal {
-  limit: number;
+  pageSize: number;
   filter?: keyof Order;
   sort?: "asc" | "desc";
-  firstVisibleDoc?: any | null;
-  lastVisibleDoc?: any | null;
+  currentFirstDoc?: any | null;
+  currentLastDoc?: any | null;
   direction?: "prev" | "next";
   status?:
     | "Recieved"

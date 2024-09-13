@@ -90,7 +90,7 @@ export const signUp = async (data: Register) => {
       userId: ressponseData.userInfo.uid,
       userRole: ressponseData.userInfo.role,
     });
-    
+
     return ressponseData.userInfo;
   } catch (error) {
     throw new Error("Unable to create new user");
@@ -213,8 +213,8 @@ export const updateRole = async (data: {
   }
 };
 
-//get Customer
-export const getUser = async (data: GetUserModal) => {
+//get users
+export const getUsers = async (data: GetUserModal) => {
   try {
     const response = await makeRequest({
       method: "post",
@@ -224,6 +224,22 @@ export const getUser = async (data: GetUserModal) => {
     return response.data;
   } catch (error) {
     throw new Error("Error while getting users" + error);
+  }
+};
+
+// get user by role & uid
+export const getUser = async (role: UserRole, userId: string) => {
+  try {
+    const response = await makeRequest({
+      method: "get",
+      url: `users/${role.role}`,
+      params: {
+        userId: userId,
+      },
+    });
+    return response;
+  } catch (error) {
+    return null;
   }
 };
 

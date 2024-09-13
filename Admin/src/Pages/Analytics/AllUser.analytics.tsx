@@ -5,7 +5,7 @@ import { CustomerTable } from "../User/User.page.table";
 import {
   bulkDeleteOfCustomer,
   deletUser,
-  getUser,
+  getUsers,
 } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
@@ -47,7 +47,7 @@ const AllCustomers = () => {
   const handleCustomerData = async (data: GetUserModal) => {
     setLoading(true);
     try {
-      const allUser = await getUser({
+      const allUser = await getUsers({
         path: data.path,
         filter: data.filter,
         pageSize: data.pageSize,
@@ -97,13 +97,13 @@ const AllCustomers = () => {
               ? [
                   ...newCustomer,
                   {
-                    id: findCustomer?.uid,
+                    id: findCustomer?.uid as string,
                     role: findCustomer?.role as "customer" | "admin" | "chef",
                   },
                 ]
               : [
                   {
-                    id: findCustomer?.uid,
+                    id: findCustomer?.uid as string,
                     role: findCustomer?.role as "customer" | "admin" | "chef",
                   },
                 ];
@@ -206,6 +206,7 @@ const AllCustomers = () => {
     }
   };
 
+  // search user
   const handleChange = async (value: string) => {
     if (value.length <= 0) return handleCustomerData();
     const filterCustomer = SearchCustomer(initialCustomer, value);
@@ -216,7 +217,7 @@ const AllCustomers = () => {
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
-
+  // next fetch
   useEffect(() => {
     if (pagination.currentPage === 1) {
       handleCustomerData({
@@ -245,7 +246,7 @@ const AllCustomers = () => {
       currentDoc?.currentLastDoc
     ) {
       (async () => {
-        const customers = await getUser({
+        const customers = await getUsers({
           path:
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
             "customer",

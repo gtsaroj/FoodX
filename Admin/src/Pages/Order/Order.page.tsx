@@ -4,24 +4,24 @@ import { getOrders } from "../../Services/order.services";
 import { GetOrderModal, Order, OrderModal } from "../../models/order.model";
 import { debounce } from "../../Utility/debounce";
 import { SearchOrder } from "../../Utility/order.utils";
-import { getFullName } from "../../Utility/user.utils";
 
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import dayjs from "dayjs";
+import { getFullName } from "../../Utility/user.utils";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [totalData, setTotalData] = useState<number>();
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 3 });
+  }>({ currentPage: 1, perPage: 5 });
   const [currentDoc, setCurrentDoc] = useState<{
-    firstVisibleDoc: any;
-    lastVisibleDoc: any;
+    currentFirstDoc: string;
+    currentLastDoc: string;
   }>();
   const [isFilter, setIsFilter] = useState<{
     dateFilter?: any;
@@ -31,40 +31,36 @@ const OrderList = () => {
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
     try {
-      //  get total orders data from  server
-      let orders;
-      if (pagination.currentPage === 1) {
-        orders = await getOrders({
-          limit: data.limit,
-          firstVisibleDoc: data.firstVisibleDoc || null,
-          lastVisibleDoc: data.lastVisibleDoc || null,
-        });
-      }
+      const orders = await getOrders({
+        pageSize: data.pageSize,
+        currentFirstDoc: data.currentFirstDoc || null,
+        currentLastDoc: data.currentLastDoc || null,
+        // filter: data.filter,
+        sort: data.sort,
+      });
 
-      const allOrder = (await orders.data.orderData ) as {
-        firstVisibleDoc: string;
-        lastVisibleDoc: string;
+      const allOrder = (await orders.data) as {
+        currentFirstDoc: string;
+        currentLastDoc: string;
         orders: Order[];
         length: number;
       };
-       console.log(allOrder)
       setTotalData(allOrder.length);
       setCurrentDoc({
-        firstVisibleDoc: allOrder.firstVisibleDoc,
-        lastVisibleDoc: allOrder.lastVisibleDoc,
+        currentFirstDoc: allOrder.currentFirstDoc,
+        currentLastDoc: allOrder.currentLastDoc,
       });
-      const aggregateData = allOrder?.orders.map(async (item) => {
-        let getUserName = await getFullName(item?.uid);
-        if (!getUserName) getUserName = "Student";
+      const aggregateData = allOrder?.orders.map(async (item, index) => {
+        const getUserName = await getFullName(item.uid);
         const productNames = item.products?.map(
           (product) =>
             (product.name as string) + " × " + product.quantity + ", "
         );
         return {
           id: item.orderId as string,
-          name: getUserName,
+          name: getUserName || "User",
           products: productNames,
-          rank: 3,
+          rank: (pagination.currentPage - 1) * pagination.perPage + (index + 1),
           orderRequest: dayjs(item.orderRequest).format("YYYY-MM-DD"),
           delivered: dayjs(item.orderFullfilled).format("YYYY-MM-DD"),
           status: item.status,
@@ -82,8 +78,6 @@ const OrderList = () => {
     setLoading(false);
   };
 
-
-
   const handleChange = (value: string) => {
     const filterOrder = SearchOrder(initialOrders, value);
     if (value?.length === 0) getAllOrders();
@@ -96,81 +90,77 @@ const OrderList = () => {
 
   useEffect(() => {
     getAllOrders({
-      limit: pagination.perPage,
+      pageSize: pagination.perPage,
       firstVisibleDoc: null,
       lastVisibleDoc: null,
+      filter: "uid",
+      sort: sortOrder || "asc",
     });
-  }, [pagination.perPage]);
+  }, [pagination.perPage, sortOrder]);
 
   useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.firstVisibleDoc &&
-      currentDoc?.lastVisibleDoc
-    ) {
+    if (pagination.currentPage > 1) {
+      setLoading(true);
       const fetchNextPage = async () => {
-        const orders = await getOrders({
-          limit: pagination.perPage,
-          firstVisibleDoc: currentDoc.firstVisibleDoc,
-          lastVisibleDoc: currentDoc.lastVisibleDoc,
-          direction: "next",
-        });
-        const getAllOrder = orders.data as {
-          firstVisibleDoc: any;
-          lastVisibleDocc: any;
-          orders: Order[];
-          length: number;
-        };
-        setCurrentDoc({
-          firstVisibleDoc: getAllOrder.firstVisibleDoc,
-          lastVisibleDoc: getAllOrder.lastVisibleDocc,
-        });
-        setTotalData(getAllOrder.length);
-
-        const aggregateData = getAllOrder?.orders.map(async (item) => {
-          let getUserName = await getFullName(item?.uid);
-          const getDate = convertIsoToReadableDateTime(
-            item.orderRequest as string
-          );
-
-          if (!getUserName) getUserName = "Student";
-          const productNames = item.products?.map(
-            (product) =>
-              (product.name as string) + " × " + product.quantity + ", "
-          );
-          return {
-            id: item.orderId as string,
-            name: getUserName,
-            products: productNames,
-            rank: 3,
-            orderRequest: {
-              fulldate: getDate.date.substring(5, getDate.date.length),
-              time: getDate.time,
-            },
-
-            delivered: item.orderFullFilled,
-            status: item.status,
+        setLoading(true);
+        try {
+          const orders = await getOrders({
+            pageSize: pagination.perPage,
+            currentLastDoc: currentDoc && currentDoc.currentLastDoc,
+            currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
+            // filter: (isFilter?.sortFilter as keyof Order) || "uid",
+            sort: sortOrder || "desc",
+            direction: "next",
+          });
+          const getAllOrder = orders.data as {
+            currentFirstDoc: string;
+            currentLastDoc: string;
+            orders: Order[];
+            length: number;
           };
-        });
+          setCurrentDoc({
+            currentFirstDoc: getAllOrder.currentFirstDoc,
+            currentLastDoc: getAllOrder.currentLastDoc,
+          });
+          setTotalData(getAllOrder.length);
+          const aggregateData = getAllOrder?.orders.map(async (item,index) => {
+            const getUserName = await getFullName(item.uid as string);
+            const productNames = item.products?.map(
+              (product) =>
+                (product.name as string) + " × " + product.quantity + ", "
+            );
+            return {
+              id: item.orderId as string,
+              name: getUserName || "User",
+              products: productNames,
+              rank: (pagination.currentPage - 1) * pagination.perPage + (index + 1),
+              orderRequest: dayjs(item.orderRequest).format("MMM D, h:mm A"),
 
-        const getaggregateDataPromises = await Promise.all(aggregateData);
-        setInitialOrders((prev) => {
-          return [
-            ...prev,
-            ...getaggregateDataPromises.filter(
-              (order) => !prev.some((data) => data.id === order.id)
-            ),
-          ];
-        });
+              delivered:
+                (item.orderFullfilled &&
+                  dayjs(item.orderFullfilled).format("MMM D, h:mm A")) ||
+                "",
+              status: item.status,
+            };
+          });
+          const getaggregateDataPromises = await Promise.all(aggregateData);
+          setInitialOrders((prev) => {
+            return [
+              ...prev,
+              ...getaggregateDataPromises.filter(
+                (order) => !prev.some((data) => data.id === order.id)
+              ),
+            ];
+          });
+        } catch (error) {
+          setInitialOrders([]);
+        }
+        setLoading(false);
       };
+      setLoading(false);
       fetchNextPage();
     }
-  }, [
-    currentDoc?.firstVisibleDoc,
-    currentDoc?.lastVisibleDoc,
-    pagination.currentPage,
-    pagination.perPage,
-  ]);
+  }, [pagination.currentPage, pagination.perPage, sortOrder]);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -262,7 +252,7 @@ const OrderList = () => {
         )}
       </div>
       <OrderTable
-        totalData={(totalData as number) || 15}
+        totalData={(totalData as number) || 1}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

@@ -143,7 +143,7 @@ function Table<T extends { id: string }>({
               {currentData &&
                 currentData.map((item, index) => (
                   <tr
-                    className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-4 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
+                    className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-8 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
                     key={(item.id ? item.id : item.uid) || index}
                   >
                     {!!actions?.checkFn && !disableActions && (
@@ -225,6 +225,7 @@ function Table<T extends { id: string }>({
           <tr>
             <td>
               <Pagination
+                
                 totalData={totalData}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}

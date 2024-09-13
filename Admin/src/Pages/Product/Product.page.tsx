@@ -18,6 +18,11 @@ import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./Product.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import { searchProduct } from "../../Services/product.services";
+import { getRevenue } from "../../Services/revenue.services";
+import dayjs from "dayjs";
+import { Revenue } from "../../models/revenue.model";
+import { match } from "assert";
+import { aggregateProducts } from "./product";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -50,50 +55,20 @@ const FoodPage: React.FC = () => {
   const getProducts = async () => {
     setLoading(true);
     try {
-      const normalProducts = await getNormalProducts();
-      const specialProducts = await getSpecialProducts();
+      const [normalProducts, specialProducts] = await Promise.all([
+        getNormalProducts(),
+        getSpecialProducts(),
+      ]);
+      // All products
+      const allProducts = [...normalProducts.data, ...specialProducts.data];
 
-      const agrregateNormalProducts = normalProducts?.data?.map(
-        (data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: "products",
-          };
-        }
-      );
-
-      const agrregateSpecialProducts = specialProducts?.data?.map(
-        (data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: "specials",
-          };
-        }
-      );
-      const products = [...agrregateNormalProducts, agrregateSpecialProducts];
+      const products = await aggregateProducts(allProducts);
       setFetchedProducts(products);
     } catch (error) {
-      throw new Error("Error while getting products " + error);
+      console.error("Error while fetching products:", error);
+    } finally {
+      setLoading(false); // Ensure loading state is reset even in case of an error
     }
-    setLoading(false);
   };
 
   const handleSelectedDelete = async () => {
@@ -228,24 +203,11 @@ const FoodPage: React.FC = () => {
     if (value.length <= 0) return getProducts();
 
     const filterProducts = (await searchProduct(value)) as Product[];
-    const aggregateProducts = filterProducts?.map((product) => {
-      return {
-        id: product.id,
-        name: product.name,
-        image: product.image,
-        quantity: product.quantity as number,
-        price: product.price as number,
-        category: product.tag,
-        order: Math.floor(Math.random() * (500 - 50 + 1)) + 50,
-        rating: Math.floor(Math.random() * (10 - 1 + 1)) + 1,
-        revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-      };
-    });
-    setTotalData(aggregateProducts.length);
-    setFetchedProducts(aggregateProducts);
+    const products = await aggregateProducts(filterProducts);
+    setFetchedProducts(products);
   };
 
-  const debounceSearch = useCallback(debounce(handleChange, 300), []);
+  const debounceSearch = useCallback(debounce(handleChange, 500), []);
 
   useEffect(() => {
     getProducts();
@@ -260,27 +222,12 @@ const FoodPage: React.FC = () => {
         const specialProducts = await getSpecialProducts(
           `${isFilter.typeFilter === "products" ? "all" : isFilter.typeFilter}`
         );
-        filteredProducts = specialProducts?.data?.map((data: Product) => {
-          return {
-            id: data.id,
-            image: data.image,
-            name: data.name,
-            price: data.price,
-            order: 45,
-            revenue: 203,
-            rating: 3,
-            quantity: data.quantity,
-            tag: data.tag,
-            categoryId: "lkdf",
-            type: isFilter?.typeFilter,
-          };
-        });
+        filteredProducts = await aggregateProducts(specialProducts.data);
       } else {
         // Fetch all products if no filter is applied
         getProducts();
         return;
       }
-
       setFetchedProducts(filteredProducts);
     };
 
