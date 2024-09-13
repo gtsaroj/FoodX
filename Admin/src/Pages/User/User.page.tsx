@@ -15,7 +15,7 @@ const CustomerList: React.FC = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 5 });
+  }>({ currentPage: 1, perPage: 2 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
@@ -50,21 +50,16 @@ const CustomerList: React.FC = () => {
       const users = user.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
-        users: DbUser[];
+        users: User[];
         length: number;
       };
+
       setCurrentDoc({
         currentFirstDoc: users.currentFirstDoc,
         currentLastDoc: users.currentLastDoc,
       });
-      setTotalData(user.length);
-      if (getUsers.length <= 0) {
-        setLoading(false);
-        return setInitialCustomer([]);
-      }
-      const customerList = await aggregateCustomerData(users.users);
-      console.log(customerList);
-      setInitialCustomer(customerList);
+      setTotalData(users.length);
+      setInitialCustomer(users.users);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error while getting customers : ${error}`);
@@ -118,12 +113,9 @@ const CustomerList: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.currentFirstDoc &&
-      currentDoc?.currentLastDoc.length > 1
-    ) {
+    if (pagination.currentPage > 1) {
       (async () => {
+        setLoading(true);
         const customers = await getUsers({
           path:
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
@@ -132,9 +124,10 @@ const CustomerList: React.FC = () => {
           direction: "next",
           filter: (isFilter?.sortFilter as keyof User) || "fullName",
           sort: isFilter?.sortFilter || "asc",
-          currentFirstDoc: currentDoc.currentFirstDoc,
-          currentLastDoc: currentDoc.currentLastDoc,
+          currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
+          currentLastDoc: currentDoc && currentDoc.currentLastDoc,
         });
+
         const users = customers.data as {
           currentFirstDoc: string;
           currentLastDoc: string;
@@ -145,21 +138,20 @@ const CustomerList: React.FC = () => {
           currentFirstDoc: users.currentFirstDoc,
           currentLastDoc: users.currentLastDoc,
         });
-        setTotalData(customers.length);
-        const aggregateCustomer = await aggregateCustomerData(users.users);
+        setTotalData(users.length);
+
         setInitialCustomer((customer) => {
           return [
             ...customer,
-            ...aggregateCustomer.filter(
+            ...users.users.filter(
               (user) => !customer.some((cust) => user.uid === cust.uid)
             ),
           ];
         });
+        setLoading(false);
       })();
     }
   }, [
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
     pagination.currentPage,
     pagination.perPage,
     isFilter?.sortFilter,
@@ -243,7 +235,10 @@ const CustomerList: React.FC = () => {
         </div>
       </div>
       <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start gap-8 sm:gap-2 w-full px-1">
-        <form action="" className="relative text-[var(--dark-text)] w-full sm:w-auto ">
+        <form
+          action=""
+          className="relative text-[var(--dark-text)] w-full sm:w-auto "
+        >
           <input
             id="search"
             type="search"
@@ -290,7 +285,7 @@ const CustomerList: React.FC = () => {
         )}
       </div>
       <CustomerTable
-        totalData={totalData}
+        totalData={totalData || 1}
         pagination={{
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,

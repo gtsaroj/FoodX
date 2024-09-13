@@ -24,6 +24,7 @@ import NotFoundPage from "./Pages/404Page/NotFoundPage";
 import Footer from "./Components/Footer/Footer";
 import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
+import { WelcomePage } from "./Pages/Page.Welcome";
 
 const MainPage = () => {
   return (
@@ -58,6 +59,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<WelcomePage />} />
         <Route
           path="login/"
           element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}

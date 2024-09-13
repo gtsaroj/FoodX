@@ -8,6 +8,7 @@ import { TicketType } from "../../models/ticket.model";
 
 import Skeleton from "react-loading-skeleton";
 import { Empty } from "../Common/Empty/Empty";
+import { getTickets } from "../../Services/ticket.services";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
@@ -18,15 +19,14 @@ export const RecentTickets = () => {
 
   const fetchTickets = async () => {
     try {
-      // const tickets = (await getTickets({
-      //   pageSize: 5,
-      //   direction: "next",
-      //   sort: "desc",
-      //   currentFirstDoc: null,
-      //   currentLastDoc: null,
-      //   status: "Pending",
-      // })) as TicketType[];
-      // setTickets(tickets);
+      const tickets = (await getTickets({
+        pageSize: 5,
+        direction: "next",
+        sort: "desc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+      })) as { tickets: TicketType[] };
+      setTickets(tickets.tickets);
     } catch (error) {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);

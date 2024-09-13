@@ -38,10 +38,12 @@ export const getFullName = async (uid: string): Promise<string | null> => {
   }
 };
 export const getUserInfo = async (uid: string) => {
-  const user = await getUserData("customer", uid);
-  if (user) return user;
-  const admin = await getUserData("admin", uid);
-  if (admin) return admin;
+  const user = await getUser({ role: "customer" }, uid);
+  if (user) return user.data.data;
+  const chef = await getUser({ role: "chef" }, uid);
+  if (chef) return chef.data.data;
+  const admin = await getUser({ role: "admin" }, uid);
+  if (admin) return admin.data.data;
 };
 
 // aggregate Customer Data
