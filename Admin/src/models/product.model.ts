@@ -8,7 +8,7 @@ export interface Product {
   rating?: number;
   quantity: number | string;
   tag?: string;
-  tagId?: string;
+  tagId: string;
   category?: string;
   type?: "products" | "specials";
 }

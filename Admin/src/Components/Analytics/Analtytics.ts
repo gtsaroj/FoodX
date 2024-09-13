@@ -5,12 +5,12 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
   const today = dayjs().format("YYYY-MM-DD");
 
   try {
-    const currentDayOrder = orders.find((order) => {
+    const currentDayOrder = orders?.find((order) => {
       const orderDate = dayjs(order.id).format("YYYY-MM-DD");
       return today === orderDate;
     });
 
-    const total7DaysOrders = orders.filter((order) => {
+    const total7DaysOrders = orders?.filter((order) => {
       const orderDate = dayjs(order.id).format("YYYY-MM-DD");
       const last7Days = dayjs().subtract(7, "days").format("YYYY-MM-DD");
       return orderDate >= last7Days && orderDate <= today;
@@ -19,19 +19,16 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
     // Calculate average orders and average revenue per day over the past 7 days
     const totalRevenueLast7Days = getRevenue(total7DaysOrders);
 
-    console.log(total7DaysOrders);
-
     const totalOrderProductsInAWeek = total7DaysOrders.reduce(
-      (acc, order) => acc + order.orders.length,
+      (acc, order) => acc + order.orders?.length,
       0
     );
     const revenueToday = getRevenue([currentDayOrder] as Revenue[]);
 
-    // Generate analytics data
     const dailyAnalyticsData: CardAnalytic[] = [
       {
         title: "Items Delivered",
-        total: currentDayOrder!.orders.length,
+        total: currentDayOrder?.orders.length || 0,
         percentage: 100,
       },
       {
@@ -43,11 +40,12 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       },
       {
         title: "Revenue",
-        total: revenueToday,
-        percentage: Math.round((revenueToday / totalRevenueLast7Days) * 100), // Revenue percentage based on average
+        total: revenueToday || 0,
+        percentage: Math.round(
+          (revenueToday || 0 / totalRevenueLast7Days) * 100
+        ), // Revenue percentage based on average
       },
     ];
-    console.log(dailyAnalyticsData);
 
     return dailyAnalyticsData;
   } catch (error) {
@@ -67,5 +65,6 @@ const getRevenue = (revenue: Revenue[]) => {
     0
   );
 
-  return total; // Ensure the total is returned
+  if (!total) return 0;
+  return total;
 };

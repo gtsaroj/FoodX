@@ -1,4 +1,4 @@
-import { ChevronUp, Filter, Plus, X } from "lucide-react";
+import { Filter, Plus, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import { UploadCategory } from "../../Components/Upload/Category.upload";
@@ -19,6 +19,7 @@ import { Category } from "../../models/category.model";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { CategoryTable } from "./Category.table";
 import { Button } from "../../Components/Common/Button/Button";
+import { aggregateCategories } from "./category";
 
 export const CategoryPage: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModelOpen] = useState<boolean>(true);
@@ -31,7 +32,6 @@ export const CategoryPage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("asc");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
-  const [originalData, setOriginalData] = useState<Category[]>([]);
   const [id, setId] = useState<string>();
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
     { id: string }[]
@@ -43,17 +43,10 @@ export const CategoryPage: React.FC = () => {
     setLoading(true);
     try {
       const categories = await getCategories();
-      const categorydata: Category[] = categories.map((category) => ({
-        id: category.id,
-        name: category.name,
-        item: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-        order: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-        rank: Math.floor(Math.random() * (50 - 10 + 1)) + 10,
-        revenue: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
-        image: category.image,
-      }));
-      setOriginalData(categorydata);
-      setInitialCategory(categorydata);
+      const allCategories = (await aggregateCategories(
+        categories
+      )) as Category[];
+      setInitialCategory(allCategories);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error found while fetching category` + error);
@@ -78,6 +71,9 @@ export const CategoryPage: React.FC = () => {
         })
       : setBulkSelectedCategory(refreshIds);
   };
+  console.log(initialCategory)
+
+  //select all category
   const handleAllSelected = (isChecked: boolean) => {
     if (isChecked) {
       const AllCategories = initialCategory?.map((product) => {
@@ -89,7 +85,7 @@ export const CategoryPage: React.FC = () => {
       setBulkSelectedCategory([]);
     }
   };
-
+  // Delete each category
   const handleSelectedDelete = async () => {
     try {
       const toastLoader = toast.loading("Deleting category...");
@@ -114,11 +110,12 @@ export const CategoryPage: React.FC = () => {
     setIsBulkDeleted(false);
   };
 
+  //dispatch latest category
   useEffect(() => {
     initialCategory?.forEach((category) =>
       dispatch(categoryAdd(category.name))
     );
-  }, [initialCategory, dispatch, originalData, isFilter?.length]);
+  }, [initialCategory, dispatch, isFilter?.length]);
 
   useEffect(() => {
     getAllCategories();
@@ -254,7 +251,7 @@ export const CategoryPage: React.FC = () => {
         </div>
       </div>
       <div className="flex  sm:flex-row flex-col  items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
-        <div className="flex w-full items-center justify-start gap-2 ">
+        <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
           {" "}
           <form
             action=""

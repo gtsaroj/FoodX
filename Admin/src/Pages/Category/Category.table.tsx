@@ -1,12 +1,12 @@
 import React from "react";
-import { CategoryType } from "../../models/category.model";
+import { Category } from "../../models/category.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 
 interface CustomerTableProp {
-  totalData? : number;
-  selectedData?: Array<T>;
-  category: CategoryType[];
+  totalData?: number;
+  selectedData?: Array<any>;
+  category: Category[];
   loading?: boolean;
   actions?: {
     checkAllFn?: (isChecked: boolean) => void;
@@ -21,13 +21,13 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
   loading,
   actions,
   selectedData,
-  totalData
+  totalData,
 }) => {
   const Columns: ColumnProps[] = [
     {
       fieldName: "Name",
       colStyle: { width: "150px", justifyContent: "start", textAlign: "start" },
-      render: (value: CategoryType) => (
+      render: (value: Category) => (
         <div className="w-[150px] text-[var(--dark-text)] flex items-center justify-start gap-3 ">
           <div className="w-[40px] h-[40px]">
             <img
@@ -43,7 +43,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
     {
       fieldName: "Id",
       colStyle: { width: "120px", textAlign: "start" },
-      render: (item: CategoryType) => (
+      render: (item: Category) => (
         <div className="w-[120px] relative cursor-pointer group/id text-start ">
           #{item.id?.substring(0, 8)}
           <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
@@ -55,7 +55,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
     {
       fieldName: "Items",
       colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
-      render: (item: CategoryType) => (
+      render: (item: Category) => (
         <div className=" w-[100px]  text-[var(--dark-text)]">
           <p>{item.order}</p>
         </div>
@@ -64,7 +64,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
     {
       fieldName: "Orders",
       colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
-      render: (item: CategoryType) => (
+      render: (item: Category) => (
         <div className=" w-[120px] text-[var(--dark-text)] ">
           <p>{item.order}</p>
         </div>
@@ -73,7 +73,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
     {
       fieldName: "Revenue",
       colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
-      render: (item: CategoryType) => (
+      render: (item: Category) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
           <p>Rs {item.revenue}</p>
         </div>
@@ -82,7 +82,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
     {
       fieldName: "Rank",
       colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
-      render: (item: CategoryType) => (
+      render: (item: Category) => (
         <div className=" w-[100px] flex  text-[var(--dark-text)] gap-2 items-center justify-start ">
           <div className="mt-1">{item.rank}</div>
         </div>
@@ -91,7 +91,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
   ];
   return (
     <Table
-      totalData={ totalData}
+      totalData={totalData}
       selectedData={selectedData}
       data={category}
       columns={Columns}
