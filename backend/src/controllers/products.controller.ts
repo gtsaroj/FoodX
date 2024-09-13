@@ -53,10 +53,10 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
       products = await searchProductInDatabase(search);
     } else {
       products = await getAllProductsFromDatabase("products");
+      await redisClient.set("products", JSON.stringify(products), {
+        EX: 3600,
+      });
     }
-    await redisClient.set("products", JSON.stringify(products), {
-      EX: 3600,
-    });
     return res
       .status(200)
       .json(

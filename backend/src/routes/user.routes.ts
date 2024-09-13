@@ -4,6 +4,7 @@ import {
   deleteUser,
   deleteUsersInBulk,
   fetchUsers,
+  getSearchUser,
   getUser,
   logOutUser,
   loginUser,
@@ -56,4 +57,5 @@ router
 router
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteUsersInBulk);
+router.route("/find").get(verifyJwt, verifyAdmin, getSearchUser);
 export default router;

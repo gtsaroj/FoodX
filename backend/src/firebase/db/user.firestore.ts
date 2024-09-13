@@ -2,7 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { User, AccessType, UserInfo } from "../../models/user.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { db } from "../index.js";
-import { paginateFnc } from "../utils.js";
+import { paginateFnc, searchItemInDatabase } from "../utils.js";
 
 const addUserToFirestore = async (
   user: User,
@@ -226,6 +226,49 @@ const findUserInDatabase = async (id: string) => {
     );
   }
 };
+const searchUserInDatabase = async (query: string) => {
+  try {
+    const customerSnapshot = await searchItemInDatabase(
+      "customer",
+      query,
+      "fullName",
+      5
+    );
+
+    const chefSnapshot = await searchItemInDatabase(
+      "chef",
+      query,
+      "fullName",
+      5
+    );
+    const adminSnapshot = await searchItemInDatabase(
+      "admin",
+      query,
+      "fullName",
+      5
+    );
+    let searchResult: UserInfo[] = [
+      ...customerSnapshot.docs.map((doc) => ({
+        ...(doc.data() as UserInfo),
+      })),
+      ...chefSnapshot.docs.map((doc) => ({
+        ...(doc.data() as UserInfo),
+      })),
+      ...adminSnapshot.docs.map((doc) => ({
+        ...(doc.data() as UserInfo),
+      })),
+    ];
+
+    searchResult.sort((a, b) => {
+      return a.fullName.localeCompare(b.fullName);
+    });
+    searchResult = searchResult.slice(0, 9);
+
+    return searchResult;
+  } catch (error) {
+    throw new ApiError(500, "Error while searching user based on username.");
+  }
+};
 
 export {
   addUserToFirestore,
@@ -237,4 +280,5 @@ export {
   findUserInDatabase,
   updateTotalOrder,
   updateTotalSpent,
+  searchUserInDatabase,
 };

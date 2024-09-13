@@ -11,6 +11,7 @@ import {
   deleteUserFromFireStore,
   getUserFromDatabase,
   getUsersFromDatabase,
+  searchUserInDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
 
@@ -491,6 +492,30 @@ const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
   }
 });
 
+const getSearchUser = asyncHandler(async (req: any, res: any) => {
+  const search = req.query.search;
+  try {
+    if (!search) return;
+    const users = await searchUserInDatabase(search);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, users, "All products fetched successfully.", true)
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Unable to fetch user information.",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
+
 export {
   loginUser,
   logOutUser,
@@ -504,4 +529,5 @@ export {
   deleteUsersInBulk,
   fetchUsers,
   getUser,
+  getSearchUser,
 };
