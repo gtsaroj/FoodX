@@ -21,6 +21,7 @@ const Revenue: React.FC = () => {
       });
       const responseData = response.data;
       const analyticsData = aggregateCurrentDayData(responseData);
+       console.log(analyticsData)
       setTotalOrder(analyticsData as CardAnalyticsProp[]);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);

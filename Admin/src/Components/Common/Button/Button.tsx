@@ -400,7 +400,7 @@ const Selector: React.FC<SelectorProp> = ({ data, onSelect }) => {
   const [show, setShow] = useState<boolean>(false);
   const [showField, setShowField] = useState<string>("Low to High");
   return (
-    <div className="w-full relative group/selector border-[1px] border-[var(--dark-border)] rounded px-2 ">
+    <div className="w-full relative group/selector border-[1px]  border-[var(--dark-border)] rounded px-2 ">
       <div
         onClick={() => setShow(!show)}
         className="flex items-center cursor-pointer  justify-between"
@@ -428,7 +428,7 @@ const Selector: React.FC<SelectorProp> = ({ data, onSelect }) => {
               setShow(false);
             }}
             key={option.label}
-            className="text-[var(--dark-secondary-text)]  text-start text-[16px] p-1 cursor-pointer hover:bg-slate-200 w-full rounded"
+            className="text-[var(--dark-secondary-text)]  text-start text-[16px] p-1 cursor-pointer hover:bg-[var(--light-background)] w-full rounded"
           >
             {option.label}
           </p>
