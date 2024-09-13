@@ -1,16 +1,12 @@
 import express from "express";
 import {
   addNewOrderToDatabase,
-  getNextBatchOfData,
-  getOrderDataInBatches,
   getOrdersFromDatabase,
-  getPrevBatch,
   updateOrderStatusInDatabase,
 } from "../firebase/db/order.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
-import { redisClient } from "../utils/Redis.js";
 import { User } from "../models/user.model.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
@@ -26,28 +22,21 @@ const getOrderByUserIdFromDatabase = asyncHandler(
       currentFirstDoc: any | null;
       currentLastDoc: any | null;
       direction?: "prev" | "next";
-      status?: "fullfilled" | "cancelled" | "preparing" | "received";
+      status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
     } = req.body;
     try {
       const user: User = req.user;
       if (!user) throw new ApiError(500, "No user found. Please login first.");
 
+      const limitPage = +pageSize;
       let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
-        pageSize,
+        limitPage,
         direction === "next" ? currentLastDoc : null,
         direction === "prev" ? currentFirstDoc : null,
         direction,
         status,
         user.uid
       );
-      const pipeline = redisClient.multi();
-
-      orders.forEach((order) => {
-        pipeline.lPush(`latest_orders`, JSON.stringify(order));
-      });
-
-      pipeline.lRange("latest_orders", 0, 9);
-      await pipeline.exec();
 
       res.status(200).json(
         new ApiResponse(
@@ -63,12 +52,16 @@ const getOrderByUserIdFromDatabase = asyncHandler(
         )
       );
     } catch (error) {
-      throw new ApiError(
-        500,
-        "Error while fetching user orders.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "Something went wrong while fetching user's order from database",
+            null,
+            error as string[]
+          )
+        );
     }
   }
 );
@@ -78,10 +71,6 @@ const addNewOrder = asyncHandler(
     if (!order) throw new ApiError(400, "Order not found");
     try {
       await addNewOrderToDatabase(order);
-      const pipeline = redisClient.multi();
-      pipeline.lPush("latest_orders", JSON.stringify(order));
-      pipeline.lRange("latest_orders", 0, 9);
-      await pipeline.exec();
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Orders fetched successfully", true));
@@ -142,13 +131,14 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     currentFirstDoc: any | null;
     currentLastDoc: any | null;
     direction?: "prev" | "next";
-    status?: "fullfilled" | "cancelled" | "preparing" | "received";
+    status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
     userId?: string;
   } = req.body;
 
   try {
+    const limitPage = +pageSize;
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
-      pageSize,
+      limitPage,
       direction === "next" ? currentLastDoc : null,
       direction === "prev" ? currentFirstDoc : null,
       direction,
@@ -169,72 +159,17 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
       )
     );
   } catch (error) {
-    throw new ApiError(
-      401,
-      "Something went wrong while fetching orders from database",
-      null,
-      error as string[]
-    );
-  }
-});
-
-const getOrderInBatch = asyncHandler(async (req: any, res: any) => {
-  try {
-    const { direction, currentLastDoc, currentFirstDoc, limit} = req.body;
-
-    if (direction === "next") {
-      const orderData = await getNextBatchOfData(currentLastDoc, limit);
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { orderData },
-            "Order data fetched successfully.",
-            true
-          )
-        );
-    } else if (direction === "prev") {
-      const orderData = await getPrevBatch(currentFirstDoc, limit);
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            { orderData },
-            "Order data fetched successfully.",
-            true
-          )
-        );
-    }
-    const orderData = await getOrderDataInBatches(limit);
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { orderData },
-          "Order data fetched successfully.",
-          true
-        )
-      );
-  } catch (error) {
     return res
       .status(500)
       .json(
         new ApiError(
           500,
-          "Something went wrong while fetching user order",
+          "Something went wrong while fetching orders from database",
           null,
           error as string[]
         )
       );
   }
 });
-export {
-  getOrderByUserIdFromDatabase,
-  addNewOrder,
-  updateOrder,
-  fetchOrders,
-  getOrderInBatch,
-};
+
+export { getOrderByUserIdFromDatabase, addNewOrder, updateOrder, fetchOrders };
