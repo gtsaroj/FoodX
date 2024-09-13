@@ -6,6 +6,7 @@ import {
   bulkDeleteOfCustomer,
   deletUser,
   getUsers,
+  searchUser,
 } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
@@ -38,42 +39,46 @@ const AllCustomers = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 2 });
+  }>({ currentPage: 1, perPage: 5 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
 
-  const handleCustomerData = async (data: GetUserModal) => {
+  const handleCustomerData = async ({
+    direction,
+    filter,
+    pageSize,
+    path,
+    sort,
+    currentFirstDoc,
+    currentLastDoc,
+  }: GetUserModal) => {
     setLoading(true);
     try {
-      const allUser = await getUsers({
-        path: data.path,
-        filter: data.filter,
-        pageSize: data.pageSize,
-        direction: data.direction,
-        sort: data.sort,
-        currentFirstDoc: data.currentFirstDoc || null,
-        currentLastDoc: data.currentLastDoc || null,
+      const user = await getUsers({
+        path: path,
+        pageSize: pageSize,
+        filter: filter,
+        direction: direction,
+        sort: sort,
+        currentFirstDoc: currentFirstDoc || null,
+        currentLastDoc: currentLastDoc || null,
       });
-      const users = allUser.data as {
+
+      const users = user.data as {
         currentFirstDoc: string;
         currentLastDoc: string;
-        users: DbUser[];
+        users: User[];
         length: number;
       };
+
       setCurrentDoc({
         currentFirstDoc: users.currentFirstDoc,
         currentLastDoc: users.currentLastDoc,
       });
       setTotalData(users.length);
-      if (users.users.length <= 0) {
-        setInitialCustomer([]);
-        return setLoading(false);
-      }
-
-      const customerList = await aggregateCustomerData(users.users);
-      setInitialCustomer(customerList);
+      setInitialCustomer(users.users);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error while getting customers : ${error}`);
@@ -208,34 +213,45 @@ const AllCustomers = () => {
 
   // search user
   const handleChange = async (value: string) => {
-    if (value.length <= 0) return handleCustomerData();
-    const filterCustomer = SearchCustomer(initialCustomer, value);
-    if (filterCustomer.length <= 0) return setInitialCustomer([]);
-    setInitialCustomer(filterCustomer);
+    if (value.length <= 0)
+      return handleCustomerData({
+        path:
+          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+        direction: "next",
+        filter: (isFilter?.sortFilter as keyof User) || "fullName",
+        pageSize: pagination.perPage,
+        sort: sortOrder || "asc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+      });
+    const filterCustomer = await searchUser(value);
+    const aggregateUser = await aggregateCustomerData(filterCustomer);
+    setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
+    setInitialCustomer(aggregateUser);
   };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
-  // next fetch
+  // call getUser fn based on changing the current page number
   useEffect(() => {
     if (pagination.currentPage === 1) {
       handleCustomerData({
         path:
-          (isFilter?.typeFilter as "customer" | "admin" | "chef") || "customer",
+          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
         direction: "next",
         filter: (isFilter?.sortFilter as keyof User) || "fullName",
         pageSize: pagination.perPage,
-        sort: sortOrder as "asc" | "desc",
+        sort: sortOrder || "asc",
         currentFirstDoc: null,
         currentLastDoc: null,
       });
     }
   }, [
+    pagination.perPage,
     isFilter?.sortFilter,
     isFilter?.typeFilter,
     sortOrder,
-    pagination.perPage,
     pagination.currentPage,
   ]);
 
@@ -243,9 +259,10 @@ const AllCustomers = () => {
     if (
       pagination.currentPage > 1 &&
       currentDoc?.currentFirstDoc &&
-      currentDoc?.currentLastDoc
+      currentDoc.currentLastDoc
     ) {
       (async () => {
+        setLoading(true);
         const customers = await getUsers({
           path:
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
@@ -253,10 +270,11 @@ const AllCustomers = () => {
           pageSize: pagination.perPage,
           direction: "next",
           filter: (isFilter?.sortFilter as keyof User) || "fullName",
-          sort: sortOrder as "asc" | "desc",
-          currentFirstDoc: currentDoc.currentFirstDoc,
-          currentLastDoc: currentDoc.currentLastDoc,
+          sort: (isFilter?.sortFilter as "asc" | "desc") || "asc",
+          currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
+          currentLastDoc: currentDoc && currentDoc.currentLastDoc,
         });
+
         const users = customers.data as {
           currentFirstDoc: string;
           currentLastDoc: string;
@@ -268,25 +286,23 @@ const AllCustomers = () => {
           currentLastDoc: users.currentLastDoc,
         });
         setTotalData(users.length);
-        const aggregateCustomer = await aggregateCustomerData(users.users);
+
         setInitialCustomer((customer) => {
           return [
             ...customer,
-            ...aggregateCustomer.filter(
+            ...users.users.filter(
               (user) => !customer.some((cust) => user.uid === cust.uid)
             ),
           ];
         });
+        setLoading(false);
       })();
     }
   }, [
-    currentDoc?.currentFirstDoc,
-    currentDoc?.currentLastDoc,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
     pagination.currentPage,
     pagination.perPage,
-    sortOrder,
+    isFilter?.sortFilter,
+    isFilter?.typeFilter,
   ]);
 
   return (
@@ -403,7 +419,7 @@ const AllCustomers = () => {
         </div>
       </div>
       <CustomerTable
-        totalData={totalData}
+        totalData={totalData || 1}
         onPageChange={(page) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }

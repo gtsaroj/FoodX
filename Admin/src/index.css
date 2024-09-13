@@ -42,9 +42,9 @@
   }
   .dark {
     --color: #1ba13dd2;
-    --primary-color: #2c398d;
-    --primary-light: #00a3d9;
-    --primary-dark: #0e76a8;
+    --primary-color: #007fff;
+    --primary-light: #0076ce;
+    --primary-dark: #004792;
 
     --secondary-color: #d90081;
     --secondary-light: #ec008d;

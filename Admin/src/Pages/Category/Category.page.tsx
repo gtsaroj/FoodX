@@ -71,7 +71,6 @@ export const CategoryPage: React.FC = () => {
         })
       : setBulkSelectedCategory(refreshIds);
   };
-  console.log(initialCategory)
 
   //select all category
   const handleAllSelected = (isChecked: boolean) => {

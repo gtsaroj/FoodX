@@ -1,12 +1,12 @@
 import { Download, Filter, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { aggregateCustomerData } from "../../Utility/user.utils";
 import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
-import { getUsers } from "../../Services/user.services";
+import { getUsers, searchUser } from "../../Services/user.services";
 import { DbUser, GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
+import { aggregateCustomerData } from "../../Utility/user.utils";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);
@@ -67,10 +67,10 @@ const CustomerList: React.FC = () => {
     setLoading(false);
   };
 
-  // searching function
+  // search user
   const handleChange = async (value: string) => {
     if (value.length <= 0)
-      return await handleCustomerData({
+      return handleCustomerData({
         path:
           (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
         direction: "next",
@@ -80,9 +80,10 @@ const CustomerList: React.FC = () => {
         currentFirstDoc: null,
         currentLastDoc: null,
       });
-    // const filterCustomer = SearchCustomer(initialCustomer, value);
-    // if (filterCustomer.length <= 0) return setInitialCustomer([]);
-    // setInitialCustomer(filterCustomer);
+    const filterCustomer = await searchUser(value);
+    const aggregateUser = await aggregateCustomerData(filterCustomer);
+    setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
+    setInitialCustomer(aggregateUser|| []);
   };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
@@ -113,7 +114,11 @@ const CustomerList: React.FC = () => {
   ]);
 
   useEffect(() => {
-    if (pagination.currentPage > 1) {
+    if (
+      pagination.currentPage > 1 &&
+      currentDoc?.currentFirstDoc &&
+      currentDoc.currentLastDoc
+    ) {
       (async () => {
         setLoading(true);
         const customers = await getUsers({
