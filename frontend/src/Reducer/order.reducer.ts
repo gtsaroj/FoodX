@@ -18,11 +18,10 @@ const OrderSlice = createSlice({
   reducers: {
     addToList: (state, action) => {
       const currentOrderIds = state.order.map((order) => order.orderId);
-      console.log(currentOrderIds);
       const newOrders = action.payload.filter(
         (order: any) => !currentOrderIds.includes(order.orderId)
       );
-      console.log(newOrders);
+
       state.order.push(...newOrders);
     },
     onNavigateNextPage: (state) => {

@@ -198,7 +198,6 @@ const PersonlInformation: React.FC<User> = ({
   phoneNumber,
   role,
 }) => {
-  console.log(fullName, email, phoneNumber);
   const firstName = fullName?.split(" ")[0];
   const lastName = fullName?.split(" ")[1];
 
@@ -211,7 +210,6 @@ const PersonlInformation: React.FC<User> = ({
     lastName,
     phoneNumber,
   });
-  console.log(update);
   const dispatch = useDispatch<AppDispatch>();
   const handleSubmit = async () => {
     setLoading(true);
@@ -360,7 +358,7 @@ const PersonlInformation: React.FC<User> = ({
                 Role
               </p>
               <p className="text-[var(--dark-text)] font-medium ">
-                {role?.charAt(0).toUpperCase() + role?.slice(1)}
+                {role && role?.charAt(0).toUpperCase() + role?.slice(1)}
               </p>
             </div>
           </div>

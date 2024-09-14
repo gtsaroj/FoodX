@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import toast from "react-hot-toast";
 
 interface favourie {
   favourite: string[];
@@ -30,7 +29,7 @@ const favouriteSlice = createSlice({
         (product) => product !== action.payload
       );
     },
-    resetFavourite: (state, action) => {
+    resetFavourite: (state) => {
       state.favourite = [];
     },
   },

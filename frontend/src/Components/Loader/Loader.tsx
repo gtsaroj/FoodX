@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { InfinitySpin, RotatingLines } from "react-loader-spinner";
 
-
 interface LoadingTextProp {
   isLoading: boolean;
   loadingFn?: () => void;
@@ -44,7 +43,7 @@ export const LoadingContent: React.FC<LoadingTextProp> = ({
   useEffect(() => {
     const loadingTime = setTimeout(() => {
       if (isLoading) {
-        loadingFn();
+        loadingFn && loadingFn();
       }
     }, 440);
 
@@ -67,10 +66,7 @@ export const LoadingContent: React.FC<LoadingTextProp> = ({
   );
 };
 
-export const Loader: React.FC<LoadingTextProp> = ({
-  isLoading,
-  loadingFn,
-}) => {
+export const Loader: React.FC<LoadingTextProp> = ({ isLoading, loadingFn }) => {
   useEffect(() => {
     const loadingTime = setTimeout(() => {
       if (isLoading) {

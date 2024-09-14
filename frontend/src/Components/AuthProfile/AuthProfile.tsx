@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { makeRequest } from "../../makeRequest";
 import { signOutUser } from "../../firebase/Authentication";
 import { useDispatch } from "react-redux";
@@ -6,23 +6,20 @@ import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { User } from "../../models/user.model";
 
-interface userModel {
-  uid: string;
-  email: string;
-  fullName: string;
-  avatar: string;
-}
 interface Prop {
-  user: userModel;
+  user: User;
 }
 
 const Profile: React.FC<Prop> = ({ user }: Prop) => {
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     const toastLoader = toast.loading("Logging out, please wait...");
+    setLoading(true);
     try {
       const response = await makeRequest.post("/users/logout");
 
@@ -39,8 +36,9 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
     } catch (error) {
       toast.dismiss(toastLoader);
       toast.error("Error logging out. Please try again.");
-      throw new Error("Error logging out." + error);
+      // throw new Error("Error logging out." + error);
     }
+    setLoading(false);
   };
 
   return (
@@ -81,6 +79,7 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
             View Orders
           </button>
           <button
+            disabled={loading}
             onClick={() => handleLogout()}
             className=" flex justify-start items-center  rounded text-[var(--dark-text)]  w-full text-[17px] py-1.5 px-4 hover:bg-[var(--light-background)]"
           >

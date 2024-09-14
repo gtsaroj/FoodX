@@ -4,11 +4,8 @@ import { AppDispatch, RootState } from "../../Store";
 import { Trash2 } from "lucide-react";
 
 import {
-  getFavourites,
   removeFavourites,
 } from "../../Services/favourite.services";
-import { useEffect, useState } from "react";
-import { Favourite } from "../../models/favourite.model";
 import toast from "react-hot-toast";
 import { removeFavourite } from "../../Reducer/favourite.reducer";
 
@@ -20,18 +17,8 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
   prop,
 }: SingleCardProp) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [favourites, setFavourites] = useState<Favourite[]>([]);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
-  
-  const getFavouireProducts = async () => {
-    try {
-      const response = await getFavourites(authUser.uid as string);
-      setFavourites(response.data.favourites);
-    } catch (error) {
-      throw new Error("Error while adding favourite products" + error);
-    }
-  };
 
   const removeFavouriteProduct = async (id: string) => {
     const toastId = toast.loading("Removing from favorites...");
@@ -40,19 +27,15 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
         uid: authUser.uid as string,
         productId: id,
       });
-      toast.dismiss(toastId)
+      toast.dismiss(toastId);
       toast.success("Item removed from the cart successfully!");
       dispatch(removeFavourite(id));
     } catch (error) {
-      toast.dismiss(toastId)
+      toast.dismiss(toastId);
       toast.error("Failed to remove the item. Please try again.");
       throw new Error("Error while removing favourite cart product" + error);
     }
   };
-
-  useEffect(() => {
-    getFavouireProducts();
-  }, []);
 
   return (
     <div
