@@ -32,6 +32,7 @@ router.route("/signIn").post(
   rateLimiter(30, 3),
   signUpNewUser
 );
+router.route("/find").get(verifyJwt, verifyAdmin, getSearchUser);
 router.route("/:role").get(rateLimiter(60, 5), getUser);
 router.route("/refresh-token").post(rateLimiter(60, 5), refreshAccessToken);
 router
@@ -57,5 +58,4 @@ router
 router
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteUsersInBulk);
-router.route("/find").get(verifyJwt, verifyAdmin, getSearchUser);
 export default router;
