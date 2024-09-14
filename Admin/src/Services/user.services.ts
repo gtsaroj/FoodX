@@ -17,8 +17,7 @@ export const searchUser = async (search: string) => {
   try {
     const response = await makeRequest({
       method: "get",
-      url: `users/find`,
-      params: { search: search },
+      url: `users/find?search=${search}`,
     });
     return response.data.data;
   } catch (error) {
