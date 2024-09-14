@@ -17,21 +17,9 @@ import { cacheMiddleware } from "../middlewares/redis.middleware.js";
 const productRouter = Router();
 
 productRouter
-  .route("/all")
-  .get(rateLimiter(60, 20), cacheMiddleware("products"), getNormalProducts);
-
-productRouter
   .route("/specials")
   .get(rateLimiter(60, 20), cacheMiddleware("specials"), getSpecialProducts);
 
-productRouter.route("/get-product-by-tag/:tag").get(
-  rateLimiter(60, 20),
-  (req, res, next) => {
-    const tag = req?.params.tag;
-    cacheMiddleware(`product:${tag}`)(req, res, next);
-  },
-  getProductByTag
-);
 productRouter
   .route("/popular")
   .get(
@@ -53,5 +41,16 @@ productRouter
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteProductsInBulk);
+productRouter
+  .route("/all")
+  .get(rateLimiter(60, 20), cacheMiddleware("products"), getNormalProducts);
 
+productRouter.route("/get-product-by-tag/:tag").get(
+  rateLimiter(60, 20),
+  (req, res, next) => {
+    const tag = req?.params.tag;
+    cacheMiddleware(`product:${tag}`)(req, res, next);
+  },
+  getProductByTag
+);
 export { productRouter };
