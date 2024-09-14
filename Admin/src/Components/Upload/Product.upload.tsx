@@ -17,7 +17,10 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
 
-const UploadFood: React.FC = () => {
+interface UploadFoodProp {
+  closeModal: () => void;
+}
+const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
   const [addFood, setAddFood] = useState<UploadProduct>({
     product: {
@@ -65,7 +68,19 @@ const UploadFood: React.FC = () => {
         date: new Date(),
       });
       if (addProduct) return toast.success("Succesfully Added");
-      addFood.product.image = "";
+      setAddFood(() => ({
+        collection: "",
+        product: {
+          id: "",
+          image: "",
+          name: "",
+          price: "",
+          quantity: "",
+          tagId: "",
+        },
+      }));
+
+      closeModal();
     } catch (error) {
       toast.error("Error while adding product ");
       throw new Error("Error while uploading products" + error);

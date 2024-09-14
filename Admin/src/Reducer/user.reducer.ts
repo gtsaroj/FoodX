@@ -5,7 +5,6 @@ import {
   signInAction,
   updateUserAction,
 } from "../Actions/user.actions";
-import { userInfo } from "os";
 
 interface authState {
   success: boolean;

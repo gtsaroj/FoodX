@@ -41,7 +41,7 @@ export const RecentOrders = () => {
       const recentOrders = await getRecentOrders(response.data.orders);
       setRecentOrder(recentOrders);
     } catch (error) {
-      setRecentOrder([])
+      setRecentOrder([]);
       throw new Error("Error while fetching recent orders" + error);
     }
     setLoading(false);
@@ -81,12 +81,12 @@ export const RecentOrders = () => {
             recentOrder.length > 0 ? (
               recentOrder?.map((order, index) => (
                 <OrderCard
-                  image={order.image}
-                  orderId={order.orderId}
-                  price={order.price}
-                  orderRequest={order.orderRequest}
-                  products={order.products}
-                  status={order.status}
+                  image={order?.image}
+                  orderId={order?.orderId}
+                  price={order?.price}
+                  orderRequest={order?.orderRequest}
+                  products={order?.products}
+                  status={order?.status}
                   key={index}
                 />
               ))

@@ -61,6 +61,8 @@ const UpdateFood: React.FC<updateProductProp> = ({ product, closeModal }) => {
       toast.dismiss(toastLoading);
       toast.success("Successfully updated...");
       closeModal();
+      setNewData("");
+      closeModal();
     } catch (error) {
       toast.dismiss(toastLoading);
       closeModal();

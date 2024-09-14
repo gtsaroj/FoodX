@@ -18,10 +18,6 @@ import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./Product.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import { searchProduct } from "../../Services/product.services";
-import { getRevenue } from "../../Services/revenue.services";
-import dayjs from "dayjs";
-import { Revenue } from "../../models/revenue.model";
-import { match } from "assert";
 import { aggregateProducts } from "./product";
 
 const FoodPage: React.FC = () => {
@@ -414,7 +410,7 @@ const FoodPage: React.FC = () => {
       />
 
       <Modal close={isModalOpen} closeModal={closeModal}>
-        <UploadFood />
+        <UploadFood closeModal={closeModal} />
       </Modal>
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
         <UpdateFood
