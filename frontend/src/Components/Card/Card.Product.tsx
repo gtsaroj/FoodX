@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { RootState } from "../../Store";
-import { LoadingText } from "../Loader/Loader";
 import { Product } from "../../models/product.model";
 import Modal from "../Common/Popup/Popup";
 import { LoginContainer } from "../Login/Login";
@@ -23,14 +22,12 @@ interface MenuProp {
 export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
   const [cartQuantity, setCartQuantity] = useState<number>(1);
-  const [loader, setLoader] = useState<boolean>(false);
   const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
   const dispatch = useDispatch();
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const addFavouriteProduct = async () => {
-    setLoader(true);
     const toastId = toast.loading("Processing, please wait...");
     try {
       await addFavourite({ uid: authUser.uid as string, productId: prop.id });
@@ -42,11 +39,9 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       toast.error("Failed to add the item. Please try again.");
       throw new Error("Error while adding favourite products" + error);
     }
-    setLoader(false);
   };
 
   const removeFavouriteProduct = async () => {
-    setLoader(true);
     const toastId = toast.loading("Processing, please wait...");
 
     try {
@@ -58,12 +53,10 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       toast.success("Item removed ");
       dispatch(removeFavourite(prop.id));
     } catch (error) {
-      setLoader(false);
       toast.dismiss(toastId);
       toast.error("Failed to remove the item. Please try again.");
       throw new Error("Error while removing favourite cart product" + error);
     }
-    setLoader(false);
   };
 
   const selectedProductsQuantity = useSelector(

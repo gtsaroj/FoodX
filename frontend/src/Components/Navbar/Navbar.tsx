@@ -18,10 +18,7 @@ import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
 import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
-import {
-  getNormalProducts,
-  searchProduct,
-} from "../../Services/product.services";
+import { searchProduct } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
@@ -120,7 +117,7 @@ export const Navbar: React.FC = () => {
     setLoading(true);
     try {
       const filter = await searchProduct(value);
-       console.log(filter)
+      console.log(filter);
       setSearchData(filter);
     } catch (error) {
       throw new Error("Error while search product" + error);
@@ -356,6 +353,8 @@ export const Header: React.FC = () => {
 };
 
 export const SearchProductCard: React.FC<Product> = (data) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   return (
     <div
       key={data.id}

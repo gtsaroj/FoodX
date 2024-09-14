@@ -11,12 +11,9 @@ const Order = () => {
 
       <OrderHistory />
 
-
-          <div className="w-full h-full flex items-center gap-4 justify-start  ">
-            <PopularProduct />
-          </div>
-        
-      
+      <div className="w-full h-full flex items-center gap-4 justify-start  ">
+        <PopularProduct />
+      </div>
     </div>
   );
 };

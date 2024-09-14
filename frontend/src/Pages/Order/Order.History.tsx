@@ -7,10 +7,9 @@ import { getOrderByUser } from "../../Services/order.services";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
-import { useNavigate, useRouteLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   addToCart,
-  removeCart,
   resetCart,
 } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
@@ -183,7 +182,6 @@ export const OrderHistory = () => {
     }
     setLoading(false);
   };
-  console.log(useRouteLoaderData);
 
   useEffect(() => {
     if (pagination.currentPage === 1) {
@@ -222,7 +220,7 @@ export const OrderHistory = () => {
             });
             navigate("/cart/checkout");
           },
-          downloadFn: (id: string) => toast.success("We will integrate soon!"),
+          downloadFn: () => toast.success("We will integrate soon!"),
         }}
         pagination={{
           currentPage: pagination?.currentPage,

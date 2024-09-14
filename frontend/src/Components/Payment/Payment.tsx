@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Product } from "../../models/product.model";
 import "react-loading-skeleton/dist/skeleton.css";
 import toast from "react-hot-toast";
 import { addOrder } from "../../Services/order.services";
@@ -9,9 +8,6 @@ import dayjs from "dayjs";
 import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
 
-interface CartProp {
-  prop: Product;
-}
 
 export const Payment: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("esewa");

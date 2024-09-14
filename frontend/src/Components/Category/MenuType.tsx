@@ -67,7 +67,7 @@ export const MenuType: React.FC = () => {
 
       <div className="flex flex-col items-start rounded-md bg-[var(--light-foreground)] px-8 gap-5  py-5">
           <p className="text-2xl px-5 pt-4 text-[var(--dark-text)] font-bold tracking-wider">
-            Category Title
+            Category
           </p>
     
         <div className="flex flex-wrap items-center justify-center md:justify-start  gap-20 p-5 rounded-md flex-shrink-0">

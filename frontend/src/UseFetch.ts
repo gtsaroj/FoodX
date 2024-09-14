@@ -1,10 +1,9 @@
 import { makeRequest } from "./makeRequest";
 import { useEffect, useState } from "react";
-import { Product, ProductType } from "./models/product.model";
+import { Product } from "./models/product.model";
 import { RootState, Store } from "./Store";
 import { authLogout } from "./Reducer/user.reducer";
 import { useSelector } from "react-redux";
-import Cookies from "js-cookie";
 
 const DelayRequestTime = <T>(fn: () => Promise<T>, time: number) => {
   return function executated() {

@@ -8,7 +8,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AppDispatch, RootState } from "./Store.ts";
-import PrivateRoute from "./PrivateRoute.tsx";
+const PrivateRoute = React.lazy(() => import("./PrivateRoute.tsx"));
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
@@ -87,7 +87,7 @@ export const App: React.FC = () => {
   const [showContent, SetShowContent] = useState<boolean>(true);
   const auth = useSelector((state: RootState) => state.root.auth);
 
-  const [isDark, setIsDark] = useState<boolean>(() => {
+  const [isDark] = useState<boolean>(() => {
     const prefersDarkScheme = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;

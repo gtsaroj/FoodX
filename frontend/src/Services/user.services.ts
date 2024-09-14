@@ -3,7 +3,7 @@ import { globalRequest } from "../GlobalRequest";
 import { getRoleFromAccessToken } from "../Utility/JWTUtility";
 import { signInUser, signUpNewUser } from "../firebase/Authentication";
 import { ValidationType } from "../models/register.model";
-import { UpdateProfileInfo, User } from "../models/user.model";
+import { User } from "../models/user.model";
 import Cookies from "js-cookie";
 import { makeRequest } from "../makeRequest";
 

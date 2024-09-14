@@ -15,7 +15,11 @@
 
     /* f4f6f8 
     f5f9ff
-    */
+
+        /* brand color */
+    --esewa: #00cd4c;
+    --khalti: #6d008d;
+
     --body-bg: #f4f6f8;
     --light-foreground: #fbfbfb;
     --light-background: #f4f6f8;
@@ -42,18 +46,17 @@
   }
   .dark {
     --color: #1ba13dd2;
-    --primary-color: #007fff;
+    --primary-color: #1673d1;
     --primary-light: #0076ce;
     --primary-dark: #004792;
 
     --secondary-color: #d90081;
     --secondary-light: #ec008d;
     --secondary-dark: #ec008e;
-     
 
     /* brand color */
-    --esewa : #00CD4C;
-    --khalti : #6D008D;
+    --esewa: #00cd4c;
+    --khalti: #6d008d;
     /* f4f6f8 
     f5f9ff
     */
