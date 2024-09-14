@@ -56,6 +56,7 @@
     "redux-persist": "^6.0.0",
     "sass": "^1.77.2",
     "shadcn-ui": "^0.2.3",
+    "socket.io-client": "^4.7.5",
     "styled-component": "^2.8.0",
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.3.0",

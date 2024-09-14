@@ -25,10 +25,11 @@ import Footer from "./Components/Footer/Footer";
 import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
 import { WelcomePage } from "./Pages/Page.Welcome";
+import { socket } from "./Utility/socket.util";
 
 const MainPage = () => {
   return (
-    <div className="flex flex-col  items-center justify-center w-full overflow-hidden ">
+    <div className="flex flex-col items-center justify-center w-full overflow-hidden ">
       <div className=" flex xl:flex-row flex-col w-full 2xl:container lg:h-[100vh] gap-4 py-3 items-start justify-center  px-3 xl:px-5">
         <div className="hidden xl:flex ">
           <DesktopSlider closeFn={() => {}} open={false} />
@@ -55,6 +56,21 @@ const App: React.FC = () => {
   useEffect(() => {
     auth.success ? setShowContent(true) : setShowContent(false);
   }, [auth.success]);
+
+  useEffect(() => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log("Connected to server");
+
+      socket.on("disconnect", () => {
+        console.log("Disconnected from server");
+      });
+    });
+
+    return () => {
+      socket.off("chef");
+    };
+  });
   return (
     <Router>
       <Routes>
