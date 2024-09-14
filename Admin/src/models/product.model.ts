@@ -37,7 +37,7 @@ export interface ProductTable {
 }
 export interface UploadProduct {
   product: Product;
-  collection: Collection["name"];
+  collection: Collection["name"] | string;
 }
 
 export interface Collection {

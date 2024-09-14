@@ -1,4 +1,4 @@
-import { UpdateProfileType } from "./UpdateAdminProfile";
+import { Register } from "../../models/user.model";
 
 export interface ChangePasswordType {
   newPassword: string;
@@ -6,13 +6,13 @@ export interface ChangePasswordType {
 }
 
 export const allFieldsRequired = (
-  RegisterValue: UpdateProfileType,
+  RegisterValue: Register,
   error: Record<string, string>
 ) => {
   for (const inputValue in RegisterValue) {
     if (
       Object.prototype.hasOwnProperty.call(RegisterValue, inputValue) &&
-      RegisterValue[inputValue as keyof UpdateProfileType] === ""
+      RegisterValue[inputValue as keyof Register] === ""
     )
       error[inputValue] = `All are required`;
   }
@@ -23,7 +23,7 @@ export const allFieldsRequired = (
 };
 
 export const checkValidNumber = (
-  registervalue: UpdateProfileType,
+  registervalue: Register,
   error: Record<string, string>
 ) => {
   if (registervalue.phoneNumber === "") {

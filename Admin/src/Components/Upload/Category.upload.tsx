@@ -40,6 +40,9 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
       });
       toast.dismiss(toastLoader);
       toast.success("Successfully updated");
+      closeModal();
+      setCategoryName("");
+      setImageURL("");
     } catch (error) {
       toast.dismiss(toastLoader);
       console.error("Error adding category:", error);

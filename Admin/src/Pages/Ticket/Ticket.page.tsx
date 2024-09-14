@@ -10,7 +10,7 @@ import { getTickets } from "../../Services/ticket.services";
 import toast from "react-hot-toast";
 import {
   GetTicketModal,
-  TicketState,
+  TicketStatus,
   TicketType,
 } from "../../models/ticket.model";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -22,7 +22,8 @@ import { RotatingLines } from "react-loader-spinner";
 // }
 
 const TicketPage: React.FC = () => {
-  const [ticketState, setTicketState] = useState<TicketState>("Pending");
+  const [ticketState, setTicketState] =
+    useState<TicketStatus["status"]>("pending");
   const [pagination, setPagination] = useState<{
     perPage: number;
     currentPage: number;
@@ -46,6 +47,7 @@ const TicketPage: React.FC = () => {
         sort: data.sort,
         currentFirstDoc: data.currentFirstDoc || null,
         currentLastDoc: data.currentLastDoc || null,
+        status: data.status,
       })) as {
         tickets: TicketType[];
         currentFirstDoc: string;
@@ -85,8 +87,9 @@ const TicketPage: React.FC = () => {
       sort: "asc",
       currentFirstDoc: null,
       currentLastDoc: null,
+      status: ticketState || "pending",
     });
-  },[pagination.perPage])
+  }, [pagination.perPage, ticketState]);
 
   const TicketComponents = {
     Pending: <PendingTicket prop={tickets} loading={loading} />,
@@ -158,7 +161,10 @@ const TicketPage: React.FC = () => {
         </button>
       </div>
       {/* Employee Card */}
-      <div id="ticketScrollable" className="w-full py-6 h-full overflow-auto   scrollbar-custom px-5 ">
+      <div
+        id="ticketScrollable"
+        className="w-full py-6 h-full overflow-auto   scrollbar-custom px-5 "
+      >
         <div className="w-full h-[400px] ">
           <InfiniteScroll
             endMessage={

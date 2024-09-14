@@ -12,7 +12,10 @@ import { addBanner } from "../../Services/banner.services";
 import { addLogs } from "../../Services/log.services";
 import { Selector } from "../Selector/Selector";
 
-const UploadBanner: React.FC = () => {
+interface UploadBannerProp {
+  closeModal: () => void;
+}
+const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
@@ -45,6 +48,8 @@ const UploadBanner: React.FC = () => {
           date: new Date(),
           detail: `Banner : ${name} `,
         });
+        setImage("");
+        setName("");
       }
       if (banner === "sponsors") {
         await addBanner({
@@ -57,6 +62,8 @@ const UploadBanner: React.FC = () => {
           date: new Date(),
           detail: `sponsor : ${name} `,
         });
+        setImage("");
+        setName("");
       }
     } catch (error) {
       throw new Error("Unable to add new banner" + error);

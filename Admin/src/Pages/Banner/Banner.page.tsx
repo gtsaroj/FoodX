@@ -109,7 +109,6 @@ const FoodPage: React.FC = () => {
         if (fetchNormalBanner.length > 0) banners.push(...fetchNormalBanner);
       }
       if (sponsorBanner) {
-  
         const fetchSponsorBanner: BannerModel[] = sponsorBanner?.banners?.map(
           (banner) => {
             return {
@@ -125,7 +124,7 @@ const FoodPage: React.FC = () => {
           }
         );
         if (fetchSponsorBanner.length > 0) banners.push(...fetchSponsorBanner);
-}
+      }
       setInitialBanner(banners);
 
       console.log(banners);
@@ -324,7 +323,7 @@ const FoodPage: React.FC = () => {
       />
 
       <Modal close={isModalOpen} closeModal={closeModal}>
-        <UploadBanner />
+        <UploadBanner closeModal={closeModal} />
       </Modal>
 
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
@@ -345,7 +344,7 @@ const FoodPage: React.FC = () => {
       )}
       {isBulkDelete && (
         <Delete
-          id={idAndPath}
+          id={idAndPath.id}
           setDelete={() => handleSelectedDelete()}
           isClose={isBulkDelete}
           closeModal={() => setIsBulkDelete(false)}

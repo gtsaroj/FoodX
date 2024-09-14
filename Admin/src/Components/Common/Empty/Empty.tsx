@@ -5,7 +5,7 @@ interface EmptryProp {
   children?: string;
   action: () => void;
   style?: React.CSSProperties;
-  actionText: string;
+  actionText?: string;
 }
 
 export const Empty: React.FC<EmptryProp> = ({
