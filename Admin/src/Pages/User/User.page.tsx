@@ -80,10 +80,13 @@ const CustomerList: React.FC = () => {
         currentFirstDoc: null,
         currentLastDoc: null,
       });
+    setLoading(true);
     const filterCustomer = await searchUser(value);
-    const aggregateUser = await aggregateCustomerData(filterCustomer);
+    setTotalData(filterCustomer.length);
+    // const aggregateUser = await aggregateCustomerData(filterCustomer);
     setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-    setInitialCustomer(aggregateUser|| []);
+    setInitialCustomer(filterCustomer || []);
+    setLoading(false);
   };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [

@@ -10,7 +10,7 @@ import {
 } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
-import { Filter, X } from "lucide-react";
+import { Filter, Flag, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/User.upload";
@@ -224,10 +224,13 @@ const AllCustomers = () => {
         currentFirstDoc: null,
         currentLastDoc: null,
       });
+    setLoading(true);
     const filterCustomer = await searchUser(value);
-    const aggregateUser = await aggregateCustomerData(filterCustomer);
+    setTotalData(filterCustomer.length);
+    // const aggregateUser = await aggregateCustomerData(filterCustomer);
     setCurrentDoc({ currentFirstDoc: "", currentLastDoc: "" });
-    setInitialCustomer(aggregateUser);
+    setInitialCustomer(filterCustomer || []);
+    setLoading(false);
   };
 
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
