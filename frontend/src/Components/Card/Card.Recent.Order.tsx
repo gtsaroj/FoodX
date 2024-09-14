@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-import { Order, UserOrder } from "../../models/order.model";
+import { UserOrder } from "../../models/order.model";
 import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";

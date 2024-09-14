@@ -77,15 +77,8 @@ export const RegisterContainer: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
-        const {
-          avatar,
-          password,
-          email,
-          lastName,
-          firstName,
-          phoneNumber,
-          role,
-        } = RegisterValue;
+        const { avatar, password, email, lastName, firstName, phoneNumber } =
+          RegisterValue;
         SetDataSend(false);
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",

@@ -1,4 +1,4 @@
-import { FaCloudDownloadAlt, FaEdit, FaEye, FaTrash } from "react-icons/fa";
+import { FaEdit, FaEye } from "react-icons/fa";
 import Pagination from "../Pagination/Pagination";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -47,9 +47,7 @@ function Table<T extends { id: string }>({
   columns,
   actionIconColor,
   actions,
-  bodyHeight,
   disableActions,
-  disableNoData,
   loading,
   onPageChange,
   selectedData,
@@ -74,7 +72,7 @@ function Table<T extends { id: string }>({
       onPageChange(page);
     }
   };
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+
   const isCheckedData = selectedData?.map((data) => data.id);
 
   return (
@@ -88,7 +86,6 @@ function Table<T extends { id: string }>({
                   onChange={(event) => {
                     if (!actions.checkAllFn) return;
                     actions.checkAllFn(event.target.checked);
-                    setIsChecked(event.target.checked);
                   }}
                   className="w-4 accent-slate-900 h-4 cursor-pointer"
                   type="checkbox"
@@ -156,7 +153,6 @@ function Table<T extends { id: string }>({
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             actions.checkFn &&
                               actions.checkFn(item.id, event.target.checked);
-                            setIsChecked(event.target.checked);
                           }}
                           className="w-4 h-4 accent-slate-900 cursor-pointer"
                           type="checkbox"
@@ -197,9 +193,7 @@ function Table<T extends { id: string }>({
                             strokeWidth={1}
                             size={19}
                           />
-                          <span className="text-[15px] ">
-                            Order
-                          </span>
+                          <span className="text-[15px] ">Order</span>
                         </div>
                       </td>
                     )}

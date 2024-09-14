@@ -1,4 +1,4 @@
-import { ProductType } from "../../models/product.model";
+import { Product } from "../../models/product.model";
 import React from "react";
 import { ShoppingCart } from "lucide-react";
 import { useDispatch } from "react-redux";
@@ -6,14 +6,14 @@ import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 
 interface PropType {
-  prop: ProductType;
+  prop: Product;
 }
 
 const ProductSearch: React.FC<PropType> = ({ prop }: PropType) => {
   const dispatch = useDispatch();
   return (
     <div
-      key={prop.id} 
+      key={prop.id}
       className=" hover:bg-[#8a849571]  p-1 rounded-md w-full flex justify-between  items-center gap-9 text-[16px] cursor-pointer transition-all hover:text-[var(--primary-color)]"
     >
       <img className="size-14 rounded-md" src={prop.image} alt="" />

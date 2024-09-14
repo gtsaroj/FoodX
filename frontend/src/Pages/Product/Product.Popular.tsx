@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Product } from "../../models/product.model";
 import Skeleton from "react-loading-skeleton";
 import { SpecialCards } from "../../Components/Card/Card.Product";
-import { getPopularProducts, getSpecialProducts } from "../../Services/product.services";
+import { getPopularProducts } from "../../Services/product.services";
 
 export const PopularProduct = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);

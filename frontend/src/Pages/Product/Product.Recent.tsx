@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Product } from "../../models/product.model";
-import { getSpecialProducts } from "../../Services/product.services";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { Frown } from "lucide-react";
@@ -25,7 +24,9 @@ export const RecentProduct = () => {
         currentLastDoc: null,
         direction: "next",
       });
-      const aggregateProducts = response.data.orders?.flatMap((order) => order.products);
+      const aggregateProducts = response.data.orders?.flatMap(
+        (order: any) => order.products
+      );
       setInitialData(aggregateProducts);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
@@ -36,8 +37,6 @@ export const RecentProduct = () => {
   useEffect(() => {
     getProducts();
   }, []);
-
-  console.log(initialData);
 
   const navigate = useNavigate();
 

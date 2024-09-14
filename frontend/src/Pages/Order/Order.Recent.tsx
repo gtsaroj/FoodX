@@ -5,9 +5,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { RecentCard } from "../../Components/Card/Card.Recent.Order";
 import { getOrderByUser } from "../../Services/order.services";
 import { aggregateUserOrder } from "./order";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Store";
 
 export const RecentOrder = () => {
   const [initialData, setInitialData] = useState<UserOrder[]>([]);
@@ -57,7 +54,6 @@ export const RecentOrder = () => {
     });
   }, []);
 
-  console.log(initialData);
 
   return (
     <div className="w-full h-full flex text-[var(--dark-text)] flex-col gap-6 bg-[var--light-foreground] px-5 py-4   rounded items-start justify-center">

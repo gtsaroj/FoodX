@@ -1,11 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { authState, UpdateProfileInfo } from "../models/user.model";
 import { ValidationType } from "../models/register.model";
-import * as userAction from "../Services/user.services"
+import * as userAction from "../Services/user.services";
 import { SigninTypes } from "../Actions/user.actions";
-
-
-
 
 const signInAction = createAsyncThunk(
   "auth/signIn",
@@ -44,7 +41,7 @@ const updateUserAction = createAsyncThunk(
   "auth/update-user",
   async (data: UpdateProfileInfo, thunkApi) => {
     try {
-      const response = await userAction.updateUser({ ...data });
+      const response = await userAction.updateAccount({ ...data });
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(
@@ -125,11 +122,19 @@ const authSlice = createSlice({
     });
     builder.addCase(
       updateUserAction.fulfilled,
-      (state, action: PayloadAction<any>) => {
+      (state, action: PayloadAction<UpdateProfileInfo>) => {
         const payload = action.payload;
-        const keys = Object.keys(payload);
+        const keys = Object.keys(payload) as Array<keyof UpdateProfileInfo>;
+
         keys.forEach((key) => {
-          state.userInfo[key] = payload[key];
+          if (payload[key] !== undefined) {
+            // Handle phoneNumber separately if needed
+            if (key === "phoneNumber" && typeof payload[key] === "number") {
+              state.userInfo[key] = String(payload[key]); // Convert number to string
+            } else {
+              state.userInfo[key] = payload[key] as string | undefined;
+            }
+          }
         });
       }
     );

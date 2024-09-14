@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SingleCard } from "../../Components/Card/Card.Product.Cart";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
-import { CopyPlus, Plus, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../../Reducer/product.reducer";
 import { Loader } from "../../Components/Loader/Loader";
