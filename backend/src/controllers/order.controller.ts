@@ -8,6 +8,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { User } from "../models/user.model.js";
+import { io } from "../app.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: any, res: any) => {
@@ -71,6 +72,7 @@ const addNewOrder = asyncHandler(
     if (!order) throw new ApiError(400, "Order not found");
     try {
       await addNewOrderToDatabase(order);
+      io.to("chef").emit("new_order", order);
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Orders fetched successfully", true));

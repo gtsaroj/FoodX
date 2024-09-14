@@ -13,8 +13,12 @@ import { categoryRouter } from "./routes/category.routes.js";
 import { bannerRouter } from "./routes/banner.routes.js";
 import { revenueRouter } from "./routes/revenue.routes.js";
 import favouriteRouter from "./routes/favourites.routes.js";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 const app = express();
+const server = createServer();
+const io = new Server(server);
 
 app.use(cors());
 app.use(cookieParser());
@@ -34,4 +38,5 @@ app.use("/banners", bannerRouter);
 app.use("/revenue", revenueRouter);
 app.use("/favourites", favouriteRouter);
 
-export { app };
+
+export { app, io, server };

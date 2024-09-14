@@ -1,3 +1,4 @@
+import { io } from "../app.js";
 import {
   addLogToFirestore,
   getLogsFromDatabase,
@@ -52,6 +53,16 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
       },
       `${role}Logs`
     );
+    const logData = {
+      uid,
+      fullName,
+      role,
+      avatar,
+      action,
+      detail,
+      date,
+    };
+    io.to("chef").emit("new_log", logData);
     return res
       .status(200)
       .json(
