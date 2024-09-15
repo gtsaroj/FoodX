@@ -62,7 +62,6 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
       detail,
       date,
     };
-    io.to("chef").emit("new_log", logData);
     return res
       .status(200)
       .json(

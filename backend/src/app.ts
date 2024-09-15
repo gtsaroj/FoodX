@@ -20,8 +20,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5500",
-    methods: ["GET", "POST"],
+    origin: "*",
   },
 });
 

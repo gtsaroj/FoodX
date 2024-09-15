@@ -25,7 +25,6 @@ import Footer from "./Components/Footer/Footer";
 import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
 import { WelcomePage } from "./Pages/Page.Welcome";
-import { socket } from "./Utility/socket.util";
 
 const MainPage = () => {
   return (
@@ -57,20 +56,6 @@ const App: React.FC = () => {
     auth.success ? setShowContent(true) : setShowContent(false);
   }, [auth.success]);
 
-  useEffect(() => {
-    socket.connect();
-    socket.on("connect", () => {
-      console.log("Connected to server");
-
-      socket.on("disconnect", () => {
-        console.log("Disconnected from server");
-      });
-    });
-
-    return () => {
-      socket.off("chef");
-    };
-  });
   return (
     <Router>
       <Routes>
