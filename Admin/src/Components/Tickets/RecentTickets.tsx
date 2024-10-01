@@ -57,7 +57,7 @@ export const RecentTickets = () => {
         ref={orderReference as any}
         className={`max-h-[550px]  scrollbar-custom scroll-smooth px-6 overflow-y-scroll`}
       >
-        <div className="flex flex-col w-full h-full items-center justify-center gap-2 py-2  ">
+        <div className="flex flex-col w-full h-full items-center  gap-2 py-2  ">
           {!loading ? (
             tickets?.length > 0 ? (
               tickets?.map((ticket) => (

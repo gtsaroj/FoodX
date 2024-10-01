@@ -1,22 +1,16 @@
 /* eslint-disable no-empty */
 import { BarChart } from "@mui/x-charts";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { barData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
 import { Filter, MoveUp, X } from "lucide-react";
-import { AddRevenue, Revenue } from "../../models/revenue.model";
+import { AddRevenue } from "../../models/revenue.model";
 import { getRevenue } from "../../Services/revenue.services";
 import { RotatingLines } from "react-loader-spinner";
-interface MonthlyOrderChartProps {
-  height: number;
-  dateRange: { startDate: Dayjs; endDate: Dayjs };
-}
 
-export const MonthlyOrderChart: React.FC<MonthlyOrderChartProps> = ({
-  height,
-  dateRange,
-}) => {
+
+export const MonthlyOrderChart: React.FC= () => {
   const [initialData, setInitialData] = useState<
     { [key: string]: number | string }[]
   >([]);

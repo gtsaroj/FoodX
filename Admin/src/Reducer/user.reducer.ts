@@ -17,7 +17,15 @@ const authState: authState = {
   success: false,
   error: false,
   loading: true,
-  userInfo: {},
+  userInfo: {
+    fullName: "",
+    avatar: "",
+    email: "",
+    role: undefined,
+    uid: "",
+    amountSpent: 0,
+    totalOrder: 0,
+  },
 };
 
 const authSlice = createSlice({
@@ -26,7 +34,7 @@ const authSlice = createSlice({
   reducers: {
     authLogout: (state) => {
       state.userInfo = {};
-      if (state.success) state.success = false;
+      state.success = false;
       state.loading = true;
     },
   },
