@@ -120,9 +120,11 @@ export const WeekReveneuChart: React.FC = () => {
   );
 };
 
+//monthly revenue
 export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
-  const [initialData, setInitialData] =
-    useState<{ time: string; revenue: number }[]>();
+  const [initialData, setInitialData] = useState<
+    { time: string; revenue: number }[]
+  >([]);
   const [previousData, setPreviousData] = useState<
     { time: string; revenue: number }[]
   >([]);
@@ -132,6 +134,21 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
     dateFilter?: { startDate: string; endDate: string };
     normalFilter?: string;
   }>();
+
+  const syncData = () => {
+    const times = new Set();
+    const allKeys: string[] = [];
+
+    [...initialData, ...previousData]?.forEach((time) => {
+      times.add(time.time);
+    });
+
+    times?.forEach((time: any) => {
+      allKeys.push(time);
+    });
+
+    return { allKeys };
+  };
 
   const getLineChartData = async (data: AddRevenue) => {
     setLoading(true);
@@ -163,19 +180,6 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   };
 
   useEffect(() => {
-    getLineChartData({
-      startDate:
-        (filter?.dateFilter?.startDate as string) ||
-        dayjs().startOf("month").format("YYYY-MM-DD"),
-      endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-    });
-  }, [
-    filter?.normalFilter,
-    filter?.dateFilter?.startDate,
-    filter?.dateFilter?.endDate,
-  ]);
-
-  useEffect(() => {
     if (filter?.normalFilter) {
       getPreviousChartData({
         startDate: dayjs()
@@ -187,8 +191,22 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
           .endOf("month")
           .format("YYYY-MM-DD"),
       });
+    } else {
+      setPreviousData([]);
+      getLineChartData({
+        startDate:
+          (filter?.dateFilter?.startDate as string) ||
+          dayjs().startOf("month").format("YYYY-MM-DD"),
+        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+      });
     }
-  }, [filter?.normalFilter]);
+  }, [
+    filter?.normalFilter,
+    filter?.dateFilter?.startDate,
+    filter?.dateFilter?.endDate,
+  ]);
+
+  const { allKeys } = syncData();
 
   return (
     <div className="flex px-5 flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
@@ -212,7 +230,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
             {
               label: "Previous week",
               value: "previous",
-              id: "8933lfjsl840fhn",
+              id: "8933lffffffsdjsl840fhn",
             },
           ]}
           checkFn={{
@@ -342,7 +360,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
             }}
             xAxis={[
               {
-                data: initialData?.map((order) => order["time"]),
+                data: allKeys?.map((data) => data),
                 scaleType: "point",
               },
             ]}
@@ -366,6 +384,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
   );
 };
 
+//monthly order
 export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
   const [initialData, setInitialData] = useState<
     { time: string; orders: number }[]
@@ -414,14 +433,18 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    getOrders({
-      startDate:
-        filter?.dateFilter?.startDate ||
-        dayjs().startOf("month").format("YYYY-MM-DD"),
-      endDate: filter?.dateFilter?.startDate || dayjs().format("YYYY-MM-DD"),
+  const syncData = () => {
+    const times = new Set();
+    const allKeys: string[] = [];
+    [...initialData, ...previousData]?.forEach((data) => {
+      times.add(data.time);
     });
-  }, [filter?.dateFilter?.startDate, filter?.dateFilter?.endDate]);
+
+    times?.forEach((time: any) => {
+      allKeys.push(time);
+    });
+    return { allKeys };
+  };
 
   useEffect(() => {
     if (filter?.normalFilter) {
@@ -435,8 +458,22 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
           .endOf("month")
           .format("YYYY-MM-DD"),
       });
+    } else {
+      setPreviousData([]);
+      getOrders({
+        startDate:
+          filter?.dateFilter?.startDate ||
+          dayjs().startOf("month").format("YYYY-MM-DD"),
+        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+      });
     }
-  }, [filter?.normalFilter]);
+  }, [
+    filter?.dateFilter?.startDate,
+    filter?.dateFilter?.endDate,
+    filter?.normalFilter,
+  ]);
+
+  const { allKeys } = syncData();
 
   return (
     <div className="flex flex-col p-2 items-center justify-center w-full rounded">
@@ -586,13 +623,13 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
             xAxis={[
               {
                 labelStyle: { color: "white" },
-                data: initialData?.map((order) => order["time"]),
+                data: allKeys?.map((data) => data),
                 scaleType: "point",
               },
             ]}
             series={[
               {
-                data: initialData?.map((order) => order["orders"]),
+                data: initialData?.map((order) => order["orders"] || null),
                 type: "line",
                 color: "#45c241",
                 highlightScope: { fade: "global", highlight: "item" },

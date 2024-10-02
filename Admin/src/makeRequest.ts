@@ -1,10 +1,10 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { Store } from "./Store";
 import { authLogout } from "./Reducer/user.reducer";
 
-export const makeRequest: AxiosInstance = axios.create({
+export const makeRequest = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 });
 
@@ -29,25 +29,18 @@ makeRequest.interceptors.response.use(
         return Promise.reject("You have not access, please login again...");
       }
       Cookies.remove("accessToken");
-      console.log(
-        `==================STEP-1===================================`
-      );
       const response = await makeRequest.post("/users/refresh-token", {
         refreshToken,
       });
 
-      const responseData = await response.data.data;
+      const responseData = response.data.data;
       const newRefreshToken = await responseData.refreshToken;
       const newAcessToken = await responseData.accessToken;
       Cookies.set("accessToken", newAcessToken);
-      let previousRefreshToken = Cookies.get("refreshToken");
-      if (previousRefreshToken) {
-        Cookies.set("refreshToken", (previousRefreshToken = newRefreshToken));
-      }
+      Cookies.set("refreshToken", newRefreshToken);
       //  try with original request
       return await makeRequest(error.config);
     }
-    console.log(error);
     if (status === 403) {
       Cookies.remove("refreshToken");
       toast.error("Session Expired, Please Login Again");
