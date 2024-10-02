@@ -2,7 +2,7 @@
 import { BarChart } from "@mui/x-charts";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { barData } from "./BarChart";
+import { barData, monthlyBarData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
 import { Filter, MoveUp, X } from "lucide-react";
 import { AddRevenue } from "../../models/revenue.model";
@@ -28,8 +28,7 @@ export const MonthlyOrderChart: React.FC= () => {
         startDate: startDate,
         endDate: endDate,
       });
-      const aggregateData = barData(response.data);
-       console.log(aggregateData)
+      const aggregateData = monthlyBarData(response.data);
       setInitialData(aggregateData);
       const listOfKeys = extractUniqueKeys(aggregateData);
       setDataKey(listOfKeys as string[]);

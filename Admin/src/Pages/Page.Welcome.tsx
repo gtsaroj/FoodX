@@ -1,8 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { UserRole } from "../models/user.model";
+import { useSelector } from "react-redux";
+import { RootState } from "../Store";
 
-export const WelcomePage: React.FC = () => {
+interface WelcomePageProp {
+  user: (user: UserRole["role"]) => void;
+}
+
+export const WelcomePage: React.FC<WelcomePageProp> = ({ user }) => {
   return (
     <div className="min-h-screen bg-[var(--light-foreground)] flex flex-col items-center justify-center p-8">
       <motion.h1
@@ -33,6 +40,7 @@ export const WelcomePage: React.FC = () => {
             Manage orders, products, categories, and customer information.
           </p>
           <Link
+            onClick={() => user("admin")}
             to="/admin"
             className="bg-[var(--primary-light)] text-[var(--dark-text)] py-1.5 px-4 rounded-lg inline-block transition-colors duration-300 hover:bg-primary-dark"
             aria-label="Go to Admin Panel"
@@ -48,11 +56,14 @@ export const WelcomePage: React.FC = () => {
           whileTap={{ scale: 0.95 }}
           aria-label="Chef Dashboard"
         >
-          <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">Chef Dashboard</h2>
+          <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
+            Chef Dashboard
+          </h2>
           <p className="mb-4 text-[var(--dark-secondary-text)] text-[14px] ">
             Track tickets, manage kitchen tasks, and update food status.
           </p>
           <Link
+            onClick={() => user("admin")}
             to="/chef"
             className="bg-[var(--primary-light)] text-[var(--dark-text)] py-1.5 px-4 rounded-lg inline-block transition-colors duration-300 hover:bg-primary-dark"
             aria-label="Go to Chef Panel"

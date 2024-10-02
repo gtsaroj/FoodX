@@ -25,6 +25,7 @@ import Footer from "./Components/Footer/Footer";
 import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
 import { WelcomePage } from "./Pages/Page.Welcome";
+import { UserRole } from "./models/user.model";
 
 const MainPage = () => {
   return (
@@ -55,19 +56,39 @@ const App: React.FC = () => {
   useEffect(() => {
     auth.success ? setShowContent(true) : setShowContent(false);
   }, [auth.success]);
+  const [userRole, setUserRole] = useState<UserRole["role"]>("chef");
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomePage />} />
+        <Route
+          path="/"
+          element={
+            !auth.userInfo.role ? (
+              <WelcomePage user={(role) => setUserRole(role)} />
+            ) : (
+              <Navigate to={`/${auth.userInfo.role}`} replace />
+            )
+          }
+        />
         <Route
           path="login/"
-          element={showContent ? <Navigate to={"/admin"} replace /> : <Login />}
+          element={
+            showContent ? (
+              <Navigate to={`/${auth.userInfo.role}`} replace />
+            ) : (
+              <Login role={userRole} />
+            )
+          }
         />
         <Route
           path="register/"
           element={
-            showContent ? <Navigate to={"/admin"} replace /> : <Register />
+            showContent ? (
+              <Navigate to={`/${auth.userInfo.role}`} replace />
+            ) : (
+              <Register />
+            )
           }
         />
         <Route
@@ -75,7 +96,7 @@ const App: React.FC = () => {
             <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
           }
         >
-          <Route path="admin/" element={<MainPage />}>
+          <Route path={`${userRole}/`} element={<MainPage />}>
             <Route
               element={
                 <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />

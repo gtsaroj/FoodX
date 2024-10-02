@@ -9,8 +9,12 @@ import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { signInAction } from "../../Actions/user.actions";
+import { UserRole } from "../../models/user.model";
 
-const LoginContainer: React.FC = () => {
+interface LoginProp {
+  role: UserRole["role"];
+}
+const LoginContainer: React.FC<LoginProp> = ({ role }) => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
@@ -46,7 +50,7 @@ const LoginContainer: React.FC = () => {
     event.preventDefault();
     setDataSend(true);
     try {
-      await dispatch(signInAction({ email, password, userRole: "admin" }));
+      await dispatch(signInAction({ email, password, userRole: role }));
     } catch (error) {
       toast.error("Invalid email or password");
       throw new Error(`Error occuring while sending form : ${error}`);
@@ -145,14 +149,14 @@ const LoginContainer: React.FC = () => {
   );
 };
 
-const Login: React.FC = () => {
+const Login: React.FC<LoginProp> = ({ role }) => {
   return (
     <div className=" min-w-[100vw] w-full  h-full overflow-x-hidden">
       {/* Mobile */}
       <div className="flex flex-col items-center w-full h-full lg:hidden min-h-[90vh] gap-8">
         <AuthNavbar />
         <div className="flex bg-[var(--light-foreground)] items-center justify-center w-full sm:w-[600px] h-full">
-          <LoginContainer />
+          <LoginContainer role={role} />
         </div>
       </div>
       {/* Tablet and Desktop */}
@@ -161,7 +165,7 @@ const Login: React.FC = () => {
           <img src={Logo} className="w-full max-w-[800px]  " alt="logo" />
         </div>
         <div className=" max-w-[700px] w-full pr-8">
-          <LoginContainer />
+          <LoginContainer role={role} />
         </div>
       </div>
       <AuthFooter />

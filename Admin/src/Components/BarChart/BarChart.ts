@@ -104,6 +104,7 @@ export const monthlyBarData = (orders: DailyOrders[]) => {
   return allBarData;
 };
 
+
 type AggregateMonthlyData = {
   [key: string]: number;
   time: string;
@@ -119,50 +120,47 @@ export const getOrderWeeklyTotal = (
 ): WeeklyOrders => {
   const MAX_PRODUCTS = 4;
   const weeklyOrders: WeeklyOrders = [];
-
-  let weekNumber = 1;
   let weeklyTotal: { [key: string]: number } = {};
+  let weekNumber = 1;
+
+  // Helper to process and push weekly data
+  const processWeek = (weekTotal: { [key: string]: number }, time: string) => {
+    const sortedEntries = Object.entries(weekTotal).sort((a, b) => b[1] - a[1]);
+    const topProducts = sortedEntries.slice(0, MAX_PRODUCTS);
+    const otherTotal = sortedEntries
+      .slice(MAX_PRODUCTS)
+      .reduce((sum, [, quantity]) => sum + quantity, 0);
+
+    const weekData = topProducts.reduce((acc, [product, quantity]) => {
+      acc[product] = quantity;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    if (otherTotal > 0) {
+      weekData["Others"] = otherTotal;
+    }
+
+    weeklyOrders.push({ ...weekData, time });
+  };
 
   for (let i = 0; i < aggregateMonthlyData.length; i++) {
     const currentData = aggregateMonthlyData[i];
     const currentDate = dayjs(currentData.time).date();
-    const isCurrentWeek = Math.ceil(currentDate / 7);
+    const currentWeekNumber = Math.ceil(currentDate / 7);
 
-    if (isCurrentWeek === weekNumber) {
+    if (currentWeekNumber === weekNumber) {
       Object.keys(currentData).forEach((key) => {
         if (key !== "time") {
           weeklyTotal[key] = (weeklyTotal[key] || 0) + currentData[key];
         }
       });
     } else {
-      // Process the aggregated weekly data
-      const sortedEntries = Object.entries(weeklyTotal).sort(
-        (a, b) => b[1] - a[1]
-      );
-      const topProducts = sortedEntries.slice(0, MAX_PRODUCTS);
-      const otherTotal = sortedEntries
-        .slice(MAX_PRODUCTS)
-        .reduce((sum, [, quantity]) => sum + quantity, 0);
-
-      const weekData = topProducts.reduce((acc, [product, quantity]) => {
-        acc[product] = quantity;
-        return acc;
-      }, {} as { [key: string]: number });
-
-      if (otherTotal > 0) {
-        weekData["Others"] = otherTotal;
-      }
-
-      weeklyOrders.push({
-        ...weekData,
-        time: aggregateMonthlyData[i - 1].time, // Use the last date of the completed week
-      });
-
-      // Reset the weekly total for the new week
+      // Process the data for the completed week
+      processWeek(weeklyTotal, aggregateMonthlyData[i - 1].time);
+      weekNumber = currentWeekNumber;
       weeklyTotal = {};
-      weekNumber = isCurrentWeek;
 
-      // Aggregate the current day's data for the new week
+      // Aggregate data for the new week
       Object.keys(currentData).forEach((key) => {
         if (key !== "time") {
           weeklyTotal[key] = (weeklyTotal[key] || 0) + currentData[key];
@@ -170,34 +168,15 @@ export const getOrderWeeklyTotal = (
       });
     }
 
-    // Handle the last week (push data at the end of the loop)
+    // Handle the last week
     if (i === aggregateMonthlyData.length - 1) {
-      const sortedEntries = Object.entries(weeklyTotal).sort(
-        (a, b) => b[1] - a[1]
-      );
-      const topProducts = sortedEntries.slice(0, MAX_PRODUCTS);
-      const otherTotal = sortedEntries
-        .slice(MAX_PRODUCTS)
-        .reduce((sum, [, quantity]) => sum + quantity, 0);
-
-      const weekData = topProducts.reduce((acc, [product, quantity]) => {
-        acc[product] = quantity;
-        return acc;
-      }, {} as { [key: string]: number });
-
-      if (otherTotal > 0) {
-        weekData["Others"] = otherTotal;
-      }
-
-      weeklyOrders.push({
-        ...weekData,
-        time: currentData.time, // Use the last date for the last week
-      });
+      processWeek(weeklyTotal, currentData.time);
     }
   }
 
   return weeklyOrders;
 };
+
 
 export const combineSmallCategories = (
   data: { [key: string]: number },
@@ -223,3 +202,6 @@ export const combineSmallCategories = (
 
   return result;
 };
+
+
+

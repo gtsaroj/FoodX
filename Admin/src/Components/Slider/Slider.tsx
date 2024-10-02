@@ -38,6 +38,8 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
   const [openCollection, setOpenCollection] = useState<boolean>(false);
   const [url, setUrl] = useState<string>("");
 
+  const user = useSelector((state: RootState) => state.root.user);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -92,7 +94,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
         <div className="flex items-start justify-start flex-grow h-full overflow-auto ">
           <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-5">
             <li
-              onClick={() => setUrl("/admin")}
+              onClick={() => setUrl(`/`)}
               className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  w-full py-3 px-2 rounded duration-150  "
             >
               <LayoutDashboard />
@@ -103,7 +105,9 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("analytics")}
-                className="flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28] w-full p-3 rounded duration-150 "
+                className={`${
+                  user.userInfo.role === "admin" ? "visible" : "hidden"
+                } flex items-center justify-start gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28] w-full p-3 rounded duration-150`}
               >
                 <LineChart />
                 <span>Analytics</span>
