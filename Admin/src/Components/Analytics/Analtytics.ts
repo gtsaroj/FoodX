@@ -24,7 +24,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       0
     );
     const revenueToday = getRevenue([currentDayOrder] as Revenue[]);
- console.log(revenueToday)
+
     const dailyAnalyticsData: CardAnalytic[] = [
       {
         title: "Items Delivered",
@@ -41,13 +41,62 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       {
         title: "Revenue",
         total: revenueToday || 0,
-        percentage: Math.round((revenueToday /totalRevenueLast7Days)*100)
+        percentage: Math.round((revenueToday / totalRevenueLast7Days) * 100),
       },
     ];
 
     return dailyAnalyticsData;
   } catch (error) {
     throw new Error(`Failed to aggregate analytics card data: ${error}`);
+  }
+};
+
+export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
+  try {
+    const totalOrders = orders.reduce(
+      (order, orderAcc) =>
+        order +
+        orderAcc.orders.reduce(
+          (product, productAcc) => product + productAcc.quantity,
+          1
+        ),
+      1
+    );
+
+    const averageOrder = totalOrders / dayjs().endOf("month").date();
+
+    const totalRevenue = getRevenue(orders);
+
+    const previousMonth = orders.filter(
+      (order) =>
+        dayjs(order.id).month() <= dayjs().subtract(month, "month").month()
+    );
+    const previousMonthRevenue = getRevenue(previousMonth);
+
+    console.log(previousMonth, month);
+
+    const dailyAnalyticsData: CardAnalytic[] = [
+      {
+        title: "Items Delivered",
+        total: orders.length || 0,
+        percentage: 100,
+      },
+      {
+        title: "Average Items",
+        total: Math.round(averageOrder),
+        percentage: Math.round((averageOrder / totalOrders) * 100),
+      },
+      {
+        title: "Revenue",
+        total: totalRevenue || 0,
+        percentage: Math.round(
+          ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
+        ) || 0,
+      },
+    ];
+    return dailyAnalyticsData;
+  } catch (error) {
+    throw new Error("Error while aggregate monthly analytics data " + error);
   }
 };
 

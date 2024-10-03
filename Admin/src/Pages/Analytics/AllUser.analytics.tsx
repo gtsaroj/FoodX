@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { aggregateCustomerData } from "../../Utility/user.utils";
 import { User } from "../../models/user.model";
 import { CustomerTable } from "../User/User.page.table";
 import {
@@ -10,12 +9,11 @@ import {
 } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
-import { Filter, Flag, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/User.upload";
 import { debounce } from "../../Utility/debounce";
-import { SearchCustomer } from "../../Utility/user.utils";
 import { DbUser, GetUserModal } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
 
