@@ -16,8 +16,10 @@ export const RecentOrders = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 3 });
+  }>({ currentPage: 1, perPage: 5 });
   const [loading, setLoading] = useState<boolean>(false);
+
+
   const getRecentOrder = async ({
     pageSize,
     filter,
@@ -46,7 +48,6 @@ export const RecentOrders = () => {
     }
     setLoading(false);
   };
-  console.log(recentOrder);
 
   useEffect(() => {
     getRecentOrder({
@@ -56,6 +57,7 @@ export const RecentOrders = () => {
       currentLastDoc: null,
       direction: "next",
       filter: "orderRequest",
+      status: "pending",
     });
   }, [pagination.perPage, isClicked]);
 

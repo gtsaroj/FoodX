@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Order, OrderModal, status } from "../../models/order.model";
+import { OrderModal, status } from "../../models/order.model";
 import Table from "../../Components/Common/Table/Table";
 import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
@@ -26,7 +26,8 @@ export const OrderTable: React.FC<orderTableProp> = ({
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [initialOrder, setInitialOrder] = useState<OrderModal[]>([]);
-  const statusChangeFn = async (newStatus: string) => {
+  
+  const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
     try {
@@ -159,7 +160,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
               <StatusChanger
                 isChangeStatus={() => setIsChangeStatus(false)}
                 status={item.status!}
-                statusFn={(status) => statusChangeFn(status)}
+                statusFn={(status : status["status"]) => statusChangeFn(status)}
               />
             )}
           </div>
@@ -177,7 +178,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
     },
   ];
 
-   console
+  console;
 
   useEffect(() => {
     setInitialOrder(orders);
@@ -207,7 +208,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
 
 interface StatusChangerProp {
   status: "prepared" | "preparing" | "completed" | "cancelled" | "pending";
-  statusFn: (status: string, id?: string) => void;
+  statusFn: (status: status["status"], id?: string) => void;
   isChangeStatus: () => void;
 }
 
