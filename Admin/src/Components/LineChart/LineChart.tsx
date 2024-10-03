@@ -4,7 +4,7 @@ import "./LineChart.css";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import dayjs, { Dayjs } from "dayjs";
-import { monthlyRevenue, totalMonthOrder } from "./LineChartData";
+import { monthlyRevenue, revenueData, totalMonthOrder } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
@@ -15,7 +15,6 @@ interface MonthlyLineChartProps {
 export const WeekReveneuChart: React.FC = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
-  const [prevData, setPrevData] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const getLineChartData = async () => {
     setLoading(true);
@@ -24,7 +23,7 @@ export const WeekReveneuChart: React.FC = () => {
         startDate: dayjs().startOf("week").format("YYYY-MM-DD"),
         endDate: dayjs().format("YYYY-MM-DD"),
       });
-      const totalData = weeklyRevenue(response.data);
+      const totalData = revenueData(response.data);
       setInitialData(totalData);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);

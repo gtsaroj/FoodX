@@ -45,7 +45,7 @@ export const MonthlyOrderChart: React.FC= () => {
         startDate: startDate,
         endDate: endDate,
       });
-      const aggregateData = barData(response.data);
+      const aggregateData = monthlyBarData(response.data);
       setInitialData(aggregateData);
       const listOfKeys = extractUniqueKeys(aggregateData);
       setDataKey(listOfKeys as string[]);

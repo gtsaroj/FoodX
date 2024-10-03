@@ -56,7 +56,10 @@ const App: React.FC = () => {
   useEffect(() => {
     auth.success ? setShowContent(true) : setShowContent(false);
   }, [auth.success]);
-  const [userRole, setUserRole] = useState<UserRole["role"]>("chef");
+
+  const [userRole, setUserRole] = useState<UserRole["role"]>(
+    auth.userInfo.role as UserRole["role"]
+  );
 
   return (
     <Router>
@@ -77,7 +80,7 @@ const App: React.FC = () => {
             showContent ? (
               <Navigate to={`/${auth.userInfo.role}`} replace />
             ) : (
-              <Login role={userRole} />
+              <Login role={userRole as UserRole["role"]} />
             )
           }
         />

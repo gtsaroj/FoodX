@@ -1,83 +1,28 @@
 import dayjs from "dayjs";
 import { Product } from "../../models/product.model";
-import { DailyOrders } from "../../models/chart.modal";
 import { Revenue } from "../../models/revenue.model";
+import weekOfYear from "dayjs/plugin/isoWeek";
 
-//bardata
-// export const barData = async (data: Order[]) => {
-//     const today = dayjs().format("YYYY-MM-DD");
-//     const datas: { [key: string]: string }[] = [];
+interface WeeklyOrders {
+  week: number;
+  orders: Product[];
+}
 
-//     data?.forEach((order) => {
-//       const orderDate = dayjs(order.orderRequest).format("YYYY-MM-DD");
+dayjs.extend(weekOfYear);
 
-//       let foundOrder = false;
-//       datas.forEach((data) => {
-//         data["time"] === orderDate;
-//         foundOrder = true;
-//       });
-
-//       if (!foundOrder) datas.push({ time: orderDate });
-
-//       datas?.forEach((data) => {
-//         order?.products?.forEach((product) => {
-//           if (data["time"] === orderDate) {
-//             data[product.name]
-//               ? (data[product.name] += product.quantity as number)
-//               : (data[product.name] = product.quantity as any);
-//           }
-//         });
-//       });
-//     });
-//     return datas;
-//   };
-
-//   export const filterBarData = async (
-//     data: Order[],
-//     time: { startDate: Dayjs; endDate: Dayjs }
-//   ) => {
-//     const filterData = data.filter((order) => {
-//       const orderDate = order.orderRequest;
-
-//       return (
-//         orderDate >= time.startDate.toISOString() &&
-//         orderDate <= time.endDate.toISOString()
-//       );
-//     });
-//     const filterOrderData = barData(filterData);
-//     return filterOrderData;
-//   };
-
-//   export const filterBarTodayData = async (data: Order[]) => {
-//     // Get today's date
-//     const today = dayjs();
-
-//     // Calculate the start and end of the current month
-//     const startOfMonth = today.startOf("month").format("YYYY-MM-DD");
-//     const endOfMonth = today.endOf("month").format("YYYY-MM-DD");
-//     console.log(startOfMonth, endOfMonth);
-
-//     // Filter data for the current month
-//     const filteredData = data.filter((order) => {
-//       const orderDate = dayjs(order.orderRequest).format("YYY-MM-DD");
-//       return startOfMonth >= orderDate && orderDate <= endOfMonth;
-//     });
-
-//     const filterOrderData = barData(filteredData);
-//     return filterOrderData;
-//   };
-
-export const barData = (data: Revenue[]) => {
+export const barData = (data: WeeklyOrders[]) => {
   if (!data) throw new Error("No found data : file: barchart.ts => line:72");
   try {
-    const allOrder = data.map((order) => {
-      const products = productWithQuantity(order.orders);
-      const processedProducts = combineSmallCategories(products, 5);
-      return {
-        ...processedProducts,
-        time: order.id,
-      };
-    });
+    const allOrder = data.map(
+      (order): { [key: string]: string; time: string } => {
+        const products = productWithQuantity(order.orders);
+        const aggregateProduct = combineSmallCategories(products, 5);
+        return {
+          ...aggregateProduct,
+          time: `Week ${order.week}`,
+        };
+      }
+    );
     return allOrder;
   } catch (error) {
     throw new Error(
@@ -97,86 +42,46 @@ export const productWithQuantity = (orders: Product[]) => {
   return datas;
 };
 
-export const monthlyBarData = (orders: DailyOrders[]) => {
+export const monthlyBarData = (orders: Revenue[]) => {
   if (!orders) throw new Error("No data found : line=> 101");
-  const response = barData(orders);
-  const allBarData = getOrderWeeklyTotal(response);
-  return allBarData;
+  const weeklyOrders = groupProductsByWeek(orders);
+  const response = barData(weeklyOrders);
+  return response;
 };
 
+// Helper function to calculate the week of the month
+function getWeekOfMonth(date: dayjs.Dayjs): number {
+  const startOfMonth = date.startOf("month"); // Start of the month
+  const dayOfMonth = date.date(); // Day of the month (1 - 31)
 
-type AggregateMonthlyData = {
-  [key: string]: number;
-  time: string;
-};
+  // Calculate the week of the month
+  const weekOfMonth = Math.ceil((dayOfMonth + startOfMonth.day()) / 7);
+  return weekOfMonth;
+}
 
-type WeeklyOrders = {
-  [key: string]: number;
-  time: string;
-}[];
+// Function to group products by week
+function groupProductsByWeek(revenueArray: Revenue[]): WeeklyOrders[] {
+  const weeklyOrdersMap: { [key: number]: Product[] } = {}; // Object to store products by week number
 
-export const getOrderWeeklyTotal = (
-  aggregateMonthlyData: AggregateMonthlyData[]
-): WeeklyOrders => {
-  const MAX_PRODUCTS = 4;
-  const weeklyOrders: WeeklyOrders = [];
-  let weeklyTotal: { [key: string]: number } = {};
-  let weekNumber = 1;
+  revenueArray.forEach((revenue) => {
+    const revenueDate = dayjs(revenue.id);
+    const weekNumber = getWeekOfMonth(revenueDate); // Get the week number
+    console.log(weekNumber);
 
-  // Helper to process and push weekly data
-  const processWeek = (weekTotal: { [key: string]: number }, time: string) => {
-    const sortedEntries = Object.entries(weekTotal).sort((a, b) => b[1] - a[1]);
-    const topProducts = sortedEntries.slice(0, MAX_PRODUCTS);
-    const otherTotal = sortedEntries
-      .slice(MAX_PRODUCTS)
-      .reduce((sum, [, quantity]) => sum + quantity, 0);
-
-    const weekData = topProducts.reduce((acc, [product, quantity]) => {
-      acc[product] = quantity;
-      return acc;
-    }, {} as { [key: string]: number });
-
-    if (otherTotal > 0) {
-      weekData["Others"] = otherTotal;
+    if (!weeklyOrdersMap[weekNumber]) {
+      weeklyOrdersMap[weekNumber] = []; // Initialize array if week not encountered before
     }
 
-    weeklyOrders.push({ ...weekData, time });
-  };
+    // Add all products for this revenue entry to the respective week
+    weeklyOrdersMap[weekNumber].push(...revenue.orders);
+  });
 
-  for (let i = 0; i < aggregateMonthlyData.length; i++) {
-    const currentData = aggregateMonthlyData[i];
-    const currentDate = dayjs(currentData.time).date();
-    const currentWeekNumber = Math.ceil(currentDate / 7);
-
-    if (currentWeekNumber === weekNumber) {
-      Object.keys(currentData).forEach((key) => {
-        if (key !== "time") {
-          weeklyTotal[key] = (weeklyTotal[key] || 0) + currentData[key];
-        }
-      });
-    } else {
-      // Process the data for the completed week
-      processWeek(weeklyTotal, aggregateMonthlyData[i - 1].time);
-      weekNumber = currentWeekNumber;
-      weeklyTotal = {};
-
-      // Aggregate data for the new week
-      Object.keys(currentData).forEach((key) => {
-        if (key !== "time") {
-          weeklyTotal[key] = (weeklyTotal[key] || 0) + currentData[key];
-        }
-      });
-    }
-
-    // Handle the last week
-    if (i === aggregateMonthlyData.length - 1) {
-      processWeek(weeklyTotal, currentData.time);
-    }
-  }
-
-  return weeklyOrders;
-};
-
+  // Convert the object into an array of WeeklyOrders
+  return Object.keys(weeklyOrdersMap).map((week) => ({
+    week: parseInt(week, 10),
+    orders: weeklyOrdersMap[Number(week)],
+  }));
+}
 
 export const combineSmallCategories = (
   data: { [key: string]: number },
@@ -202,6 +107,3 @@ export const combineSmallCategories = (
 
   return result;
 };
-
-
-
