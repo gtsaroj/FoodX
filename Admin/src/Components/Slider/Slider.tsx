@@ -69,7 +69,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
       ref={reference}
       className="  w-[300px] px-3 py-4 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded "
     >
-      <div className="flex flex-col justify-between w-full h-full gap-5 py-2 overflow-auto ">
+      <div className="flex flex-col justify-betweekn w-full h-full gap-5 py-2 overflow-auto ">
         {/* College Logo Section */}
         <div className="flex items-center justify-center w-full py-3 ">
           <div className="items-center justify-center hidden xl:flex ">
