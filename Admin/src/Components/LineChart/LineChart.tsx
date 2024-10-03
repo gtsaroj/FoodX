@@ -4,7 +4,7 @@ import "./LineChart.css";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import dayjs, { Dayjs } from "dayjs";
-import { orderData, weeklyRevenue } from "./LineChartData";
+import { monthlyRevenue, totalMonthOrder } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
@@ -157,13 +157,14 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
         startDate: data.startDate,
         endDate: data.endDate,
       });
-      const totalData = weeklyRevenue(response.data);
+      const totalData = monthlyRevenue(response.data);
       setInitialData(totalData);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
     }
     setLoading(false);
   };
+
   const getPreviousChartData = async (data: AddRevenue) => {
     setLoading(true);
     try {
@@ -171,7 +172,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
         startDate: data.startDate,
         endDate: data.endDate,
       });
-      const totalData = weeklyRevenue(response.data);
+      const totalData = monthlyRevenue(response.data);
       setPreviousData(totalData);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
@@ -409,7 +410,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
         endDate: endDate,
       });
 
-      const aggregateOrders = orderData(response.data);
+      const aggregateOrders = totalMonthOrder(response.data);
       setInitialData(aggregateOrders);
     } catch (error) {
       throw new Error("Error while fetching orders" + error);
@@ -425,7 +426,7 @@ export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
         startDate: startDate,
         endDate: endDate,
       });
-      const aggregateOrders = orderData(response.data);
+      const aggregateOrders = totalMonthOrder(response.data);
       setPreviousData(aggregateOrders);
     } catch (error) {
       throw new Error("Error while fetching orders" + error);
