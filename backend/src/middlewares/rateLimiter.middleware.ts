@@ -26,11 +26,13 @@ const rateLimiter = (limitTime: number, limitRequestAmount: number) => {
       }
       next();
     } catch (error) {
-      new ApiError(
-        501,
-        "Rate limit exceeded. Please try again later.",
-        null,
-        error as string[]
+      next(
+        new ApiError(
+          501,
+          "Rate limit exceeded. Please try again later.",
+          null,
+          error as string[]
+        )
       );
     }
   });
