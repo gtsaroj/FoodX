@@ -168,7 +168,9 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
             ) : (
               <li
                 onClick={() => setUrl("customer-list")}
-                className="flex items-center justify-start  gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]   w-full p-3 rounded duration-150  "
+                className={`flex items-center justify-start  gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]   w-full p-3 rounded duration-150 ${
+                  user.userInfo.role === "admin" ? "visible" : "hidden"
+                } `}
               >
                 <BookUser />
                 <span>Customers</span>
@@ -194,28 +196,16 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                     : "hidden opacity-0 bottom-[0px] z-[-1]"
                 } items-start   gap-3 justify-center`}
               >
-                {auth.role !== "admin" ? (
-                  ""
-                ) : (
-                  <li
-                    onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28] hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
-                  >
-                    <CircleUser />
-                    Admin Details
-                  </li>
-                )}
-                {auth.role !== "Chef" ? (
-                  ""
-                ) : (
-                  <li
-                    onClick={() => setUrl("contact/profile")}
-                    className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28]  hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
-                  >
-                    <CircleUser />
-                    Chef Details
-                  </li>
-                )}
+                <li
+                  onClick={() => setUrl("contact/profile")}
+                  className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28] hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                >
+                  <CircleUser />
+                  {user.userInfo.role!.charAt(0).toUpperCase() +
+                    user.userInfo.role!.slice(1)}{" "}
+                  Details
+                </li>
+
                 {auth.role !== "admin" ? (
                   ""
                 ) : (

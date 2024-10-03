@@ -1,9 +1,10 @@
+import { getRevenue } from "../../Utility/order.utils";
 import { DailyOrders } from "../../models/chart.modal";
 import { Product } from "../../models/product.model";
 import { Revenue, RevenueInfo } from "../../models/revenue.model";
-import { getOrder, getRevenue } from "../../Utility/order.utils";
 import dayjs from "dayjs";
 
+// revenue data
 export const revenueData = (data: RevenueInfo[]) => {
   if (!data) throw new Error("data not found");
   try {
@@ -20,28 +21,14 @@ export const revenueData = (data: RevenueInfo[]) => {
   }
 };
 
-export const weeklyRevenue = (data: RevenueInfo[]) => {
-  if (!data)
-    throw new Error(
-      "data not found in weekly revenue : file=> linchartdata.ts"
-    );
-  try {
-    const revenue = revenueData(data).slice(0, 7);
-    return revenue;
-  } catch (error) {
-    throw new Error(
-      "Unable to get weekly revenue : file=> linechartdata.ts" + error
-    );
-  }
-};
-
+// monthly revenue
 export const monthlyRevenue = (data: RevenueInfo[]) => {
   if (!data)
     throw new Error(
       "data not found in weekly revenue : file=> linchartdata.ts"
     );
   try {
-    const revenue = revenueData(data).slice(0, 34);
+    const revenue = revenueData(data)
     const monthlyData = getWeekTotal(revenue);
     return monthlyData;
   } catch (error) {
@@ -51,6 +38,8 @@ export const monthlyRevenue = (data: RevenueInfo[]) => {
   }
 };
 
+
+// get revenue  weekly-wise
 export const getWeekTotal = (
   aggregateMonthlyData: {
     revenue: number;
@@ -72,7 +61,7 @@ export const getWeekTotal = (
     if (currentWeek === weekNumber) {
       weeklyTotal += currentOrder.revenue;
     } else {
-      // Push the previous week data
+      // Push the next week data
       weeklyOrders.push({
         time: `Week ${weekNumber}`,
         revenue: weeklyTotal,
@@ -96,7 +85,6 @@ export const getWeekTotal = (
 };
 
 export const orderData = (data: Revenue[]) => {
-   console.log(data)
   if (!data) throw new Error("data not found");
   try {
     const orders = data.map((order): { orders: number; time: string } => {
@@ -113,6 +101,8 @@ export const orderData = (data: Revenue[]) => {
   }
 };
 
+
+// calculate total order
 const totalOrder = (products: Product[]) => {
   const total = products.reduce(
     (acc, order) => acc + Number(order.quantity as number),
@@ -121,13 +111,13 @@ const totalOrder = (products: Product[]) => {
   return total;
 };
 
-export const monthlyTotal = (data: DailyOrders[]) => {
+export const totalMonthOrder = (data: Revenue[]) => {
   if (!data)
     throw new Error(
       "data not found in weekly revenue : file=> linchartdata.ts"
     );
   try {
-    const order = orderData(data).slice(0, 34);
+    const order = orderData(data)
     const monthlyData = getOrderWeeklyTotal(order);
     return monthlyData;
   } catch (error) {
@@ -136,21 +126,7 @@ export const monthlyTotal = (data: DailyOrders[]) => {
     );
   }
 };
-export const previousMonthOrder = (data: DailyOrders[]) => {
-  if (!data)
-    throw new Error(
-      "data not found in weekly revenue : file=> linchartdata.ts"
-    );
-  try {
-    const order = orderData(data).slice(0, 34);
-    const monthlyData = getOrderWeeklyTotal(order);
-    return monthlyData;
-  } catch (error) {
-    throw new Error(
-      "Unable to get weekly revenue : file=> linechartdata.ts" + error
-    );
-  }
-};
+
 
 const getOrderWeeklyTotal = (
   aggregateMonthlyData: {

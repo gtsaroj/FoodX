@@ -120,7 +120,7 @@ const TicketPage: React.FC = () => {
       </div>
       <div className="grid  w-full grid-cols-4 gap-2 px-5 pt-10 sm:gap-6">
         <button
-          onClick={() => setTicketState("Pending")}
+          onClick={() => setTicketState("pending")}
           className={`${
             ticketState === "pending"
               ? "bg-[var(--primary-dark)]"
@@ -130,7 +130,7 @@ const TicketPage: React.FC = () => {
           Pending
         </button>
         <button
-          onClick={() => setTicketState("Progress")}
+          onClick={() => setTicketState("progress")}
           className={` py-3 sm:text-[15px] hover:bg-[#bb8115]   duration-150 text-sm  font-[550] contrast-150 rounded text-white ${
             ticketState === "progress"
               ? "bg-[#bb8115] "
@@ -140,9 +140,9 @@ const TicketPage: React.FC = () => {
           Progress
         </button>
         <button
-          onClick={() => setTicketState("Resolved")}
+          onClick={() => setTicketState("resolved")}
           className={`py-3 sm:text-[15px] hover:bg-[#287e28fd] duration-150   ${
-            ticketState === "Resolved"
+            ticketState === "resolved"
               ? "bg-[#287e28fd]"
               : "bg-[var(--green-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-white `}
@@ -150,9 +150,9 @@ const TicketPage: React.FC = () => {
           Resolve
         </button>
         <button
-          onClick={() => setTicketState("Rejected")}
+          onClick={() => setTicketState("rejected")}
           className={`py-3 hover:bg-[#a82d2dfd] sm:text-[15px] duration-150  ${
-            ticketState === "Rejected"
+            ticketState === "rejected"
               ? "bg-[#a82d2dfd]"
               : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-white `}

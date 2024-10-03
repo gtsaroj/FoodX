@@ -6,7 +6,7 @@ export interface Product {
   order?: number;
   revenue?: number;
   rating?: number;
-  quantity: number | string;
+  quantity: number;
   tag?: string;
   tagId: string;
   category?: string;

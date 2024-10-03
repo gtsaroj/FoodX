@@ -7,7 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
 import { getRevenue } from "../../Services/revenue.services";
 import dayjs from "dayjs";
-import { aggregateCurrentDayData } from "./Analtytics";
+import { aggregateCurrentDayData, aggregateMonthlyData } from "./Analtytics";
 import { AddRevenue } from "../../models/revenue.model";
 
 export const MonthlyAnalytics: React.FC = () => {
@@ -27,7 +27,12 @@ export const MonthlyAnalytics: React.FC = () => {
         endDate: data.endDate,
       });
       const responseData = response.data;
-      const analyticsData = aggregateCurrentDayData(responseData);
+      const filterValue = filter?.normalFilter
+        ? 2
+        : filter?.dateFilter?.startDate
+        ? (dayjs().date() as number)
+        : 1;
+      const analyticsData = aggregateMonthlyData(responseData, filterValue);
       setTotalOrder(analyticsData as CardAnalyticsProp[]);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
@@ -38,11 +43,13 @@ export const MonthlyAnalytics: React.FC = () => {
   useEffect(() => {
     getDailyData({
       startDate:
-        filter?.normalFilter ||
+        (filter?.normalFilter &&
+          dayjs().subtract(2, "month").startOf("month").format("YYYY-MM-DD")) ||
         filter?.dateFilter?.startDate ||
-        dayjs().subtract(1, "month").format("YYYY-MM-DD"),
+        dayjs().subtract(2, "month").format("YYYY-MM-DD"),
       endDate:
-        filter?.normalFilter ||
+        (filter?.normalFilter &&
+          dayjs().subtract(2, "month").endOf("month").format("YYYY-MM-DD")) ||
         filter?.dateFilter?.endDate ||
         dayjs().format("YYYY-MM-DD"),
     });
