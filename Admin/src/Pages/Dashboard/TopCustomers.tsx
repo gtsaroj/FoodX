@@ -8,6 +8,7 @@ import { Filter } from "lucide-react";
 import { Button } from "../../Components/Common/Button/Button";
 import { Empty } from "../../Components/Common/Empty/Empty";
 import CustomerLogo from "../../assets/customer.png";
+import { getUsers } from "../../Services/user.services";
 
 export const TopCustomers = () => {
   const [TopCustomer, setTopCustomer] = useState<User[]>([]);
@@ -42,7 +43,13 @@ export const TopCustomers = () => {
     (async () => {
       setLoading(true);
       try {
-        const customers = await getTopCustomers();
+        const customers = await getUsers({
+          pageSize: 5,
+          path: "customer",
+          sort: "asc",
+          filter: "totalOrder",
+          direction: "next",
+        });
         console.log(customers);
         setOriginalData(customers as User[]);
         if (customers) setTopCustomer(customers as User[]);
