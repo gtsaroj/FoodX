@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { createTicket } from "../../Services/ticket.services";
 import { User } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
+import dayjs from "dayjs";
 
 const CreateTicket: React.FC = () => {
   const reference = useRef<HTMLDivElement>();
@@ -21,8 +22,8 @@ const CreateTicket: React.FC = () => {
     title: "",
     category: "",
     description: "",
-    date: new Date().toISOString().split("T") as any,
-    status: "Pending",
+    date: dayjs().format("YYYY-MM-DD h:mm A"),
+    status: "pending",
     uid: user?.uid as string,
   });
 

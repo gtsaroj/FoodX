@@ -50,9 +50,8 @@ export const TopCustomers = () => {
           filter: "totalOrder",
           direction: "next",
         });
-        console.log(customers);
         setOriginalData(customers as User[]);
-        if (customers) setTopCustomer(customers as User[]);
+        if (customers) setTopCustomer(customers.data.users as User[]);
       } catch (error) {
         setLoading(false);
         setOriginalData([]);
