@@ -2,8 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { UserRole } from "../models/user.model";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store";
 
 interface WelcomePageProp {
   user: (user: UserRole["role"]) => void;
@@ -63,7 +61,7 @@ export const WelcomePage: React.FC<WelcomePageProp> = ({ user }) => {
             Track tickets, manage kitchen tasks, and update food status.
           </p>
           <Link
-            onClick={() => user("admin")}
+            onClick={() => user("chef")}
             to="/chef"
             className="bg-[var(--primary-light)] text-[var(--dark-text)] py-1.5 px-4 rounded-lg inline-block transition-colors duration-300 hover:bg-primary-dark"
             aria-label="Go to Chef Panel"
