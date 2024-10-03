@@ -11,6 +11,7 @@ import { AppDispatch, RootState } from "./Store.ts";
 const PrivateRoute = React.lazy(() => import("./PrivateRoute.tsx"));
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
+import { socket } from "./Utility/socket.utility.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -67,6 +68,11 @@ const HomePage: React.FC = () => {
     if (!authUser.uid) return;
     getFavouireProducts();
   }, [authUser.uid]);
+
+  useEffect(() => {
+    socket.connect();
+  });
+
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">
       <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">

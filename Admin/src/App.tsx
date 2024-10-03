@@ -26,6 +26,7 @@ import { CategoryPage } from "./Pages/Category/Category.page";
 import Navbar from "./Components/Navbar/Navbar";
 import { WelcomePage } from "./Pages/Page.Welcome";
 import { UserRole } from "./models/user.model";
+import { socket } from "./Utility/socket.util";
 
 const MainPage = () => {
   return (
@@ -58,6 +59,12 @@ const App: React.FC = () => {
   }, [auth.success]);
   const [userRole, setUserRole] = useState<UserRole["role"]>("chef");
 
+  useEffect(() => {
+    socket.connect();
+    return () => {
+      socket.off("chef");
+    };
+  });
   return (
     <Router>
       <Routes>
