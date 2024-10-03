@@ -24,7 +24,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       0
     );
     const revenueToday = getRevenue([currentDayOrder] as Revenue[]);
-
+ console.log(revenueToday)
     const dailyAnalyticsData: CardAnalytic[] = [
       {
         title: "Items Delivered",
@@ -41,9 +41,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       {
         title: "Revenue",
         total: revenueToday || 0,
-        percentage: Math.round(
-          (revenueToday || 0 / totalRevenueLast7Days) * 100
-        ), // Revenue percentage based on average
+        percentage: Math.round((revenueToday /totalRevenueLast7Days)*100)
       },
     ];
 

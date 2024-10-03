@@ -1,7 +1,7 @@
+import { getRevenue } from "../../Utility/order.utils";
 import { DailyOrders } from "../../models/chart.modal";
 import { Product } from "../../models/product.model";
 import { Revenue, RevenueInfo } from "../../models/revenue.model";
-import { getOrder, getRevenue } from "../../Utility/order.utils";
 import dayjs from "dayjs";
 
 export const revenueData = (data: RevenueInfo[]) => {

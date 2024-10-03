@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { getAllOrder } from "../Services/order.services";
 import { OrderProduct } from "../models/chart.modal";
 import { Order, OrderModal } from "../models/order.model";
 import { Product } from "../models/product.model";
