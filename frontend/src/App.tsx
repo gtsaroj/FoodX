@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
-  });
+  }, []);
 
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">

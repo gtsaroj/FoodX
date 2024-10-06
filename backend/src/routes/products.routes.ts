@@ -18,7 +18,7 @@ const productRouter = Router();
 
 productRouter
   .route("/specials")
-  .get(rateLimiter(60, 20), cacheMiddleware("specials"), getSpecialProducts);
+  .get(cacheMiddleware("specials"), getSpecialProducts);
 
 productRouter
   .route("/popular")
@@ -41,16 +41,10 @@ productRouter
 productRouter
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteProductsInBulk);
-productRouter
-  .route("/all")
-  .get(rateLimiter(60, 20), cacheMiddleware("products"), getNormalProducts);
+productRouter.route("/all").get(cacheMiddleware("products"), getNormalProducts);
 
-productRouter.route("/get-product-by-tag/:tag").get(
-  rateLimiter(60, 20),
-  (req, res, next) => {
-    const tag = req?.params.tag;
-    cacheMiddleware(`product:${tag}`)(req, res, next);
-  },
-  getProductByTag
-);
+productRouter.route("/get-product-by-tag/:tag").get((req, res, next) => {
+  const tag = req?.params.tag;
+  cacheMiddleware(`product:${tag}`)(req, res, next);
+}, getProductByTag);
 export { productRouter };

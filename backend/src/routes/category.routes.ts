@@ -15,19 +15,19 @@ const categoryRouter = Router();
 
 categoryRouter
   .route("/get-category")
-  .get(rateLimiter(60, 10), cacheMiddleware("category"), getAllCategory);
+  .get(cacheMiddleware("category"), getAllCategory);
 
 categoryRouter
   .route("/add-category")
-  .post(rateLimiter(60, 20), verifyJwt, verifyChef, addNewCategory);
+  .post(rateLimiter(60, 30), verifyJwt, verifyChef, addNewCategory);
 categoryRouter
   .route("/update-category")
-  .put(rateLimiter(60, 20), verifyJwt, verifyChef, updateCategory);
+  .put(rateLimiter(60, 50), verifyJwt, verifyChef, updateCategory);
 categoryRouter
   .route("/delete-category")
-  .delete(rateLimiter(60, 5), verifyJwt, verifyChef, deleteCategory);
+  .delete(rateLimiter(60, 15), verifyJwt, verifyChef, deleteCategory);
 categoryRouter
   .route("/bulk-delete")
-  .delete(rateLimiter(60, 5), verifyJwt, verifyChef, deleteCategoriesInBulk);
+  .delete(rateLimiter(60, 10), verifyJwt, verifyChef, deleteCategoriesInBulk);
 
 export { categoryRouter };

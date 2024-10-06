@@ -64,10 +64,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
-    return () => {
-      socket.off("chef");
-    };
-  });
+  }, []);
   return (
     <Router>
       <Routes>

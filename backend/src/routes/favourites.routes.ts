@@ -12,14 +12,13 @@ const favouriteRouter = Router();
 
 favouriteRouter
   .route("/add")
-  .post(rateLimiter(60, 20), verifyJwt, addFavourite);
+  .post(rateLimiter(60, 30), verifyJwt, addFavourite);
 favouriteRouter
   .route("/remove")
   .delete(rateLimiter(60, 20), verifyJwt, removeFavourites);
 favouriteRouter
   .route("/:uid")
   .get(
-    rateLimiter(60, 20),
     verifyJwt,
     cacheMiddleware("favourites"),
     getFavourites
