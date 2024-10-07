@@ -36,6 +36,19 @@ export const signIn = async (
   }
 };
 
+export const verifyNewUser = async (otp: number) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "otp/verify",
+      data: { otp: otp },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error("Error while verify user " + error);
+  }
+};
+
 export const signUp = async (data: ValidationType) => {
   try {
     await signUpNewUser(
