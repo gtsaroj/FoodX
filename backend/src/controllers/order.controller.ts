@@ -71,8 +71,8 @@ const addNewOrder = asyncHandler(
     const order = req.body;
     if (!order) throw new ApiError(400, "Order not found");
     try {
-      await addNewOrderToDatabase(order);
-      io.to("chef").emit("new_order", order);
+      const orderId = await addNewOrderToDatabase(order);
+      io.to("chef").emit("new_order", { ...order, orderId });
       return res
         .status(200)
         .json(new ApiResponse(200, "", "Orders fetched successfully", true));

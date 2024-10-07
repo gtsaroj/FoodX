@@ -15,7 +15,7 @@ const addNewOrderToDatabase = async (order: Order) => {
   if (!orderDocRef) throw new ApiError(404, "Couldn't find order collection.");
   try {
     const { orderRequest, products, uid, status, note } = order;
-    await orderDocRef
+    const orderData = await orderDocRef
       .add({
         orderId: "",
         orderRequest,
@@ -29,7 +29,9 @@ const addNewOrderToDatabase = async (order: Order) => {
           orderId: docRef.id,
           createdAt: FieldValue.serverTimestamp(),
         });
+        return docRef.id;
       });
+    return orderData;
   } catch (error) {
     throw new ApiError(
       500,
