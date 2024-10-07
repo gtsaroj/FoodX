@@ -104,17 +104,8 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <>
       <div className="w-full h-full flex items-center justify-center flex-nowrap py-[20px] px-[50px] ">
-        <div className="flex items-center justify-center gap-8" style={style}>
+        <div className="flex items-center justify-center gap-5" style={style}>
           <div className="flex items-center justify-center gap-2 ">
-            <button
-              disabled={currentPage === 1}
-              className={`bg-[var(--light-background)]  ${
-                currentPage === 1 ? "cursor-not-allowed" : "cursor-pointer"
-              } p-2 rounded hover:bg-[var(--dark-foreground)] hover:text-[var(--light-foreground)] duration-150`}
-              onClick={() => handlePageChange(1)}
-            >
-              <FaAngleDoubleLeft />
-            </button>
             <button
               disabled={currentPage === 1}
               className={`bg-[var(--light-background)]   ${
@@ -127,11 +118,15 @@ const Pagination: React.FC<PaginationProps> = ({
           </div>
 
           <div
-            className={`flex items-center justify-center gap-3 ${
+            className={`flex items-center justify-center  gap-2 ${
               className ? className : ""
             }`}
           >
-            {renderPageNumbers()}
+            <button className="px-3 bg-red-500 hover:bg-red-600 py-1 duration-150 rounded text-[var(--dark-text)] hover:text-[var(--dark-text)]  hover:bg-[var(--light-background)]">
+              {currentPage}{" "}
+            </button>{" "}
+            <p className=" text-[18px] ">of</p>
+            <p className="text-[18px]">{totalPages}</p>
           </div>
 
           <div className="flex items-center justify-center gap-2">
@@ -145,18 +140,6 @@ const Pagination: React.FC<PaginationProps> = ({
               disabled={currentPage === totalPages}
             >
               <FaChevronRight />
-            </button>
-
-            <button
-              className={`bg-[var(--light-background)] p-2 rounded hover:bg-[var(--dark-foreground)] hover:text-[var(--light-foreground)] duration-150  ${
-                currentPage === totalPages
-                  ? "cursor-not-allowed"
-                  : "cursor-pointer"
-              }`}
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              <FaAngleDoubleRight />
             </button>
           </div>
         </div>
