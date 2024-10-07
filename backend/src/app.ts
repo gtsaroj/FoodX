@@ -15,6 +15,7 @@ import { revenueRouter } from "./routes/revenue.routes.js";
 import favouriteRouter from "./routes/favourites.routes.js";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { verifyRouter } from "./routes/verify.routes.js";
 
 const app = express();
 const server = createServer(app);
@@ -41,5 +42,6 @@ app.use("/categories", categoryRouter);
 app.use("/banners", bannerRouter);
 app.use("/revenue", revenueRouter);
 app.use("/favourites", favouriteRouter);
+app.use("/otp", verifyRouter);
 
 export { app, io, server };

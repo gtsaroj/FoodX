@@ -19,6 +19,9 @@ import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import { OptGenerator } from "../utils/otpGenerator.js";
+import { redisClient } from "../utils/Redis.js";
+import { sendEmail } from "../utils/email.js";
 
 //Cookie options
 const options = {
@@ -102,6 +105,9 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
 
     const userFromDatabase = await getUserFromDatabase(uid, userInfo.role);
 
+    const otp = await OptGenerator();
+    redisClient.set("otp", otp, { EX: 3600 });
+    await sendEmail(userInfo.email, otp.toString());
     return res
       .status(201)
       .cookie("accessToken", accessToken, options)
