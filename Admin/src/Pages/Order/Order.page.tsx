@@ -13,9 +13,9 @@ import { SearchOrder } from "../../Utility/order.utils";
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import dayjs from "dayjs";
-import { getFullName } from "../../Utility/user.utils";
+import { getFullName, getUserInfo } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
-import {Invoice} from "../../Invoice/Invoice";
+import { Invoice, InvoiceDocumentProp } from "../../Invoice/Invoice";
 import { nanoid } from "@reduxjs/toolkit";
 import { Product } from "../../models/product.model";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -66,6 +66,7 @@ const OrderList = () => {
       const aggregateData = allOrder?.orders.map(async (item, index) => {
         const getUserName = await getFullName(item.uid as string);
         return {
+          uid: item.uid,
           id: item.orderId as string,
           name: getUserName || "User",
           products: item.products,
@@ -157,6 +158,7 @@ const OrderList = () => {
                 (product.name as string) + " × " + product.quantity + ", "
             );
             return {
+              uid: item.uid,
               id: item.orderId as string,
               name: getUserName || "User",
               products: productNames,
@@ -217,6 +219,48 @@ const OrderList = () => {
     };
   }, []);
 
+  const [resolvedOrders, setResolvedOrders] = useState<
+    InvoiceDocumentProp["orders"]
+  >([]);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const resolvedOrders = await Promise.all(
+        exportSelectedOrder.map(async (order) => {
+          const matchedOrder = initialOrders?.find((od) => od.id === order);
+
+          if (!matchedOrder) {
+            return null;
+          }
+
+          const user = await getUserInfo(matchedOrder.uid as string);
+
+          return {
+            orderDetails: {
+              products: matchedOrder.products,
+              status: matchedOrder.status,
+            },
+            customerDetails: {
+              name: matchedOrder.name as string,
+              phoneNumber: user.phoneNumber, // Ensure correct type for phoneNumber
+            },
+            invoiceData: {
+              invoiceDate: dayjs().format("YYYY-MM-DD"),
+              invoiceNumber: order,
+            },
+          };
+        })
+      );
+
+      // Filter out null values and update the state
+      setResolvedOrders(resolvedOrders as InvoiceDocumentProp["orders"]);
+    };
+
+    fetchOrders();
+  }, [exportSelectedOrder, initialOrders]);
+  
+  console.log(resolvedOrders)
+
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
       <div className="flex items-center justify-between w-full pt-5">
@@ -230,7 +274,8 @@ const OrderList = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
-            <button disabled={!exportSelectedOrder.length}
+            <button
+              disabled={!exportSelectedOrder.length}
               onClick={() => setIsExport(!isExport)}
               className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
@@ -328,23 +373,12 @@ const OrderList = () => {
         loading={loading}
       />
       {!isExport && exportSelectedOrder.length > 0 && (
-        <Modal close={isExport} isExport={true} closeModal={() => setIsExport(!isExport)}>
-   <Invoice 
-      orders={exportSelectedOrder.map((order) => {
-        const matchedOrder = initialOrders?.find((od) => od.id === order);
-
-        return matchedOrder
-          ? {
-              orderDetails: matchedOrder.products as Product[],
-              customerDetails: { name: matchedOrder.name as string },
-              invoiceData: {
-                invoiceDate: dayjs().format("YYYY-MM-DD"),
-                invoiceNumber: nanoid(),
-              },
-            }
-          : null;
-      }).filter(Boolean)}  // Filter out any null orders
-    />
+        <Modal
+          close={isExport}
+          isExport={true}
+          closeModal={() => setIsExport(!isExport)}
+        >
+          <Invoice orders={resolvedOrders} />
         </Modal>
       )}
     </div>

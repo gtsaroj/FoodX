@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
@@ -8,8 +8,9 @@ import {
   PDFViewer,
 } from "@react-pdf/renderer";
 import { Product } from "../models/product.model";
+import { status } from "../models/order.model";
 
-interface InvoiceDocumentProp {
+export interface InvoiceDocumentProp {
   orders: {
     invoiceData: {
       invoiceNumber: string;
@@ -19,7 +20,10 @@ interface InvoiceDocumentProp {
       name: string;
       phoneNumber: number;
     };
-    orderDetails: Product[];
+    orderDetails: {
+      products: Product[];
+      status: status["status"];
+    };
   }[];
 }
 
@@ -215,7 +219,7 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                 <Text style={[styles.tableCol, styles.tableCell]}>Total</Text>
               </View>
 
-              {order.orderDetails?.map((item, itemIndex) => (
+              {order.orderDetails?.products?.map((item, itemIndex) => (
                 <View key={itemIndex} style={styles.tableRow}>
                   <Text style={[styles.tableCol, styles.tableCell]}>
                     {item.name}
@@ -238,79 +242,44 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
           <View
             style={{
               width: "100%",
-              alignItems: "flex-end",
+              alignItems: "flex-start",
               flexDirection: "column",
-              padding: "10px",
+              padding: "5px 0px 5px 0px",
               backgroundColor: "#f9f9f9", // Light background for better readability
               borderRadius: "5px",
               border: "1px solid #ddd",
+              gap: "5px",
             }}
           >
             <View
               style={{
-                width: "150px",
-                paddingVertical: "8px",
-                flexDirection: "column",
-                alignItems: "flex-end",
-                gap: "10px",
-                border: "1px solid gray",
-                borderRadius: "5px",
-                backgroundColor: "#fff", // White background for the summary box
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "space-between",
+                borderBottom: "1px solid gray",
+                paddingBottom:"6pxI"
               }}
             >
-              <Text
-                style={{
-                  textAlign: "center",
-                  width: "100%",
-                  borderBottom: "0.5px solid gray",
-                  paddingBottom: "5px",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
-                Invoice Summary
+              <Text style={{ fontSize: "13px" }}>Total</Text>
+              <Text style={{ fontSize: "13px" }}>
+                {order.orderDetails?.products?.reduce(
+                  (productAcc, product) =>
+                    productAcc + product?.price * product?.quantity,
+                  1
+                )}
               </Text>
-              <View
-                style={{
-                  paddingHorizontal: "2px",
-                  flexDirection: "row",
-                  width: "100%",
-                  justifyContent: "space-between",
-                  marginTop: "5px",
-                }}
-              >
-                <View
-                  style={{
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: "8px",
-                  }}
-                >
-                  <Text style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    Total
-                  </Text>
-                  <Text style={{ fontSize: "12px", fontWeight: "bold" }}>
-                    Status
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: "8px",
-                  }}
-                >
-                  <Text style={{ fontSize: "12px" }}>
-                    Rs{" "}
-                    {order?.orderDetails?.reduce(
-                      (productAcc, product) =>
-                        productAcc + product.quantity * product.price,
-                      1
-                    )}
-                  </Text>
-                  <Text style={{ fontSize: "12px" }}>Completed</Text>
-                </View>
-              </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                alignContent: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ fontSize: "13px" }}>Status</Text>
+              <Text style={{ fontSize: "13px" }}>
+                {order.orderDetails.status}
+              </Text>
             </View>
           </View>
 
@@ -341,4 +310,3 @@ export const Invoice: React.FC<InvoiceDocumentProp> = ({ orders }) => {
     </div>
   );
 };
-
