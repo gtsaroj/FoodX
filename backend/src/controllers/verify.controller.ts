@@ -1,4 +1,5 @@
 import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
+import { deleteUserFromFirebase } from "../firebase/auth/userHandler.js";
 import {
   addUserToFirestore,
   getUserFromDatabase,
@@ -21,6 +22,7 @@ export const verifyOtp = asyncHandler(async (req: any, res: any) => {
       return res.status(404).json(new ApiError(404, "OTP not found."));
     }
     if (!userInfo) {
+      await deleteUserFromFirebase(uid);
       return res
         .status(404)
         .json(new ApiError(404, "User not registered. Please try again"));
