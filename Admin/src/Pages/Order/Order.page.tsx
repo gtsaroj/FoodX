@@ -15,7 +15,7 @@ import { Button } from "../../Components/Common/Button/Button";
 import dayjs from "dayjs";
 import { getFullName } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
-import Invoice from "../../Invoice/Invoice";
+import {Invoice} from "../../Invoice/Invoice";
 import { nanoid } from "@reduxjs/toolkit";
 import { Product } from "../../models/product.model";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -38,7 +38,7 @@ const OrderList = () => {
     dateFilter?: any;
     sortFilter?: string;
   }>();
-  const [isExport, setIsExport] = useState<boolean>(false);
+  const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
 
   const getAllOrders = async (data: GetOrderModal) => {
@@ -196,7 +196,7 @@ const OrderList = () => {
       const userName = await getFullName(order.uid as string);
       setInitialOrders((prev) => [
         {
-          id: order.orderId as string || nanoid(),
+          id: order.orderId as string,
           name: userName as string,
           orderRequest: order.orderRequest as string,
           orderFullfilled: order.orderFullfilled as string,
@@ -230,7 +230,7 @@ const OrderList = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
-            <button
+            <button disabled={!exportSelectedOrder.length}
               onClick={() => setIsExport(!isExport)}
               className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
@@ -328,25 +328,23 @@ const OrderList = () => {
         loading={loading}
       />
       {!isExport && exportSelectedOrder.length > 0 && (
-        <Modal close={isExport} closeModal={() => setIsExport(!isExport)}>
-          {exportSelectedOrder?.map((order) => {
-            const matchedOrder = initialOrders?.find((od) => od.id === order);
+        <Modal close={isExport} isExport={true} closeModal={() => setIsExport(!isExport)}>
+   <Invoice 
+      orders={exportSelectedOrder.map((order) => {
+        const matchedOrder = initialOrders?.find((od) => od.id === order);
 
-            return (
-              <Invoice
-                orders={[
-                  {
-                    orderDetails: matchedOrder!.products as Product[],
-                    customerDetails: { name: matchedOrder?.name as string },
-                    invoiceData: {
-                      invoiceDate: dayjs().format("YYYY-MM-DD"),
-                      invoiceNumber: nanoid(),
-                    },
-                  },
-                ]}
-              />
-            );
-          })}
+        return matchedOrder
+          ? {
+              orderDetails: matchedOrder.products as Product[],
+              customerDetails: { name: matchedOrder.name as string },
+              invoiceData: {
+                invoiceDate: dayjs().format("YYYY-MM-DD"),
+                invoiceNumber: nanoid(),
+              },
+            }
+          : null;
+      }).filter(Boolean)}  // Filter out any null orders
+    />
         </Modal>
       )}
     </div>
