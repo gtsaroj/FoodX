@@ -8,6 +8,9 @@ import { getOrders } from "../../Services/order.services";
 import { OrderCard } from "../Common/Cards/ OrderCard";
 import { Empty } from "../Common/Empty/Empty";
 import { getRecentOrders } from "./Order";
+import { getFullName } from "../../Utility/user.utils";
+import toast from "react-hot-toast";
+import { socket } from "../../Utility/socket.util";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
@@ -18,7 +21,6 @@ export const RecentOrders = () => {
     perPage: number;
   }>({ currentPage: 1, perPage: 5 });
   const [loading, setLoading] = useState<boolean>(false);
-
 
   const getRecentOrder = async ({
     pageSize,
@@ -60,6 +62,25 @@ export const RecentOrders = () => {
       status: "pending",
     });
   }, [pagination.perPage, isClicked]);
+
+  useEffect(() => {
+    const handleNewOrder = async (order: Order) => {
+      // Assuming getFullName is asynchronous
+      const userName = await getFullName(order.uid as string);
+      const new_order = (await getRecentOrders([order])) as RecentOrder[];
+
+      setRecentOrder((prev) => [...new_order, ...prev]);
+      toast.success(`${userName} was orderered products.`);
+    };
+
+    // Listen for the 'new_order' event
+    socket.on("new_order", handleNewOrder);
+
+    // Cleanup listener when component unmounts
+    return () => {
+      socket.off("new_order", handleNewOrder);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">

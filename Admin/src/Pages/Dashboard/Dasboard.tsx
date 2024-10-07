@@ -8,6 +8,8 @@ import { RecentTickets } from "../../Components/Tickets/RecentTickets.tsx";
 import { TopCustomers } from "./TopCustomers.tsx";
 // import WeekRevenue from "../../Components/LineChart/WeekRevenue.tsx";
 import { WeekReveneuChart } from "../../Components/LineChart/LineChart.tsx";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store.ts";
 
 // import {
 //   LineChartOfOrder,
@@ -15,7 +17,7 @@ import { WeekReveneuChart } from "../../Components/LineChart/LineChart.tsx";
 // } from "../Components/LineChart/LineChart";
 
 const Dasboard: React.FC = () => {
-  
+  const user = useSelector((state: RootState) => state.root.user.userInfo);
   return (
     <div className="flex flex-col  items-center justify-center w-full gap-16 px-3 py-5 pb-5 2xl:container">
       <Revenue />
@@ -27,11 +29,12 @@ const Dasboard: React.FC = () => {
         <div className="flex  w-full border-[var(--dark-border)] border-[1px] rounded-lg">
           <WeekReveneuChart />
         </div>
-        <div className="hidden min-w-[350px] lg:block">
-          <TopCustomers />
-        </div>
+        {user.role === "admin" && (
+          <div className="hidden min-w-[350px] lg:block">
+            <TopCustomers />
+          </div>
+        )}
       </div>
-
     </div>
   );
 };

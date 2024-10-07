@@ -267,7 +267,7 @@ const AllCategories = () => {
       </div>
       <CategoryTable
         totalData={initialCategory?.length}
-        selectedData={bulkSelectedCategory}
+        selectedData={bulkSelectedCategory?.map((category) => category.id)}
         loading={loading}
         category={initialCategory}
         actions={{

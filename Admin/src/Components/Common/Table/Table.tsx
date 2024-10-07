@@ -8,8 +8,8 @@ import "react-loading-skeleton/dist/skeleton.css";
 export declare namespace Table {
   interface TableModalProps<T> {
     data: Array<T>;
-    totalData: number,
-    selectedData?: Array<T>;
+    totalData: number;
+    selectedData?: string[];
     columns: ColumnProps[];
     actions?: TableActions;
     loading?: boolean;
@@ -52,7 +52,6 @@ function Table<T extends { id: string }>({
   totalData,
   pagination = { perPage: 2, currentPage: 1 },
 }: Table.TableModalProps<T>): React.ReactElement {
-
   const [currentPage, setCurrentPage] = useState<number>(
     pagination.currentPage as number
   );
@@ -72,7 +71,6 @@ function Table<T extends { id: string }>({
     }
   };
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const isCheckedData = selectedData?.map((data) => data.id ? data.id : data.uid);
 
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
@@ -149,8 +147,7 @@ function Table<T extends { id: string }>({
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">
                         <input
-                          
-                          checked={isCheckedData?.includes(item.id)}
+                          checked={selectedData?.includes(item.id)}
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             actions.checkFn &&
                               actions.checkFn(item.id, event.target.checked);
@@ -170,7 +167,8 @@ function Table<T extends { id: string }>({
                       <td
                         className="w-[100px]"
                         onClick={() => {
-                          actions?.editFn && actions?.editFn(item.id ? item.id : item.uid);
+                          actions?.editFn &&
+                            actions?.editFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
@@ -185,7 +183,8 @@ function Table<T extends { id: string }>({
                       <td
                         className="w-[100px]"
                         onClick={() => {
-                          actions?.deleteFn && actions?.deleteFn(item.id ? item.id : item.uid);
+                          actions?.deleteFn &&
+                            actions?.deleteFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
@@ -200,7 +199,8 @@ function Table<T extends { id: string }>({
                       <td
                         className="table-body-content"
                         onClick={() => {
-                          actions?.viewFn && actions?.viewFn(item.id ? item.id : item.uid);
+                          actions?.viewFn &&
+                            actions?.viewFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div
@@ -225,7 +225,6 @@ function Table<T extends { id: string }>({
           <tr>
             <td>
               <Pagination
-                
                 totalData={totalData}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}
