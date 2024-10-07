@@ -378,7 +378,7 @@ const AllProductAnalytics = () => {
         onPageChange={(page: number) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }
-        selectedData={bulkSelectedProduct}
+        selectedData={bulkSelectedProduct?.map((product)=>product.id)}
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
           delete: (id) => {

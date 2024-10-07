@@ -2,20 +2,21 @@ import { Product } from "./product.model";
 
 export interface Order {
   orderId: string;
-  name: string;
-  uid: string;
+  name?: string;
+  uid?: string;
   products: Product[];
-  rank?: string;
+  rank?: number;
   note?: string;
   orderRequest: string;
-  status: "Received" | "Preparing" | "Cancelled" | "Pending";
-  orderFullfilled: string;
+  status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
+  orderFullfilled?: string;
   updatedAt?: Date;
 }
 
 export interface RecentOrder extends Order {
   image: string;
-  price: string;
+  price: number;
+  products: string[] | Product[];
 }
 
 export interface DailyAggregateData {
@@ -51,10 +52,10 @@ export interface CardAnalyticsProp {
 export interface OrderModal {
   id?: string;
   name: string;
-  products?: string[];
-  rank?: string;
+  products?: Product[];
+  rank?: number;
   orderRequest: string;
-  status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
+  status: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
   orderFullfilled: string;
 }
 

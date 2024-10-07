@@ -1,7 +1,12 @@
 import { Download, Filter, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { getOrders } from "../../Services/order.services";
-import { GetOrderModal, Order, OrderModal } from "../../models/order.model";
+import {
+  GetOrderModal,
+  Order,
+  OrderModal,
+  status,
+} from "../../models/order.model";
 import { debounce } from "../../Utility/debounce";
 import { SearchOrder } from "../../Utility/order.utils";
 
@@ -9,6 +14,12 @@ import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import dayjs from "dayjs";
 import { getFullName } from "../../Utility/user.utils";
+import toast from "react-hot-toast";
+import Invoice from "../../Invoice/Invoice";
+import { nanoid } from "@reduxjs/toolkit";
+import { Product } from "../../models/product.model";
+import Modal from "../../Components/Common/Popup/Popup";
+import { socket } from "../../Utility/socket.util";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
@@ -27,6 +38,8 @@ const OrderList = () => {
     dateFilter?: any;
     sortFilter?: string;
   }>();
+  const [isExport, setIsExport] = useState<boolean>(false);
+  const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
 
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
@@ -35,7 +48,7 @@ const OrderList = () => {
         pageSize: data.pageSize,
         currentFirstDoc: data.currentFirstDoc || null,
         currentLastDoc: data.currentLastDoc || null,
-        // filter: data.filter,
+        filter: data.filter,
         sort: data.sort,
       });
 
@@ -52,24 +65,18 @@ const OrderList = () => {
       });
       const aggregateData = allOrder?.orders.map(async (item, index) => {
         const getUserName = await getFullName(item.uid);
-        const productNames = item.products?.map(
-          (product) =>
-            (product.name as string) + " × " + product.quantity + ", "
-        );
         return {
           id: item.orderId as string,
           name: getUserName || "User",
-          products: productNames,
+          products: item.products,
           rank: (pagination.currentPage - 1) * pagination.perPage + (index + 1),
           orderRequest: dayjs(item.orderRequest).format("YYYY-MM-DD"),
-          delivered: dayjs(item.orderFullfilled).format("YYYY-MM-DD"),
+          orderFullfilled: dayjs(item.orderFullfilled).format("YYYY-MM-DD"),
           status: item.status,
         };
       });
 
-      const getaggregateDataPromises: OrderModal[] = await Promise.all(
-        aggregateData
-      );
+      const getaggregateDataPromises = await Promise.all(aggregateData);
       setInitialOrders(getaggregateDataPromises);
     } catch (error) {
       setLoading(false);
@@ -88,15 +95,35 @@ const OrderList = () => {
     initialOrders,
   ]);
 
+  const exportAllOrder = (isCheckedAll: boolean) => {
+    if (!isCheckedAll) {
+      return setExportSelectedOrder([]);
+    }
+    const selectedOrder_Ids = initialOrders?.map((order) => order.id);
+    setExportSelectedOrder(selectedOrder_Ids as string[]);
+  };
+
+  const exportSelectedOrderFn = (id: string, isChecked: boolean) => {
+    if (id && !isChecked) {
+      return setExportSelectedOrder((prev) =>
+        prev.filter((value) => value !== id)
+      );
+    }
+    const selectedOrders = initialOrders?.filter((order) => order.id === id);
+    const order_Ids = selectedOrders?.map((order) => order.id);
+    if (selectedOrders.length === 0) return toast.error("Order not found");
+    setExportSelectedOrder((prev) => [...prev, ...(order_Ids as string[])]);
+  };
+
   useEffect(() => {
     getAllOrders({
       pageSize: pagination.perPage,
-      firstVisibleDoc: null,
-      lastVisibleDoc: null,
-      filter: "uid",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+      filter: (isFilter?.sortFilter as keyof Order) || "uid",
       sort: sortOrder || "asc",
     });
-  }, [pagination.perPage, sortOrder]);
+  }, [pagination.perPage, sortOrder, isFilter?.sortFilter]);
 
   useEffect(() => {
     if (pagination.currentPage > 1) {
@@ -108,7 +135,7 @@ const OrderList = () => {
             pageSize: pagination.perPage,
             currentLastDoc: currentDoc && currentDoc.currentLastDoc,
             currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
-            // filter: (isFilter?.sortFilter as keyof Order) || "uid",
+            filter: (isFilter?.sortFilter as keyof Order) || "uid",
             sort: sortOrder || "desc",
             direction: "next",
           });
@@ -123,7 +150,7 @@ const OrderList = () => {
             currentLastDoc: getAllOrder.currentLastDoc,
           });
           setTotalData(getAllOrder.length);
-          const aggregateData = getAllOrder?.orders.map(async (item,index) => {
+          const aggregateData = getAllOrder?.orders.map(async (item, index) => {
             const getUserName = await getFullName(item.uid as string);
             const productNames = item.products?.map(
               (product) =>
@@ -133,7 +160,8 @@ const OrderList = () => {
               id: item.orderId as string,
               name: getUserName || "User",
               products: productNames,
-              rank: (pagination.currentPage - 1) * pagination.perPage + (index + 1),
+              rank:
+                (pagination.currentPage - 1) * pagination.perPage + (index + 1),
               orderRequest: dayjs(item.orderRequest).format("MMM D, h:mm A"),
 
               delivered:
@@ -162,6 +190,33 @@ const OrderList = () => {
     }
   }, [pagination.currentPage, pagination.perPage, sortOrder]);
 
+  useEffect(() => {
+    const handleNewOrder = async (order: Order) => {
+      // Assuming getFullName is asynchronous
+      const userName = await getFullName(order.uid as string);
+      setInitialOrders((prev) => [
+        {
+          id: order.orderId as string || nanoid(),
+          name: userName as string,
+          orderRequest: order.orderRequest as string,
+          orderFullfilled: order.orderFullfilled as string,
+          products: order.products as Product[],
+          rank: 1,
+          status: order.status as keyof status["status"],
+        },
+        ...prev.map((o) => ({ ...o, rank: o.rank! + 1 })),
+      ]);
+      toast.success(`${userName} was orderered products.`);
+    };
+    // Listen for the 'new_order' event
+    socket.on("new_order", handleNewOrder);
+
+    // Cleanup listener when component unmounts
+    return () => {
+      socket.off("new_order", handleNewOrder);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
       <div className="flex items-center justify-between w-full pt-5">
@@ -175,7 +230,10 @@ const OrderList = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
-            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
+            <button
+              onClick={() => setIsExport(!isExport)}
+              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+            >
               <Download strokeWidth={2.5} className="size-5" />
               <p className="text-[16px]   tracking-widest ">Export</p>
             </button>
@@ -252,6 +310,12 @@ const OrderList = () => {
         )}
       </div>
       <OrderTable
+        selectedData={exportSelectedOrder}
+        action={{
+          checkAllFn: (isChecked: boolean) => exportAllOrder(isChecked),
+          checkFn: (id: string, isChecked: boolean) =>
+            exportSelectedOrderFn(id, isChecked),
+        }}
         totalData={(totalData as number) || 1}
         pagination={{
           currentPage: pagination.currentPage,
@@ -263,6 +327,28 @@ const OrderList = () => {
         orders={initialOrders}
         loading={loading}
       />
+      {!isExport && exportSelectedOrder.length > 0 && (
+        <Modal close={isExport} closeModal={() => setIsExport(!isExport)}>
+          {exportSelectedOrder?.map((order) => {
+            const matchedOrder = initialOrders?.find((od) => od.id === order);
+
+            return (
+              <Invoice
+                orders={[
+                  {
+                    orderDetails: matchedOrder!.products as Product[],
+                    customerDetails: { name: matchedOrder?.name as string },
+                    invoiceData: {
+                      invoiceDate: dayjs().format("YYYY-MM-DD"),
+                      invoiceNumber: nanoid(),
+                    },
+                  },
+                ]}
+              />
+            );
+          })}
+        </Modal>
+      )}
     </div>
   );
 };

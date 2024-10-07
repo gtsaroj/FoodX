@@ -428,7 +428,7 @@ const AllCustomers = () => {
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,
         }}
-        selectedData={bulkSelectedCustomer}
+        selectedData={bulkSelectedCustomer?.map((customer) => customer.id)}
         users={initialCustomer as User[]}
         loading={loading}
         actions={{

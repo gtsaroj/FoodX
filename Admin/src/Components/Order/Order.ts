@@ -1,10 +1,10 @@
 import { getUserInfo } from "../../Utility/user.utils";
-import { Order } from "../../models/order.model";
+import { Order, RecentOrder, status } from "../../models/order.model";
 
 export const getRecentOrders = async (orders: Order[]) => {
   try {
-    const aggregateData =  orders?.map(async (item) => {
-      const user = await getUserInfo(item.uid);
+    const aggregateData = orders?.map(async (item): Promise<RecentOrder | null | undefined> => {
+      const user = await getUserInfo(item.uid as string);
       if (!user) {
         console.error(
           `Order ${item.orderId} does not have a valid user (UID: ${item.uid}).`
@@ -24,16 +24,18 @@ export const getRecentOrders = async (orders: Order[]) => {
 
         return {
           orderId: item.orderId,
-          image: user.avatar,
+          image: user.avatar as string,
           products: productNames,
           price: price,
-          status: item.status as string,
+          status: item.status as keyof status["status"],
           orderRequest: item.orderRequest as string,
         };
       }
     });
 
-    const getaggregateDataPromises = await Promise.all(aggregateData);
+    const getaggregateDataPromises: RecentOrder[] = await Promise.all(
+      aggregateData
+    );
     return getaggregateDataPromises;
     // console.log(getaggregateDataPromises);
     // const filteProducts = getaggregateDataPromises?.filter(
