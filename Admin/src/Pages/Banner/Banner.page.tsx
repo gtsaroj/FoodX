@@ -291,7 +291,7 @@ const FoodPage: React.FC = () => {
       <Table
         loading={loading}
         totalData={initialBanner?.length}
-        selectedData={bulkSelectedBanner}
+        selectedData={bulkSelectedBanner?.map((banner) => banner.id)}
         columns={columns}
         data={initialBanner}
         actions={{

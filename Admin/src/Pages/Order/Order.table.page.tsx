@@ -10,8 +10,13 @@ interface orderTableProp {
   totalData: number;
   orders: OrderModal[];
   loading?: boolean;
+  selectedData: string[];
   pagination: { currentPage: number; perPage: number };
   onPageChange: (page: number) => void;
+  action: {
+    checkAllFn?: (isChecked: boolean) => void;
+    checkFn?: (id: string, isChecked: boolean) => void;
+  };
 }
 
 export const OrderTable: React.FC<orderTableProp> = ({
@@ -20,13 +25,15 @@ export const OrderTable: React.FC<orderTableProp> = ({
   loading,
   onPageChange,
   pagination,
+  action,
+  selectedData,
 }) => {
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [initialOrder, setInitialOrder] = useState<OrderModal[]>([]);
-  
+
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
@@ -89,8 +96,11 @@ export const OrderTable: React.FC<orderTableProp> = ({
         <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
           <p>
             {!isCollapsed && item.id == selectedId
-              ? item.products
-              : item.products && item.products[0]}
+              ? item.products?.map(
+                  (product) => `${product.name} * ${product.quantity} `
+                )
+              : item.products &&
+                `${item.products[0].name} * ${item.products[0].quantity}  `}
           </p>
           <button
             onClick={() => {
@@ -160,7 +170,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
               <StatusChanger
                 isChangeStatus={() => setIsChangeStatus(false)}
                 status={item.status!}
-                statusFn={(status : status["status"]) => statusChangeFn(status)}
+                statusFn={(status: status["status"]) => statusChangeFn(status)}
               />
             )}
           </div>
@@ -187,10 +197,17 @@ export const OrderTable: React.FC<orderTableProp> = ({
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
+        selectedData={selectedData}
         totalData={totalData}
         data={initialOrder as any}
         columns={Columns}
         actionIconColor="red"
+        actions={{
+          checkFn: (id: string, isChecked: boolean) =>
+            action.checkFn && action.checkFn(id, isChecked),
+          checkAllFn: (isCheckedAll: boolean) =>
+            action.checkAllFn && action.checkAllFn(isCheckedAll),
+        }}
         disableActions={false}
         loading={loading}
         bodyHeight={400}

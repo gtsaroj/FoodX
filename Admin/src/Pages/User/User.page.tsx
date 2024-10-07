@@ -6,7 +6,6 @@ import "../../index.css";
 import { getUsers, searchUser } from "../../Services/user.services";
 import { DbUser, GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
-import { aggregateCustomerData } from "../../Utility/user.utils";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);

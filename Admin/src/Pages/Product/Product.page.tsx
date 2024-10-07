@@ -384,7 +384,7 @@ const FoodPage: React.FC = () => {
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,
         }}
-        selectedData={bulkSelectedProduct}
+        selectedData={bulkSelectedProduct?.map((product)=> product.id)}
         products={fetchedProducts}
         actions={{
           delete: (id) => {
