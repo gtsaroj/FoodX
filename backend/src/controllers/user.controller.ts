@@ -88,35 +88,27 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       email,
       avatar,
       phoneNumber,
-      uid: uid || "",
+      uid,
       refreshToken: "",
       role,
       totalOrder: 0,
       totalSpent: 0,
     };
 
-    await addUserToFirestore(userInfo, role);
-    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-      uid,
-      userInfo.role
-    );
-
-    userInfo.refreshToken = refreshToken;
-
-    const userFromDatabase = await getUserFromDatabase(uid, userInfo.role);
-
     const otp = await OptGenerator();
-    redisClient.set("otp", otp, { EX: 3600 });
-    await sendEmail(userInfo.email, otp.toString());
+    redisClient.set(`otp:${uid}`, otp, { EX: 60 });
+    await sendEmail(email, otp.toString());
+    redisClient.set(`register_user:${uid}`, JSON.stringify(userInfo), {
+      EX: 3600,
+    });
+
     return res
       .status(201)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
           201,
-          { userInfo: userFromDatabase, accessToken, refreshToken },
-          "User successfully added",
+          [],
+          "User registered Successfully. Please verify your account.",
           true
         )
       );
