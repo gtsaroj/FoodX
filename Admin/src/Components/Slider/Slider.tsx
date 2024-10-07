@@ -23,6 +23,7 @@ import { Loader } from "../Common/Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import Profile from "../../Auth/AuthProfile";
+import TicketAdminPage from "../../Pages/Ticket/Ticket.admin.page";
 
 interface DesktopSliderProp {
   closeFn: () => void;
@@ -60,10 +61,6 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
     };
   }, [open, closeFn]);
 
-  const auth = {
-    role: "admin",
-  };
-
   return (
     <div
       ref={reference}
@@ -100,7 +97,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <LayoutDashboard />
               <span>Dashboard</span>
             </li>
-            {auth.role !== "admin" ? (
+            {user.userInfo.role !== "admin" ? (
               ""
             ) : (
               <li
@@ -163,19 +160,17 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
               <ListOrdered />
               <span>Order</span>
             </li>
-            {auth.role !== "admin" ? (
-              ""
-            ) : (
-              <li
-                onClick={() => setUrl("customer-list")}
-                className={`flex items-center justify-start  gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]   w-full p-3 rounded duration-150 ${
-                  user.userInfo.role === "admin" ? "visible" : "hidden"
-                } `}
-              >
-                <BookUser />
-                <span>Customers</span>
-              </li>
-            )}
+
+            <li
+              onClick={() => setUrl("customer-list")}
+              className={`flex items-center justify-start  gap-5 cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]   w-full p-3 rounded duration-150 ${
+                user.userInfo.role === "admin" ? "visible" : "hidden"
+              } `}
+            >
+              <BookUser />
+              <span>Customers</span>
+            </li>
+
             <li className="relative flex flex-col items-center justify-start w-full gap-3 ">
               <button
                 onClick={() => setOpenContact(!openContact)}
@@ -206,11 +201,18 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                   Details
                 </li>
 
-                {auth.role !== "admin" ? (
-                  ""
-                ) : (
+                {user.userInfo.role === "admin" && (
                   <li
-                    onClick={() => setUrl("contact/tickets")}
+                    onClick={() => setUrl("contact/admin-tickets")}
+                    className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28]  hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                  >
+                    <Ticket />
+                    Tickets
+                  </li>
+                )}
+                {user.userInfo.role === "chef" && (
+                  <li
+                    onClick={() => setUrl("contact/chef-tickets")}
                     className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28]  hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <Ticket />

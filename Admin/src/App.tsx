@@ -11,7 +11,7 @@ import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
 import Analytics from "./Pages/Analytics/Analytics";
 import OrderList from "./Pages/Order/Order.page";
 import CustomerList from "./Pages/User/User.page";
-import TicketPage from "./Pages/Ticket/Ticket.page";
+import TicketPage from "./Pages/Ticket/Ticket.chef.page";
 import { AdminProfile } from "./Pages/Profile/AdminProfile";
 import BannerPage from "./Pages/Banner/Banner.page";
 import FoodPage from "./Pages/Product/Product.page";
@@ -27,6 +27,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import { WelcomePage } from "./Pages/Page.Welcome";
 import { UserRole } from "./models/user.model";
 import { socket } from "./Utility/socket.util";
+import TicketAdminPage from "./Pages/Ticket/Ticket.admin.page";
 
 const MainPage = () => {
   return (
@@ -132,12 +133,14 @@ const App: React.FC = () => {
               <Route path="customer-list" element={<CustomerList />} />
             </Route>
 
-            <Route
-              element={
-                <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />
-              }
-            >
-              <Route path="contact/tickets" element={<TicketPage />} />
+            <Route element={<PrivateRoute role={[{ role: "chef" }]} />}>
+              <Route path="contact/chef-tickets" element={<TicketPage />} />
+            </Route>
+            <Route element={<PrivateRoute role={[{ role: "admin" }]} />}>
+              <Route
+                path="contact/admin-tickets"
+                element={<TicketAdminPage />}
+              />
             </Route>
             <Route
               element={

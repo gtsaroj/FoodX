@@ -112,13 +112,14 @@ export const FoodTable: React.FC<FoodTableProp> = ({
       loading={loading}
       selectedData={selectedData}
       bodyHeight={400}
+      headStyle={{ width: "100%" }}
       pagination={{
         currentPage: pagination.currentPage,
         perPage: pagination.perPage,
       }}
       onPageChange={(pageNumber) => onPageChange(pageNumber)}
       disableNoData={products?.length < 1 ? true : false}
-      headStyle={{ width: "100%" }}
+    
     />
   );
 };
