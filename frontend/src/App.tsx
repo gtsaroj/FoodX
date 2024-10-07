@@ -12,6 +12,7 @@ const PrivateRoute = React.lazy(() => import("./PrivateRoute.tsx"));
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 import { socket } from "./Utility/socket.utility.ts";
+import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -90,7 +91,7 @@ const HomePage: React.FC = () => {
   );
 };
 export const App: React.FC = () => {
-  const [showContent, SetShowContent] = useState<boolean>(true);
+  const [showContent, SetShowContent] = useState<boolean>(false);
   const auth = useSelector((state: RootState) => state.root.auth);
 
   const [isDark] = useState<boolean>(() => {
@@ -121,6 +122,10 @@ export const App: React.FC = () => {
         <Route
           path="/register"
           element={showContent ? <Navigate to={"/"} /> : <Register />}
+        />
+         <Route
+          path="/email-verification"
+          element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* <Route path="/email-verification" element={<VerificationPage />} /> */}

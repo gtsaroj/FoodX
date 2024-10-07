@@ -93,7 +93,7 @@ export const RegisterContainer: React.FC = () => {
           avatar: imageUrl,
           role: "customer",
         };
-
+         navigate("/email-verification")
         await dispatch(signUpAction(ConvertedForm as ValidationType));
         RegisterValue.avatar = "";
         RegisterValue.firstName = "";

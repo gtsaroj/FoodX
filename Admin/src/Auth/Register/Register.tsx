@@ -90,6 +90,7 @@ export const RegisterContainer: React.FC = () => {
           avatar: imageUrl,
           role: "admin" as UserRole["role"],
         };
+        navigate("/email-verification")
         await dispatch(signUpAction(ConvertedForm));
         toast.success("Congratulations!, You logged in");
       }
