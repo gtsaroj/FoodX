@@ -64,7 +64,7 @@ const OrderList = () => {
         currentLastDoc: allOrder.currentLastDoc,
       });
       const aggregateData = allOrder?.orders.map(async (item, index) => {
-        const getUserName = await getFullName(item.uid);
+        const getUserName = await getFullName(item.uid as string);
         return {
           id: item.orderId as string,
           name: getUserName || "User",

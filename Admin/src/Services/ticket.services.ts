@@ -1,5 +1,9 @@
 import { makeRequest } from "../makeRequest";
-import { GetTicketModal, TicketType } from "../models/ticket.model";
+import {
+  GetTicketModal,
+  TicketStatus,
+  TicketType,
+} from "../models/ticket.model";
 
 export const createTicket = async (data: TicketType) => {
   try {
@@ -27,7 +31,6 @@ export const getTickets = async (data: GetTicketModal) => {
   }
 };
 
-
 export const deleteTicket = async (data: TicketType) => {
   try {
     const response = await makeRequest({
@@ -41,12 +44,15 @@ export const deleteTicket = async (data: TicketType) => {
   }
 };
 
-export const updateTicket = async (data: TicketType) => {
+export const updateTicket = async (data: {
+  id: string;
+  newStatus: TicketStatus["status"];
+}) => {
   try {
     const response = await makeRequest({
-      method: "post",
+      method: "put",
       url: "tickets/update-ticket",
-      data: data,
+      data: { ...data },
     });
     return response.data;
   } catch (error) {

@@ -111,7 +111,7 @@ function Table<T extends { id: string }>({
               <th className="w-[100px]"></th>
             )}
             {!!actions?.viewFn && !disableActions && (
-              <th className="w-[100px]">View</th>
+              <th className="w-[200px] text-start">View</th>
             )}
           </tr>
         </thead>
@@ -197,20 +197,20 @@ function Table<T extends { id: string }>({
                     )}
                     {!!actions?.viewFn && !disableActions && (
                       <td
-                        className="table-body-content"
+                        className="w-[120px]"
                         onClick={() => {
                           actions?.viewFn &&
                             actions?.viewFn(item.id ? item.id : item.uid);
                         }}
                       >
                         <div
-                          className="table-body-content-btns"
+                          className="w-full rounded-lg cursor-pointer hover:bg-[var(--danger-text)] duration-150 font-semibold bg-[var(--danger-bg)] p-2 flex items-center justify-center gap-3"
                           style={{
-                            color: actionIconColor ? actionIconColor : "red",
+                            color: actionIconColor ? actionIconColor : "white",
                           }}
                         >
-                          <FaEye />
-                          <span className="text-sm text-[var(--dark-text)] ">
+                          <FaEye className=" size-5 " />
+                          <span className="text-[15px] text-[var(--dark-text)] ">
                             View
                           </span>
                         </div>

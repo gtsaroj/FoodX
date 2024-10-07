@@ -1,14 +1,19 @@
 export interface TicketType {
-  id?: string;
+  id: string;
   category: string;
   title: string;
   description: string;
-  date: Date | string;
+  date: string;
   status?: TicketStatus["status"];
-  uid: string;
+  uid?: string;
   createdAt?: any;
   updateAt?: any;
 }
+
+export interface TicketModel extends TicketType {
+  name: string;
+}
+
 export interface GetTicketModal {
   pageSize: number;
   sort: "asc" | "desc";

@@ -158,14 +158,14 @@ export const Button: React.FC<ButtonProp> = ({
             className={`flex text-[var(--dark-text)]  flex-col w-full items-start justify-center  gap-4`}
           >
             <h1 className="text-[18px] tracking-wider ">Types</h1>
-            <div className="w-full  flex items-center justify-around gap-5">
+            <div className="w-full  flex  flex-wrap items-center justify-start gap-5">
               {types?.map(
                 (data) =>
                   checkFn?.checkTypeFn &&
                   data.value && (
                     <div
                       key={data.id}
-                      className="w-full   flex items-center justify-start gap-2 cursor-pointer"
+                      className="   flex items-center justify-start gap-2 cursor-pointer"
                     >
                       <input
                         onChange={(event: ChangeEvent<HTMLInputElement>) => {

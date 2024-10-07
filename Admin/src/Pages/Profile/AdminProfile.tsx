@@ -1,8 +1,8 @@
-import { EditIcon, Flag } from "lucide-react";
+import { EditIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import React, { useEffect, useRef, useState } from "react";
 import avatar from "../../assets/logo/avatar.png";
-import { AppDispatch, RootState, Store } from "../../Store";
+import { AppDispatch, RootState } from "../../Store";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { User } from "../../models/user.model";
 import Modal from "../../Components/Common/Popup/Popup";
@@ -13,7 +13,6 @@ import ReAuth from "../../Auth/Profile/ReAuth";
 import { AccountDisable } from "../../Auth/Settings/Account.disable";
 import { AccountDelete } from "../../Auth/Settings/Account.delete";
 import toast from "react-hot-toast";
-import { updateAccount } from "../../Services/user.services";
 
 export const AdminProfile = () => {
   const authUser = useSelector(
