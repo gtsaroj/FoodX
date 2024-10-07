@@ -8,6 +8,7 @@ import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/Ticket.upload";
 import { getTickets } from "../../Services/ticket.services";
 import toast from "react-hot-toast";
+import TicketLogo from "../../assets/tickets.png";
 import {
   GetTicketModal,
   TicketStatus,
@@ -15,11 +16,7 @@ import {
 } from "../../models/ticket.model";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { RotatingLines } from "react-loader-spinner";
-
-// interface ButtonProp {
-//   title: string[];
-//   style?: ReactNode;
-// }
+import { Empty } from "../../Components/Common/Empty/Empty";
 
 const TicketPage: React.FC = () => {
   const [ticketState, setTicketState] =
@@ -27,7 +24,7 @@ const TicketPage: React.FC = () => {
   const [pagination, setPagination] = useState<{
     perPage: number;
     currentPage: number;
-  }>({ currentPage: 1, perPage: 4 });
+  }>({ currentPage: 1, perPage: 5 });
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalData, setTotalData] = useState<number>(0);
   const [closeModal, setCloseModal] = useState<boolean>(true);
@@ -37,6 +34,7 @@ const TicketPage: React.FC = () => {
     currentLastDoc: string;
   }>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
   const fetchTickets = async (data: GetTicketModal) => {
     setLoading(true);
@@ -65,14 +63,7 @@ const TicketPage: React.FC = () => {
 
       setTotalData((prev) => prev + tickets.tickets.length);
 
-      setTickets((prev) => {
-        return [
-          ...prev,
-          ...tickets.tickets.filter(
-            (data) => !prev.some((ticket) => ticket.id === data.id)
-          ),
-        ];
-      });
+      setTickets(tickets.tickets);
     } catch (error) {
       toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
@@ -89,13 +80,59 @@ const TicketPage: React.FC = () => {
       currentLastDoc: null,
       status: ticketState || "pending",
     });
-  }, [pagination.perPage, ticketState]);
+  }, [pagination.perPage, ticketState, isRefresh]);
+
+  useEffect(() => {
+    if (
+      window.innerHeight + window.scrollY >=
+      document.body.offsetHeight - 500
+    ) {
+      const fetchNextPage = async () => {
+        try {
+          const response = (await getTickets({
+            direction: "next",
+            pageSize: pagination.perPage,
+            sort: "desc",
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            currentLastDoc: currentDoc?.currentLastDoc,
+            status: ticketState,
+          })) as {
+            tickets: TicketType[];
+            currentFirstDoc: string;
+            currentLastDoc: string;
+            length: number;
+          };
+          if (response.tickets.length < pagination.perPage) {
+            setHasMore(false);
+          }
+
+          setTickets((prev) => [
+            ...prev,
+            ...response.tickets.filter((ticket) =>
+              prev.some((data) => data.id !== ticket.id)
+            ),
+          ]);
+
+          setCurrentDoc({
+            currentFirstDoc: response.currentFirstDoc,
+            currentLastDoc: response.currentLastDoc,
+          });
+        } catch (error) {
+          setTickets([]);
+          console.log(
+            "Error while fetching tickets => ticket.chef.page" + error
+          );
+        }
+      };
+      fetchNextPage();
+    }
+  }, [pagination.perPage]);
 
   const TicketComponents = {
-    Pending: <PendingTicket prop={tickets} loading={loading} />,
-    Progress: <ProgressTicket prop={tickets} loading={loading} />,
-    Resolved: <ResolveTicket prop={tickets} loading={loading} />,
-    Rejected: <CancelTicket prop={tickets} loading={loading} />,
+    pending: <PendingTicket prop={tickets} loading={loading} />,
+    progress: <ProgressTicket prop={tickets} loading={loading} />,
+    resolved: <ResolveTicket prop={tickets} loading={loading} />,
+    rejected: <CancelTicket prop={tickets} loading={loading} />,
   };
   const component = ticketState && TicketComponents[ticketState];
 
@@ -166,39 +203,44 @@ const TicketPage: React.FC = () => {
         className="w-full py-6 h-full overflow-auto   scrollbar-custom px-5 "
       >
         <div className="w-full h-[400px] ">
-          <InfiniteScroll
-            endMessage={
-              <div className="w-full flex items-center justify-center py-3 text-[18px] tracking-wider ">
-                No data to load
-              </div>
-            }
-            scrollableTarget={"ticketScrollable"}
-            loader={
-              <div className="w-full flex flex-col items-center pt-3 justify-center ">
-                {/* <Skeleton height={70} count={5} /> */}
-                <div className="flex items-center justify-center gap-3">
-                  <RotatingLines strokeColor="var(--dark-text)" width="27" />
-                  <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
-                    {" "}
-                    loading...
-                  </span>
+          {tickets.length <= 0 ? (
+            <Empty
+              actionText="Refresh ticket"
+              parent={TicketLogo}
+              style={{ width: "15rem", height: "12rem" }}
+              action={() => setIsRefresh(!isRefresh)}
+              children={`No ${ticketState}  tickets available`}
+            />
+          ) : (
+            <InfiniteScroll
+              scrollableTarget={"ticketScrollable"}
+              loader={
+                <div className="w-full flex flex-col items-center pt-3 justify-center ">
+                  {/* <Skeleton height={70} count={5} /> */}
+                  <div className="flex items-center justify-center gap-3">
+                    <RotatingLines strokeColor="var(--dark-text)" width="27" />
+                    <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
+                      {" "}
+                      loading...
+                    </span>
+                  </div>
                 </div>
-              </div>
-            }
-            hasMore={hasMore}
-            next={() => {
-              fetchTickets({
-                direction: "next",
-                pageSize: pagination?.perPage,
-                sort: "asc",
-                currentFirstDoc: null || currentDoc?.currentFirstDoc,
-                currentLastDoc: null || currentDoc?.currentLastDoc,
-              });
-            }}
-            dataLength={totalData}
-          >
-            {component}
-          </InfiniteScroll>
+              }
+              hasMore={hasMore}
+              next={() => {
+                fetchTickets({
+                  direction: "next",
+                  pageSize: pagination?.perPage,
+                  sort: "asc",
+                  currentFirstDoc: null || currentDoc?.currentFirstDoc,
+                  currentLastDoc: null || currentDoc?.currentLastDoc,
+                });
+              }}
+              dataLength={totalData}
+            >
+              {component}
+            </InfiniteScroll>
+          )}
         </div>
       </div>
     </div>

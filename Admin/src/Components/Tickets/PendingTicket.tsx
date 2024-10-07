@@ -2,7 +2,6 @@ import React from "react";
 import TicketCard from "./TicketCard";
 import { TicketType } from "../../models/ticket.model";
 import Skeleton from "react-loading-skeleton";
-import NotFound from "../NotFound/NotFound";
 
 interface PendingProp {
   prop: TicketType[];
@@ -10,7 +9,7 @@ interface PendingProp {
 }
 
 const PendingTicket: React.FC<PendingProp> = ({ prop, loading }) => {
-  console.log(prop);
+ 
   return loading ? (
     <div className="w-full ">
       <Skeleton

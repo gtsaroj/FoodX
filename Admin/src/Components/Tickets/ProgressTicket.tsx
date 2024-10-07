@@ -9,6 +9,7 @@ interface ProgressProp {
 }
 
 const ProgressTicket: React.FC<ProgressProp> = ({ prop, loading }) => {
+  console.log(prop,loading)
   return loading ? (
     <div className="w-full ">
       <Skeleton
