@@ -1,19 +1,53 @@
+import { generateAccessAndRefreshToken } from "../firebase/auth/TokenHandler.js";
+import {
+  addUserToFirestore,
+  getUserFromDatabase,
+} from "../firebase/db/user.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { redisClient } from "../utils/Redis.js";
-
+const options = {
+  httpOnly: true,
+  secure: true,
+};
 export const verifyOtp = asyncHandler(async (req: any, res: any) => {
-  const { code } = req.body;
+  const { code, uid } = req.body;
   try {
-    const data = redisClient.get("otp");
+    const data = await redisClient.get(`otp:${uid}`);
+    const userInfo = await redisClient.get(`register_user:${uid}`);
+
     if (!data) {
       return res.status(404).json(new ApiError(404, "OTP not found."));
     }
-    if (data && +data === +code) {
+    if (!userInfo) {
       return res
-        .status(200)
-        .json(new ApiResponse(200, [], "OTP verified successfully.", true));
+        .status(404)
+        .json(new ApiError(404, "User not registered. Please try again"));
+    }
+    const user = await JSON.parse(userInfo);
+    if (data && +data === +code) {
+      await addUserToFirestore(user, user.role);
+      const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+        user.uid,
+        user.role
+      );
+      user.refreshToken = refreshToken;
+      const userFromDatabase = await getUserFromDatabase(user.uid, user.role);
+      redisClient.del(`otp:${uid}`);
+      redisClient.del(`register_user:${uid}`);
+      return res
+        .status(201)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(
+          new ApiResponse(
+            201,
+            { userInfo: userFromDatabase, accessToken, refreshToken },
+            "User successfully verified and added",
+            true
+          )
+        );
     } else {
       return res.status(400).json(new ApiError(400, "Invalid otp."));
     }
