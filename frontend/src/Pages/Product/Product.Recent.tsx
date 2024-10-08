@@ -27,7 +27,12 @@ export const RecentProduct = () => {
       const aggregateProducts = response.data.orders?.flatMap(
         (order: any) => order.products
       );
-      setInitialData(aggregateProducts);
+      const uniqueProducts = Array.from(
+        new Set(aggregateProducts.map((product: any) => product.id))
+      ).map((id) =>
+        aggregateProducts.find((product: any) => product.id === id)
+      );
+      setInitialData(uniqueProducts);
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
     }

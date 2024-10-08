@@ -48,7 +48,7 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
     }, [selectedProductsQuantity]);
   
     return (
-      <div className=" w-full shadow-sm shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)] h-[200px] ">
+      <div className=" w-full shadow-sm shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)]  ">
         <div className="flex w-full items-stretch h-full justify-start gap-3">
           <div className=" h-full ">
             <img
