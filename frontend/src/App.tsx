@@ -51,9 +51,22 @@ const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
+  const [isDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    } else {
+      document.body.classList.remove("dark");
+    }
+  }, [isDark]);
+  
   const getFavouireProducts = async () => {
     try {
       const response = await getFavourites(authUser.uid as string);
@@ -94,19 +107,7 @@ export const App: React.FC = () => {
   const [showContent, SetShowContent] = useState<boolean>(false);
   const auth = useSelector((state: RootState) => state.root.auth);
 
-  const [isDark] = useState<boolean>(() => {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return prefersDarkScheme;
-  });
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-  }, [isDark]);
+
 
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);

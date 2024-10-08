@@ -60,11 +60,12 @@
     /* f4f6f8 
     f5f9ff
     */
-    --body-bg: #080e18;
+    --body-bg:  #141b25;
     --light-foreground: #10161f;
     --light-background: #283041;
     --light-secondary-background: #dadada;
     --light-border: #dedde2;
+   
 
     --dark-foreground: #fbfbfb;
     --dark-background: #f4f6f8;

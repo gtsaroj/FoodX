@@ -130,7 +130,7 @@ export const LoginContainer: React.FC = () => {
 
 const Login: React.FC = () => {
   return (
-    <div className=" min-w-[100vw] w-full  h-full bg-[var(--light-background)] overflow-x-hidden">
+    <div className=" min-w-[100vw] w-full  h-full bg-[var(--body-bg)] overflow-x-hidden">
       {/* Mobile */}
       <div className="flex flex-col items-center w-full h-full lg:hidden min-h-[90vh] gap-8">
         <AuthNavbar />

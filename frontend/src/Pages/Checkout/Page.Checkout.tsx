@@ -117,8 +117,19 @@ export const Items = () => {
             {(discount && "Applied") || "Apply"}
           </button>
         </form> */}
-        <div className=" text-[17px] font-semibold tracking-wider flex justify-between items-center ">
-          <span className="text-[var(--dark-text)] ">Order Total</span>
+        <div className={` ${products?.length > 3 ? "h-20" : "h-auto"} overflow-auto scrollbar-custom pr-4 `}>
+          {products?.map((product) => (
+            <div className="flex justify-between items-center text-[var(--dark-secondary-text)] ">
+              <span className="text-[16px]">{product.name}</span>
+              <div>
+                <span className="text-[16px]">{product.quantity || "0"} </span>{" "}
+                × <span className="text-[16px]">{product.price || "0"} </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className=" text-[17px] border-t-[3px] pt-2  border-[var(--dark-border)] font-semibold tracking-wider flex justify-between items-center ">
+          <span className="text-[var(--dark-text)] "> Total Amount</span>
           <span className="text-[var(--green-bg)] ">Rs. {totalPrice}</span>
         </div>
       </div>
