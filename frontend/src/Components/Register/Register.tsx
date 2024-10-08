@@ -330,10 +330,11 @@ export const RegisterContainer: React.FC = () => {
 
 export const Register = () => {
   return (
-    <div className="items-center justify-center w-full h-full">
+    <div className="flex w-full h-screen flex-col items-center justify-between 2xl:justify-center lg:py-5">
       <RegisterContainer />
-      <AuthFooter />
-      <Toaster />
+      <div className="w-full pt-10 ">
+      <AuthFooter/>
     </div>
+   </div>
   );
 };
