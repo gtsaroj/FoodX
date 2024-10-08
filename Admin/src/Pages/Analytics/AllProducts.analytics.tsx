@@ -16,7 +16,6 @@ import { Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
-import { searchProduct } from "../../Services/product.services";
 import { aggregateProducts } from "../Product/product";
 const AllProductAnalytics = () => {
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
@@ -137,17 +136,30 @@ const AllProductAnalytics = () => {
     setFetchedProducts(filteredProducts);
   }, [isFilter, sortOrder]);
 
-  useEffect(() => {});
-
   const handleChange = async (value: string) => {
     if (value.length <= 0) return await getProducts();
-    const filterProducts = (await searchProduct(value)) as Product[];
+    const filterProducts = (await searchProducts(value)) as Product[];
 
     const products = await aggregateProducts(filterProducts);
     setFetchedProducts(products);
   };
 
-  const debounceSearch = useCallback(debounce(handleChange, 500), []);
+  const searchProducts = async (value: string) => {
+    const [specialProducts, normalProducts] = [
+      await getSpecialProducts(),
+      await getNormalProducts(),
+    ];
+    const allProducts = [
+      ...specialProducts?.data,
+      ...normalProducts?.data,
+    ] as Product[];
+    const filterProducts = allProducts?.filter((product) =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+    return filterProducts;
+  };
+
+  const debounceSearch = useCallback(debounce(handleChange, 200), []);
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");
@@ -259,8 +271,6 @@ const AllProductAnalytics = () => {
       setBulkSelectedProduct([]);
     }
   };
-
-  console.log(fetchedProducts);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
@@ -378,7 +388,7 @@ const AllProductAnalytics = () => {
         onPageChange={(page: number) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))
         }
-        selectedData={bulkSelectedProduct?.map((product)=>product.id)}
+        selectedData={bulkSelectedProduct?.map((product) => product.id)}
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
           delete: (id) => {

@@ -103,7 +103,7 @@ const AllCategories = () => {
   const SearchingCategories = async (value: string) => {
     if (value.length <= 0) return getAllCategories();
     const filterCategories = SearchCategory(initialCategory, value);
-    if (filterCategories.length <= 0) setInitialCategory([]);
+    setInitialCategory(filterCategories);
     setInitialCategory(filterCategories);
   };
 
@@ -135,10 +135,8 @@ const AllCategories = () => {
   };
 
   useEffect(() => {
-    if (initialCategory?.length <= 0 || undefined) {
-      getAllCategories();
-    }
-  }, [initialCategory?.length]);
+    getAllCategories();
+  }, []);
 
   useEffect(() => {
     const handleSelect = async (value: string) => {

@@ -71,7 +71,6 @@ function Table<T extends { id: string }>({
     }
   };
   const [isChecked, setIsChecked] = useState<boolean>(false);
-
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
       <table className="w-full relative border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
@@ -147,7 +146,7 @@ function Table<T extends { id: string }>({
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">
                         <input
-                          checked={selectedData?.includes(item.uid)}
+                          checked={selectedData?.includes(item.uid || item.id)}
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             actions.checkFn &&
                               actions.checkFn(item.id || item.uid, event.target.checked);
@@ -221,11 +220,11 @@ function Table<T extends { id: string }>({
             </>
           )}
         </tbody>
-        <tfoot>
+        <tfoot className="w-full flex justify-end py-3">
           <tr>
             <td>
               <Pagination
-                totalData={totalData}
+                totalData={totalData || 0}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}
                 onChange={handlePageChange}

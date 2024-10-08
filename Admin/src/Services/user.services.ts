@@ -247,6 +247,7 @@ export const updateAccount = async (data: {
   avatar?: string;
   phoneNumber?: number;
   fullName?: string;
+  email?: string;
 }) => {
   try {
     const response = await makeRequest({
@@ -254,12 +255,21 @@ export const updateAccount = async (data: {
       data: { ...data },
       url: "users/update-account",
     });
-    return response.data.data;
+    await addLogs({
+      action: "update",
+      date: new Date(),
+      detail: `${
+        response.data.data.updatedUser.fullName
+      } updated  at ${new Date().toLocaleString()}`,
+      userId: response.data.data.updatedUser.uid,
+      userRole: response.data.data.updatedUser.role,
+    });
+
+    return response.data.data.updatedUser;
   } catch (error) {
     throw new Error("Unable to update account" + error);
   }
 };
-
 export const deleteAccount = async () => {
   try {
     const response = await makeRequest({

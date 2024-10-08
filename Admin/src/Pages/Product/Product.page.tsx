@@ -17,7 +17,6 @@ import UpdateFood from "../../Components/Upload/Product.update.upload";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import { FoodTable } from "./Product.table.page";
 import { Button } from "../../Components/Common/Button/Button";
-import { searchProduct } from "../../Services/product.services";
 import { aggregateProducts } from "./product";
 
 const FoodPage: React.FC = () => {
@@ -56,9 +55,20 @@ const FoodPage: React.FC = () => {
         getSpecialProducts(),
       ]);
       // All products
-      const allProducts = [...normalProducts.data, ...specialProducts.data];
+      const aggregateNormalProducts = normalProducts?.data?.map(
+        (product: Product) => ({ ...product, type: "products" })
+      );
+      const aggregateSpecialProducts = specialProducts?.data?.map(
+        (product: Product) => ({ ...product, type: "specials" })
+      );
 
-      const products = await aggregateProducts(allProducts);
+      console.log(aggregateNormalProducts, aggregateSpecialProducts)
+
+      const products = await aggregateProducts([
+        ...aggregateNormalProducts,
+        ...aggregateSpecialProducts,
+      ]);
+  
       setFetchedProducts(products);
     } catch (error) {
       console.error("Error while fetching products:", error);
@@ -66,6 +76,8 @@ const FoodPage: React.FC = () => {
       setLoading(false); // Ensure loading state is reset even in case of an error
     }
   };
+
+ 
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");
@@ -85,6 +97,7 @@ const FoodPage: React.FC = () => {
         },
         { specials: [], products: [] }
       );
+
       if (specials.length > 0) {
         await bulkDeleteOfProduct({ category: "specials", ids: specials });
       }
@@ -198,9 +211,25 @@ const FoodPage: React.FC = () => {
   const handleChange = async (value: string) => {
     if (value.length <= 0) return getProducts();
 
-    const filterProducts = (await searchProduct(value)) as Product[];
+    const filterProducts = (await searchProducts(value)) as Product[];
     const products = await aggregateProducts(filterProducts);
     setFetchedProducts(products);
+  };
+
+  const searchProducts = async (value: string) => {
+    console.log(value);
+    const [specialProducts, normalProducts] = [
+      await getSpecialProducts(),
+      await getNormalProducts(),
+    ];
+    const allProducts = [
+      ...specialProducts.data,
+      ...normalProducts.data,
+    ] as Product[];
+    const filterProducts = allProducts?.filter((product) =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+    return filterProducts;
   };
 
   const debounceSearch = useCallback(debounce(handleChange, 500), []);
@@ -384,7 +413,7 @@ const FoodPage: React.FC = () => {
           currentPage: pagination.currentPage,
           perPage: pagination.perPage,
         }}
-        selectedData={bulkSelectedProduct?.map((product)=> product.id)}
+        selectedData={bulkSelectedProduct?.map((product) => product.id)}
         products={fetchedProducts}
         actions={{
           delete: (id) => {
