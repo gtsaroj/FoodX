@@ -28,11 +28,11 @@ const signInAction = createAsyncThunk(
     }
   }
 );
-const signUpAction = createAsyncThunk(
+const verifyAction = createAsyncThunk(
   "auth/signUp",
-  async (data: ValidationType, thunkApi) => {
+  async ({ otp, uid }: { otp: number; uid: string }, thunkApi) => {
     try {
-      const response = await userAction.signUp({ ...data });
+      const response = await userAction.verifyNewUser(otp, uid);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(
@@ -56,4 +56,4 @@ const updateUserAction = createAsyncThunk(
   }
 );
 
-export { signInAction, signUpAction, updateUserAction };
+export { signInAction, verifyAction, updateUserAction };

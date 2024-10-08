@@ -12,7 +12,8 @@ export interface User {
   phoneNumber?: string;
   role?: UserRole["role"];
   refreshToken?: string;
-  totalOrders?: number;
+  totalOrder?: number;
+  totalSpent?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -40,4 +41,15 @@ export interface DbUser {
   refreshToken: string;
   uid: string;
   role?: "admin" | "customers";
+}
+
+export interface Register {
+  avatar: string | File;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  confirmpassword?: string;
+  role?: UserRole["role"];
 }

@@ -65,10 +65,10 @@ const Cart: React.FC = () => {
               />
             ))
           ) : (
-            <div className="flex flex-col  py-16 items-center justify-center gap-2">
-              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-16" />
+            <div className="flex flex-col h-full   py-16 items-center justify-center gap-9">
+              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-20" />
 
-              <h1 className="text-[25px] text-[var(--dark-text)] ">
+              <h1 className="text-[25px] tracking-wider text-[var(--dark-text)] ">
                 Your cart is empty
               </h1>
             </div>

@@ -50,6 +50,7 @@ export interface CardAnalyticsProp {
 }
 
 export interface OrderModal {
+  uid?: string;
   id?: string;
   name: string;
   products?: Product[];

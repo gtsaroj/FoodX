@@ -7,8 +7,8 @@ import {
   StyleSheet,
   PDFViewer,
 } from "@react-pdf/renderer";
-import { Product } from "../models/product.model";
-import { status } from "../models/order.model";
+import { Product } from "../../models/product.model";
+import { OrderStatus } from "../../models/order.model";
 
 export interface InvoiceDocumentProp {
   orders: {
@@ -22,7 +22,7 @@ export interface InvoiceDocumentProp {
     };
     orderDetails: {
       products: Product[];
-      status: status["status"];
+      status: OrderStatus["status"];
     };
   }[];
 }
@@ -106,7 +106,7 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
       <Page key={index} wrap={false} size="A4" style={styles.page}>
         <View
           style={{
-            border: "1px solid gray",
+            
             padding: "4px",
             width: "100%",
             display: "flex",
@@ -246,18 +246,21 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
               flexDirection: "column",
               padding: "5px 0px 5px 0px",
               backgroundColor: "#f9f9f9", // Light background for better readability
-              borderRadius: "5px",
-              border: "1px solid #ddd",
+
               gap: "5px",
             }}
           >
             <View
               style={{
+                width: "100%",
                 display: "flex",
+                flexDirection: "row",
+                paddingVertical: "7px",
+                paddingHorizontal: "5px",
                 alignContent: "center",
                 justifyContent: "space-between",
-                borderBottom: "1px solid gray",
-                paddingBottom:"6pxI"
+                borderBottom: "1px solid #ddd",
+                borderTop: "1px solid #ddd",
               }}
             >
               <Text style={{ fontSize: "13px" }}>Total</Text>
@@ -271,9 +274,15 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             </View>
             <View
               style={{
+                width: "100%",
                 display: "flex",
+                flexDirection: "row",
+                paddingVertical: "7px",
+                paddingHorizontal: "5px",
                 alignContent: "center",
                 justifyContent: "space-between",
+                borderBottom: "1px solid #ddd",
+                paddingBottom: "6px",
               }}
             >
               <Text style={{ fontSize: "13px" }}>Status</Text>

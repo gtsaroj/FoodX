@@ -9,6 +9,7 @@ import {
   getSpecialProducts,
 } from "../../Services/product.services";
 import { Frown } from "lucide-react";
+import { Category } from "../../models/category.model";
 
 export interface categoriesTagOption {
   name: string;
@@ -21,16 +22,16 @@ export const MenuType: React.FC = () => {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [categoriesTag, setCategoriesTag] = useState<categoriesTagOption[]>([]);
-  const [initialTag, setInitialTag] = useState<string>("Burger");
+  const [categoriesTag, setCategoriesTag] = useState<Category[]>([]);
+  const [initialTag, setInitialTag] = useState<Category>();
 
   const getMenuProducts = async () => {
     setLoading(true);
     try {
-      const response = await getProductsByTag(initialTag);
+      const response = await getProductsByTag(initialTag!.id);
       const specialProducts = await getSpecialProducts();
       const aggregateSpecialData = specialProducts?.data?.filter(
-        (product: Product) => product.tagId === initialTag
+        (product: Product) => product.tagId === initialTag!.id
       );
       setInitialData([...response.data, ...aggregateSpecialData]);
     } catch (error) {
@@ -45,7 +46,7 @@ export const MenuType: React.FC = () => {
       try {
         const response = await getCategories();
         setCategoriesTag(response.data);
-        setInitialTag(response.data[0].id);
+        setInitialTag(response.data[0]);
       } catch (error) {
         throw new Error("Error fetching tags:" + error);
       }
@@ -54,22 +55,28 @@ export const MenuType: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log(initialTag);
+    
     getMenuProducts();
-  }, [initialTag]);
+  }, [initialTag?.id]);
+
 
   return (
     <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
       <Selector
-        children={categoriesTag as categoriesTagOption[]}
-        action={(tagId) => setInitialTag(tagId)}
+        children={categoriesTag as Category[]}
+        action={(tagId) => {
+          const categories = categoriesTag?.find(
+            (category) => category.id === tagId
+          );
+          setInitialTag(categories as Category);
+        }}
       />
 
       <div className="flex flex-col items-start rounded-md bg-[var(--light-foreground)] px-8 gap-5  py-5">
-          <p className="text-2xl px-5 pt-4 text-[var(--dark-text)] font-bold tracking-wider">
-            Category
-          </p>
-    
+        <p className="text-2xl px-5 pt-4 text-[var(--dark-text)] font-bold tracking-wider">
+          {initialTag?.name}
+        </p>
+
         <div className="flex flex-wrap items-center justify-center md:justify-start  gap-20 p-5 rounded-md flex-shrink-0">
           {!loading ? (
             initialData?.length <= 0 ? (

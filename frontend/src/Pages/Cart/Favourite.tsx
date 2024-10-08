@@ -21,8 +21,10 @@ const Favourite: React.FC = () => {
 
   const getAllProducts = async () => {
     try {
-      const response = await getNormalProducts();
-      const specialsProduct = await getSpecialProducts();
+      const [response, specialsProduct] = [
+        await getNormalProducts(),
+        await getSpecialProducts(),
+      ];
       console.log(response.data);
       const products = [...response.data, ...specialsProduct.data] as Product[];
       console.log(selectedProducts);

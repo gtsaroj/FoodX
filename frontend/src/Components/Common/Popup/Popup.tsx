@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useRef } from "react";
 
 interface ModelProp {
   close: boolean;
+  isExport?: boolean;
   children: ReactNode;
   closeModal: () => void;
   disableScroll?: boolean;
@@ -12,6 +13,7 @@ const Modal: React.FC<ModelProp> = ({
   close,
   children,
   closeModal,
+  isExport,
 }: ModelProp) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -43,7 +45,9 @@ const Modal: React.FC<ModelProp> = ({
       }}
     >
       <div
-        className=" overflow-auto rounded py-4 bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] flex duration-150 sm:h-fit relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  "
+        className={` overflow-auto ${
+          isExport ? "pt-16" : "p-4"
+        } rounded  bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150  relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  `}
         ref={modalRef}
       >
         <div className="w-full z-[100]  overflow-auto">{children}</div>

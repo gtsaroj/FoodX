@@ -3,9 +3,10 @@ import { globalRequest } from "../GlobalRequest";
 import { getRoleFromAccessToken } from "../Utility/JWTUtility";
 import { signInUser, signUpNewUser } from "../firebase/Authentication";
 import { ValidationType } from "../models/register.model";
-import { User } from "../models/user.model";
+import { Register, User } from "../models/user.model";
 import Cookies from "js-cookie";
 import { makeRequest } from "../makeRequest";
+import { addLogs } from "./log.services";
 
 export const signIn = async (
   email: string,
@@ -15,60 +16,83 @@ export const signIn = async (
   const toastLoader = toast.loading("Logging in, please wait...");
   try {
     await signInUser(email, password as string);
+
     const response = await globalRequest({
       method: "post",
       url: "users/login",
       data: { email, userRole },
     });
+
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
-    const role = await getRoleFromAccessToken();
-    responseData.user.role = role;
     toast.dismiss(toastLoader);
+    await addLogs({
+      action: "login",
+      date: new Date(),
+      detail: `${
+        responseData.user.fullName
+      } logged in at ${new Date().toLocaleString()}`,
+      userId: responseData.user.uid,
+      userRole: responseData.user.role,
+    });
     toast.success("Logged in successfully!");
-
     return responseData.user as User;
   } catch (error) {
-    toast.dismiss(toastLoader);
+    console.log(`Error : ${error}`);
     toast.error("Error logging in. Please try again.");
     throw new Error("Invalid username or password");
   }
 };
 
-export const verifyNewUser = async (otp: number) => {
+export const verifyNewUser = async (otp: number, uid: string) => {
   try {
     const response = await makeRequest({
       method: "post",
       url: "otp/verify",
-      data: { otp: otp },
+      data: { code: otp, uid: uid },
     });
-    return response.data;
+    toast.success("Congratulations! You logged in");
+    const user = response.data.data;
+    Cookies.set("accessToken", user.accessToken);
+    Cookies.set("refreshToken", user.refreshToken);
+    localStorage.removeItem("time");
+    localStorage.removeItem("uid");
+    await addLogs({
+      action: "register",
+      date: new Date(),
+      detail: `${
+        user.userInfo.fullName
+      } signed up at ${new Date().toLocaleString()}`,
+      userId: user.userInfo.uid,
+      userRole: user.userInfo.role,
+    });
+
+    return user.userInfo;
   } catch (error) {
     throw new Error("Error while verify user " + error);
   }
 };
 
-export const signUp = async (data: ValidationType) => {
+export const signUp = async (data: Register) => {
   try {
     await signUpNewUser(
       data.firstName,
       data.lastName,
       data.email,
       data.password,
-      data.avatar
+      data.avatar as string
     );
     const response = await globalRequest({
       method: "post",
       url: "users/signIn",
       data: { ...data },
     });
-    await signIn(data.email, data.password);
-    return response.data.data.userInfo;
-    // return response.data.data.userInfo;
+
+    const ressponseData = response.data.data;
+    localStorage.setItem("uid", ressponseData || ressponseData.uid);
+    return;
   } catch (error) {
-    console.log(error);
-    // toast.error("Unable to create new user");
     throw new Error("Unable to create new user");
   }
 };
@@ -85,7 +109,17 @@ export const updateAccount = async (data: {
       data: { ...data },
       url: "users/update-account",
     });
-    return response.data.data;
+    await addLogs({
+      action: "update",
+      date: new Date(),
+      detail: `${
+        response.data.data.updatedUser.fullName
+      } updated  at ${new Date().toLocaleString()}`,
+      userId: response.data.data.updatedUser.uid,
+      userRole: response.data.data.updatedUser.role,
+    });
+
+    return response.data.data.updatedUser;
   } catch (error) {
     throw new Error("Unable to update account" + error);
   }

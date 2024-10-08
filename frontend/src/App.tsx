@@ -128,12 +128,13 @@ export const App: React.FC = () => {
           element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
         />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        {/* <Route path="/email-verification" element={<VerificationPage />} /> */}
         <Route>
           <Route path="/" element={<HomePage />}>
             <Route index element={<Home />} />
             <Route path="/cart" element={<CartPage />}></Route>
+            <Route  element={<PrivateRoute userRole={["customer"]} />} >
             <Route path="/profile" element={<AdminProfile />} />
+          </Route>
             <Route
               element={
                 <PrivateRoute userRole={["customer", "chef", "admin"]} />
