@@ -80,6 +80,7 @@ export const Navbar: React.FC = () => {
   const FilterRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
   const favouriteReference = useRef<HTMLDivElement>();
+  const notificationReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -101,9 +102,15 @@ export const Navbar: React.FC = () => {
       ) {
         setOpen(false);
       }
+      if (
+        notificationReference.current &&
+        !notificationReference.current.contains(event.target as any)
+      ) {
+        setOpenNotification(false);
+      }
     };
 
-    if (!closeProfile || !openFavourite || !open) {
+    if (!closeProfile || !openFavourite || !open || openNotification) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -271,14 +278,17 @@ export const Navbar: React.FC = () => {
               </Modal>
             )}
           </div>
-          <div
-            className="relative"
-            
-          >
-            <Bell  onClick={() => setOpenNotification(!openNotification)} className="size-7 cursor-pointer " />
+          <div className="relative">
+            <Bell
+              onClick={() => setOpenNotification(!openNotification)}
+              className="size-7 cursor-pointer "
+            />
             <div
+              ref={notificationReference as any}
               className={`absolute w-[300px] z-30 duration-150 ${
-                openNotification ? "visible opacity-100 -translate-y-0 " : "invisible opacity-0 translate-y-10"
+                openNotification
+                  ? "visible opacity-100 -translate-y-0 "
+                  : "invisible opacity-0 translate-y-10"
               }   right-[4.7rem] top-8`}
             >
               <NotificationPage />
