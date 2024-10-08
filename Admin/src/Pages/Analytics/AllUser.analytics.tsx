@@ -85,6 +85,7 @@ const AllCustomers = () => {
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
+    
     const refreshIds = bulkSelectedCustomer?.filter(
       (product) => product.id !== id
     );
@@ -236,26 +237,24 @@ const AllCustomers = () => {
   ]);
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    if (pagination.currentPage === 1) {
-      handleCustomerData({
-        path:
-          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
-        direction: "next",
-        filter: (isFilter?.sortFilter as keyof User) || "fullName",
-        pageSize: pagination.perPage,
-        sort: sortOrder || "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-      });
-    }
+    handleCustomerData({
+      path:
+        (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+      direction: "next",
+      filter: (isFilter?.sortFilter as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
     pagination.perPage,
     isFilter?.sortFilter,
     isFilter?.typeFilter,
     sortOrder,
-    pagination.currentPage,
   ]);
 
+  // fetch next page
   useEffect(() => {
     if (
       pagination.currentPage > 1 &&

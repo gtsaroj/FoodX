@@ -1,10 +1,11 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { User as user } from "../../models/user.model";
-import { User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 import "../../index.css";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Profile from "../../Auth/AuthProfile";
+import { NotificationPage } from "../Notification/Notification";
 
 const Navbar = () => {
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -13,9 +14,10 @@ const Navbar = () => {
     ).matches;
     return prefersDarkScheme;
   });
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openNotification, setOpenNotification] = useState<boolean>(false);
 
+  const notificationReference = useRef<HTMLDivElement>();
   const profileReference = useRef<HTMLDivElement>();
 
   const user = useSelector(
@@ -30,8 +32,14 @@ const Navbar = () => {
       ) {
         setIsOpen(false);
       }
+      if (
+        notificationReference.current &&
+        !notificationReference.current.contains(event.target as any)
+      ) {
+        setOpenNotification(false);
+      }
     };
-    if (isOpen) {
+    if (isOpen || openNotification) {
       document.addEventListener("mousedown", closeModal);
     }
     if (isDark) {
@@ -63,6 +71,23 @@ const Navbar = () => {
           />
           <span className="slider"></span>
         </label>
+        {user.fullName && (
+            <div ref={notificationReference as any} className="relative">
+              <Bell
+                onClick={() => setOpenNotification(!openNotification)}
+                className="size-7 text-[var(--dark-text)] cursor-pointer "
+              />
+              <div
+                className={`absolute w-[300px] z-30 duration-150 ${
+                  openNotification
+                    ? "visible opacity-100 -translate-y-0 "
+                    : "invisible opacity-0 translate-y-10"
+                }   right-[4.7rem] top-8`}
+              >
+                <NotificationPage isOpen={openNotification} />
+              </div>
+            </div>
+          )}
         <div>
           {user ? (
             <div

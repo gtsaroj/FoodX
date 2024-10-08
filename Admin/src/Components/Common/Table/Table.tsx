@@ -147,10 +147,10 @@ function Table<T extends { id: string }>({
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">
                         <input
-                          checked={selectedData?.includes(item.id)}
+                          checked={selectedData?.includes(item.uid)}
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             actions.checkFn &&
-                              actions.checkFn(item.id, event.target.checked);
+                              actions.checkFn(item.id || item.uid, event.target.checked);
                             setIsChecked(event.target.checked);
                           }}
                           className="w-4 h-4 accent-slate-900 cursor-pointer"
