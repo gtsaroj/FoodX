@@ -41,3 +41,14 @@ export interface DbUser {
   uid: string;
   role?: "admin" | "customers";
 }
+
+export interface Register {
+  avatar: string | File;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  confirmpassword?: string;
+  role?: UserRole["role"];
+}

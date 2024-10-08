@@ -3,9 +3,10 @@ import { globalRequest } from "../GlobalRequest";
 import { getRoleFromAccessToken } from "../Utility/JWTUtility";
 import { signInUser, signUpNewUser } from "../firebase/Authentication";
 import { ValidationType } from "../models/register.model";
-import { User } from "../models/user.model";
+import { Register, User } from "../models/user.model";
 import Cookies from "js-cookie";
 import { makeRequest } from "../makeRequest";
+import { addLogs } from "./log.services";
 
 export const signIn = async (
   email: string,
@@ -20,6 +21,7 @@ export const signIn = async (
       url: "users/login",
       data: { email, userRole },
     });
+
     const responseData = response.data.data;
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
@@ -27,7 +29,13 @@ export const signIn = async (
     responseData.user.role = role;
     toast.dismiss(toastLoader);
     toast.success("Logged in successfully!");
-
+    await addLogs({
+      action: "login",
+      date: new Date(),
+      detail: `${responseData.userInfo.fullName} loggedin at ${new Date()} `,
+      userId: responseData.userInfo.uid,
+      userRole: responseData.userInfo.role,
+    });
     return responseData.user as User;
   } catch (error) {
     toast.dismiss(toastLoader);
@@ -36,39 +44,44 @@ export const signIn = async (
   }
 };
 
-export const verifyNewUser = async (otp: number) => {
+export const verifyNewUser = async (otp: number, uid: string) => {
   try {
     const response = await makeRequest({
       method: "post",
       url: "otp/verify",
-      data: { otp: otp },
+      data: { code: otp, uid: uid },
     });
-    return response.data;
+    toast.success("Congratulations! You logged in");
+    const user = response.data.data;
+    Cookies.set("accessToken", user.accessToken);
+    Cookies.set("refreshToken", user.refreshToken);
+    localStorage.removeItem("time");
+    localStorage.removeItem("uid");
+    return user.userInfo;
   } catch (error) {
     throw new Error("Error while verify user " + error);
   }
 };
 
-export const signUp = async (data: ValidationType) => {
+export const signUp = async (data: Register) => {
   try {
     await signUpNewUser(
       data.firstName,
       data.lastName,
       data.email,
       data.password,
-      data.avatar
+      data.avatar as string
     );
     const response = await globalRequest({
       method: "post",
       url: "users/signIn",
       data: { ...data },
     });
-    await signIn(data.email, data.password);
-    return response.data.data.userInfo;
-    // return response.data.data.userInfo;
+
+    const ressponseData = response.data.data;
+    localStorage.setItem("uid", ressponseData || ressponseData.uid);
+    return;
   } catch (error) {
-    console.log(error);
-    // toast.error("Unable to create new user");
     throw new Error("Unable to create new user");
   }
 };

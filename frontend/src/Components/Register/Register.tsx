@@ -13,6 +13,8 @@ import logo from "../../assets/logo/Fx.png";
 import toast, { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { signUpAction } from "../../Actions/user.actions";
+import { signUp } from "../../Services/user.services";
+import { UserRole } from "../../models/user.model";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
@@ -84,37 +86,27 @@ export const RegisterContainer: React.FC = () => {
           folder: "users",
         });
 
-        const ConvertedForm = {
+        const convertedForm = {
           firstName,
           lastName,
           phoneNumber,
           email,
           password,
           avatar: imageUrl,
-          role: "customer",
+          role: "customer" as UserRole["role"],
         };
-         navigate("/email-verification")
-        await dispatch(signUpAction(ConvertedForm as ValidationType));
-        RegisterValue.avatar = "";
-        RegisterValue.firstName = "";
-        RegisterValue.lastName = "";
-        RegisterValue.password = "";
-        RegisterValue.confirmpassword = "";
-        RegisterValue.email = "";
-        (RegisterValue.phoneNumber = ""), SetDataSend(true);
-
-        SetDataSend(true);
-        toast.success("Congratulations! You logged in");
+        await signUp({ ...convertedForm });
+        navigate("/email-verification");
       }
     } catch (error) {
       console.log(error);
-      // RegisterValue.avatar = "";
-      // RegisterValue.firstName = "";
-      // RegisterValue.lastName = "";
-      // RegisterValue.password = "";
-      // RegisterValue.confirmpassword = "";
-      // RegisterValue.email = "";
-      // RegisterValue.phoneNumber = "";
+      RegisterValue.avatar = "";
+      RegisterValue.firstName = "";
+      RegisterValue.lastName = "";
+      RegisterValue.password = "";
+      RegisterValue.confirmpassword = "";
+      RegisterValue.email = "";
+      RegisterValue.phoneNumber = "";
       toast.error(`User already logged in`);
       SetDataSend(true);
     }

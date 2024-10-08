@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
+  Bell,
   Heart,
   Menu,
   Phone,
@@ -22,6 +23,7 @@ import { searchProduct } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
+import NotificationPage from "../Notification/Notification";
 const navbarItems = [
   {
     name: "Home",
@@ -72,7 +74,7 @@ export const Navbar: React.FC = () => {
   const [closeProfile, setCloseProfile] = useState<boolean>(true);
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [openNotification, setOpenNotification] = useState<boolean>(false);
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);
@@ -268,6 +270,19 @@ export const Navbar: React.FC = () => {
                 <LoginContainer />
               </Modal>
             )}
+          </div>
+          <div
+            className="relative"
+            
+          >
+            <Bell  onClick={() => setOpenNotification(!openNotification)} className="size-7 cursor-pointer " />
+            <div
+              className={`absolute w-[300px] z-30 duration-150 ${
+                openNotification ? "visible opacity-100 -translate-y-0 " : "invisible opacity-0 translate-y-10"
+              }   right-[4.7rem] top-8`}
+            >
+              <NotificationPage />
+            </div>
           </div>
           <div ref={profileRef} className="w-full">
             {authUser?.avatar && (

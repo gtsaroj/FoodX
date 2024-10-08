@@ -6,10 +6,9 @@ export interface ValidationType {
   phoneNumber: string;
   password: string;
   confirmpassword: string;
-  role?: userRole;
+  role?: UserRole["role"];
 }
 
-enum userRole {
-  admin = "admin",
-  customer = "customer",
+export interface UserRole {
+  readonly role: "admin" | "chef" | "customer";
 }
