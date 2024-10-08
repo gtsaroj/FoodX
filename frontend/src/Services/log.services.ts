@@ -1,3 +1,6 @@
+import { makeRequest } from "../makeRequest";
+import { LogCardProps } from "../models/log.model";
+
 export const addLogs = async (data: LogCardProps) => {
     try {
       const response = await makeRequest({

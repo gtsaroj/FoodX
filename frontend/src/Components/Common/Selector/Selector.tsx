@@ -1,15 +1,15 @@
 import { ChevronDown } from "lucide-react";
 import React, { useState } from "react";
-import { categoriesTagOption } from "../../Category/MenuType";
+import { Category } from "../../../models/category.model";
 
 interface SelectorPop {
   action: (value: string) => void;
-  children?: categoriesTagOption[];
+  children: Category[];
 }
 
 export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
   const [show, setShow] = useState<boolean>(false);
-  const [showField, setShowField] = useState<string>("Burger");
+  const [showField, setShowField] = useState<string>(children[0]?.name);
   const [haveScroll, setHaveScroll] = useState<boolean>(false);
   return (
     <div className="w-[350px] rounded-t-xl relative group/selector py-1 gap-2 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">

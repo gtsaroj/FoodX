@@ -75,6 +75,7 @@ export const Navbar: React.FC = () => {
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
+
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const FilterRef = useRef<HTMLDivElement>(null);

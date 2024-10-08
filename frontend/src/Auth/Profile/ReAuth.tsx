@@ -41,9 +41,7 @@ const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
     setLoading(false);
   };
   return (
-    <div
-      className={`w-full h-[80vh] flex justify-center items-center px-5 z-30`}
-    >
+    <div className={`w-full  flex justify-center items-center z-30`}>
       <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
           <div className="w-full flex flex-col items-center gap-3 px-3   text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
@@ -51,9 +49,12 @@ const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
             <h1 className="hidden md:block">ReAuthenticate</h1>
           </div>
           <div className="px-3 py-4">
-            <form className="flex flex-col gap-5 p-2" onSubmit={HandleSubmit}>
+            <form className="flex flex-col gap-3 p-2" onSubmit={HandleSubmit}>
               <div className="relative flex flex-col gap-2">
-                <label htmlFor="logEmail" className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]">
+                <label
+                  htmlFor="logEmail"
+                  className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+                >
                   Email
                 </label>
                 <input
@@ -63,11 +64,14 @@ const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                  className="border-[var(--dark-border)]  border-[1px] bg-[var(--light-foreground)] rounded-md h-[40px] outline-none px-5 py-4 text-[var(--dark-text)] text-md"
                 />
               </div>
               <div className="relative flex flex-col gap-2">
-                <label htmlFor="logPassword" className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]">
+                <label
+                  htmlFor="logPassword"
+                  className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+                >
                   Password
                 </label>
                 <input
@@ -78,7 +82,7 @@ const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="border-[var(--light-border)] focus:border-transparent focus:bg-[var(--light-border)] border bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                  className="border-[var(--dark-border)]  border-[1px] bg-[var(--light-foreground)] rounded-md h-[40px] outline-none px-5 py-4 text-[var(--dark-text)] text-md"
                 />
 
                 {show ? (

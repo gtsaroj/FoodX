@@ -74,7 +74,7 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
   },[isOpen])
 
   return (
-    <div className="p-4 w-[400px] min-h-40 bg-[var(--primary-color)]  rounded-xl ">
+    <div className="p-4 w-[400px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="text-lg font-semibold mb-4">Notifications</h2>
       <div
         id="notification"

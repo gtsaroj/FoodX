@@ -2,17 +2,22 @@ import { ChevronRight } from "lucide-react";
 import { ColumnProps } from "../../models/table.model";
 import { useEffect, useState } from "react";
 import Table from "../../Components/Common/Table/Table";
-import { GetOrderModal, Order, UserOrder } from "../../models/order.model";
+import {
+  GetOrderModal,
+  Order,
+  OrderStatus,
+  UserOrder,
+} from "../../models/order.model";
 import { getOrderByUser } from "../../Services/order.services";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
 import { useNavigate } from "react-router-dom";
-import {
-  addToCart,
-  resetCart,
-} from "../../Reducer/product.reducer";
+import { addToCart, resetCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
+import Modal from "../../Components/Common/Popup/Popup";
+import { Invoice } from "../../Components/Invoice/Invoice";
+import dayjs from "dayjs";
 
 export const OrderHistory = () => {
   const navigate = useNavigate();
@@ -30,6 +35,8 @@ export const OrderHistory = () => {
   }>({ currentPage: 1, perPage: 5 });
   const [totalData, setTotalData] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [isExport, setIsExport] = useState<boolean>(true);
+  const [selectedOrder, setSelectedOrder] = useState<UserOrder>();
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
   const Columns: ColumnProps[] = [
     {
@@ -42,7 +49,7 @@ export const OrderHistory = () => {
             className=" top-[-27px] mx-2  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
            rounded shadow "
           >
-            {item.id}
+            #{item.id}
           </div>
         </div>
       ),
@@ -50,12 +57,12 @@ export const OrderHistory = () => {
     {
       fieldName: "Items",
       colStyle: {
-        width: "180px ",
+        width: "200px ",
         justifyContent: "start",
         textAlign: "start",
       },
       render: (item: UserOrder) => (
-        <div className=" w-[180px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
+        <div className=" w-[200px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
           <p>
             {item.id == selectedId && isCollapsed
               ? item.products.map(
@@ -81,18 +88,21 @@ export const OrderHistory = () => {
     },
     {
       fieldName: "Date",
-      colStyle: { width: "135px", justifyContent: "start", textAlign: "start" },
+      colStyle: { width: "200px", justifyContent: "start", textAlign: "start" },
       render: (item: UserOrder) => (
-        <div className=" w-[135px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
+        <div className=" w-[200px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
           <span>{item.time}</span>
         </div>
       ),
     },
     {
       fieldName: "Status",
-      colStyle: { width: "140px", justifyContent: "start", textAlign: "start" },
+      colStyle: { width: "180px", justifyContent: "start", textAlign: "start" },
       render: (item: UserOrder) => (
-        <div className=" w-[140px]  gap-2 flex  items-center justify-start  text-[var(--dark-text)]  ">
+        <div
+          className=" w-[180px]  mb-2.5
+          text-[var(--dark-text)]  "
+        >
           <div
             className={`w-2 h-2 rounded-full ${
               item.status === "Received"
@@ -114,19 +124,10 @@ export const OrderHistory = () => {
     },
     {
       fieldName: "Amount",
-      colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
+      colStyle: { width: "140px", justifyContent: "start", textAlign: "start" },
       render: (item: UserOrder) => (
-        <div className=" w-[100px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
+        <div className=" w-[140px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
           <span>{item.amount}</span>
-        </div>
-      ),
-    },
-    {
-      fieldName: "Payment",
-      colStyle: { width: "170px", justifyContent: "start", textAlign: "start" },
-      render: (item: UserOrder) => (
-        <div className=" w-[170px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.payment}</span>
         </div>
       ),
     },
@@ -220,7 +221,11 @@ export const OrderHistory = () => {
             });
             navigate("/cart/checkout");
           },
-          downloadFn: () => toast.success("We will integrate soon!"),
+          downloadFn: (id: string) => {
+            const findOrder = initialOrder?.find((order) => order.id === id);
+            setSelectedOrder(findOrder);
+            setIsExport(!isExport);
+          },
         }}
         pagination={{
           currentPage: pagination?.currentPage,
@@ -233,9 +238,31 @@ export const OrderHistory = () => {
         bodyHeight={400}
         columns={Columns}
         data={initialOrder}
-        totalData={totalData as number || 1}
+        totalData={(totalData as number) || 1}
         loading={loading}
       />
+      {!isExport && selectedOrder && (
+        <Modal close={isExport} isExport={true} closeModal={() => setIsExport(!isExport)}>
+          <Invoice
+            orders={[
+              {
+                orderDetails: {
+                  products: selectedOrder.products,
+                  status: selectedOrder.status as OrderStatus["status"],
+                },
+                invoiceData: {
+                  invoiceDate: dayjs().format("YYYY-MM-DD"),
+                  invoiceNumber: selectedOrder!.id,
+                },
+                customerDetails: {
+                  name: authUser!.fullName as string,
+                  phoneNumber: parseInt(authUser!.phoneNumber as string),
+                },
+              },
+            ]}
+          ></Invoice>
+        </Modal>
+      )}
     </div>
   );
 };

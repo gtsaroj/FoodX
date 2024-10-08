@@ -242,9 +242,9 @@ function Table<T extends { id: string }>({
             </>
           )}
         </tbody>
-        <tfoot>
+        <tfoot className="w-full flex justify-end py-3">
           <tr>
-            <td>
+            <td className="w-full ">
               <Pagination
                 totalData={totalData}
                 perPage={pagination?.perPage || 2}

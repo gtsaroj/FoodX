@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import toast from "react-hot-toast";
 import { addOrder } from "../../Services/order.services";
@@ -8,11 +8,14 @@ import dayjs from "dayjs";
 import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
 import { addNotification } from "../../Services/notification.services";
+// import { Product } from "../../models/product.model";
 
 export const Payment: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("esewa");
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  // const [discount, setDiscount] = useState<number>();
+  // const [order, setOrder] = useState<Product[]>();
 
   const handlePaymentSelection = (paymentMethod: string) => {
     setSelectedPayment(paymentMethod);
@@ -57,6 +60,26 @@ export const Payment: React.FC = () => {
     }
     setLoading(false);
   };
+
+  // useEffect(() => {
+  //   const updateStateFromSessionStorage = () => {
+  //     const products = sessionStorage.getItem("products");
+  //     setOrder(products ? JSON.parse(products) : []);
+      
+  //     const getDiscount = sessionStorage.getItem("discount");
+  //     setDiscount(getDiscount ? parseInt(getDiscount, 10) : 0);
+  //   };
+
+  //   // Initial state setup
+  //   updateStateFromSessionStorage();
+
+  //   // Listen for storage changes
+  //   window.addEventListener('storage', updateStateFromSessionStorage);
+
+  //   return () => {
+  //     window.removeEventListener('storage', updateStateFromSessionStorage);
+  //   };
+  // }, []);
 
   return (
     <div className="w-full md:max-w-md p-5 mt-12 rounded-lg bg-[var(--light-foreground)] shadow-md">
@@ -109,21 +132,37 @@ export const Payment: React.FC = () => {
 
         {/* Order Summary */}
         <div className="mt-5 p-4 bg-[var(--light-foreground)] rounded-lg border-[1px] border-[var(--dark-border)]">
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <span className="text-[var(--dark-secondary-text)]">
               Cart Subtotal
             </span>
             <span className="text-[var(--dark-secondary-text)]">
-              Rs. 2333.00
+              {store.cart.products?.reduce(
+                (productAcc, product) =>
+                  productAcc + product.price * product.quantity,
+                0
+              )}
             </span>
-          </div>
-          <div className="flex justify-between items-center mt-2">
+          </div> */}
+          {/* <div className="flex justify-between items-center mt-2">
             <span className="text-[var(--dark-secondary-text)]">Discount</span>
-            <span className="text-[var(--dark-secondary-text)]">Rs. 0.00</span>
-          </div>
-          <div className="flex justify-between items-center mt-2 font-semibold text-[var(--green-text)]">
+            <span className="text-[var(--dark-secondary-text)]"> { discount || 0}</span>
+          </div> */}
+          <div className="flex justify-between items-center  font-semibold text-[var(--green-text)]">
             <span>Order Total</span>
-            <span>Rs. 2,2230.00</span>
+            <span>
+              Rs.
+              {store.cart.products?.reduce(
+                (productAcc, product) =>
+                  productAcc + product.price * product.quantity,
+                0
+              ) ||
+                store?.cart?.products?.reduce(
+                  (productAcc, product) =>
+                    productAcc + product.price * product.quantity,
+                  0
+                )}
+            </span>
           </div>
         </div>
 
