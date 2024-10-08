@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
   Bell,
@@ -19,11 +19,14 @@ import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
 import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
-import { searchProduct } from "../../Services/product.services";
+import {
+  getNormalProducts,
+  getSpecialProducts,
+} from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
-import {NotificationPage} from "../Notification/Notification";
+import { NotificationPage } from "../Notification/Notification";
 const navbarItems = [
   {
     name: "Home",
@@ -126,7 +129,7 @@ export const Navbar: React.FC = () => {
     if (value.length <= 0) return;
     setLoading(true);
     try {
-      const filter = await searchProduct(value);
+      const filter = await searchProducts(value);
       console.log(filter);
       setSearchData(filter);
     } catch (error) {
@@ -135,7 +138,23 @@ export const Navbar: React.FC = () => {
     setLoading(false);
   };
 
-  const debounceSearch = debounce(handleSearch, 500);
+  const searchProducts = async (value: string) => {
+    console.log(value);
+    const [specialProducts, normalProducts] = [
+      await getSpecialProducts(),
+      await getNormalProducts(),
+    ];
+    const allProducts = [
+      ...specialProducts?.data,
+      ...normalProducts?.data,
+    ] as Product[];
+    const filterProducts = allProducts?.filter((product) =>
+      product.name.toLowerCase().includes(value.toLowerCase())
+    );
+    return filterProducts;
+  };
+
+  const debounceSearch = useCallback(debounce(handleSearch, 200),[])
 
   return (
     <nav
@@ -184,7 +203,7 @@ export const Navbar: React.FC = () => {
               {openSearch ? <X /> : <Search className="size-7 " />}
             </button>
             <div
-              className={`absolute md:right-3 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
+              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-1 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
                 openSearch
                   ? "visible md:w-[500px] translate-y-0 opacity-100 "
                   : "w-0 invisible opacity-0  -translate-y-10 "

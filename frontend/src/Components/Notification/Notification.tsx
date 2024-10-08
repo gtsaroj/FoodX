@@ -67,7 +67,7 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
         currentFirstDoc: null,
         currentLastDoc: null,
         pageSize: 5,
-        sort: "asc",
+        sort: "desc",
         direction: "next"
      }) 
 }
