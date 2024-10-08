@@ -60,7 +60,7 @@ const Favourite: React.FC = () => {
           <div className="flex flex-col items-center py-16 justify-center gap-2">
             <ShoppingBag className=" cursor-pointer size-16" />
 
-            <h1 className="text-[25px]">Your cart is empty</h1>
+            <h1 className="text-[25px]">Your Favourite is empty</h1>
           </div>
         )}
       </div>
