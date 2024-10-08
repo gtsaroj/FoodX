@@ -32,7 +32,7 @@ export const OrderHistory = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 5 });
+  }>({ currentPage: 1, perPage: 2 });
   const [totalData, setTotalData] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(true);
@@ -140,10 +140,12 @@ export const OrderHistory = () => {
     currentFirstDoc,
     currentLastDoc,
     direction,
+    sort,
   }: GetOrderModal) => {
     setLoading(true);
     try {
       const response = await getOrderByUser({
+        sort: sort,
         pageSize: pageSize,
         direction: direction,
         currentFirstDoc: currentFirstDoc || null,
@@ -185,25 +187,29 @@ export const OrderHistory = () => {
   };
 
   useEffect(() => {
-    if (pagination.currentPage === 1) {
-      getUserOrders({
-        pageSize: pagination.perPage,
-        filter: "orderId",
-        sort: "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-        userId: authUser.uid,
-      });
-    }
+    getUserOrders({
+      pageSize: pagination.perPage,
+      filter: "orderId",
+      sort: "desc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+      direction: "next",
+    });
+  }, []);
+
+  useEffect(() => {
     if (pagination.currentPage > 1 && currentDoc?.currentLastDoc) {
       getUserOrders({
+        sort: "desc",
         pageSize: pagination.perPage,
-        currentFirstDoc: currentDoc.currentFirstDoc,
-        currentLastDoc: currentDoc.currentLastDoc,
-        direction: "next",
+        currentFirstDoc: currentDoc?.currentFirstDoc,
+        currentLastDoc: currentDoc?.currentLastDoc,
+        direction: (pagination.currentPage === 4 ? "prev " : "next") as
+          | "prev"
+          | "next",
       });
     }
-  }, [pagination.perPage, pagination.currentPage]);
+  }, [pagination.currentPage]);
 
   return (
     <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var(--light-foreground)] px-5 py-4   rounded items-start justify-center">
@@ -242,7 +248,11 @@ export const OrderHistory = () => {
         loading={loading}
       />
       {!isExport && selectedOrder && (
-        <Modal close={isExport} isExport={true} closeModal={() => setIsExport(!isExport)}>
+        <Modal
+          close={isExport}
+          isExport={true}
+          closeModal={() => setIsExport(!isExport)}
+        >
           <Invoice
             orders={[
               {

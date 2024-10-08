@@ -1,10 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User } from "../models/user.model";
 import {
   signUpAction,
   signInAction,
   updateUserAction,
 } from "../Actions/user.actions";
+import { UpdateProfileInfo } from "../Pages/Profile/AdminProfile";
 
 interface authState {
   success: boolean;
@@ -23,7 +24,7 @@ const authState: authState = {
     email: "",
     role: undefined,
     uid: "",
-    amountSpent: 0,
+    totalSpent: 0,
     totalOrder: 0,
   },
 };
@@ -68,21 +69,29 @@ const authSlice = createSlice({
       state.loading = false;
       state.userInfo = {};
     });
-    // action to update user
-    builder.addCase(updateUserAction.pending, (state) => {
-      state.loading = true;
-    }),
-      builder.addCase(updateUserAction.fulfilled, (state, { payload }) => {
-        const key = Object.keys(payload);
 
-        state.userInfo[key[0]] = payload[key[0]];
-        if (key[1]) {
-          state.userInfo[key[1]] = payload[key[1]];
-        }
-        if (key[2]) {
-          state.userInfo[key[2]] = payload[key[2]];
-        }
-      });
+        // Update existing user
+        builder.addCase(updateUserAction.pending, (state) => {
+          state.loading = true;
+        });
+        builder.addCase(
+          updateUserAction.fulfilled,
+          (state, action: PayloadAction<UpdateProfileInfo>) => {
+            const payload = action.payload;
+            const keys = Object.keys(payload) as Array<keyof UpdateProfileInfo>;
+    
+            keys.forEach((key) => {
+              if (payload[key] !== undefined) {
+                // Handle phoneNumber separately if needed
+                if (key === "phoneNumber" && typeof payload[key] === "number") {
+                  state.userInfo[key] = String(payload[key]); // Convert number to string
+                } else {
+                  state.userInfo[key] = payload[key] as string | undefined;
+                }
+              }
+            });
+          }
+        );
   },
 });
 export const authReducer = authSlice.reducer;

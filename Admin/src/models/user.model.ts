@@ -36,7 +36,7 @@ export interface User {
   email?: string;
   phoneNumber?: string;
   role?: UserRole["role"];
-  amountSpent: number;
+  totalSpent: number;
   totalOrder: number;
   refreshToken?: string;
 }

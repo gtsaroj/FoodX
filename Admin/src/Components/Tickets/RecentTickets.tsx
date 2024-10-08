@@ -9,6 +9,8 @@ import { TicketType } from "../../models/ticket.model";
 import Skeleton from "react-loading-skeleton";
 import { Empty } from "../Common/Empty/Empty";
 import { getTickets } from "../../Services/ticket.services";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
@@ -33,6 +35,8 @@ export const RecentTickets = () => {
     }
   };
 
+  const user = useSelector((state: RootState) => state.root.user.userInfo);
+
   const orderReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -46,7 +50,11 @@ export const RecentTickets = () => {
         <p className="flex items-center justify-center text-[12px] cursor-pointer hover:underline text-[var(--primary-color)] flex-nowrap">
           <span
             className="text-nowrap"
-            onClick={() => seturl("contact/tickets")}
+            onClick={() =>
+              user.role === "admin"
+                ? seturl("contact/admin-tickets")
+                : seturl("contact/chef-tickets")
+            }
           >
             View More
           </span>

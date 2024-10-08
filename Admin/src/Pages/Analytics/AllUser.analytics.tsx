@@ -85,7 +85,6 @@ const AllCustomers = () => {
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
-    
     const refreshIds = bulkSelectedCustomer?.filter(
       (product) => product.id !== id
     );
@@ -411,8 +410,8 @@ const AllCustomers = () => {
               { label: "Chef", value: "chef", id: "fkldjs" },
             ]}
             sort={[
-              { label: "Orders", value: "orders", id: "flksjd" },
-              { label: "Amount", value: "amount", id: "lfkjds" },
+              { label: "Orders", value: "totalOrder", id: "flksjd" },
+              { label: "Amount", value: "totalSpent", id: "lfkjds" },
             ]}
             sortFn={(type: "asc" | "desc") => setSortOrder(type)}
           />

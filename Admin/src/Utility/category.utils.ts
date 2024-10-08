@@ -1,8 +1,8 @@
-import { CategoryType } from "../models/category.model";
+import { Category } from "../models/category.model";
 
-export const SearchCategory = (categories: CategoryType[], value: string) => {
+export const SearchCategory = (categories: Category[], value: string) => {
   const searchingCategory = categories?.filter((category) => {
-    return category.name.toLowerCase().includes(value);
+    return category.name.toLowerCase().includes(value.toLowerCase());
   });
   return searchingCategory;
 };

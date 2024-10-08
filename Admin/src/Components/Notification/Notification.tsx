@@ -12,10 +12,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
-interface Notifications{
-    isOpen: boolean
- }
-export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
+interface Notifications {
+  isOpen: boolean;
+}
+export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalData, setTotalData] = useState<number>();
@@ -68,13 +68,13 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
         currentLastDoc: null,
         pageSize: 5,
         sort: "asc",
-        direction: "next"
-     }) 
-}
-  },[isOpen, user.uid])
+        direction: "next",
+      });
+    }
+  }, [isOpen, user.uid]);
 
   return (
-    <div className="p-4 w-[400px] min-h-40 bg-[var(--primary-color)]  rounded-xl ">
+    <div className="p-4 w-[400px] min-h-40 bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="text-lg font-semibold text-white mb-4">Notifications</h2>
       <div
         id="notification"

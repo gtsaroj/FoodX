@@ -7,17 +7,15 @@ interface LoaderProp {
 
 export const Loader: React.FC<LoaderProp> = ({ url }) => {
   const [loader, setLoader] = useState<boolean>(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoader(prev => !prev);
+      setLoader(false); // Toggling loader
     }, 500);
-
-    return () => {
-      clearTimeout(timer);
-      setLoader(true);
-    };
+  
+    return () => clearTimeout(timer);
   }, [url]);
-  console.log(url);
+  
 
   return loader ? (
     <div className="w-screen z-[10000000]   left-0 bg-[var(--popup-bg)] top-0 fixed h-screen ">

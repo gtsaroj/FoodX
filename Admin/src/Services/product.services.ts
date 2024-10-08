@@ -5,17 +5,6 @@ import { UpdateCategory } from "../models/category.model";
 import {  UploadProduct } from "../models/product.model";
 
 
-export const searchProduct = async (search: string) => {
-  try {
-    const response = await makeRequest({
-      method: "get",
-      url: `products/all?search=${search}`,
-    });
-    return response.data.data;
-  } catch (error) {
-    throw new Error("Unable to get products while searching" + error);
-  }
-};
 
 export const getNormalProducts = async () => {
   try {

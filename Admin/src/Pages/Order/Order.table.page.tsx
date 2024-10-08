@@ -40,7 +40,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
     try {
       await updateOrderStatus({
         id: id as string,
-        status: newStatus,
+        status: newStatus as string,
       });
       const refreshProducts = orders?.map((order) => {
         if (order.id === id) {
@@ -71,7 +71,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
             className=" top-[-27px]  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
            rounded shadow "
           >
-            {item.id}
+            #{item.id}
           </div>
         </div>
       ),

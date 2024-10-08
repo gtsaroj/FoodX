@@ -73,13 +73,13 @@ const Footer: React.FC = () => {
                   Cart
                 </a>
                 <a
-                  href="/checkout"
+                  href="/cart/checkout"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
                   Checkout
                 </a>
                 <a
-                  href="/order"
+                  href="/orders"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
                   Orders
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
               <p className="font-bold tracking-wider">Resources</p>
               <div className="flex flex-col gap-3 text-sm text-white">
                 <a
-                  href="/terms"
+                  href="/"
                   target="_blank"
                   className="cursor-pointer hover:underline  hover:text-[var(--secondary-color)]"
                 >
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
                 </a>
                 <a
                   target="_blank"
-                  href="/privacy"
+                  href="/"
                   className="cursor-pointer hover:underline  hover:text-[var(--secondary-color)]"
                 >
                   Privacy Policy

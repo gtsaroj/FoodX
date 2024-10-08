@@ -54,6 +54,10 @@ const Navbar = () => {
     };
   }, [isDark, isOpen]);
 
+  useEffect(() => {
+    console.log(user.avatar);
+  }, [user.avatar]);
+
   return (
     <div className="w-full  shadow-md shadow-[var(--light-foreground)] border-b-2 border-[var(--light-background)] h-[80px] hidden xl:flex justify-between  items-center gap-5 px-5 py-4">
       <h1 className="px-3 text-[var(--dark-text)] text-2xl">
@@ -72,22 +76,22 @@ const Navbar = () => {
           <span className="slider"></span>
         </label>
         {user.fullName && (
-            <div ref={notificationReference as any} className="relative">
-              <Bell
-                onClick={() => setOpenNotification(!openNotification)}
-                className="size-7 text-[var(--dark-text)] cursor-pointer "
-              />
-              <div
-                className={`absolute w-[300px] z-30 duration-150 ${
-                  openNotification
-                    ? "visible opacity-100 -translate-y-0 "
-                    : "invisible opacity-0 translate-y-10"
-                }   right-[4.7rem] top-8`}
-              >
-                <NotificationPage isOpen={openNotification} />
-              </div>
+          <div ref={notificationReference as any} className="relative">
+            <Bell
+              onClick={() => setOpenNotification(!openNotification)}
+              className="size-7 text-[var(--dark-text)] cursor-pointer "
+            />
+            <div
+              className={`absolute w-[300px] z-30 duration-150 ${
+                openNotification
+                  ? "visible opacity-100 -translate-y-0 "
+                  : "invisible opacity-0 translate-y-10"
+              }   right-[4.7rem] top-8`}
+            >
+              <NotificationPage isOpen={openNotification} />
             </div>
-          )}
+          </div>
+        )}
         <div>
           {user ? (
             <div

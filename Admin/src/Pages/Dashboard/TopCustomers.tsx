@@ -16,28 +16,7 @@ export const TopCustomers = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
-
-  const handleSelect = async (value: string | undefined) => {
-    let sortedCustomers;
-    if (value === "totalOrders") {
-      sortedCustomers = TopCustomer?.sort((a: User, b: User) =>
-        sortOrder === "desc"
-          ? (((b.totalOrder as number) - a.totalOrder) as number)
-          : (((a.totalOrder as number) - b.totalOrder) as number)
-      );
-    }
-    if (value === "totalSpent") {
-      sortedCustomers = TopCustomer?.sort((a: User, b: User) =>
-        sortOrder === "desc"
-          ? (((b.amountSpent as number) - a.amountSpent) as number)
-          : (((a.amountSpent as number) - b.amountSpent) as number)
-      );
-    }
-    if (value === undefined) {
-      return setTopCustomer(originalData);
-    }
-    setTopCustomer(sortedCustomers as User[]);
-  };
+  const [filter, setFilter] = useState<keyof User | "">("");
 
   useEffect(() => {
     (async () => {
@@ -46,8 +25,8 @@ export const TopCustomers = () => {
         const customers = await getUsers({
           pageSize: 5,
           path: "customer",
-          sort: "asc",
-          filter: "totalOrder",
+          sort: "desc" || sortOrder,
+          filter: "fullName" || filter,
           direction: "next",
         });
         setOriginalData(customers as User[]);
@@ -59,7 +38,7 @@ export const TopCustomers = () => {
       }
       setLoading(false);
     })();
-  }, [isRefresh]);
+  }, [isRefresh, filter, sortOrder]);
 
   return (
     <div className="w-full border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] h-[400px] flex flex-col justify-start  items-start px-2 rounded-md py-3 ">
@@ -85,11 +64,11 @@ export const TopCustomers = () => {
               </div>
             }
             checkFn={{
-              checkSortFn: (isChecked: boolean, value: string) => {
-                if (!isChecked) {
-                  return handleSelect((value = undefined));
+              checkSortFn: (isChecked: boolean, value: keyof User) => {
+                if (!isChecked && value) {
+                  return setFilter("");
                 }
-                handleSelect(value);
+                setFilter(value);
               },
             }}
             sort={[
