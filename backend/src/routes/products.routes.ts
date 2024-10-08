@@ -23,8 +23,8 @@ productRouter
 productRouter
   .route("/popular")
   .get(
-    rateLimiter(60, 20),
     cacheMiddleware("popular_products"),
+    rateLimiter(60, 20),
     getPopularProducts
   );
 

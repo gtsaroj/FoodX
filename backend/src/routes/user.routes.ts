@@ -44,7 +44,7 @@ router.route("/logout").post(verifyJwt, rateLimiter(60, 10), logOutUser);
 
 router
   .route("/get-users")
-  .post(verifyJwt, verifyAdmin, rateLimiter(60, 10), fetchUsers);
+  .post(verifyJwt, verifyAdmin, fetchUsers);
 router
   .route("/delete-user")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 10), deleteUser);
