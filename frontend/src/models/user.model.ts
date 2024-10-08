@@ -12,7 +12,8 @@ export interface User {
   phoneNumber?: string;
   role?: UserRole["role"];
   refreshToken?: string;
-  totalOrders?: number;
+  totalOrder?: number;
+  totalSpent?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

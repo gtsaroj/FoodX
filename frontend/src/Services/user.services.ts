@@ -15,7 +15,15 @@ export const signIn = async (
 ) => {
   const toastLoader = toast.loading("Logging in, please wait...");
   try {
+    
     await signInUser(email, password as string);
+    //  await addLogs({
+    //   action: "login",
+    //   date: new Date(),
+    //   detail: `${responseData.user.fullName} loggedin at ${new Date()} `,
+    //   userId: responseData.user.uid,
+    //   userRole: responseData.user.role,
+    // });
     const response = await globalRequest({
       method: "post",
       url: "users/login",
@@ -23,19 +31,12 @@ export const signIn = async (
     });
 
     const responseData = response.data.data;
+
     Cookies.set("accessToken", responseData.accessToken);
     Cookies.set("refreshToken", responseData.refreshToken);
-    const role = await getRoleFromAccessToken();
-    responseData.user.role = role;
     toast.dismiss(toastLoader);
     toast.success("Logged in successfully!");
-    await addLogs({
-      action: "login",
-      date: new Date(),
-      detail: `${responseData.userInfo.fullName} loggedin at ${new Date()} `,
-      userId: responseData.userInfo.uid,
-      userRole: responseData.userInfo.role,
-    });
+
     return responseData.user as User;
   } catch (error) {
     toast.dismiss(toastLoader);

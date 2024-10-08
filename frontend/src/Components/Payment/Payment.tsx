@@ -7,7 +7,7 @@ import { RootState } from "../../Store";
 import dayjs from "dayjs";
 import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
-
+import { addNotification } from "../../Services/notification.services";
 
 export const Payment: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("esewa");
@@ -43,6 +43,11 @@ export const Payment: React.FC = () => {
       await addRevenue({
         id: dayjs().format("YYYY-MM-DD"),
         orders: store.cart.products,
+      });
+      await addNotification({
+        userId: store.auth.userInfo.uid as string,
+        title: "Order Confirmed!",
+        message: `Your order has been placed successfully! We are processing it now. You ordered ${store.cart.products.length} items. Thank you for shopping with us!`,
       });
       toast.success("Ordered Sucessfully!");
     } catch (error) {

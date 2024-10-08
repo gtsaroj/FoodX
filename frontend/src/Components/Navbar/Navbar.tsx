@@ -23,7 +23,7 @@ import { searchProduct } from "../../Services/product.services";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
-import NotificationPage from "../Notification/Notification";
+import {NotificationPage} from "../Notification/Notification";
 const navbarItems = [
   {
     name: "Home",
@@ -278,22 +278,23 @@ export const Navbar: React.FC = () => {
               </Modal>
             )}
           </div>
-          <div className="relative">
-            <Bell
-              onClick={() => setOpenNotification(!openNotification)}
-              className="size-7 cursor-pointer "
-            />
-            <div
-              ref={notificationReference as any}
-              className={`absolute w-[300px] z-30 duration-150 ${
-                openNotification
-                  ? "visible opacity-100 -translate-y-0 "
-                  : "invisible opacity-0 translate-y-10"
-              }   right-[4.7rem] top-8`}
-            >
-              <NotificationPage />
+          {authUser.fullName && (
+            <div ref={notificationReference as any} className="relative">
+              <Bell
+                onClick={() => setOpenNotification(!openNotification)}
+                className="size-7 cursor-pointer "
+              />
+              <div
+                className={`absolute w-[300px] z-30 duration-150 ${
+                  openNotification
+                    ? "visible opacity-100 -translate-y-0 "
+                    : "invisible opacity-0 translate-y-10"
+                }   right-[4.7rem] top-8`}
+              >
+                <NotificationPage isOpen={openNotification} />
+              </div>
             </div>
-          </div>
+          )}
           <div ref={profileRef} className="w-full">
             {authUser?.avatar && (
               <div className="w-full relative">
