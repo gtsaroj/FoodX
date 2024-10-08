@@ -107,7 +107,7 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
       .json(
         new ApiResponse(
           201,
-          [],
+          uid,
           "User registered Successfully. Please verify your account.",
           true
         )
