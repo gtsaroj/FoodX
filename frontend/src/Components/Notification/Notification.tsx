@@ -94,10 +94,10 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
     }
   };
 
-  console.log(notifications);
+
 
   return (
-    <div className="p-4 w-[400px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+    <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
@@ -169,7 +169,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   return (
     <div
       key={notification.uid}
-      className="relative flex items-center p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
+      className="relative flex w-full items-center p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
     >
       <div className="flex-1">
         <h4 className="font-semibold">{notification.title}</h4>
