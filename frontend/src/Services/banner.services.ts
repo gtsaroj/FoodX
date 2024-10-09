@@ -1,5 +1,4 @@
 import { globalRequest } from "../GlobalRequest";
-import { makeRequest } from "../makeRequest";
 
 export const getBanners = async (path: "sponsors" | "banners") => {
   try {
