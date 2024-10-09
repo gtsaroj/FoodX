@@ -12,7 +12,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
-import toast from "react-hot-toast";
 interface Notifications {
   isOpen: boolean;
 }
@@ -94,8 +93,6 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
     }
   };
 
-
-
   return (
     <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
@@ -119,7 +116,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
           }
           loader={
             loader && (
-              <div className="flex flex-col  items-center justify-center w-full pt-3 ">
+              <div className="flex flex-col items-center justify-center w-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
                 <div className="flex items-center justify-center gap-3">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
@@ -160,16 +157,14 @@ interface NotificationProp {
 const NoticationContainer: React.FC<NotificationProp> = ({
   notification,
   closeNotification,
-  isLoading,
 }: {
   notification: Notification;
   closeNotification: (id: string) => void;
-  isLoading: boolean;
 }) => {
   return (
     <div
       key={notification.uid}
-      className="relative flex w-full items-center p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
+      className="relative flex items-center w-full p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
     >
       <div className="flex-1">
         <h4 className="font-semibold">{notification.title}</h4>
