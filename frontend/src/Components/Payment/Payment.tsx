@@ -42,7 +42,7 @@ export const Payment: React.FC = () => {
           0
         ),
         status: "pending",
-        orderId: ""
+        orderId: "",
       });
       await addRevenue({
         id: dayjs().format("YYYY-MM-DD"),
@@ -51,7 +51,7 @@ export const Payment: React.FC = () => {
       await addNotification({
         userId: store.auth.userInfo.uid as string,
         title: "Order Confirmed!",
-        message: `Your order has been placed successfully! We are processing it now. You ordered ${store.cart.products.length} items. Thank you for shopping with us!`,
+        message: `Order placed successfully! We're processing your ${store?.cart?.products?.length} item. Thank you for shopping with us!"`,
       });
       toast.success("Ordered Sucessfully!");
     } catch (error) {
@@ -66,7 +66,7 @@ export const Payment: React.FC = () => {
   //   const updateStateFromSessionStorage = () => {
   //     const products = sessionStorage.getItem("products");
   //     setOrder(products ? JSON.parse(products) : []);
-      
+
   //     const getDiscount = sessionStorage.getItem("discount");
   //     setDiscount(getDiscount ? parseInt(getDiscount, 10) : 0);
   //   };
