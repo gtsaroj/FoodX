@@ -13,10 +13,10 @@ export interface Order {
   updatedAt?: Date;
 }
 
-export interface RecentOrder extends Order {
+export interface RecentOrder extends Omit<Order, "products"> {
   image: string;
   price: number;
-  products: string[] | Product[];
+  products: string[];
 }
 
 export interface DailyAggregateData {

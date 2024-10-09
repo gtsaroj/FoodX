@@ -2,15 +2,14 @@
 import { BarChart } from "@mui/x-charts";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { barData, monthlyBarData } from "./BarChart";
+import { monthlyBarData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
 import { Filter, MoveUp, X } from "lucide-react";
 import { AddRevenue } from "../../models/revenue.model";
 import { getRevenue } from "../../Services/revenue.services";
 import { RotatingLines } from "react-loader-spinner";
 
-
-export const MonthlyOrderChart: React.FC= () => {
+export const MonthlyOrderChart: React.FC = () => {
   const [initialData, setInitialData] = useState<
     { [key: string]: number | string }[]
   >([]);
@@ -55,7 +54,6 @@ export const MonthlyOrderChart: React.FC= () => {
     setLoading(false);
   };
 
-
   useEffect(() => {
     if (filter?.normalFilter) {
       getPreviousBarData({
@@ -68,8 +66,7 @@ export const MonthlyOrderChart: React.FC= () => {
           .endOf("month")
           .format("YYYY-MM-DD"),
       });
-    }
-    else {
+    } else {
       getBarData({
         startDate:
           (filter?.dateFilter?.startDate as string) ||
@@ -77,7 +74,11 @@ export const MonthlyOrderChart: React.FC= () => {
         endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
       });
     }
-  }, [filter?.normalFilter, filter?.dateFilter?.startDate, filter?.dateFilter?.endDate]);
+  }, [
+    filter?.normalFilter,
+    filter?.dateFilter?.startDate,
+    filter?.dateFilter?.endDate,
+  ]);
 
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
     const allKeys = new Set();

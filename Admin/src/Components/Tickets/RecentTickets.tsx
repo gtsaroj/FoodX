@@ -40,7 +40,9 @@ export const RecentTickets = () => {
   const orderReference = useRef<HTMLDivElement>();
 
   useEffect(() => {
+    setLoading(true);
     fetchTickets();
+    setLoading(false);
   }, [isRefresh]);
 
   return (

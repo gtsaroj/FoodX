@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { LogCardProps } from "../../../models/log.model";
 import {
   AlignLeft,
-  ChevronDown,
   ChevronRight,
   LogOutIcon,
   MinusCircle,
@@ -22,25 +21,7 @@ export const LogCard: React.FC<LogCardProps> = ({
   detail,
   name,
   profile,
-  open = false,
   handleClick,
-}: {
-  id: string;
-  uid: string;
-  name: string;
-  profile: string;
-  action:
-    | "login"
-    | "register"
-    | "logout"
-    | "create"
-    | "update"
-    | "delete"
-    | "checkout";
-  detail?: string;
-  date: Date;
-  open?: boolean;
-  handleClick?: (id: string) => void;
 }) => {
   const icons = {
     login: <UserCheck2Icon color="green" size={15} />,
@@ -65,11 +46,11 @@ export const LogCard: React.FC<LogCardProps> = ({
 
   const handleCollapse = () => {
     if (handleClick) {
-      handleClick(id);
+      handleClick(id as string);
       setOpenMenu(!openMenu);
     }
   };
-  const newDate = dayjs(date).format("dddd, MMMM D, YYYY h:mm A")
+  const newDate = dayjs(date).format("dddd, MMMM D, YYYY h:mm A");
   return (
     <div>
       <div className="flex items-center justify-between w-full h-full gap-3 p-4 border-[1px] border-[var(--dark-border)] rounded-md ">
@@ -78,7 +59,7 @@ export const LogCard: React.FC<LogCardProps> = ({
             <p className="relative">
               <AlignLeft color="var(--dark-secondary-text)" size={35} />
               <span className="absolute bottom-[-5px] right-[-5px] bg-[var(--light-foreground)] rounded-full p-1">
-                {icons[`${action}`]}
+                {icons[`${action as keyof LogCardProps["action"]}`]}
               </span>
             </p>
           </div>
@@ -89,15 +70,22 @@ export const LogCard: React.FC<LogCardProps> = ({
           />
           <div className="px-2">
             <p className="flex flex-wrap items-center justify-start gap-1 text-[var(--dark-secondary-text)] text-sm">
-              <span  className="text-[var(--dark-text)] " >{name}</span>
-              <span  className="text-[var(--dark-text)] " >{titles[`${action}`]}</span>
+              <span className="text-[var(--dark-text)] ">{name}</span>
+              <span className="text-[var(--dark-text)] ">
+                {titles[`${action}` as keyof LogCardProps["action"]]}
+              </span>
             </p>
             <p className="text-[var(--dark-secondary-text)] text-xs">
               {newDate}
             </p>
           </div>
         </div>
-        <div className={`${openMenu ? "rotate-90":""} duration-150 cursor-pointer text-[var(--dark-text)] ` } onClick={() => handleCollapse()}>
+        <div
+          className={`${
+            openMenu ? "rotate-90" : ""
+          } duration-150 cursor-pointer text-[var(--dark-text)] `}
+          onClick={() => handleCollapse()}
+        >
           <ChevronRight />
         </div>
       </div>
@@ -105,9 +93,7 @@ export const LogCard: React.FC<LogCardProps> = ({
         <div className="px-3 py-4 mt-0.5 text-sm border-[1px] border-[var(--dark-border)] rounded-md ">
           {detail ? (
             <div className="flex text-[var(--dark-text)] flex-col items-start justify-center gap-0.5 text-sm">
-              <span className=" tracking-widest text-[10px]">
-                #{uid}
-              </span>
+              <span className=" tracking-widest text-[10px]">#{uid}</span>
               {detail}
             </div>
           ) : (
@@ -115,7 +101,9 @@ export const LogCard: React.FC<LogCardProps> = ({
               <p className="text-[var(--dark-secondary-text)]">#{uid}</p>
               <p className="flex flex-wrap items-center justify-start gap-1 text-sm text-[var(--dark-text)]">
                 <span>{name}</span>
-                <span>{titles[`${action}`]}</span>
+                <span>
+                  {titles[`${action}` as keyof LogCardProps["action"]]}
+                </span>
               </p>
             </div>
           )}

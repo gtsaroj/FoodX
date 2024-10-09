@@ -7,7 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
 import { getRevenue } from "../../Services/revenue.services";
 import dayjs from "dayjs";
-import { aggregateCurrentDayData, aggregateMonthlyData } from "./Analtytics";
+import { aggregateMonthlyData } from "./Analtytics";
 import { AddRevenue } from "../../models/revenue.model";
 
 export const MonthlyAnalytics: React.FC = () => {

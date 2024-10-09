@@ -43,9 +43,9 @@ function Table<T extends { id: string }>({
   columns,
   actionIconColor,
   actions,
-  bodyHeight,
+
   disableActions,
-  disableNoData,
+
   loading,
   onPageChange,
   selectedData,
@@ -70,8 +70,7 @@ function Table<T extends { id: string }>({
       onPageChange(page);
     }
   };
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  console.log(selectedData);
+
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
       <table className="w-full relative border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
@@ -83,7 +82,6 @@ function Table<T extends { id: string }>({
                   onChange={(event) => {
                     if (!actions.checkAllFn) return;
                     actions.checkAllFn(event.target.checked);
-                    setIsChecked(event.target.checked);
                   }}
                   className="w-4 accent-slate-900 h-4 cursor-pointer"
                   type="checkbox"
@@ -154,7 +152,6 @@ function Table<T extends { id: string }>({
                                 item.id || item.uid,
                                 event.target.checked
                               );
-                            setIsChecked(event.target.checked);
                           }}
                           className="w-4 h-4 accent-slate-900 cursor-pointer"
                           type="checkbox"

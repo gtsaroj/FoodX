@@ -19,7 +19,7 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
   console.log(allCategory);
 
   // Combine small categories
-  const combinedCategories = combineSmallCategories(categoryMap, 5);
+  const combinedCategories = combineSmallCategories(categoryMap as any, 5);
 
   const categories = combinedCategories?.map((reveneu) => {
     let label: string = reveneu.label; // Start with the existing label
@@ -46,21 +46,29 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
   return categories;
 };
 
+interface dataProp {
+  label: Record<string, number>; // Assuming 'label' is a string-to-number mapping
+  value: number;
+}
+
 export const combineSmallCategories = (
-  data: { label: string; value: number | undefined }[],
+  data: dataProp[], // 'data' is an array of 'dataProp'
   minCount: number = 5
 ) => {
-  console.log(data);
   const result: { label: string; value: number }[] = [];
   let othersTotal = 0;
-  console.log(Object.keys(data));
 
-  Object.keys(data).forEach((order) => {
-    if (data[order] === undefined || data[order] < minCount) {
-      othersTotal += data[order] || 0;
-    } else {
-      result.push({ label: order, value: data[order] });
-    }
+  // Iterate over the 'data' array
+  data.forEach((category) => {
+    Object.keys(category.label).forEach((key) => {
+      const value = category.label[key];
+
+      if (value === undefined || value < minCount) {
+        othersTotal += value || 0;
+      } else {
+        result.push({ label: key, value: value });
+      }
+    });
   });
 
   // If there's any category with value < minCount, add "Others" label
@@ -70,3 +78,4 @@ export const combineSmallCategories = (
 
   return result;
 };
+

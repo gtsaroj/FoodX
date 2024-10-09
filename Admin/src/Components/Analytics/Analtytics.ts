@@ -57,10 +57,10 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
       (order, orderAcc) =>
         order +
         orderAcc.orders.reduce(
-          (product, productAcc) => product + productAcc.quantity,
-          1
+          (product, productAcc) => product + Number(productAcc.quantity),
+          0
         ),
-      1
+      0
     );
 
     const averageOrder = totalOrders / dayjs().endOf("month").date();
@@ -89,9 +89,10 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
       {
         title: "Revenue",
         total: totalRevenue || 0,
-        percentage: Math.round(
-          ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
-        ) || 0,
+        percentage:
+          Math.round(
+            ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
+          ) || 0,
       },
     ];
     return dailyAnalyticsData;

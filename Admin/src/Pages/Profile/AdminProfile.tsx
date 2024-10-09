@@ -360,7 +360,7 @@ const PersonlInformation: React.FC<User> = ({
                 Role
               </p>
               <p className="text-[var(--dark-text)] font-medium ">
-                {role?.charAt(0).toUpperCase() + role?.slice(1)}
+                {role!.charAt(0).toUpperCase() + role?.slice(1)}
               </p>
             </div>
           </div>

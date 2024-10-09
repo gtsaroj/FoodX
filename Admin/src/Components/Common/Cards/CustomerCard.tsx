@@ -33,7 +33,7 @@ export const CustomerCard: React.FC<CustomerCardProp> = ({ prop, index }) => {
             <p className="text-xs">
               Total Spent:{" "}
               <span className="text-[var(--dark-text)] text-[13px] font-medium">
-                {prop.amountSpent}
+                {prop.totalSpent}
               </span>
             </p>
           </div>

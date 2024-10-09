@@ -21,8 +21,7 @@ const TicketCard: React.FC<TicketProp> = ({
 }) => {
   console.log(category, description, title, date);
 
-  const leftTime =
-    dayjs().format("YYYY-MM-DD") - dayjs(date).format("YYYY-MM-DD");
+  const leftTime = dayjs().diff(dayjs(date as any), "minute");
 
   // console.log(tickeDate)
   // let hours = tickeDate.getUTCHours()
@@ -49,7 +48,7 @@ const TicketCard: React.FC<TicketProp> = ({
       </div>
       <h3 className="text-[14px] ">{description}</h3>
       <span className="text-[12px] text-[var(--dark-text)] ">
-        {`${leftTime} mins ago`}{" "}
+        {`${dayjs(leftTime).format("YYYY-MM-DD")} mins  ago`}{" "}
       </span>
     </div>
   );

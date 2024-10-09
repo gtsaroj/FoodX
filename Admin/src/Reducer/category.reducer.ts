@@ -1,8 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { Category } from "../models/category.model";
 
 
 
-const categoryState = {
+const categoryState: {categories: Category[]} = {
   categories: [],
 };
 const categorySlice = createSlice({
@@ -10,7 +11,7 @@ const categorySlice = createSlice({
   name: "category",
   reducers: {
     categoryAdd: (state, action) => {
-      const previousCategory = state.categories?.filter(
+      const previousCategory : Category[] = state.categories?.filter(
         (category) => category !== action.payload
       );
       state.categories = [...previousCategory, action.payload];

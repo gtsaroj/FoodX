@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { CustomerCard } from "../../Components/Common/Cards/CustomerCard";
 import { User } from "../../models/user.model";
-import { getTopCustomers } from "../../Utility/user.utils";
 
 import Skeleton from "react-loading-skeleton";
 import { Filter } from "lucide-react";
@@ -12,7 +11,6 @@ import { getUsers } from "../../Services/user.services";
 
 export const TopCustomers = () => {
   const [TopCustomer, setTopCustomer] = useState<User[]>([]);
-  const [originalData, setOriginalData] = useState<User[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [loading, setLoading] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
@@ -29,11 +27,11 @@ export const TopCustomers = () => {
           filter: "fullName" || filter,
           direction: "next",
         });
-        setOriginalData(customers as User[]);
+
         if (customers) setTopCustomer(customers.data.users as User[]);
       } catch (error) {
         setLoading(false);
-        setOriginalData([]);
+
         throw new Error("Error while fetching customer data" + error);
       }
       setLoading(false);

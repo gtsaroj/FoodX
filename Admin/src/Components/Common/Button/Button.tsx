@@ -12,7 +12,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 
 import { CalendarCheck } from "lucide-react";
 
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 
 interface ButtonProp {
   action?: { label: string; value: string; id: string }[];
@@ -26,7 +26,7 @@ interface ButtonProp {
     checkTypeFn?: (isChecked: boolean, type: any) => void;
     checkSortFn?: (isChecked: boolean, type: any) => void;
     checkActionFn?: (isChecked: boolean, type: any) => void;
-    dateActionFn?: (from: Date, to: Date) => void;
+    dateActionFn?: (from:Dayjs, to:Dayjs) => void;
   };
 }
 
@@ -42,7 +42,6 @@ export const Button: React.FC<ButtonProp> = ({
   const [show, setShow] = useState<boolean>(false);
   const [isShowTo, setIsShowTo] = useState<boolean>(false);
   const [isShowFrom, setIsShowFrom] = useState<boolean>(false);
-  const [index, setIndex] = useState<string>();
   const reference = useRef<HTMLInputElement>();
   const [checkedTypeState, setCheckedTypeState] = useState<{
     [key: string]: boolean;
@@ -204,7 +203,7 @@ export const Button: React.FC<ButtonProp> = ({
                     { label: "Low to High", value: "asc" },
                     { label: "High to Low", value: "desc" },
                   ]}
-                  onSelect={(type) => sortFn(type as "asc" | "desc")}
+                  onSelect={(type) => sortFn && sortFn(type as "asc" | "desc")}
                 />
               </div>
             </div>

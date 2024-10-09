@@ -3,14 +3,13 @@ import React, { useState } from "react";
 
 interface SelectorPop {
   setField: (value: string) => void;
-  categoryOption?: { value: string; label: string }[] | any;
+  categoryOption?: { value: string; label: string }[];
 }
 
 export const Selector: React.FC<SelectorPop> = ({
   categoryOption,
   setField,
 }) => {
-  console.log(categoryOption);
   const [show, setShow] = useState<boolean>(false);
   const [showField, setShowField] = useState<string>();
   return (
@@ -30,7 +29,7 @@ export const Selector: React.FC<SelectorPop> = ({
       </div>
       <div
         className={` bg-[var(--light-foreground)] ${
-          categoryOption.length > 4 ? "h-[150px] " : ""
+          categoryOption!.length > 4 ? "h-[150px] " : ""
         } scrollbar-custom overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
           show
             ? "max-h-64 opacity-100"
@@ -47,7 +46,11 @@ export const Selector: React.FC<SelectorPop> = ({
             key={option.label}
             className="text-[var(--dark-text)] text-start text-[16px] p-2 hover:bg-[var(--light-background)] w-full rounded"
           >
-            {option.label || option}
+            {typeof option.label === "string"
+              ? option?.label
+              : typeof option === "string"
+              ? option
+              : ""}
           </p>
         ))}
       </div>

@@ -5,11 +5,8 @@ import { Store } from "../../Store";
 import { authLogout } from "../../Reducer/user.reducer";
 import { ClipLoader } from "react-spinners";
 
-interface AccountDeleteProp {
-  closeModal?: () => void;
-}
 
-export const PasswordChange: React.FC<AccountDeleteProp> = ({ closeModal }) => {
+export const PasswordChange: React.FC = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmNewPassword, setConfirmNewPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);

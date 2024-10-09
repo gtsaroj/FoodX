@@ -3,15 +3,13 @@ import { Filter, MoveUp, X } from "lucide-react";
 import "./LineChart.css";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { monthlyRevenue, revenueData, totalMonthOrder } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
 
-interface MonthlyLineChartProps {
-  dateRange: { startDate: Dayjs; endDate: Dayjs };
-}
+
 export const WeekReveneuChart: React.FC = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
@@ -120,7 +118,7 @@ export const WeekReveneuChart: React.FC = () => {
 };
 
 //monthly revenue
-export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
+export const MonthlyRevenueChart: React.FC = () => {
   const [initialData, setInitialData] = useState<
     { time: string; revenue: number }[]
   >([]);
@@ -385,7 +383,7 @@ export const MonthlyRevenueChart: React.FC<MonthlyLineChartProps> = () => {
 };
 
 //monthly order
-export const MonthlyOrderLinechart: React.FC<MonthlyLineChartProps> = () => {
+export const MonthlyOrderLinechart: React.FC = () => {
   const [initialData, setInitialData] = useState<
     { time: string; orders: number }[]
   >([]);

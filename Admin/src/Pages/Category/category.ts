@@ -75,8 +75,8 @@ export const aggregateCategories = async (categories: Category[]) => {
       revenue: data.revenue,
       rank: Math.round((data.order / maxSold) * 5),
     }));
-    console.log(aggregateCategory);
-    return aggregateCategory;
+  
+    return aggregateCategory as Category[];
   } catch (error) {
     return null;
   }

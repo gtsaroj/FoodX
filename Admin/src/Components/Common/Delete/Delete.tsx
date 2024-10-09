@@ -3,7 +3,7 @@ import React from "react";
 
 interface DeleteProp {
   id: string;
-  path?: "banners"|"sponsors"|string
+  path?: "banners" | "sponsors" | string;
   type?: "specials" | "products";
   isClose: boolean;
   setDelete: (id: string, type: "specials" | "products") => void;
@@ -13,7 +13,7 @@ interface DeleteProp {
 const Delete: React.FC<DeleteProp> = ({
   id,
   setDelete,
-  isClose,
+
   type,
   closeModal,
 }) => {

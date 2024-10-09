@@ -90,7 +90,7 @@ export const RegisterContainer: React.FC = () => {
           avatar: imageUrl,
           role: "admin" as UserRole["role"],
         };
-        navigate("/email-verification")
+        navigate("/email-verification");
         await dispatch(signUpAction(ConvertedForm));
         toast.success("Congratulations!, You logged in");
       }
@@ -201,7 +201,7 @@ export const RegisterContainer: React.FC = () => {
               id="email"
               value={RegisterValue.email}
               onChange={(e) =>
-                handleInputChange(e, "email" as keyof ValidationType)
+                handleInputChange(e, "email" as keyof RegisterModal)
               }
               className="outline-none py-[5px] lg:py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
             />
@@ -223,7 +223,7 @@ export const RegisterContainer: React.FC = () => {
               id="text"
               value={RegisterValue.phoneNumber}
               onChange={(e) =>
-                handleInputChange(e, "phoneNumber" as keyof ValidationType)
+                handleInputChange(e, "phoneNumber" as keyof RegisterModal)
               }
               className="outline-none py-[5px] lg:py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full "
             />
@@ -244,7 +244,7 @@ export const RegisterContainer: React.FC = () => {
                 id="password"
                 value={RegisterValue.password}
                 onChange={(e) =>
-                  handleInputChange(e, "password" as keyof ValidationType)
+                  handleInputChange(e, "password" as keyof RegisterModal)
                 }
                 className="outline-none py-[5px] lg:py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
               />
@@ -277,7 +277,7 @@ export const RegisterContainer: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange(
                     e,
-                    "confirmpassword" as keyof ValidationType
+                    "confirmpassword" as keyof RegisterModal
                   )
                 }
                 className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
@@ -332,8 +332,8 @@ export const Register = () => {
     <div className="flex w-full h-screen flex-col items-center justify-between 2xl:justify-center lg:py-5">
       <RegisterContainer />
       <div className="w-full pt-10 ">
-      <AuthFooter/>
+        <AuthFooter />
+      </div>
     </div>
-   </div>
   );
 };

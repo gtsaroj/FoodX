@@ -25,7 +25,7 @@ const AllCategories = () => {
   const [isFilter, setIsFilter] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
-    { id: string }[]
+    { id?: string }[]
   >([]);
   const [id, setId] = useState<string>();
   const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -40,7 +40,7 @@ const AllCategories = () => {
       const categories = await getCategories();
       const allCategory = await aggregateCategories(categories);
       allCategory?.forEach((data) => dispatch(categoryAdd(data.name)));
-      setInitialCategory(allCategory);
+      setInitialCategory(allCategory as Category[]);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error found while fetching category` + error);
@@ -83,7 +83,7 @@ const AllCategories = () => {
       const AllCategoriesId = bulkSelectedCategory?.map(
         (category) => category.id
       );
-      await bulkDeleteOfCategory(AllCategoriesId);
+      await bulkDeleteOfCategory(AllCategoriesId as string[]);
       await addLogs({
         action: "delete",
         date: new Date(),

@@ -19,7 +19,7 @@ const UpdateCategoryOption: UpdateCategoryType[] = [
 ];
 
 
-const UpdateBanner: React.FC<updateComponentProp> = ({ id,path }) => {
+const UpdateBanner: React.FC<updateComponentProp> = ({ id }) => {
   const [newData, setNewData] = useState<string>("");
   const [field, setField] = useState<"image" | "name">("name");
   const fileRef = useRef<HTMLImageElement>();

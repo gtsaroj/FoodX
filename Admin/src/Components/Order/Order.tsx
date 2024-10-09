@@ -1,5 +1,4 @@
 import { ChevronRight } from "lucide-react";
-
 import { useEffect, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import { GetOrderModal, Order, RecentOrder } from "../../models/order.model";
@@ -16,10 +15,7 @@ export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
   const [recentOrder, setRecentOrder] = useState<RecentOrder[]>([]);
   const [isClicked, setIsClicked] = useState<boolean>(false);
-  const [pagination, setPagination] = useState<{
-    currentPage: number;
-    perPage: number;
-  }>({ currentPage: 1, perPage: 5 });
+
   const [loading, setLoading] = useState<boolean>(false);
 
   const getRecentOrder = async ({
@@ -53,7 +49,7 @@ export const RecentOrders = () => {
 
   useEffect(() => {
     getRecentOrder({
-      pageSize: pagination.perPage,
+      pageSize: 5,
       sort: "desc",
       currentFirstDoc: null,
       currentLastDoc: null,
@@ -61,7 +57,7 @@ export const RecentOrders = () => {
       filter: "orderRequest",
       status: "pending",
     });
-  }, [pagination.perPage, isClicked]);
+  }, [isClicked]);
 
   useEffect(() => {
     const handleNewOrder = async (order: Order) => {

@@ -38,8 +38,8 @@ const AllProductAnalytics = () => {
 
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
-      category: "specials" | "products";
-      id: string;
+      category?: "specials" | "products";
+      id?: string;
     }[]
   >([]);
 
@@ -171,9 +171,9 @@ const AllProductAnalytics = () => {
       }>(
         (acc, product) => {
           if (product.category === "specials") {
-            acc.specials.push(product.id);
+            acc.specials.push(product.id as  string);
           } else if (product.category === "products") {
-            acc.products.push(product.id);
+            acc.products.push(product.id as  string);
           }
           return acc;
         },

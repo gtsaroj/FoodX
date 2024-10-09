@@ -14,8 +14,8 @@ export const getOrderId = async () => {
 
 export const getRevenue = (products: Product[]) => {
   const revenue = products?.reduce(
-    (productQuan, product) => productQuan + product.price * product.quantity,
-    1
+    (productQuan, product) => productQuan + Number(product.price) * Number(product.quantity),
+    0
   );
   return revenue;
 };

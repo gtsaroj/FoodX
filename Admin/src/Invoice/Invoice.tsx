@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Page,
   Text,
@@ -228,10 +228,10 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                     {item.quantity}
                   </Text>
                   <Text style={[styles.tableCol, styles.tableCell]}>
-                    Rs. {item.price.toFixed(2)}
+                    Rs. {Number(item.price).toFixed(2)}
                   </Text>
                   <Text style={[styles.tableCol, styles.tableCell]}>
-                    Rs. {(item.price * item.quantity).toFixed(2)}
+                    Rs. {(Number(item.price) * Number(item.quantity)).toFixed(2)}
                   </Text>
                 </View>
               ))}
@@ -267,8 +267,8 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
               <Text style={{ fontSize: "13px" }}>
                 {order.orderDetails?.products?.reduce(
                   (productAcc, product) =>
-                    productAcc + product?.price * product?.quantity,
-                  1
+                    productAcc + Number(product.price) * Number(product.quantity),
+                  0
                 )}
               </Text>
             </View>
