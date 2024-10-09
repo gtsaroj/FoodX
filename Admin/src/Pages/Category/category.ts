@@ -52,7 +52,7 @@ export const aggregateCategories = async (categories: Category[]) => {
         }
         products?.forEach((product) => {
           if (product.tagId === revenueCategory.id) {
-            item += Number(product.quantity);
+            item += Number([{...product}].length);
           }
         });
       });
@@ -70,12 +70,12 @@ export const aggregateCategories = async (categories: Category[]) => {
       id: data.id,
       name: data.name,
       image: data.image,
-      item: 0,
+      item: data.item,
       order: data.order,
       revenue: data.revenue,
       rank: Math.round((data.order / maxSold) * 5),
     }));
- console.log(aggregateCategory)
+    console.log(aggregateCategory);
     return aggregateCategory;
   } catch (error) {
     return null;
