@@ -1,8 +1,8 @@
-import { makeRequest } from "../makeRequest";
+import { globalRequest } from "../GlobalRequest";
 
 export const getNormalProducts = async () => {
   try {
-    const response = await makeRequest({
+    const response = await globalRequest({
       method: "GET",
       url: "products/all",
     });
@@ -13,7 +13,7 @@ export const getNormalProducts = async () => {
 };
 export const getSpecialProducts = async () => {
   try {
-    const response = await makeRequest({
+    const response = await globalRequest({
       method: "GET",
       url: "products/specials",
     });
@@ -26,7 +26,7 @@ export const getSpecialProducts = async () => {
 export const getProductsByTag = async (data: string) => {
   if (!data) return;
   try {
-    const response = await makeRequest({
+    const response = await globalRequest({
       method: "get",
       url: `products/get-product-by-tag/${data}`,
     });
@@ -38,7 +38,7 @@ export const getProductsByTag = async (data: string) => {
 
 export const getPopularProducts = async () => {
   try {
-    const response = await makeRequest({
+    const response = await globalRequest({
       method: "get",
       url: "products/popular",
     });
