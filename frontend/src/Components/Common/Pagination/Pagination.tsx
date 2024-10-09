@@ -31,37 +31,37 @@ const Pagination: React.FC<PaginationProps> = ({
   const totalPages = Math.ceil(totalData / perPage);
   const navigate = useNavigate();
 
-  const getRange = () => {
-    const siblingCount = 1;
-    const totalPageNumbers = siblingCount + 5;
+  // const getRange = () => {
+  //   const siblingCount = 1;
+  //   const totalPageNumbers = siblingCount + 5;
 
-    if (totalPages <= totalPageNumbers) {
-      return range(1, totalPages);
-    }
+  //   if (totalPages <= totalPageNumbers) {
+  //     return range(1, totalPages);
+  //   }
 
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+  //   const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+  //   const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
 
-    const showLeftDots = leftSiblingIndex > 2;
-    const showRightDots = rightSiblingIndex < totalPages - 1;
+  //   const showLeftDots = leftSiblingIndex > 2;
+  //   const showRightDots = rightSiblingIndex < totalPages - 1;
 
-    if (!showLeftDots && showRightDots) {
-      const leftCount = 1 + 2 * siblingCount;
-      const leftRange = range(1, leftCount);
-      return [...leftRange, "...", totalPages];
-    }
+  //   if (!showLeftDots && showRightDots) {
+  //     const leftCount = 1 + 2 * siblingCount;
+  //     const leftRange = range(1, leftCount);
+  //     return [...leftRange, "...", totalPages];
+  //   }
 
-    if (showLeftDots && !showRightDots) {
-      const rightCount = 1 + 2 * siblingCount;
-      const rightRange = range(totalPages - rightCount + 1, totalPages);
-      return [1, "...", ...rightRange];
-    }
+  //   if (showLeftDots && !showRightDots) {
+  //     const rightCount = 1 + 2 * siblingCount;
+  //     const rightRange = range(totalPages - rightCount + 1, totalPages);
+  //     return [1, "...", ...rightRange];
+  //   }
 
-    if (showLeftDots && showRightDots) {
-      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
-      return [1, "...", ...middleRange, "...", totalPages];
-    }
-  };
+  //   if (showLeftDots && showRightDots) {
+  //     const middleRange = range(leftSiblingIndex, rightSiblingIndex);
+  //     return [1, "...", ...middleRange, "...", totalPages];
+  //   }
+  // };
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {

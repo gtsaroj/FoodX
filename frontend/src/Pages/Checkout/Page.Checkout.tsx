@@ -1,7 +1,7 @@
 import { ChevronRight, ShoppingBag } from "lucide-react";
-import React, {  useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "../../Store";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
 import { Product } from "../../models/product.model";
 import { Payment } from "../../Components/Payment/Payment.tsx";
 import { SingleCard } from "../../Components/Card/Card.Product.Cart.tsx";
@@ -47,7 +47,7 @@ export const Items = () => {
   useEffect(() => {
     setInitialData(products);
   }, [products]);
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
 
   // const makeDiscount = async (event: FormEvent) => {
   //   const getDiscountFromSession = sessionStorage.getItem("discount");
@@ -114,7 +114,11 @@ export const Items = () => {
             {(discount && "Applied") || "Apply"}
           </button>
         </form> */}
-        <div className={` ${products?.length > 3 ? "h-20" : "h-auto"} overflow-auto scrollbar-custom pr-4 `}>
+        <div
+          className={` ${
+            products?.length > 3 ? "h-20" : "h-auto"
+          } overflow-auto scrollbar-custom pr-4 `}
+        >
           {products?.map((product) => (
             <div className="flex justify-between items-center text-[var(--dark-secondary-text)] ">
               <span className="text-[16px]">{product.name}</span>
