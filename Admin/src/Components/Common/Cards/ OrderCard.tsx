@@ -65,7 +65,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
           </p>
         </div>
       </div>
-      <div className="flex relative flex-col w-[80px] items-start justify-between gap-3 text-xs">
+      <div className="flex relative flex-col w-[100px] items-start justify-between gap-3 text-xs">
         <p
           onClick={() => {
             setIsChangeStatus(!isChangeStatus);

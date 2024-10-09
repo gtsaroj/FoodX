@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import React from "react";
 
 interface TicketProp {
-  date: string[];
+  date: string;
   uid?: string;
   description: string;
   title: string;
@@ -19,24 +19,14 @@ const TicketCard: React.FC<TicketProp> = ({
 
   id,
 }) => {
-  console.log(category, description, title, date);
+  const leftTime = dayjs(date);
 
-  const leftTime = dayjs().diff(dayjs(date as any), "minute");
-
-  // console.log(tickeDate)
-  // let hours = tickeDate.getUTCHours()
-  // let minutes = tickeDate.getUTCMinutes();
-  // console.log(minutes)
-
-  // useEffect(() => {
-
-  // },[hours,minutes])
 
   return (
-    <div className="w-full flex  text-[var(--dark-text)] border-b-[1px] pb-5  gap-2.5 flex-col items-start justify-center bg-[var(--light-foreground)]  px-1 py-4 border-[#8a849570] ">
+    <div className="w-full flex  text-[var(--dark-text)] border-b-[1px] pb-5  gap-2.5 flex-col items-start justify-center bg-[var(--light-foreground)]  px-1 py-4 border-[var(--dark-border)] ">
       <div className=" w-full flex items-start gap-5 justify-between">
         <div className="flex flex-col items-start justify-center gap-2.5">
-          <h1 className="text-[15px]  w-[120px] border-[1px] border-[var(--danger-bg)] py-0.5 px-2 rounded ">
+          <h1 className="text-[15px]   border-[1px] border-[var(--danger-bg)] py-0.5 px-2 rounded ">
             {category}
           </h1>
           <h2 className="text-[14px] w-full font-[600] ">{title}</h2>
@@ -48,7 +38,7 @@ const TicketCard: React.FC<TicketProp> = ({
       </div>
       <h3 className="text-[14px] ">{description}</h3>
       <span className="text-[12px] text-[var(--dark-text)] ">
-        {`${dayjs(leftTime).format("YYYY-MM-DD")} mins  ago`}{" "}
+        {`Created at : ${dayjs(leftTime).format("YYYY-MM-DD")} `}{" "}
       </span>
     </div>
   );

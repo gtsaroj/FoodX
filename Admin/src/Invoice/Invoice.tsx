@@ -106,7 +106,6 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
       <Page key={index} wrap={false} size="A4" style={styles.page}>
         <View
           style={{
-            border: "1px solid gray",
             padding: "4px",
             width: "100%",
             display: "flex",
@@ -187,8 +186,9 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                   Invoice To
                 </Text>
               </View>
-              <Text>{order.customerDetails.name}</Text>
+              <Text>Name : {order.customerDetails.name}</Text>
               <Text>
+                Contact No :{" "}
                 {order.customerDetails.phoneNumber || "+977-9825506216"}
               </Text>
             </View>
@@ -231,7 +231,8 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                     Rs. {Number(item.price).toFixed(2)}
                   </Text>
                   <Text style={[styles.tableCol, styles.tableCell]}>
-                    Rs. {(Number(item.price) * Number(item.quantity)).toFixed(2)}
+                    Rs.{" "}
+                    {(Number(item.price) * Number(item.quantity)).toFixed(2)}
                   </Text>
                 </View>
               ))}
@@ -267,7 +268,8 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
               <Text style={{ fontSize: "13px" }}>
                 {order.orderDetails?.products?.reduce(
                   (productAcc, product) =>
-                    productAcc + Number(product.price) * Number(product.quantity),
+                    productAcc +
+                    Number(product.price) * Number(product.quantity),
                   0
                 )}
               </Text>

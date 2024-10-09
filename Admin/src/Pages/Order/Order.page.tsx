@@ -28,6 +28,7 @@ const OrderList = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
+    pageDirecton?: "prev" | "next";
   }>({ currentPage: 1, perPage: 5 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
@@ -134,7 +135,7 @@ const OrderList = () => {
   }, [pagination.perPage, sortOrder, isFilter?.sortFilter]);
 
   useEffect(() => {
-    if (pagination.currentPage > 1) {
+    if (pagination.currentPage > 1 && pagination.pageDirecton) {
       setLoading(true);
       const fetchNextPage = async () => {
         setLoading(true);
@@ -145,7 +146,7 @@ const OrderList = () => {
             currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
             filter: (isFilter?.sortFilter as keyof Order) || "uid",
             sort: sortOrder || "desc",
-            direction: "next",
+            direction: pagination.pageDirecton || "next",
           });
           const getAllOrder = orders.data as {
             currentFirstDoc: string;
@@ -185,7 +186,8 @@ const OrderList = () => {
             return [
               ...prev,
               ...getaggregateDataPromises.filter(
-                (order) => !prev.some((data: OrderModal) => data.id === order.id)
+                (order) =>
+                  !prev.some((data: OrderModal) => data.id === order.id)
               ),
             ];
           });
@@ -194,10 +196,15 @@ const OrderList = () => {
         }
         setLoading(false);
       };
-      setLoading(false);
+
       fetchNextPage();
     }
-  }, [pagination.currentPage, pagination.perPage, sortOrder]);
+  }, [
+    pagination.currentPage,
+    pagination.perPage,
+    sortOrder,
+    pagination.pageDirecton,
+  ]);
 
   useEffect(() => {
     const handleNewOrder = async (order: Order) => {
@@ -244,12 +251,12 @@ const OrderList = () => {
 
           return {
             orderDetails: {
-              products: matchedOrder.products,
-              status: matchedOrder.status,
+              products: matchedOrder?.products,
+              status: matchedOrder?.status,
             },
             customerDetails: {
-              name: matchedOrder.name as string,
-              phoneNumber: user.phoneNumber, // Ensure correct type for phoneNumber
+              name: matchedOrder?.name as string,
+              phoneNumber: user?.phoneNumber || "N/A", // Ensure correct type for phoneNumber
             },
             invoiceData: {
               invoiceDate: dayjs().format("YYYY-MM-DD"),
@@ -265,8 +272,6 @@ const OrderList = () => {
 
     fetchOrders();
   }, [exportSelectedOrder, initialOrders]);
-
-  console.log(resolvedOrders);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">
@@ -362,6 +367,9 @@ const OrderList = () => {
         )}
       </div>
       <OrderTable
+        handlePageDirection={(pageDirection) =>
+          setPagination((prev) => ({ ...prev, pageDirecton: pageDirection }))
+        }
         selectedData={exportSelectedOrder}
         action={{
           checkAllFn: (isChecked: boolean) => exportAllOrder(isChecked),

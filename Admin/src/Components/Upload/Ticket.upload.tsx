@@ -1,6 +1,5 @@
 import React, { FormEvent, useRef, useState } from "react";
 
-
 import { HashLoader } from "react-spinners";
 import { TicketType } from "../../models/ticket.model";
 import { useSelector } from "react-redux";
@@ -41,19 +40,26 @@ const CreateTicket: React.FC = () => {
     try {
       await createTicket({ ...initialTicket });
       setLoading(false);
-      return toast.success("Ticket success");
+       toast.success("Ticket success");
     } catch (error) {
       toast.error("Unable to create ticket");
       setLoading(false);
-      return console.log("Unable to create ticket" + error);
+      console.log("Unable to create ticket" + error);
     }
+    setInitialTicket({
+      category: "",
+      date: "",
+      description: "",
+      id: "",
+      title: "",
+    });
   };
   const categoryOption: { value: string; label: string }[] = [
     { value: "ingredient_shortage", label: "Ingredient Shortage" },
     { value: "equipment_malfunction", label: "Equipment Malfunction" },
     { value: "staff_shortage", label: "Staff Shortage" },
     { value: "cleaning_required", label: "Cleaning Required" },
-    { value: "menu_adjustment", label: "Menu Adjustment" }
+    { value: "menu_adjustment", label: "Menu Adjustment" },
   ];
 
   return (

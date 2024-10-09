@@ -20,6 +20,7 @@ export declare namespace Table {
       perPage?: number;
       currentPage?: number;
     };
+    handlePageDirection?: (pageDirection: "next" | "prev") => void;
     disableNoData?: boolean;
     onPageChange?: (page: number) => void;
     disableActions?: boolean;
@@ -51,6 +52,7 @@ function Table<T extends { id: string }>({
   selectedData,
   totalData,
   pagination = { perPage: 5, currentPage: 1 },
+  handlePageDirection,
 }: Table.TableModalProps<T>): React.ReactElement {
   const [currentPage, setCurrentPage] = useState<number>(
     pagination.currentPage as number
@@ -120,7 +122,7 @@ function Table<T extends { id: string }>({
           }}
         >
           {loading ? (
-            <tr className="w-full ">
+            <div className="w-full">
               <Skeleton
                 height={100}
                 baseColor="var(--light-background)"
@@ -133,7 +135,7 @@ function Table<T extends { id: string }>({
                 highlightColor="var(--light-foreground)"
                 count={3}
               />
-            </tr>
+            </div>
           ) : (
             <>
               {currentData &&
@@ -225,6 +227,9 @@ function Table<T extends { id: string }>({
           <tr>
             <td>
               <Pagination
+                handlePageDirection={(pageDirection) =>
+                  handlePageDirection && handlePageDirection(pageDirection)
+                }
                 totalData={totalData || 0}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}

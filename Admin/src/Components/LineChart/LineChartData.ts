@@ -27,7 +27,7 @@ export const monthlyRevenue = (data: RevenueInfo[]) => {
       "data not found in weekly revenue : file=> linchartdata.ts"
     );
   try {
-    const revenue = revenueData(data)
+    const revenue = revenueData(data);
     const monthlyData = getWeekTotal(revenue);
     return monthlyData;
   } catch (error) {
@@ -36,7 +36,6 @@ export const monthlyRevenue = (data: RevenueInfo[]) => {
     );
   }
 };
-
 
 // get revenue  weekly-wise
 export const getWeekTotal = (
@@ -88,7 +87,6 @@ export const orderData = (data: Revenue[]) => {
   try {
     const orders = data.map((order): { orders: number; time: string } => {
       const orders = totalOrder(order.orders);
-       console.log(orders)
       return {
         orders: orders,
         time: order.id,
@@ -99,7 +97,6 @@ export const orderData = (data: Revenue[]) => {
     throw new Error("Unable to aggregate daily orders data" + error);
   }
 };
-
 
 // calculate total order
 const totalOrder = (products: Product[]) => {
@@ -116,7 +113,7 @@ export const totalMonthOrder = (data: Revenue[]) => {
       "data not found in weekly revenue : file=> linchartdata.ts"
     );
   try {
-    const order = orderData(data)
+    const order = orderData(data);
     const monthlyData = getOrderWeeklyTotal(order);
     return monthlyData;
   } catch (error) {
@@ -125,7 +122,6 @@ export const totalMonthOrder = (data: Revenue[]) => {
     );
   }
 };
-
 
 const getOrderWeeklyTotal = (
   aggregateMonthlyData: {

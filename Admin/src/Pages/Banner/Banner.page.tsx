@@ -122,8 +122,6 @@ const FoodPage: React.FC = () => {
         if (fetchSponsorBanner.length > 0) banners.push(...fetchSponsorBanner);
       }
       setInitialBanner(banners as any);
-
-      console.log(banners);
     } catch (error) {
       throw new Error("Unable to fetch banners" + error);
     }
@@ -137,7 +135,9 @@ const FoodPage: React.FC = () => {
 
     isChecked
       ? setBulkSelectedBanner((prev: any) => {
-          const newBanner = prev?.filter((banner : BannerModel) => banner.id !== id);
+          const newBanner = prev?.filter(
+            (banner: BannerModel) => banner.id !== id
+          );
           const findBanner = initialBanner?.find((banner) => banner.id === id);
           return newBanner
             ? [...newBanner, { id: findBanner?.id, path: findBanner?.path }]

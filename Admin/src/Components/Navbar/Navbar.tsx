@@ -39,7 +39,10 @@ const Navbar = () => {
         setOpenNotification(false);
       }
     };
-    if (isOpen || openNotification) {
+    if (isOpen) {
+      document.addEventListener("mousedown", closeModal);
+    }
+    if (openNotification) {
       document.addEventListener("mousedown", closeModal);
     }
     if (isDark) {
@@ -54,15 +57,13 @@ const Navbar = () => {
     };
   }, [isDark, isOpen]);
 
-  useEffect(() => {
-    console.log(user.avatar);
-  }, [user.avatar]);
-
   return (
     <div className="w-full  shadow-md shadow-[var(--light-foreground)] border-b-2 border-[var(--light-background)] h-[80px] hidden xl:flex justify-between  items-center gap-5 px-5 py-4">
       <h1 className="px-3 text-[var(--dark-text)] text-2xl">
         Welcome back,{" "}
-        <span className="font-semibold tracking-wide">{user?.fullName}</span>
+        <span className="font-semibold tracking-wide">
+          {user?.fullName.charAt(0).toUpperCase() + user?.fullName?.slice(1)}
+        </span>
       </h1>
       <div className="flex gap-5 items-center justify-start">
         <label className="switch">
@@ -75,13 +76,14 @@ const Navbar = () => {
           />
           <span className="slider"></span>
         </label>
-        {user.fullName && (
+        {user.role === "chef" && (
           <div ref={notificationReference as any} className="relative">
             <Bell
               onClick={() => setOpenNotification(!openNotification)}
               className="size-7 text-[var(--dark-text)] cursor-pointer "
             />
             <div
+              ref={notificationReference as any}
               className={`absolute w-[300px] z-30 duration-150 ${
                 openNotification
                   ? "visible opacity-100 -translate-y-0 "
