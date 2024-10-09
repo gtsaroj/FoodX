@@ -1,33 +1,30 @@
 import { ChevronRight, ShoppingBag } from "lucide-react";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
 import { Product } from "../../models/product.model";
 import { Payment } from "../../Components/Payment/Payment.tsx";
 import { SingleCard } from "../../Components/Card/Card.Product.Cart.tsx";
 import { useNavigate } from "react-router-dom";
-import { calculateDiscountedPrice } from "./discount.ts";
-import { addToCart } from "../../Reducer/product.reducer.ts";
-import toast from "react-hot-toast";
 
 export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full flex flex-col gap-8 py-6 px-8   ">
+    <div className="flex flex-col w-full gap-8 px-8 py-6 ">
       <div className="flex items-center justify-start gap-1 text-[var(--dark-text)] ">
         <span
           onClick={() => navigate("/cart")}
-          className=" font-semibold tracking-wider cursor-pointer "
+          className="font-semibold tracking-wider cursor-pointer "
         >
           Cart
         </span>
-        <ChevronRight className="size-5  " />
+        <ChevronRight className="size-5 " />
         <span className="text-[var(--secondary-color)] cursor-pointer font-semibold tracking-wider ">
           Checkout
         </span>
       </div>
-      <div className="w-full flex md:flex-row flex-col items-start justify-center gap-10 ">
+      <div className="flex flex-col items-start justify-center w-full gap-10 md:flex-row ">
         <Items />
         <Payment />
       </div>
@@ -67,7 +64,7 @@ export const Items = () => {
   // };
 
   return (
-    <div className="w-full flex flex-col items-start justify-center gap-5 ">
+    <div className="flex flex-col items-start justify-center w-full gap-5 ">
       <h1 className="text-xl font-semibold tracking-wider text-[var(--dark-text)] ">
         Your Items
       </h1>
@@ -75,7 +72,7 @@ export const Items = () => {
         {initialData?.length > 0 ? (
           initialData?.map((data) => <SingleCard prop={data} key={data.id} />)
         ) : (
-          <div className="flex flex-col h-full   py-16 items-center justify-center gap-9">
+          <div className="flex flex-col items-center justify-center h-full py-16 gap-9">
             <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-20" />
 
             <h1 className="text-[25px] tracking-wider text-[var(--dark-text)] ">

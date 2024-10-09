@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import toast from "react-hot-toast";
 import { addOrder } from "../../Services/order.services";
@@ -42,6 +42,7 @@ export const Payment: React.FC = () => {
           0
         ),
         status: "pending",
+        orderId: ""
       });
       await addRevenue({
         id: dayjs().format("YYYY-MM-DD"),
@@ -117,7 +118,7 @@ export const Payment: React.FC = () => {
         </div>
 
         {/* Note Section */}
-        <div className="flex flex-col mt-4 w-full">
+        <div className="flex flex-col w-full mt-4">
           <label className="text-[var(--dark-secondary-text)]">
             Add a Note (Optional)
           </label>
@@ -132,7 +133,7 @@ export const Payment: React.FC = () => {
 
         {/* Order Summary */}
         <div className="mt-5 p-4 bg-[var(--light-foreground)] rounded-lg border-[1px] border-[var(--dark-border)]">
-          {/* <div className="flex justify-between items-center">
+          {/* <div className="flex items-center justify-between">
             <span className="text-[var(--dark-secondary-text)]">
               Cart Subtotal
             </span>
@@ -144,7 +145,7 @@ export const Payment: React.FC = () => {
               )}
             </span>
           </div> */}
-          {/* <div className="flex justify-between items-center mt-2">
+          {/* <div className="flex items-center justify-between mt-2">
             <span className="text-[var(--dark-secondary-text)]">Discount</span>
             <span className="text-[var(--dark-secondary-text)]"> { discount || 0}</span>
           </div> */}
@@ -167,7 +168,7 @@ export const Payment: React.FC = () => {
         </div>
 
         {/* Payment Action */}
-        <div className="flex justify-between items-center mt-5">
+        <div className="flex items-center justify-between mt-5">
           <button
             type="button"
             onClick={handlePayment}

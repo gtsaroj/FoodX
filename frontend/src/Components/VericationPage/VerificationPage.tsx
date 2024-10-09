@@ -1,8 +1,5 @@
 import { Send } from "lucide-react";
 import { FormEvent, useState, useEffect, useRef } from "react";
-import { verifyNewUser } from "../../Services/user.services";
-import { redisClient } from "../../Utility/redis.utility";
-import { User } from "../../models/user.model";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { verifyAction } from "../../Actions/user.actions";

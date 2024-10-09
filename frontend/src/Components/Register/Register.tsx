@@ -1,8 +1,8 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { ValidationType } from "../../models/register.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Store";
+// import { useDispatch } from "react-redux";
+// import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import { checkValidNumber, validatePasswordOnChange } from "./RegisterHandler";
 import { allFieldsRequired } from "./RegisterHandler";
@@ -10,14 +10,14 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import { AuthFooter } from "../Footer/AuthFooter";
 import avatar from "../../assets/logo/avatar.png";
 import logo from "../../assets/logo/Fx.png";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { signUp } from "../../Services/user.services";
 import { UserRole } from "../../models/user.model";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
+  // const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<ValidationType>({
     avatar: "",
     firstName: "",
@@ -109,11 +109,11 @@ export const RegisterContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex lg:flex-row w-full py-10  items-start flex-col lg:items-center    lg:justify-evenly   ">
+    <div className="flex flex-col items-start w-full py-10 lg:flex-row lg:items-center lg:justify-evenly ">
       <div className="bg-[var(--light-foreground)] lg:bg-transparent w-full lg:w-auto py-2  mb-4 ">
         <img src={logo} alt="" className="lg:w-[500px]  w-[150px]  " />
       </div>
-      <div className="w-full lg:w-auto  flex sm:px-3 px-5 flex-col items-center justify-center ">
+      <div className="flex flex-col items-center justify-center w-full px-5 lg:w-auto sm:px-3 ">
         <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
           <h1 className="md:hidden">Sign In</h1>
           <h1 className="hidden md:block">Sign In With Email</h1>
@@ -124,7 +124,7 @@ export const RegisterContainer: React.FC = () => {
           onSubmit={handleFormSubmit}
           className=" flex flex-col  sm:w-[550px] w-full  items-center gap-3 bg-[var(--light-foreground)] p-6 rounded-lg text-[var(--dark-text)] "
         >
-          <div className="relative duration-150 group/image  flex flex-col items-center justify-center gap-1">
+          <div className="relative flex flex-col items-center justify-center gap-1 duration-150 group/image">
             {SelectedImage ? (
               <img
                 src={URL.createObjectURL(SelectedImage)}
@@ -301,7 +301,7 @@ export const RegisterContainer: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="w-full flex flex-col items-center gap-3 ">
+          <div className="flex flex-col items-center w-full gap-3 ">
             <button
               type="submit"
               className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
@@ -330,7 +330,7 @@ export const RegisterContainer: React.FC = () => {
 
 export const Register = () => {
   return (
-    <div className="flex w-full h-screen flex-col items-center justify-between 2xl:justify-center lg:py-5">
+    <div className="flex flex-col items-center justify-between w-full h-screen 2xl:justify-center lg:py-5">
       <RegisterContainer />
       <div className="w-full pt-10 ">
       <AuthFooter/>

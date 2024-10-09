@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as userAction from "../Services/user.services";
-import { ValidationType } from "../models/register.model";
 import { UpdateProfileInfo } from "../models/user.model";
 
 export interface SigninTypes {

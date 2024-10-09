@@ -12,10 +12,10 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
-interface Notifications{
-    isOpen: boolean
- }
-export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
+interface Notifications {
+  isOpen: boolean;
+}
+export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalData, setTotalData] = useState<number>();
@@ -68,14 +68,14 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
         currentLastDoc: null,
         pageSize: 5,
         sort: "desc",
-        direction: "next"
-     }) 
-}
-  },[isOpen])
+        direction: "next",
+      });
+    }
+  }, [isOpen]);
 
   return (
     <div className="p-4 w-[400px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
-      <h2 className="text-lg font-semibold mb-4">Notifications</h2>
+      <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
         className="w-full h-[350px] flex items-center justify-center pr-4 scrollbar-custom"
@@ -86,8 +86,8 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
           dataLength={(totalData as number) || 0}
           next={() =>
             getNotification({
-              currentFirstDoc: null || currentDoc?.currentFirstDoc,
-              currentLastDoc: null || currentDoc?.currentLastDoc,
+              currentFirstDoc: currentDoc?.currentFirstDoc || null,
+              currentLastDoc: currentDoc?.currentLastDoc || null,
               pageSize: 5,
               sort: "desc",
               uid: user.uid as string,
@@ -96,7 +96,7 @@ export const NotificationPage: React.FC<Notifications> = ({isOpen}) => {
           }
           loader={
             loader && (
-              <div className="w-full flex flex-col items-center pt-3 justify-center ">
+              <div className="flex flex-col items-center justify-center w-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
                 <div className="flex items-center justify-center gap-3">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
@@ -136,6 +136,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
 }: {
   notifications: Notification[];
   closeNotification: (id: string) => void;
+  isLoading: boolean;
 }) => {
   console.log(notifications);
   const removeNotification = async (id: string) => {
@@ -155,7 +156,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
     notifications.map((notification) => (
       <div
         key={notification.uid}
-        className="relative flex items-center p-4 mb-4 border rounded-lg shadow-lg bg-white text-gray-900"
+        className="relative flex items-center p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
       >
         <div className="flex-1">
           <h4 className="font-semibold">{notification.title}</h4>

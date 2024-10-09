@@ -69,38 +69,38 @@ const Pagination: React.FC<PaginationProps> = ({
       navigate(`?${navigateTo}=${page}`);
     }
   };
-  const renderPageNumbers = () => {
-    const pageNumbers: any[] = [];
-    const pages = getRange();
-    pages?.forEach((page, index) => {
-      pageNumbers.push(
-        <button
-          key={index}
-          className={`px-3 py-1 duration-150 rounded text-[var(--dark-text)] hover:text-[var(--dark-text)]  hover:bg-[var(--light-background)] ${
-            typeof page === "number" ? "pagination-page" : "not-btn"
-          } ${
-            page === currentPage
-              ? " text-[white] bg-red-500 hover:!bg-red-600  "
-              : ""
-          }`}
-          style={{
-            cursor: typeof page !== "number" ? "default" : "pointer",
-          }}
-          onClick={() => {
-            if (typeof page === "number") handlePageChange(page);
-          }}
-        >
-          {page}
-        </button>
-      );
-    });
-    return pageNumbers;
-  };
+  // const renderPageNumbers = () => {
+  //   const pageNumbers: any[] = [];
+  //   const pages = getRange();
+  //   pages?.forEach((page, index) => {
+  //     pageNumbers.push(
+  //       <button
+  //         key={index}
+  //         className={`px-3 py-1 duration-150 rounded text-[var(--dark-text)] hover:text-[var(--dark-text)]  hover:bg-[var(--light-background)] ${
+  //           typeof page === "number" ? "pagination-page" : "not-btn"
+  //         } ${
+  //           page === currentPage
+  //             ? " text-[white] bg-red-500 hover:!bg-red-600  "
+  //             : ""
+  //         }`}
+  //         style={{
+  //           cursor: typeof page !== "number" ? "default" : "pointer",
+  //         }}
+  //         onClick={() => {
+  //           if (typeof page === "number") handlePageChange(page);
+  //         }}
+  //       >
+  //         {page}
+  //       </button>
+  //     );
+  //   });
+  //   return pageNumbers;
+  // };
 
   return (
     <div className="w-full h-full flex items-center justify-end flex-nowrap py-[20px] px-[50px] ">
       <div className="flex items-center justify-center gap-4" style={style}>
-        <div className="flex  w-full items-center justify-center gap-2 ">
+        <div className="flex items-center justify-center w-full gap-2 ">
           <button
             disabled={currentPage === 1}
             className={`bg-[var(--light-background)]   ${
