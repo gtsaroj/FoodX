@@ -176,7 +176,7 @@ export const PieChartAnalytics = () => {
             series={[
               {
                 data: initialData?.map((data, index) => ({
-                  value: data.value,
+                  value: typeof data?.value === "number" ? data.value : null,
                   label: data.label.slice(0, 6),
                   id: index,
                 })),

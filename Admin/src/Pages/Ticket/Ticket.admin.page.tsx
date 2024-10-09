@@ -13,6 +13,7 @@ import { Filter, X } from "lucide-react";
 import { Button } from "../../Components/Common/Button/Button";
 import Modal from "../../Components/Common/Popup/Popup";
 import TicketView from "../../Components/Tickets/Ticket.view";
+import { addNotification } from "../../Services/notification.services";
 
 const TicketAdminPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -110,7 +111,33 @@ const TicketAdminPage = () => {
   ];
 
   const updateTicketFn = async (newStatus: TicketStatus["status"]) => {
+    const messages = {
+      pending: {
+        message: "Your ticket is pending. We'll get back to you shortly.",
+        title: "Ticket Pending",
+      },
+      progress: {
+        message: "We're working on your issue. Stay tuned for updates!",
+        title: "Ticket In Progress",
+      },
+      resolved: {
+        message: "Your issue has been resolved. Thanks for your patience!",
+        title: "Ticket Resolved",
+      },
+      rejected: {
+        message:
+          "Unfortunately, your ticket was rejected. Please contact support for details.",
+        title: "Ticket Rejected",
+      },
+    };
     await updateTicket({ id: id as string, newStatus: newStatus });
+    const { message, title } = messages[newStatus];
+    const findTicket = tickets?.find((ticket) => ticket.id === id);
+    await addNotification({
+      message: message,
+      title: title,
+      userId: findTicket?.uid as string,
+    });
     const updateTickets = tickets?.map((ticket) => {
       if (ticket.id === id) {
         return { ...ticket, status: newStatus };

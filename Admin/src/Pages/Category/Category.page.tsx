@@ -146,7 +146,7 @@ export const CategoryPage: React.FC = () => {
           sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
         );
       }
-      if (value.length <= 0) {
+      if (value?.length <= 0) {
         getAllCategories();
       }
       setInitialCategory(sortedCustomers as Category[]);

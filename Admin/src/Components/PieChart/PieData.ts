@@ -16,8 +16,6 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
   });
   const allCategory = await getCategories();
 
-  console.log(allCategory);
-
   // Combine small categories
   const combinedCategories = combineSmallCategories(categoryMap as any, 5);
 
@@ -33,7 +31,7 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
       if (matchingCategory) {
         label = matchingCategory.name;
       } else {
-        label = "default"; // If no match is found, set default
+        label = "N/A"; // If no match is found, set default
       }
     }
 
@@ -47,28 +45,26 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
 };
 
 interface dataProp {
-  label: Record<string, number>; // Assuming 'label' is a string-to-number mapping
-  value: number;
+  [key: string]: number; // Assuming 'data' is an object where keys are strings and values are numbers
 }
 
 export const combineSmallCategories = (
-  data: dataProp[], // 'data' is an array of 'dataProp'
+  data: dataProp, // Change to object
   minCount: number = 5
 ) => {
   const result: { label: string; value: number }[] = [];
   let othersTotal = 0;
 
-  // Iterate over the 'data' array
-  data.forEach((category) => {
-    Object.keys(category.label).forEach((key) => {
-      const value = category.label[key];
+  // Iterate over the keys of the object
+  Object.keys(data).forEach((key) => {
+    const value = data[key]; // Access the value using the key
 
-      if (value === undefined || value < minCount) {
-        othersTotal += value || 0;
-      } else {
-        result.push({ label: key, value: value });
-      }
-    });
+  
+    if (value === undefined || value < minCount) {
+      othersTotal += value || 0; 
+    } else {
+      result.push({ label: key, value: value }); 
+    }
   });
 
   // If there's any category with value < minCount, add "Others" label
@@ -76,6 +72,5 @@ export const combineSmallCategories = (
     result.push({ label: "Others", value: othersTotal });
   }
 
-  return result;
+  return result; 
 };
-

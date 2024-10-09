@@ -41,7 +41,8 @@ const AllProductAnalytics = () => {
       category?: "specials" | "products";
       id?: string;
     }[]
-  >([]);
+    >([]);
+  console.log(isFilter)
 
   const getProducts = async () => {
     setLoading(true);
@@ -50,7 +51,7 @@ const AllProductAnalytics = () => {
         getNormalProducts(),
         getSpecialProducts(),
       ]);
-      const allProducts = [...normalProducts.data, specialProducts.data];
+      const allProducts = [...normalProducts.data, ...specialProducts.data];
       const products = await aggregateProducts(allProducts);
       setFetchedProducts(products);
     } catch (error) {
@@ -143,6 +144,7 @@ const AllProductAnalytics = () => {
     const products = await aggregateProducts(filterProducts);
     setFetchedProducts(products);
   };
+  console.log(fetchedProducts)
 
   const searchProducts = async (value: string) => {
     const [specialProducts, normalProducts] = [
@@ -342,6 +344,7 @@ const AllProductAnalytics = () => {
         </div>
         <div className="">
           <Button
+            haveCheck={isFilter?.sortFilter}
             sortFn={(value) => setSortOrder(value)}
             bodyStyle={{
               width: "400px",

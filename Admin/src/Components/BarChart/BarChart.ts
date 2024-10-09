@@ -66,7 +66,7 @@ function groupProductsByWeek(revenueArray: Revenue[]): WeeklyOrders[] {
   revenueArray.forEach((revenue) => {
     const revenueDate = dayjs(revenue.id);
     const weekNumber = getWeekOfMonth(revenueDate); // Get the week number
-    console.log(weekNumber);
+
 
     if (!weeklyOrdersMap[weekNumber]) {
       weeklyOrdersMap[weekNumber] = []; // Initialize array if week not encountered before

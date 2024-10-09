@@ -92,7 +92,7 @@ export const MonthlyOrderChart: React.FC = () => {
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
     <div className={`w-full p-2 h-[450px]`}>
-      <p className="w-full py-2  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
+      <div className="w-full py-2  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
         <div className="flex items-center justify-start gap-2">
           <span>Top Products</span>
           <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
@@ -146,7 +146,7 @@ export const MonthlyOrderChart: React.FC = () => {
             ]}
           />
         </div>
-      </p>
+      </div>
       <div className="flex h-[20px] pt-1 items-center justify-start gap-2">
         {filter?.dateFilter?.startDate && filter.dateFilter.endDate && (
           <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
@@ -260,8 +260,8 @@ export const MonthlyOrderChart: React.FC = () => {
               },
             ]}
             series={dataKey?.map((key) => ({
-              dataKey: key,
-              label: key,
+              dataKey: typeof key === "string" ? key : undefined,
+              label: typeof key === "string" ? key : undefined,
             }))}
           />
         )}

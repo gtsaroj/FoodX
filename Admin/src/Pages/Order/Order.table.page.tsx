@@ -17,6 +17,7 @@ interface orderTableProp {
     checkAllFn?: (isChecked: boolean) => void;
     checkFn?: (id: string, isChecked: boolean) => void;
   };
+  handlePageDirection: (pageDirection: "next" | "prev") => void;
 }
 
 export const OrderTable: React.FC<orderTableProp> = ({
@@ -27,6 +28,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
   pagination,
   action,
   selectedData,
+  handlePageDirection
 }) => {
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
@@ -197,6 +199,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
+        handlePageDirection={(pageDirection)=> handlePageDirection(pageDirection)}
         selectedData={selectedData}
         totalData={totalData}
         data={initialOrder as any}

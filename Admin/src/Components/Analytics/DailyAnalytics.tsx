@@ -17,11 +17,11 @@ const Revenue: React.FC = () => {
     try {
       const response = await getRevenue({
         startDate: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
-        endDate: dayjs().format("YYYY-MM-DD")
+        endDate: dayjs().format("YYYY-MM-DD"),
       });
       const responseData = response.data;
       const analyticsData = aggregateCurrentDayData(responseData);
-       console.log(analyticsData)
+
       setTotalOrder(analyticsData as CardAnalyticsProp[]);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
@@ -32,7 +32,6 @@ const Revenue: React.FC = () => {
   useEffect(() => {
     getDailyData();
   }, []);
-   
 
   return (
     <React.Fragment>

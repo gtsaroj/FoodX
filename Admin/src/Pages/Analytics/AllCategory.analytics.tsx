@@ -164,7 +164,7 @@ const AllCategories = () => {
           sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
         );
       }
-      if (value.length <= 0 || undefined) {
+      if (value?.length <= 0 || undefined) {
         getAllCategories();
       }
       setInitialCategory(sortedCustomers as Category[]);

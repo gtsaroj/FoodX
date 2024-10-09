@@ -73,8 +73,6 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
     );
     const previousMonthRevenue = getRevenue(previousMonth);
 
-    console.log(previousMonth, month);
-
     const dailyAnalyticsData: CardAnalytic[] = [
       {
         title: "Items Delivered",

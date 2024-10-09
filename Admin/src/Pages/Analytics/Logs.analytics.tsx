@@ -24,7 +24,7 @@ const Logs = () => {
     sortFilter?: string;
     actionFilter?: keyof LogActionModal | string;
   }>();
-  const [sort, setSort] = useState<"asc" | "desc">("asc");
+  const [sort, setSort] = useState<"asc" | "desc">("desc");
 
   const handleCollapseFn = (logId: string) => {
     const logItems = items.map((item) =>

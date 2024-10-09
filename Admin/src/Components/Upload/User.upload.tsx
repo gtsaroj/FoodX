@@ -48,7 +48,6 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
   const [field, setField] = useState<"image" | "name" | "role">("name");
 
   const fileRef = useRef<HTMLImageElement>();
-  console.log(field, newData);
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!customerInfo.uid && !newData && !field)

@@ -62,8 +62,6 @@ const FoodPage: React.FC = () => {
         (product: Product) => ({ ...product, type: "specials" })
       );
 
-      console.log(aggregateNormalProducts, aggregateSpecialProducts);
-
       const products = await aggregateProducts([
         ...aggregateNormalProducts,
         ...aggregateSpecialProducts,
@@ -216,7 +214,6 @@ const FoodPage: React.FC = () => {
   };
 
   const searchProducts = async (value: string) => {
-    console.log(value);
     const [specialProducts, normalProducts] = [
       await getSpecialProducts(),
       await getNormalProducts(),

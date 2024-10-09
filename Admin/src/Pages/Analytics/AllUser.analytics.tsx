@@ -37,6 +37,7 @@ const AllCustomers = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
+    pageDirection?: "prev" | "next";
   }>({ currentPage: 1, perPage: 5 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
@@ -210,7 +211,6 @@ const AllCustomers = () => {
         (data) => data.uid !== id
       );
       setInitialCustomer(refreshCustomer);
-     
     } catch (error) {
       toast.dismiss(toastLoader);
       toast.error("Error while delting user");
@@ -266,11 +266,7 @@ const AllCustomers = () => {
 
   // fetch next page
   useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.currentFirstDoc &&
-      currentDoc.currentLastDoc
-    ) {
+    if (pagination.currentPage > 1 && pagination.pageDirection) {
       (async () => {
         setLoading(true);
         const customers = await getUsers({
@@ -278,7 +274,7 @@ const AllCustomers = () => {
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
             "customer",
           pageSize: pagination.perPage,
-          direction: "next",
+          direction: pagination.pageDirection || "next",
           filter: (isFilter?.sortFilter as keyof User) || "fullName",
           sort: (isFilter?.sortFilter as "asc" | "desc") || "asc",
           currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
@@ -324,6 +320,7 @@ const AllCustomers = () => {
     pagination.perPage,
     isFilter?.sortFilter,
     isFilter?.typeFilter,
+    pagination.pageDirection,
   ]);
 
   return (
@@ -440,6 +437,9 @@ const AllCustomers = () => {
         </div>
       </div>
       <CustomerTable
+        handlePageDirection={(pageDirection) =>
+          setPagination((prev) => ({ ...prev, pageDirection: pageDirection }))
+        }
         totalData={totalData || 1}
         onPageChange={(page) =>
           setPagination((prev) => ({ ...prev, currentPage: page }))

@@ -190,7 +190,7 @@ const TicketPage: React.FC = () => {
               : " bg-[var(--danger-bg)] "
           }  text-sm  font-[550] contrast-150 rounded text-white `}
         >
-          Cancel
+          Reject
         </button>
       </div>
       {/* Employee Card */}

@@ -16,6 +16,7 @@ interface CustomerTableProp {
   totalData?: number;
   pagination: { currentPage: number; perPage: number };
   onPageChange: (page: number) => void;
+  handlePageDirection: (pageDirection: "next" | "prev") => void;
 }
 
 export const CustomerTable: React.FC<CustomerTableProp> = ({
@@ -26,6 +27,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
   onPageChange,
   pagination,
   totalData,
+  handlePageDirection
 }) => {
   const Columns: ColumnProps[] = [
     {
@@ -95,6 +97,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
   return (
     <div className="w-full">
       <Table
+        handlePageDirection={(pageDirection)=> handlePageDirection(pageDirection)}
         totalData={totalData as number}
         data={users as any}
         columns={Columns}

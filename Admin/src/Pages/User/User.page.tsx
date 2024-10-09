@@ -4,7 +4,7 @@ import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
 import { getUsers, searchUser } from "../../Services/user.services";
-import {  GetUserModal, User } from "../../models/user.model";
+import { GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
 
 const CustomerList: React.FC = () => {
@@ -14,7 +14,8 @@ const CustomerList: React.FC = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 2 });
+    pageDirection?: "prev" | "next";
+  }>({ currentPage: 1, perPage: 5 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
@@ -94,33 +95,25 @@ const CustomerList: React.FC = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    if (pagination.currentPage === 1) {
-      console.log("currentpage");
-      handleCustomerData({
-        path:
-          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
-        direction: "next",
-        filter: (isFilter?.sortFilter as keyof User) || "fullName",
-        pageSize: pagination.perPage,
-        sort: sortOrder || "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-      });
-    }
+    handleCustomerData({
+      path:
+        (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+      direction: "next",
+      filter: (isFilter?.sortFilter as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
     pagination.perPage,
     isFilter?.sortFilter,
     isFilter?.typeFilter,
     sortOrder,
-    pagination.currentPage,
   ]);
 
   useEffect(() => {
-    if (
-      pagination.currentPage > 1 &&
-      currentDoc?.currentFirstDoc &&
-      currentDoc.currentLastDoc
-    ) {
+    if (pagination.currentPage > 1 && pagination.pageDirection) {
       (async () => {
         setLoading(true);
         const customers = await getUsers({
@@ -128,7 +121,7 @@ const CustomerList: React.FC = () => {
             (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
             "customer",
           pageSize: pagination.perPage,
-          direction: "next",
+          direction: pagination?.pageDirection || "next",
           filter: (isFilter?.sortFilter as keyof User) || "fullName",
           sort: isFilter?.sortFilter || "asc",
           currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
@@ -163,6 +156,7 @@ const CustomerList: React.FC = () => {
     pagination.perPage,
     isFilter?.sortFilter,
     isFilter?.typeFilter,
+    pagination.pageDirection,
   ]);
 
   return (
@@ -178,10 +172,6 @@ const CustomerList: React.FC = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex  items-center justify-center gap-2">
-            <button className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded">
-              <Download strokeWidth={2.5} className="size-5" />
-              <p className="text-[16px] tracking-widest ">Export</p>
-            </button>
             {/* Filter button */}
             <Button
               bodyStyle={{
@@ -292,6 +282,9 @@ const CustomerList: React.FC = () => {
         )}
       </div>
       <CustomerTable
+        handlePageDirection={(pageDirection) =>
+          setPagination((prev) => ({ ...prev, pageDirection: pageDirection }))
+        }
         totalData={totalData || 1}
         pagination={{
           currentPage: pagination.currentPage,

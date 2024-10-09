@@ -16,6 +16,7 @@ import {
   Menu,
   User,
   X,
+  Bell,
 } from "lucide-react";
 import Logout from "../Logout/Logout";
 import { signOut } from "../../Services/user.services";
@@ -23,6 +24,7 @@ import { Loader } from "../Common/Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import Profile from "../../Auth/AuthProfile";
+import { NotificationPage } from "../Notification/Notification";
 
 interface DesktopSliderProp {
   closeFn: () => void;
@@ -240,9 +242,10 @@ export const MobileSlider: React.FC = () => {
     return prefersDarkScheme;
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [openNotification, setOpenNotification] = useState<boolean>(false);
 
   const profileReference = useRef<HTMLDivElement>();
-
+  const notificationReference = useRef<HTMLDivElement>();
   useEffect(() => {
     const closeModal = (event: MouseEvent) => {
       if (
@@ -251,8 +254,17 @@ export const MobileSlider: React.FC = () => {
       ) {
         setIsOpen(false);
       }
+      if (
+        notificationReference.current &&
+        !notificationReference.current.contains(event.target as any)
+      ) {
+        setOpenNotification(false);
+      }
     };
     if (isOpen) {
+      document.addEventListener("mousedown", closeModal);
+    }
+    if (openNotification) {
       document.addEventListener("mousedown", closeModal);
     }
     if (isDark) {
@@ -295,6 +307,23 @@ export const MobileSlider: React.FC = () => {
             />
             <span className="slider"></span>
           </label>
+          {user.role === "chef" && (
+            <div ref={notificationReference as any} className="relative">
+              <Bell
+                onClick={() => setOpenNotification(!openNotification)}
+                className="size-7 text-[var(--dark-text)] cursor-pointer "
+              />
+              <div
+                className={`absolute w-[300px] z-30 duration-150 ${
+                  openNotification
+                    ? "visible opacity-100 -translate-y-0 "
+                    : "invisible opacity-0 translate-y-10"
+                }   right-[4.7rem] top-8`}
+              >
+                <NotificationPage isOpen={openNotification} />
+              </div>
+            </div>
+          )}
           <div>
             {user ? (
               <div
