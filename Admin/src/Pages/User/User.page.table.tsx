@@ -5,7 +5,7 @@ import { ColumnProps } from "../../models/table.model";
 
 interface CustomerTableProp {
   users: User[];
-  selectedData?: Array<T>;
+  selectedData?: Array<any>;
   loading?: boolean;
   actions?: {
     delete?: (id: string) => void;
@@ -87,7 +87,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
       colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
       render: (item: User) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
-          <p>Rs {item.amountSpent}</p>
+          <p>Rs {item.totalSpent}</p>
         </div>
       ),
     },
@@ -96,7 +96,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
     <div className="w-full">
       <Table
         totalData={totalData as number}
-        data={users}
+        data={users as any}
         columns={Columns}
         actionIconColor="red"
         disableActions={!actions}

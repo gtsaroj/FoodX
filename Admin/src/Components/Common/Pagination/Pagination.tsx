@@ -1,17 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaAngleDoubleLeft,
-  FaAngleDoubleRight,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./Pagination.scss";
-
-const range = (start: number, end: number) => {
-  const length = end - start + 1;
-  return Array.from({ length }, (_, idx) => idx + start);
-};
 
 interface PaginationProps {
   totalData: number;
@@ -35,70 +25,11 @@ const Pagination: React.FC<PaginationProps> = ({
   const totalPages = Math.ceil(totalData / perPage);
   const navigate = useNavigate();
 
-  const getRange = () => {
-    const siblingCount = 1;
-    const totalPageNumbers = siblingCount + 5;
-
-    if (totalPages <= totalPageNumbers) {
-      return range(1, totalPages);
-    }
-
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-    const showLeftDots = leftSiblingIndex > 2;
-    const showRightDots = rightSiblingIndex < totalPages - 1;
-
-    if (!showLeftDots && showRightDots) {
-      const leftCount = 1 + 2 * siblingCount;
-      const leftRange = range(1, leftCount);
-      return [...leftRange, "...", totalPages];
-    }
-
-    if (showLeftDots && !showRightDots) {
-      const rightCount = 1 + 2 * siblingCount;
-      const rightRange = range(totalPages - rightCount + 1, totalPages);
-      return [1, "...", ...rightRange];
-    }
-
-    if (showLeftDots && showRightDots) {
-      const middleRange = range(leftSiblingIndex, rightSiblingIndex);
-      return [1, "...", ...middleRange, "...", totalPages];
-    }
-  };
-
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       onChange(page);
       navigate(`?${navigateTo}=${page}`);
     }
-  };
-  const renderPageNumbers = () => {
-    const pageNumbers: any[] = [];
-    const pages = getRange();
-    pages?.forEach((page, index) => {
-      pageNumbers.push(
-        <button
-          key={index}
-          className={`px-3 py-1 duration-150 rounded text-[var(--dark-text)] hover:text-[var(--dark-text)]  hover:bg-[var(--light-background)] ${
-            typeof page === "number" ? "pagination-page" : "not-btn"
-          } ${
-            page === currentPage
-              ? " text-[var(--dark-text)] bg-red-500 hover:!bg-red-600  "
-              : ""
-          }`}
-          style={{
-            cursor: typeof page !== "number" ? "default" : "pointer",
-          }}
-          onClick={() => {
-            if (typeof page === "number") handlePageChange(page);
-          }}
-        >
-          {page}
-        </button>
-      );
-    });
-    return pageNumbers;
   };
 
   return (

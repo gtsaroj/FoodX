@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { RecentOrderType, status } from "../../../models/order.model";
-import { convertIsoToReadableDateTime } from "../../../Utility/DateUtils";
+import {  RecentOrder, status } from "../../../models/order.model";
 import dayjs from "dayjs";
 import { StatusChanger } from "../../../Pages/Order/Order.table.page";
 import toast from "react-hot-toast";
@@ -14,7 +13,7 @@ import { updateOrderStatus } from "../../../Services/order.services";
 //   date: Date;
 // }
 
-export const OrderCard: React.FC<RecentOrderType> = ({
+export const OrderCard: React.FC<RecentOrder> = ({
   orderId,
   image,
   products,
@@ -59,7 +58,7 @@ export const OrderCard: React.FC<RecentOrderType> = ({
           </p>
 
           <p className="text-sm text-[var(--dark-secondary-text)] pb-3">
-            {products}
+            {products as string[]}
           </p>
           <p className="text-lg text-[var(--dark-text)] font-semibold tracking-wide">
             Rs <span>{price}</span>

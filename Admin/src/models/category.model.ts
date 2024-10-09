@@ -1,7 +1,7 @@
 export interface Category {
-  id?: string;
+  id: string;
   name: string;
-  image?: string;
+  image: string;
   item: number;
   order: number;
   revenue: number;

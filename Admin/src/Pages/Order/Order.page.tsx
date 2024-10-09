@@ -16,7 +16,6 @@ import dayjs from "dayjs";
 import { getFullName, getUserInfo } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
 import { Invoice, InvoiceDocumentProp } from "../../Invoice/Invoice";
-import { nanoid } from "@reduxjs/toolkit";
 import { Product } from "../../models/product.model";
 import Modal from "../../Components/Common/Popup/Popup";
 import { socket } from "../../Utility/socket.util";
@@ -78,7 +77,7 @@ const OrderList = () => {
       });
 
       const getaggregateDataPromises = await Promise.all(aggregateData);
-      setInitialOrders(getaggregateDataPromises);
+      setInitialOrders(getaggregateDataPromises as OrderModal[]);
     } catch (error) {
       setLoading(false);
       throw new Error("Unable to display orders data" + error);
@@ -88,7 +87,15 @@ const OrderList = () => {
 
   const handleChange = (value: string) => {
     const filterOrder = SearchOrder(initialOrders, value);
-    if (value?.length === 0) getAllOrders();
+    if (value?.length === 0)
+      getAllOrders({
+        pageSize: pagination.perPage,
+        currentFirstDoc: null,
+        currentLastDoc: null,
+        direction: "next",
+        filter: (isFilter?.sortFilter as keyof Order) || "orderRequest",
+        sort: "desc",
+      });
     setInitialOrders(filterOrder);
   };
 
@@ -174,11 +181,11 @@ const OrderList = () => {
             };
           });
           const getaggregateDataPromises = await Promise.all(aggregateData);
-          setInitialOrders((prev) => {
+          setInitialOrders((prev: any) => {
             return [
               ...prev,
               ...getaggregateDataPromises.filter(
-                (order) => !prev.some((data) => data.id === order.id)
+                (order) => !prev.some((data: OrderModal) => data.id === order.id)
               ),
             ];
           });
@@ -258,8 +265,8 @@ const OrderList = () => {
 
     fetchOrders();
   }, [exportSelectedOrder, initialOrders]);
-  
-  console.log(resolvedOrders)
+
+  console.log(resolvedOrders);
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-4 rounded-sm">

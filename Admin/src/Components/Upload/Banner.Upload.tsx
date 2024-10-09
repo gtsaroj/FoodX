@@ -15,7 +15,7 @@ import { Selector } from "../Selector/Selector";
 interface UploadBannerProp {
   closeModal: () => void;
 }
-const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
+const UploadBanner: React.FC<UploadBannerProp> = () => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
@@ -47,6 +47,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
           action: "create",
           date: new Date(),
           detail: `Banner : ${name} `,
+          
         });
         setImage("");
         setName("");

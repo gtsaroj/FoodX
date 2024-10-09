@@ -34,7 +34,7 @@ export const CategoryPage: React.FC = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
-    { id: string }[]
+    { id?: string }[]
   >([]);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -91,7 +91,7 @@ export const CategoryPage: React.FC = () => {
       const AllCategoriesId = bulkSelectedCategory?.map(
         (category) => category.id
       );
-      await bulkDeleteOfCategory(AllCategoriesId);
+      await bulkDeleteOfCategory(AllCategoriesId as string[]);
       toast.dismiss(toastLoader);
       const refreshCategory = initialCategory.filter((category) => {
         return !AllCategoriesId.includes(category.id as string);

@@ -1,5 +1,4 @@
 import { getRevenue } from "../../Utility/order.utils";
-import { DailyOrders } from "../../models/chart.modal";
 import { Product } from "../../models/product.model";
 import { Revenue, RevenueInfo } from "../../models/revenue.model";
 import dayjs from "dayjs";

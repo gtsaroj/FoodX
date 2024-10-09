@@ -1,6 +1,6 @@
 import { getOrderByUser } from "../Services/order.services";
 import { getUser } from "../Services/user.services";
-import { getCustomerData, getUserData } from "../firebase/db";
+import { getCustomerData } from "../firebase/db";
 import { Order } from "../models/order.model";
 import { Product } from "../models/product.model";
 import { DbUser, User } from "../models/user.model";
@@ -71,7 +71,7 @@ export const aggregateCustomerData = async (
           fullName: data.fullName,
           email: data.email,
           avatar: data.avatar,
-          amountSpent: Math.round(totalCustomerCost * 100) / 100,
+          totalSpent: Math.round(totalCustomerCost * 100) / 100,
           totalOrder: totalCustomerQuantity,
           role: data.role as "customer" | "admin" | "chef",
         };
@@ -100,9 +100,15 @@ export const getTopCustomers = async () => {
     const getCustomer = await getCustomerData("customer");
     if (getCustomer.length <= 0) return [];
     const customerList = await aggregateCustomerData(getCustomer);
-    const sortBySpent = customerList.sort(
-      (a: User, b: User) => b.amountSpent - a.amountSpent
-    );
+    const sortBySpent = customerList.sort((a: User, b: User) => {
+      // Safely handle undefined values by assigning 0 as a default if undefined
+      const spentA = a?.totalSpent ?? 0;
+      const spentB = b?.totalSpent ?? 0;
+    
+      return spentB - spentA;
+    });
+    
+    return sortBySpent;
     return sortBySpent.slice(0, 5);
   } catch (error) {
     throw new Error("Error while sorting top customers : " + error);

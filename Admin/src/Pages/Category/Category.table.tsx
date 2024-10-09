@@ -91,7 +91,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
   ];
   return (
     <Table
-      totalData={totalData}
+      totalData={totalData as number} 
       selectedData={selectedData}
       data={category}
       columns={Columns}

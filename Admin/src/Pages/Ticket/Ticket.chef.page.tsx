@@ -21,10 +21,6 @@ import { Empty } from "../../Components/Common/Empty/Empty";
 const TicketPage: React.FC = () => {
   const [ticketState, setTicketState] =
     useState<TicketStatus["status"]>("pending");
-  const [pagination, setPagination] = useState<{
-    perPage: number;
-    currentPage: number;
-  }>({ currentPage: 1, perPage: 5 });
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalData, setTotalData] = useState<number>(0);
   const [closeModal, setCloseModal] = useState<boolean>(true);
@@ -74,13 +70,13 @@ const TicketPage: React.FC = () => {
   useEffect(() => {
     fetchTickets({
       direction: "next",
-      pageSize: pagination?.perPage,
+      pageSize: 5,
       sort: "asc",
       currentFirstDoc: null,
       currentLastDoc: null,
       status: ticketState || "pending",
     });
-  }, [pagination.perPage, ticketState, isRefresh]);
+  }, [ticketState, isRefresh]);
 
   useEffect(() => {
     if (
@@ -91,7 +87,7 @@ const TicketPage: React.FC = () => {
         try {
           const response = (await getTickets({
             direction: "next",
-            pageSize: pagination.perPage,
+            pageSize: 5,
             sort: "desc",
             currentFirstDoc: currentDoc?.currentFirstDoc,
             currentLastDoc: currentDoc?.currentLastDoc,
@@ -102,7 +98,7 @@ const TicketPage: React.FC = () => {
             currentLastDoc: string;
             length: number;
           };
-          if (response.tickets.length < pagination.perPage) {
+          if (response.tickets.length < 5) {
             setHasMore(false);
           }
 
@@ -126,7 +122,7 @@ const TicketPage: React.FC = () => {
       };
       fetchNextPage();
     }
-  }, [pagination.perPage]);
+  }, []);
 
   const TicketComponents = {
     pending: <PendingTicket prop={tickets} loading={loading} />,
@@ -230,7 +226,7 @@ const TicketPage: React.FC = () => {
               next={() => {
                 fetchTickets({
                   direction: "next",
-                  pageSize: pagination?.perPage,
+                  pageSize: 5,
                   sort: "asc",
                   currentFirstDoc: null || currentDoc?.currentFirstDoc,
                   currentLastDoc: null || currentDoc?.currentLastDoc,

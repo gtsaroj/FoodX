@@ -4,7 +4,7 @@ import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
 import { getUsers, searchUser } from "../../Services/user.services";
-import { DbUser, GetUserModal, User } from "../../models/user.model";
+import {  GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
 
 const CustomerList: React.FC = () => {
@@ -138,7 +138,7 @@ const CustomerList: React.FC = () => {
         const users = customers.data as {
           currentFirstDoc: string;
           currentLastDoc: string;
-          users: DbUser[];
+          users: User[];
           length: number;
         };
         setCurrentDoc({

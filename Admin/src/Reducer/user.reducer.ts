@@ -34,7 +34,18 @@ const authSlice = createSlice({
   name: "auth",
   reducers: {
     authLogout: (state) => {
-      state.userInfo = {};
+      state.userInfo = {
+        fullName: "",
+        totalSpent: 0,
+        totalOrder: 0,
+        id: "",
+        avatar: "",
+        email: "",
+        phoneNumber: "",
+        refreshToken: "",
+        role: undefined,
+        uid: "",
+      };
       state.success = false;
       state.loading = true;
     },
@@ -51,7 +62,19 @@ const authSlice = createSlice({
     });
     builder.addCase(signUpAction.rejected, (state) => {
       state.loading = false;
-      (state.success = false), (state.userInfo = {});
+      (state.success = false),
+        (state.userInfo = {
+          fullName: "",
+          totalSpent: 0,
+          totalOrder: 0,
+          id: "",
+          avatar: "",
+          email: "",
+          phoneNumber: "",
+          refreshToken: "",
+          role: undefined,
+          uid: "",
+        });
       state.error = false;
     });
     // action to login existing user
@@ -67,31 +90,42 @@ const authSlice = createSlice({
     builder.addCase(signInAction.rejected, (state) => {
       state.error = true;
       state.loading = false;
-      state.userInfo = {};
+      state.userInfo = {
+        fullName: "",
+        totalSpent: 0,
+        totalOrder: 0,
+        id: "",
+        avatar: "",
+        email: "",
+        phoneNumber: "",
+        refreshToken: "",
+        role: undefined,
+        uid: "",
+      };
     });
 
-        // Update existing user
-        builder.addCase(updateUserAction.pending, (state) => {
-          state.loading = true;
-        });
-        builder.addCase(
-          updateUserAction.fulfilled,
-          (state, action: PayloadAction<UpdateProfileInfo>) => {
-            const payload = action.payload;
-            const keys = Object.keys(payload) as Array<keyof UpdateProfileInfo>;
-    
-            keys.forEach((key) => {
-              if (payload[key] !== undefined) {
-                // Handle phoneNumber separately if needed
-                if (key === "phoneNumber" && typeof payload[key] === "number") {
-                  state.userInfo[key] = String(payload[key]); // Convert number to string
-                } else {
-                  state.userInfo[key] = payload[key] as string | undefined;
-                }
-              }
-            });
+    // Update existing user
+    builder.addCase(updateUserAction.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(
+      updateUserAction.fulfilled,
+      (state, action: PayloadAction<UpdateProfileInfo>) => {
+        const payload = action.payload;
+        const keys = Object.keys(payload) as Array<keyof UpdateProfileInfo>;
+
+        keys.forEach((key) => {
+          if (payload[key] !== undefined) {
+            // Handle phoneNumber separately if needed
+            if (key === "phoneNumber" && typeof payload[key] === "number") {
+              state.userInfo[key] = String(payload[key]); // Convert number to string
+            } else {
+              state.userInfo[key] = payload[key] as string;
+            }
           }
-        );
+        });
+      }
+    );
   },
 });
 export const authReducer = authSlice.reducer;

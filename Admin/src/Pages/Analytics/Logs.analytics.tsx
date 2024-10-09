@@ -15,10 +15,6 @@ const Logs = () => {
   const [items, setItems] = useState<LogCardProps[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [totalData, setTotalData] = useState<number>(0);
-  const [pagination, setPagination] = useState({
-    perPage: 8,
-    currentPage: 1,
-  });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirst: string;
     currentLastDoc: string;
@@ -102,19 +98,19 @@ const Logs = () => {
         (isFilter?.typeFilter as "customerLogs" | "adminLogs" | "chefLogs") ||
         "adminLogs",
       filter: (isFilter?.sortFilter as keyof LogCardProps) || "name",
-      pageSize: pagination.perPage,
+      pageSize: 5,
       sort,
       currentFirstDoc: null,
       currentLastDoc: null,
       direction: "next",
-      action: isFilter?.actionFilter,
+      action: isFilter?.actionFilter as LogActionModal["action"],
     });
   }, [
     isFilter?.typeFilter,
     isFilter?.actionFilter,
     isFilter?.sortFilter,
     sort,
-    pagination.perPage,
+   
   ]);
 
   return (
@@ -278,12 +274,12 @@ const Logs = () => {
                       | "chefLogs") || "adminLogs",
                   filter:
                     (isFilter?.sortFilter as keyof LogCardProps) || "name",
-                  pageSize: pagination.perPage,
+                  pageSize: 5,
                   sort,
                   currentFirstDoc: currentDoc?.currentFirst,
                   currentLastDoc: currentDoc?.currentLastDoc,
                   direction: "next",
-                  action: isFilter?.actionFilter,
+                  action: isFilter?.actionFilter as keyof LogCardProps["action"],
                 })
               }
               loader={

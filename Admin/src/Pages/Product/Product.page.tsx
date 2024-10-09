@@ -29,8 +29,8 @@ const FoodPage: React.FC = () => {
   const [id, setId] = useState<string>();
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
-      category: "specials" | "products";
-      id: string;
+      category?: "specials" | "products";
+      id?: string;
     }[]
   >([]);
   const [pagination, setPagination] = useState<{
@@ -62,13 +62,13 @@ const FoodPage: React.FC = () => {
         (product: Product) => ({ ...product, type: "specials" })
       );
 
-      console.log(aggregateNormalProducts, aggregateSpecialProducts)
+      console.log(aggregateNormalProducts, aggregateSpecialProducts);
 
       const products = await aggregateProducts([
         ...aggregateNormalProducts,
         ...aggregateSpecialProducts,
       ]);
-  
+
       setFetchedProducts(products);
     } catch (error) {
       console.error("Error while fetching products:", error);
@@ -76,8 +76,6 @@ const FoodPage: React.FC = () => {
       setLoading(false); // Ensure loading state is reset even in case of an error
     }
   };
-
- 
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");
@@ -89,9 +87,9 @@ const FoodPage: React.FC = () => {
       }>(
         (acc, product) => {
           if (product.category === "specials") {
-            acc.specials.push(product.id);
+            acc.specials.push(product?.id as string);
           } else if (product.category === "products") {
-            acc.products.push(product.id);
+            acc.products.push(product?.id as string);
           }
           return acc;
         },
@@ -133,7 +131,8 @@ const FoodPage: React.FC = () => {
     isChecked: boolean,
     value: "specials" | "products"
   ) => {
-    if (!isChecked) return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+    if (!isChecked)
+      return setIsFilter((prev) => ({ ...prev, typeFilter: undefined }));
     setIsFilter((prev) => ({ ...prev, typeFilter: value }));
   };
 

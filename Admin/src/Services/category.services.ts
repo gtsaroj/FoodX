@@ -1,5 +1,5 @@
 import { makeRequest } from "../makeRequest";
-import { CategoryType, UpdateCategoryType } from "../models/category.model";
+import { Category, UpdateCategory } from "../models/category.model";
 
 // categories
 export const addCategory = async (data: { image: string; name: string }) => {
@@ -14,7 +14,7 @@ export const addCategory = async (data: { image: string; name: string }) => {
       throw new Error("Unable to add new category" + error);
     }
   };
-  export const updateCategory = async (data: UpdateCategoryType) => {
+  export const updateCategory = async (data: UpdateCategory) => {
     try {
       const response = await makeRequest({
         method: "put",
@@ -38,7 +38,7 @@ export const addCategory = async (data: { image: string; name: string }) => {
       throw new Error("Unable to delete exist category" + error);
     }
   };
-  export const getCategories = async (): Promise<CategoryType[]> => {
+  export const getCategories = async (): Promise<Category[]> => {
     try {
       const response = await makeRequest({
         method: "get",

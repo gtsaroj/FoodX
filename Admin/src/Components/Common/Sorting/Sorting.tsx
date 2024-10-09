@@ -1,4 +1,4 @@
-import { ArrowDownAZ, ArrowUp, Key } from "lucide-react";
+import { ArrowDownAZ, ArrowUp } from "lucide-react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface SortValue {
@@ -11,7 +11,7 @@ interface SortValue {
 
 export const FilterButton: React.FC<SortValue> = ({
   onSelect,
-  data,
+  
   sortOrder,
   bodyStyle,
   parent,

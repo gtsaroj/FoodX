@@ -5,7 +5,7 @@ import { ColumnProps } from "../../models/table.model";
 
 interface FoodTableProp {
   products: Product[];
-  selectedData?: Array<T>;
+  selectedData?: Array<any>;
   loading?: boolean;
   actions: {
     checkAllFn?: (isChecked: boolean) => void;

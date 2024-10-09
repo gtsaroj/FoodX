@@ -24,26 +24,8 @@ export const PieChartAnalytics = () => {
         startDate: startDate,
         endDate: endDate,
       });
-      const aggregateData =  await aggregateDailyCategoryOrder(response.data);
-      console.log(aggregateData);
-      setInitialData(aggregateData);
-    } catch (error) {
-      throw new Error("Error while fetching revenue" + error);
-    }
-    setLoading(false);
-  };
+      const aggregateData = await aggregateDailyCategoryOrder(response.data);
 
-  const getPreviousPiechartData = async ({
-    startDate,
-    endDate,
-  }: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-      const aggregateData = aggregateDailyCategoryOrder(response.data);
       setInitialData(aggregateData);
     } catch (error) {
       throw new Error("Error while fetching revenue" + error);
@@ -76,8 +58,6 @@ export const PieChartAnalytics = () => {
     filter?.dateFilter?.endDate,
     filter?.dateFilter?.startDate,
   ]);
-
-   console.log(initialData)
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
@@ -197,7 +177,7 @@ export const PieChartAnalytics = () => {
               {
                 data: initialData?.map((data, index) => ({
                   value: data.value,
-                  label: data.label.slice(0,6),
+                  label: data.label.slice(0, 6),
                   id: index,
                 })),
                 highlightScope: { fade: "series", highlight: "item" },

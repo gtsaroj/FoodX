@@ -23,7 +23,6 @@ import { Loader } from "../Common/Loader/Loader";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import Profile from "../../Auth/AuthProfile";
-import TicketAdminPage from "../../Pages/Ticket/Ticket.admin.page";
 
 interface DesktopSliderProp {
   closeFn: () => void;

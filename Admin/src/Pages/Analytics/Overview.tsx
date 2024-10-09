@@ -4,23 +4,9 @@ import {
   MonthlyOrderLinechart,
   MonthlyRevenueChart,
 } from "../../Components/LineChart/LineChart";
-import { useState } from "react";
-import { Dayjs } from "dayjs";
 import { MonthlyAnalytics } from "../../Components/Analytics/MonthlyAnalytics.tsx";
 
 const Overview: React.FC = () => {
-  const [dateRange, setDateRange] = useState<{
-    startDate: Dayjs | undefined;
-    endDate: Dayjs | undefined;
-  }>({
-    startDate: undefined,
-    endDate: undefined,
-  });
-
-  const handleDateChange = (startDate: Dayjs, endDate: Dayjs) => {
-    setDateRange({ startDate, endDate });
-  };
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="w-full">
@@ -28,16 +14,11 @@ const Overview: React.FC = () => {
       </div>
       <div className="flex xl:flex-row flex-col items-center justify-between w-full gap-5 px-5 py-5">
         <div className="w-full h-full xl:max-w-[550px] flex flex-col items-center justify-center border-[1px] border-[var(--dark-border)] rounded-md px-2 py-0 min-w-[400px] flex-grow">
-          <MonthlyOrderChart
-            dateRange={dateRange as { startDate: Dayjs; endDate: Dayjs }}
-            height={425}
-          />
+          <MonthlyOrderChart />
         </div>
 
         <div className="w-full xl:max-w-[500px] h-[450px] min-w-[200px] border-[1px] border-[var(--dark-border)] p-2 rounded-md">
-          <MonthlyOrderLinechart
-            dateRange={dateRange as { startDate: Dayjs; endDate: Dayjs }}
-          />
+          <MonthlyOrderLinechart />
         </div>
       </div>
       <div className="flex items-center 2xl:flex-row flex-col  justify-start w-full gap-3 px-5 ">

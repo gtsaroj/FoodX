@@ -37,8 +37,8 @@ export interface User {
   email?: string;
   phoneNumber?: string;
   role?: UserRole["role"];
-  totalSpent: number;
-  totalOrder: number;
+  totalSpent?: number;
+  totalOrder?: number;
   refreshToken?: string;
 }
 

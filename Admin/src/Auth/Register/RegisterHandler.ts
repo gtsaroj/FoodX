@@ -1,13 +1,13 @@
-import { ValidationType } from "../../models/user.model";
+import { Register } from "../../models/user.model";
 
 export const allFieldsRequired = (
-  RegisterValue: ValidationType,
+  RegisterValue: Register,
   error: Record<string, string>
 ) => {
   for (const inputValue in RegisterValue) {
     if (
-      RegisterValue.hasOwnProperty(inputValue) &&
-      RegisterValue[inputValue as keyof ValidationType] === ""
+      RegisterValue[inputValue as keyof Register] &&
+      RegisterValue[inputValue as keyof Register] === ""
     )
       error[inputValue] = `All are required`;
   }
@@ -18,7 +18,7 @@ export const allFieldsRequired = (
 };
 
 export const validateEmail = (
-  RegisterValue: ValidationType,
+  RegisterValue: Register,
   error: Record<string, string>
 ) => {
   //TODO: Change this according to college/school.
@@ -32,7 +32,7 @@ export const validateEmail = (
 };
 
 export const validatePasswordOnChange = (
-  RegisterValue: ValidationType,
+  RegisterValue: Register,
   error: Record<string, string>
 ) => {
   const password = RegisterValue.password;
@@ -61,7 +61,7 @@ export const validatePasswordOnChange = (
 };
 
 export const checkValidNumber = (
-  registervalue: ValidationType,
+  registervalue: Register,
   error: Record<string, string>
 ) => {
   if (registervalue.phoneNumber.length < 10) {

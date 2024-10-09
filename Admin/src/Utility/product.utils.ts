@@ -1,9 +1,9 @@
-import { Order, Product } from "../models/order.model";
-import { ArrangedProduct } from "../models/product.model";
+import { Order } from "../models/order.model";
+import { Product } from "../models/product.model";
 
 export const totalQuantity = (products: Product[]) => {
   const customerOrderQuantity = products?.reduce(
-    (prodSum, product) => prodSum + product?.quantity,
+    (prodSum, product) => prodSum + Number(product.quantity),
     0
   );
   return customerOrderQuantity;
@@ -14,25 +14,25 @@ export const totalRevenue = (orders: Order[]) => {
     (total, order) =>
       total +
       order?.products.reduce(
-        (totalProd, product) => totalProd + product.price,
-        1
+        (totalProd, product) => totalProd + Number(product.price),
+        0
       ),
 
-    1
+    0
   );
   return revenue;
 };
 
 export const totalCost = (products: Product[]) => {
-  const customerOrderCost = products?.reduce(
-    (prodSum, product) => prodSum + product?.price,
+  const customerOrderCost = products.reduce(
+    (prodSum, product) => prodSum + Number(product.price),
     0
   );
   typeof customerOrderCost;
   return customerOrderCost;
 };
 
-export const SearchProduct = (customers: ArrangedProduct[], value: string) => {
+export const SearchProduct = (customers: Product[], value: string) => {
   const searchingProduct = customers?.filter((order) => {
     return order.name.toLowerCase().includes(value);
   });

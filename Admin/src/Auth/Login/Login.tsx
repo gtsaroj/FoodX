@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../../Components/Navbar/AuthNavbar";
@@ -24,20 +24,6 @@ const LoginContainer: React.FC<LoginProp> = ({ role }) => {
     "password"
   );
   const [dataSend, setDataSend] = useState<boolean>(false);
-
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return prefersDarkScheme;
-  });
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-  });
 
   const showPassword = () => {
     setShow((show) => !show);

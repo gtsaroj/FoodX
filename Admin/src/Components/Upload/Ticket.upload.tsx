@@ -1,6 +1,6 @@
 import React, { FormEvent, useRef, useState } from "react";
 
-import { requestSelectOption } from "../LineChart/D";
+
 import { HashLoader } from "react-spinners";
 import { TicketType } from "../../models/ticket.model";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ const CreateTicket: React.FC = () => {
     date: dayjs().format("YYYY-MM-DD h:mm A"),
     status: "pending",
     uid: user?.uid as string,
+    id: "",
   });
 
   const handleSubmit = async (event: FormEvent) => {
@@ -47,6 +48,13 @@ const CreateTicket: React.FC = () => {
       return console.log("Unable to create ticket" + error);
     }
   };
+  const categoryOption: { value: string; label: string }[] = [
+    { value: "ingredient_shortage", label: "Ingredient Shortage" },
+    { value: "equipment_malfunction", label: "Equipment Malfunction" },
+    { value: "staff_shortage", label: "Staff Shortage" },
+    { value: "cleaning_required", label: "Cleaning Required" },
+    { value: "menu_adjustment", label: "Menu Adjustment" }
+  ];
 
   return (
     <React.Fragment>
@@ -72,7 +80,7 @@ const CreateTicket: React.FC = () => {
               Category
             </label>
             <Selector
-              categoryOption={requestSelectOption}
+              categoryOption={categoryOption}
               setField={(value) =>
                 setInitialTicket((prev) => ({ ...prev, category: value }))
               }
