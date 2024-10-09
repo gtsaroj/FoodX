@@ -2,10 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const range = (start: number, end: number) => {
-  const length = end - start + 1;
-  return Array.from({ length }, (_, idx) => idx + start);
-};
+// const range = (start: number, end: number) => {
+//   const length = end - start + 1;
+//   return Array.from({ length }, (_, idx) => idx + start);
+// };
 
 interface PaginationProps {
   totalData: number;
