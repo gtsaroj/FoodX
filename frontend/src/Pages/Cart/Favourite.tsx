@@ -42,9 +42,9 @@ const Favourite: React.FC = () => {
   }, [selectedProducts]);
 
   return (
-    <div className="flex flex-col  h-[580px]   rounded-sm  pb-7 justify-between    bg-[var(--light-foreground)] w-[450px]    ">
+    <div className="flex flex-col  h-[580px]  rounded-lg  w-[350px]   pb-7 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
       <div className="flex flex-col items-start ">
-        <h3 className="w-full border-b  text-2xl px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full border-b-[1px] border-[var(--dark-border)]  text-2xl px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
           My Favourite
         </h3>
       </div>

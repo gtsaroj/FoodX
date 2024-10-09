@@ -154,7 +154,7 @@ export const Navbar: React.FC = () => {
     return filterProducts;
   };
 
-  const debounceSearch = useCallback(debounce(handleSearch, 200),[])
+  const debounceSearch = useCallback(debounce(handleSearch, 200), []);
 
   return (
     <nav
@@ -164,7 +164,11 @@ export const Navbar: React.FC = () => {
       <div className="flex  items-center justify-start gap-4">
         <div ref={menuReference as any} className="w-full  flex md:hidden ">
           <button onClick={() => setOpen(!open)}>
-            {open ? <X className="size-10" /> : <Menu className="size-10" />}
+            {open ? (
+              <X className="md:size-10  size-8" />
+            ) : (
+              <Menu className="md:size-10  size-8 " />
+            )}
           </button>
           <div
             className={`w-full  duration-150 ${
@@ -178,7 +182,7 @@ export const Navbar: React.FC = () => {
         </div>
         {/* Logo */}
         <div
-          className="flex items-center cursor-pointer shrink-0 "
+          className="sm:flex hidden  items-center cursor-pointer shrink-0 "
           onClick={() => navigate("/")}
         >
           <img
@@ -193,14 +197,18 @@ export const Navbar: React.FC = () => {
         <NavbarContainer />
       </div>
       {/*  Product Search */}
-      <div className="h-full gap-2  flex items-center text-[var(--dark-text)] px-3">
-        <div className="flex items-center justify-center h-full space-x-4 place-items-center">
+      <div className="h-full flex items-center text-[var(--dark-text)] px-3">
+        <div className="flex items-center gap-3 justify-center h-full  place-items-center">
           <div>
             <button
               className={`py-2.5 rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
             >
-              {openSearch ? <X /> : <Search className="size-7 " />}
+              {openSearch ? (
+                <X className=" " />
+              ) : (
+                <Search className="size-7 " />
+              )}
             </button>
             <div
               className={`absolute md:right-3 bg-[var(--light-foreground)] mx-1 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
@@ -222,7 +230,7 @@ export const Navbar: React.FC = () => {
                 className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
                 onClick={() => setOpenSearch(false)}
               >
-                <X className="hover:text-[var(--danger-bg)] " />
+                <X className="hover:text-[var(--danger-bg)] size-5 md:size-6 " />
               </button>
             </div>
             <div
@@ -259,14 +267,7 @@ export const Navbar: React.FC = () => {
               </div>
             </div>
           </div>
-          {/* Cart */}
-          <div
-            onClick={() => navigate("/cart")}
-            className="flex cursor-pointer items-center justify-center md:hidden"
-          >
-            <ShoppingBag />
-          </div>
-          <div className="relative" ref={favouriteReference as any}>
+          <div className="relative " ref={favouriteReference as any}>
             {/* Favourite icon */}
             <div className="relative">
               <Heart
@@ -275,13 +276,13 @@ export const Navbar: React.FC = () => {
               />
               <div
                 className={`w-[10px] duration-150 ${
-                  isFavourite.favourite.length > 0 ? "visible" : "invisible"
+                  isFavourite.favourite.length > 0 ? "visible" : "hidden"
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
             </div>
             {/* Favourite container */}
             <div
-              className={` left-[-23rem] top-12 duration-150 absolute ${
+              className={` sm:left-[-23rem] right-[-160px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
                 !openFavourite && authUser.fullName
                   ? "visible z-10 translate-y-0 opacity-100 "
                   : "-translate-y-2 invisible opacity-0 z-[-100]"
@@ -305,17 +306,17 @@ export const Navbar: React.FC = () => {
                 className="size-7 cursor-pointer "
               />
               <div
-                className={`absolute w-[300px] z-30 duration-150 ${
+                className={`absolute  w-[300px] z-30 duration-150 ${
                   openNotification
                     ? "visible opacity-100 -translate-y-0 "
                     : "invisible opacity-0 translate-y-10"
-                }   right-[4.7rem] top-8`}
+                }   sm:right-[4.7rem] right-[-40px]  top-8`}
               >
                 <NotificationPage isOpen={openNotification} />
               </div>
             </div>
           )}
-          <div ref={profileRef} className="w-full">
+          <div ref={profileRef} className="">
             {authUser?.avatar && (
               <div className="w-full relative">
                 <div
@@ -323,7 +324,7 @@ export const Navbar: React.FC = () => {
                   className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
                 >
                   <img
-                    className="rounded-full sm:size-9 size-8"
+                    className="rounded-full w-10 h-9 sm:w-11 sm:h-10"
                     src={authUser.avatar}
                     alt=""
                   />
@@ -342,7 +343,7 @@ export const Navbar: React.FC = () => {
             {!authUser?.fullName && (
               <div onClick={() => setCloseProfile(!closeProfile)} className="">
                 <UserCircleIcon
-                  className="hidden transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
+                  className=" transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
                   size={30}
                 />
               </div>
@@ -378,7 +379,7 @@ export const Header: React.FC = () => {
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
       <div className={"bg-[var(--primary-color)] "}>
-        <div className="flex items-center px-5 py-2 space-x-3">
+        <div className="flex items-center px-5 py-2">
           <Phone className="text-[var(--secondary-color)]" size={25} />
           <p className="text-xs text-[var(--light-secondary-text)] ">
             01-4589134, 01-4588627,9801644462

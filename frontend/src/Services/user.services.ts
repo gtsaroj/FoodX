@@ -37,6 +37,7 @@ export const signIn = async (
     toast.success("Logged in successfully!");
     return responseData.user as User;
   } catch (error) {
+    toast.dismiss(toastLoader);
     console.log(`Error : ${error}`);
     toast.error("Error logging in. Please try again.");
     throw new Error("Invalid username or password");

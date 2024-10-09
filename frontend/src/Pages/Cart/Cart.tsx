@@ -29,11 +29,10 @@ const Cart: React.FC = () => {
     <div
       onDragOver={(event) => {
         event.preventDefault();
-    
       }}
       onDrop={(event) => {
         const productData = event.dataTransfer.getData("product");
-        
+
         const product = JSON.parse(productData);
         dispatch(
           addToCart({
@@ -45,9 +44,8 @@ const Cart: React.FC = () => {
             tag: product.tag,
           })
         );
-        
       }}
-      className="flex flex-col w-full justify-between h-full gap-3   sm:px-1 px-[30px]"
+      className="flex flex-col w-full justify-between h-full gap-3    sm:px-[30px]"
     >
       <div className="flex flex-col items-start ">
         <h3 className="w-full py-2 text-[25px] font-semibold tracking-wide text-[var(--dark-text)]">

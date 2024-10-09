@@ -317,7 +317,7 @@ const PersonlInformation: React.FC<User> = ({
             </div>
           </div>
           <div
-            className={` grid items-center grid-flow-col grid-cols-2 gap-7 `}
+            className={` w-full flex sm:flex-row gap-10 sm:gap-0 items-center justify-between flex-col `}
           >
             <div className={`flex flex-col w-full gap-1`}>
               <p className=" tracking-wide text-[var(--dark-secondary-text)] text-sm">

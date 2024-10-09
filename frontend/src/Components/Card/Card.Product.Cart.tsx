@@ -19,9 +19,9 @@ export const SingleCard: React.FC<SingleCardProp> = ({
       key={prop.id}
       className={`duration-1000  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
-      <div>
+      <div className=" h-full">
         <img
-          className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
+          className="w-[120px]  h-full sm:h-[120px] object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />

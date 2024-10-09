@@ -42,14 +42,14 @@ const ReAuth: React.FC<ReAuthProp> = ({ isVerified }) => {
   };
   return (
     <div className={`w-full  flex justify-center items-center z-30`}>
-      <div className="flex items-center justify-center max-w-[800px] min-w-[400px] w-[600px] px-3 py-8">
+      <div className="flex items-center justify-center w-full  px-3 py-8">
         <div className="w-full h-full bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm relative">
           <div className="w-full flex flex-col items-center gap-3 px-3   text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
             <h1 className="md:hidden">ReAuthenticate</h1>
             <h1 className="hidden md:block">ReAuthenticate</h1>
           </div>
           <div className="px-3 py-4">
-            <form className="flex flex-col gap-3 p-2" onSubmit={HandleSubmit}>
+            <form className="flex w-full flex-col gap-3 p-2" onSubmit={HandleSubmit}>
               <div className="relative flex flex-col gap-2">
                 <label
                   htmlFor="logEmail"
