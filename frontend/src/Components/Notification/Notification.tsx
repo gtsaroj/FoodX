@@ -158,7 +158,6 @@ interface NotificationProp {
 }
 const NoticationContainer: React.FC<NotificationProp> = ({
   notification,
-  closeNotification,
 }: {
   notification: Notification;
   closeNotification: (id: string) => void;

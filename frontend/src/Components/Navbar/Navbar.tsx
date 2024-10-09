@@ -6,7 +6,6 @@ import {
   Menu,
   Phone,
   Search,
-  ShoppingBag,
   UserCircleIcon,
   X,
 } from "lucide-react";
@@ -46,7 +45,7 @@ export const NavbarContainer = () => {
   const location = useLocation();
 
   return (
-    <div className="flex text-start  md:flex-row flex-col items-start md:items-center justify-start md:justify-center h-full w-full">
+    <div className="flex flex-col items-start justify-start w-full h-full text-start md:flex-row md:items-center md:justify-center">
       {navbarItems &&
         navbarItems.map((item, index) => (
           <Link
@@ -59,7 +58,7 @@ export const NavbarContainer = () => {
                 : " ")
             }
           >
-            <p className="flex w-full items-center justify-start md:justify-center h-full tracking-wider text-md">
+            <p className="flex items-center justify-start w-full h-full tracking-wider md:justify-center text-md">
               {item.name}
             </p>
           </Link>
@@ -161,13 +160,13 @@ export const Navbar: React.FC = () => {
       ref={FilterRef}
       className="w-full  backdrop-blur bg-[var(--body-bg)]  min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
     >
-      <div className="flex  items-center justify-start gap-4">
-        <div ref={menuReference as any} className="w-full  flex md:hidden ">
+      <div className="flex items-center justify-start gap-4">
+        <div ref={menuReference as any} className="flex w-full md:hidden ">
           <button onClick={() => setOpen(!open)}>
             {open ? (
-              <X className="md:size-10  size-8" />
+              <X className="md:size-10 size-8" />
             ) : (
-              <Menu className="md:size-10  size-8 " />
+              <Menu className="md:size-10 size-8 " />
             )}
           </button>
           <div
@@ -182,7 +181,7 @@ export const Navbar: React.FC = () => {
         </div>
         {/* Logo */}
         <div
-          className="sm:flex hidden  items-center cursor-pointer shrink-0 "
+          className="items-center hidden cursor-pointer sm:flex shrink-0 "
           onClick={() => navigate("/")}
         >
           <img
@@ -193,22 +192,18 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
       {/* Navbar  */}
-      <div className=" h-full hidden md:flex">
+      <div className="hidden h-full md:flex">
         <NavbarContainer />
       </div>
       {/*  Product Search */}
       <div className="h-full flex items-center text-[var(--dark-text)] px-3">
-        <div className="flex items-center gap-3 justify-center h-full  place-items-center">
+        <div className="flex items-center justify-center h-full gap-3 place-items-center">
           <div>
             <button
               className={`py-2.5 rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
             >
-              {openSearch ? (
-                <X className=" " />
-              ) : (
-                <Search className="size-7 " />
-              )}
+              {openSearch ? <X className="" /> : <Search className="size-7 " />}
             </button>
             <div
               className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
@@ -242,7 +237,7 @@ export const Navbar: React.FC = () => {
             >
               <div className="w-full md:w-[500px] border-[var(--dark-border)] rounded-lg border-[1px] shadow  px-4 py-3 scrollbar-custom  overflow-y-auto bg-[var(--light-foreground)] h-[60vh] ">
                 {loading ? (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="flex items-center justify-center w-full h-full">
                     <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
                       <RotatingLines
                         strokeColor="var(--dark-secondary-text)"
@@ -272,7 +267,7 @@ export const Navbar: React.FC = () => {
             <div className="relative">
               <Heart
                 onClick={() => setOpenFavourite(!openFavourite)}
-                className="size-7 cursor-pointer "
+                className="cursor-pointer size-7 "
               />
               <div
                 className={`w-[10px] duration-150 ${
@@ -303,7 +298,7 @@ export const Navbar: React.FC = () => {
             <div ref={notificationReference as any} className="relative">
               <Bell
                 onClick={() => setOpenNotification(!openNotification)}
-                className="size-7 cursor-pointer "
+                className="cursor-pointer size-7 "
               />
               <div
                 className={`absolute  w-[300px] z-30 duration-150 ${
@@ -318,13 +313,13 @@ export const Navbar: React.FC = () => {
           )}
           <div ref={profileRef} className="">
             {authUser?.avatar && (
-              <div className="w-full relative">
+              <div className="relative w-full">
                 <div
                   onClick={() => setCloseProfile(!closeProfile)}
                   className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
                 >
                   <img
-                    className="rounded-full w-10 h-9 sm:w-11 sm:h-10"
+                    className="w-10 rounded-full h-9 sm:w-11 sm:h-10"
                     src={authUser.avatar}
                     alt=""
                   />
