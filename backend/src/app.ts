@@ -22,8 +22,11 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: process.env.SOCKET_URL,
+    methods: ["GET", "POST"],
   },
+  transports: ["websocket", "polling"],
+  path: "/socket.io",
 });
 
 app.use(cors());
