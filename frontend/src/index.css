@@ -60,12 +60,11 @@
     /* f4f6f8 
     f5f9ff
     */
-    --body-bg:  #141b25;
+    --body-bg: #141b25;
     --light-foreground: #10161f;
     --light-background: #283041;
     --light-secondary-background: #dadada;
     --light-border: #dedde2;
-   
 
     --dark-foreground: #fbfbfb;
     --dark-background: #f4f6f8;
@@ -87,7 +86,7 @@
   }
 
   ::-webkit-scrollbar {
-    width: 0px;
+    width: 4px;
   }
 
   body {
@@ -118,7 +117,7 @@
 @layer components {
   .scrollbar-invisible {
     @apply overscroll-y-auto;
-    width: 9px;
+    width: 6px;
   }
   .scrollbar-custom {
     @apply overflow-y-scroll; /* Enables scrolling */
@@ -128,8 +127,9 @@
     @apply overflow-x-auto;
   }
   .item-scrollbar::-webkit-scrollbar {
-    width: 3px;
-    height: 6px;
+    width: 4px;
+    height: 5px;
+
     cursor: pointer;
   }
   .item-scrollbar::-webkit-scrollbar-thumb {
@@ -139,7 +139,8 @@
   }
 
   .scrollbar-custom::-webkit-scrollbar {
-    width: 8px; /* Adjust scrollbar width */
+    width: 3px; /* Adjust scrollbar width */
+    height: 5px;
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {

@@ -50,7 +50,7 @@ export const RecentProduct = () => {
       <h3 className="w-full text-[25px] pl-4  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
         Recent Products
       </h3>
-      <div className="w-full h-full overflow-y-auto scrollbar-custom px-5 ">
+      <div className="w-full h-full overflow-y-auto item-scrollbar px-5 ">
         <div className="flex  flex-col w-full items-start h-[530px]  gap-5">
           {authUser.success ? (
             !loading ? (

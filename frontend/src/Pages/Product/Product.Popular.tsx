@@ -28,9 +28,9 @@ export const PopularProduct = () => {
       <h1 className="text-[25px] font-semibold  tracking-wider ">
         Popular products
       </h1>
-      <div className="w-full flex flex-col gap-3     overflow-auto  rounded items-start justify-center">
-        <div className=" overflow-hidden">
-          <div className="w-full h-full flex items-center gap-4  justify-start  ">
+      <div className="w-full flex flex-col gap-3  scrollbar-custom pb-5   overflow-auto  rounded items-start justify-center">
+        <div className=" overflow-hidden ">
+          <div className="w-full h-full  flex items-center gap-4  justify-start  ">
             {!loading ? (
               initialData?.map((singleObject) => (
                 <SpecialCards prop={singleObject} key={singleObject.id} />
