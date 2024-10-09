@@ -1,11 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaAngleDoubleLeft,
-  FaAngleDoubleRight,
-  FaChevronLeft,
-  FaChevronRight,
-} from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const range = (start: number, end: number) => {
   const length = end - start + 1;
@@ -20,6 +15,7 @@ interface PaginationProps {
   style?: React.CSSProperties;
   className?: string;
   navigateTo?: string;
+  handlePageDirection: (pageDirection: "next" | "prev") => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -30,6 +26,7 @@ const Pagination: React.FC<PaginationProps> = ({
   className,
   style,
   navigateTo = "page",
+  handlePageDirection,
 }) => {
   const totalPages = Math.ceil(totalData / perPage);
   const navigate = useNavigate();
@@ -109,7 +106,11 @@ const Pagination: React.FC<PaginationProps> = ({
             className={`bg-[var(--light-background)]   ${
               currentPage === 1 ? "cursor-not-allowed" : "cursor-pointer"
             } p-2 rounded hover:bg-[var(--dark-foreground)] hover:text-[var(--light-foreground)] duration-150`}
-            onClick={() => handlePageChange(currentPage - 1)}
+            onClick={() => {
+              handlePageChange(currentPage - 1);
+
+              handlePageDirection("prev");
+            }}
           >
             <FaChevronLeft />
           </button>
@@ -134,7 +135,10 @@ const Pagination: React.FC<PaginationProps> = ({
                 ? "cursor-not-allowed"
                 : "cursor-pointer"
             }`}
-            onClick={() => handlePageChange(currentPage + 1)}
+            onClick={() => {
+              handlePageChange(currentPage + 1);
+              handlePageDirection("next");
+            }}
             disabled={currentPage === totalPages}
           >
             <FaChevronRight />
