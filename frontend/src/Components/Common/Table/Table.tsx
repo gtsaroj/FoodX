@@ -22,6 +22,7 @@ export declare namespace Table {
       perPage?: number;
       currentPage?: number;
     };
+    handlePageDirection: (direction: "prev" | "next") => void;
     disableNoData?: boolean;
     onPageChange?: (page: number) => void;
     disableActions?: boolean;
@@ -53,6 +54,7 @@ function Table<T extends { id: string }>({
   selectedData,
   totalData,
   pagination = { perPage: 2, currentPage: 1 },
+  handlePageDirection,
 }: Table.TableModalProps<T>): React.ReactElement {
   const [currentPage, setCurrentPage] = useState<number>(
     pagination.currentPage as number
@@ -246,6 +248,9 @@ function Table<T extends { id: string }>({
           <tr>
             <td className="w-full ">
               <Pagination
+                handlePageDirection={(pageDirecton) =>
+                  handlePageDirection(pageDirecton)
+                }
                 totalData={totalData}
                 perPage={pagination?.perPage || 2}
                 currentPage={currentPage || 1}

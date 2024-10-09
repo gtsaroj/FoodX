@@ -31,7 +31,8 @@ export const OrderHistory = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 5 });
+    direction: "prev" | "next";
+  }>({ currentPage: 1, perPage: 5, direction: "next" });
   const [totalData, setTotalData] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(true);
@@ -197,18 +198,16 @@ export const OrderHistory = () => {
   }, []);
 
   useEffect(() => {
-    if (pagination.currentPage > 1 && currentDoc?.currentLastDoc) {
+    if (pagination.currentPage > 1 && pagination.direction) {
       getUserOrders({
         sort: "desc",
         pageSize: pagination.perPage,
         currentFirstDoc: currentDoc?.currentFirstDoc,
         currentLastDoc: currentDoc?.currentLastDoc,
-        direction: (pagination.currentPage === 4 ? "prev " : "next") as
-          | "prev"
-          | "next",
+        direction: pagination.direction,
       });
     }
-  }, [pagination.currentPage]);
+  }, [pagination.currentPage, pagination.direction]);
 
   return (
     <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var(--light-foreground)] px-5 py-4   rounded items-start justify-center">
@@ -217,6 +216,9 @@ export const OrderHistory = () => {
       </h1>
 
       <Table
+        handlePageDirection={(direction) =>
+          setPagination((prev) => ({ ...prev, direction: direction }))
+        }
         actions={{
           orderFn: async (id: string) => {
             const findProduct = initialOrder.find((order) => order.id === id);
