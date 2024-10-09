@@ -14,7 +14,6 @@ import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
 import { useNavigate } from "react-router-dom";
 import { addToCart, resetCart } from "../../Reducer/product.reducer";
-import toast from "react-hot-toast";
 import Modal from "../../Components/Common/Popup/Popup";
 import { Invoice } from "../../Components/Invoice/Invoice";
 import dayjs from "dayjs";
@@ -32,7 +31,7 @@ export const OrderHistory = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 2 });
+  }>({ currentPage: 1, perPage: 5 });
   const [totalData, setTotalData] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(true);

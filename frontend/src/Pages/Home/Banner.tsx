@@ -51,7 +51,7 @@ export const Sponsor: React.FC = () => {
     setLoading(true);
     try {
       const response = await getBanners("sponsors");
-
+      console.log(response)
       setInitialData(response.data.banners);
     } catch (error) {
       throw new Error("Error while fetching banners" + error);
