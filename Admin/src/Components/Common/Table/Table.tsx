@@ -50,7 +50,7 @@ function Table<T extends { id: string }>({
   onPageChange,
   selectedData,
   totalData,
-  pagination = { perPage: 2, currentPage: 1 },
+  pagination = { perPage: 5, currentPage: 1 },
 }: Table.TableModalProps<T>): React.ReactElement {
   const [currentPage, setCurrentPage] = useState<number>(
     pagination.currentPage as number
@@ -71,6 +71,7 @@ function Table<T extends { id: string }>({
     }
   };
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  console.log(selectedData);
   return (
     <div className="w-full flex items-center justify-center text-gray-400 border-collapse overflow-auto rounded ">
       <table className="w-full relative border-collapse max-w-[1500px] flex flex-col items-center justify-center  gap-2">
@@ -146,10 +147,13 @@ function Table<T extends { id: string }>({
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">
                         <input
-                          checked={selectedData?.includes(item.uid || item.id)}
+                          checked={selectedData?.includes(item?.id)}
                           onChange={(event: ChangeEvent<HTMLInputElement>) => {
                             actions.checkFn &&
-                              actions.checkFn(item.id || item.uid, event.target.checked);
+                              actions.checkFn(
+                                item.id || item.uid,
+                                event.target.checked
+                              );
                             setIsChecked(event.target.checked);
                           }}
                           className="w-4 h-4 accent-slate-900 cursor-pointer"

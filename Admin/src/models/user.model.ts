@@ -30,6 +30,7 @@ export interface DbUser {
 }
 
 export interface User {
+  id?: string
   uid?: string;
   avatar?: string;
   fullName: string;
@@ -40,6 +41,7 @@ export interface User {
   totalOrder: number;
   refreshToken?: string;
 }
+
 export interface DeleteUser {
   id: string[];
   role: string;

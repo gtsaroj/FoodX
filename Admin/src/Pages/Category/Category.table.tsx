@@ -57,7 +57,7 @@ export const CategoryTable: React.FC<CustomerTableProp> = ({
       colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
       render: (item: Category) => (
         <div className=" w-[100px]  text-[var(--dark-text)]">
-          <p>{item.order}</p>
+          <p>{item.item}</p>
         </div>
       ),
     },

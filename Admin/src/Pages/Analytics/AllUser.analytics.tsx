@@ -14,7 +14,7 @@ import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/User.upload";
 import { debounce } from "../../Utility/debounce";
-import { DbUser, GetUserModal } from "../../models/user.model";
+import { GetUserModal } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
 
 const AllCustomers = () => {
@@ -76,7 +76,17 @@ const AllCustomers = () => {
         currentLastDoc: users.currentLastDoc,
       });
       setTotalData(users.length);
-      setInitialCustomer(users.users);
+      const aggregateUser = users.users?.map((user) => ({
+        id: user.uid,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        totalSpent: user.totalSpent,
+        totalOrder: user.totalOrder,
+      }));
+      setInitialCustomer(aggregateUser);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error while getting customers : ${error}`);
@@ -85,28 +95,26 @@ const AllCustomers = () => {
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
-    const refreshIds = bulkSelectedCustomer?.filter(
-      (product) => product.id !== id
-    );
+    const refreshIds = bulkSelectedCustomer?.filter((user) => user.id !== id);
 
     isChecked
       ? setBulkSelectedCustomer(
           (prev): { id: string; role: "customer" | "admin" | "chef" }[] => {
             const newCustomer = prev?.filter((category) => category.id !== id);
             const findCustomer = initialCustomer.find(
-              (category) => category?.uid === id
+              (category) => category?.id === id
             );
             return newCustomer
               ? [
                   ...newCustomer,
                   {
-                    id: findCustomer?.uid as string,
+                    id: findCustomer?.id as string,
                     role: findCustomer?.role as "customer" | "admin" | "chef",
                   },
                 ]
               : [
                   {
-                    id: findCustomer?.uid as string,
+                    id: findCustomer?.id as string,
                     role: findCustomer?.role as "customer" | "admin" | "chef",
                   },
                 ];
@@ -117,7 +125,7 @@ const AllCustomers = () => {
   const handleAllSelected = (isChecked: boolean) => {
     if (isChecked) {
       const AllCategories = initialCustomer?.map((customer) => {
-        return { id: customer.uid as string, role: customer.role };
+        return { id: customer.id as string, role: customer.role };
       });
       setBulkSelectedCustomer(
         AllCategories as { id: string; role: "customer" | "admin" | "chef" }[]
@@ -169,8 +177,8 @@ const AllCustomers = () => {
       toast.dismiss(toastLoader);
       const refreshCategory = initialCustomer.filter((user) => {
         return (
-          !customer.includes(user.uid as string) &&
-          !admin.includes(user.uid as string)
+          !customer.includes(user.id as string) &&
+          !admin.includes(user.id as string)
         );
       });
 
@@ -181,6 +189,7 @@ const AllCustomers = () => {
       toast.error("Error while deleting...");
       throw new Error("Error while bulk user delete" + error);
     }
+    setIsBulkDelete(false);
   };
 
   const handleDelete = async (id: string) => {
@@ -201,12 +210,13 @@ const AllCustomers = () => {
         (data) => data.uid !== id
       );
       setInitialCustomer(refreshCustomer);
-      setIsDelete(true);
+     
     } catch (error) {
       toast.dismiss(toastLoader);
       toast.error("Error while delting user");
       throw new Error("Error while deleting user" + error);
     }
+    setIsDelete(false);
   };
 
   // search user
@@ -234,6 +244,7 @@ const AllCustomers = () => {
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
+
   // call getUser fn based on changing the current page number
   useEffect(() => {
     handleCustomerData({
@@ -277,7 +288,7 @@ const AllCustomers = () => {
         const users = customers.data as {
           currentFirstDoc: string;
           currentLastDoc: string;
-          users: DbUser[];
+          users: User[];
           length: number;
         };
         setCurrentDoc({
@@ -286,11 +297,22 @@ const AllCustomers = () => {
         });
         setTotalData(users.length);
 
+        const aggregateUser = users.users?.map((user) => ({
+          id: user.uid,
+          avatar: user.avatar,
+          fullName: user.fullName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          totalSpent: user.totalSpent,
+          totalOrder: user.totalOrder,
+        }));
+
         setInitialCustomer((customer) => {
           return [
             ...customer,
-            ...users.users.filter(
-              (user) => !customer.some((cust) => user.uid === cust.uid)
+            ...aggregateUser.filter(
+              (user) => !customer.some((cust) => user.id === cust.id)
             ),
           ];
         });

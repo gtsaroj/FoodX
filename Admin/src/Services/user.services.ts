@@ -155,7 +155,7 @@ export const bulkDeleteOfCustomer = async (data: {
   try {
     const response = await makeRequest({
       method: "delete",
-      url: "users",
+      url: "users/bulk-delete",
       data: { role: data.role, ids: [...data.ids] },
     });
     return response.data.data;
