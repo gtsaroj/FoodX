@@ -118,7 +118,9 @@ export const OrderHistory = () => {
                 : ""
             } `}
           ></div>
-          <span>{item.status}</span>
+          <span>
+            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+          </span>
         </div>
       ),
     },
@@ -127,7 +129,7 @@ export const OrderHistory = () => {
       colStyle: { width: "140px", justifyContent: "start", textAlign: "start" },
       render: (item: UserOrder) => (
         <div className=" w-[140px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
-          <span>{item.amount}</span>
+          <span>Rs. {item.amount}</span>
         </div>
       ),
     },

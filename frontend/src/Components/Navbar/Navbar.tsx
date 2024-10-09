@@ -206,7 +206,7 @@ export const Navbar: React.FC = () => {
               {openSearch ? <X className="" /> : <Search className="size-7 " />}
             </button>
             <div
-              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-1 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
+              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
                 openSearch
                   ? "visible md:w-[500px] translate-y-0 opacity-100 "
                   : "w-0 invisible opacity-0  -translate-y-10 "

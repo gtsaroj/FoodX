@@ -12,6 +12,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
+import dayjs from "dayjs";
+import { ChevronDown } from "lucide-react";
 interface Notifications {
   isOpen: boolean;
 }
@@ -94,7 +96,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   };
 
   return (
-    <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-background)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+    <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
@@ -116,9 +118,9 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
           }
           loader={
             loader && (
-              <div className="flex flex-col items-center justify-center w-full pt-3 ">
+              <div className="flex flex-col h-full  items-center justify-center w-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center w-full h-full pt-28 justify-center gap-3">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
                   <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                     {" "}
@@ -156,27 +158,43 @@ interface NotificationProp {
 }
 const NoticationContainer: React.FC<NotificationProp> = ({
   notification,
-  closeNotification,
 }: {
   notification: Notification;
   closeNotification: (id: string) => void;
+  isLoading: boolean;
 }) => {
+  const [open, setOpen] = useState<boolean>(false);
+
   return (
     <div
       key={notification.uid}
-      className="relative flex items-center w-full p-4 mb-4 text-gray-900 bg-white border rounded-lg shadow-lg"
+      className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
-      <div className="flex-1">
-        <h4 className="font-semibold">{notification.title}</h4>
-        <p className="text-sm">{notification.message}</p>
-        {/* <p className="text-xs text-gray-500">{notification.time}</p> */}
-      </div>
-      <button
-        className="ml-4 text-gray-500 hover:text-gray-700"
-        onClick={() => closeNotification(notification.id)}
-        aria-label="Close notification"
+      <div
+        className={`sm:w-[280px] w-[215px] ${
+          open ? "sm:h-[80px] h-[120px]" : "h-[20px]"
+        } duration-150 `}
       >
-        &times; {/* Close icon */}
+        <div
+          onClick={() => setOpen(!open)}
+          className="w-full flex  items-center justify-between pr-5"
+        >
+          <h4 className="font-semibold">{notification.title}</h4>
+          <p className="text-xs text-gray-500">
+            {dayjs.unix(notification?.createdAt?._seconds).format("YYYY-MM-DD")}
+          </p>
+        </div>
+        <p
+          className={`text-sm  duration-150 ${
+            open ? "visible opacity-[100] " : " invisible opacity-0"
+          } `}
+        >
+          {notification.message}
+        </p>
+      </div>
+      <button onClick={() => setOpen(!open)}>
+        {" "}
+        <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
       </button>
     </div>
   );
