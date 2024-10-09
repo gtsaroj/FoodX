@@ -3,7 +3,7 @@
     "site": "foodx-admin",
     "rewrites": [
       {
-        "source": "",
+        "source": "**",
         "destination": "/index.html"
       }
     ],
