@@ -155,7 +155,7 @@ export const PieChartAnalytics = () => {
               onClick={() =>
                 setIsFilter((prev) => ({
                   ...prev,
-                  normalFilter: { id: "", previous: "u" },
+                  normalFilter: { id: "", previous: "" },
                 }))
               }
               className=" "

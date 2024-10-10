@@ -161,22 +161,21 @@ const OrderList = () => {
           setTotalData(getAllOrder.length);
           const aggregateData = getAllOrder?.orders.map(async (item, index) => {
             const getUserName = await getFullName(item.uid as string);
-            const productNames = item.products?.map(
-              (product) =>
-                (product.name as string) + " × " + product.quantity + ", "
-            );
+
             return {
               uid: item.uid,
               id: item.orderId as string,
               name: getUserName || "User",
-              products: productNames,
+              products: item.products,
               rank:
                 (pagination.currentPage - 1) * pagination.perPage + (index + 1),
-              orderRequest: dayjs(item.orderRequest).format("MMM D, h:mm A"),
+              orderRequest: dayjs(item.orderRequest).format(
+                " YYYY MMM D, h:mm A"
+              ),
 
               delivered:
                 (item.orderFullfilled &&
-                  dayjs(item.orderFullfilled).format("MMM D, h:mm A")) ||
+                  dayjs(item.orderFullfilled).format(" YYYY MMM D, h:mm A")) ||
                 "",
               status: item.status,
             };
@@ -215,8 +214,12 @@ const OrderList = () => {
         {
           id: order.orderId as string,
           name: userName as string,
-          orderRequest: order.orderRequest as string,
-          orderFullfilled: order.orderFullfilled as string,
+          orderRequest: dayjs(order.orderRequest).format(
+            "YYYY MMM D, h:mm A"
+          ) as string,
+          orderFullfilled: dayjs(order.orderFullfilled).format(
+            "YYYY MMM D, h:mm A"
+          ) as string,
           products: order.products as Product[],
           rank: 1,
           status: order.status as keyof status["status"],
@@ -258,10 +261,10 @@ const OrderList = () => {
             customerDetails: {
               name: matchedOrder?.name as string,
               phoneNumber: user?.phoneNumber || "N/A", // Ensure correct type for phoneNumber
-              userId : matchedOrder?.uid || "N/A"
+              userId: matchedOrder?.uid || "N/A",
             },
             invoiceData: {
-              invoiceDate: dayjs().format("YYYY-MM-DD"),
+              invoiceDate: matchedOrder?.orderRequest || "N/A",
               invoiceNumber: order,
             },
           };
@@ -327,7 +330,7 @@ const OrderList = () => {
               checkFn={{
                 checkSortFn: (isChecked, value, id) => {
                   if (!isChecked) {
-                   return  setFilter((prev) => ({
+                    return setFilter((prev) => ({
                       ...prev,
                       sortFilter: { id: "", sort: "" },
                     }));
