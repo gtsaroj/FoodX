@@ -179,4 +179,64 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
   }
 });
 
-export { getOrderByUserIdFromDatabase, addNewOrder, updateOrder, fetchOrders };
+const getOrderBasedOnUid = asyncHandler(async (req: any, res: any) => {
+  let {
+    pageSize,
+    direction,
+    currentFirstDoc,
+    currentLastDoc,
+    status,
+  }: {
+    pageSize: number;
+    currentFirstDoc: any | null;
+    currentLastDoc: any | null;
+    direction?: "prev" | "next";
+    status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
+  } = req.body;
+  try {
+    const { uid }: { uid: string } = req.body;
+    if (!uid) throw new ApiError(500, "No user found. Please login first.");
+
+    const limitPage = +pageSize;
+    let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
+      limitPage,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
+      direction,
+      status,
+      uid
+    );
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          orders,
+          currentFirstDoc: firstDoc,
+          currentLastDoc: lastDoc,
+          length,
+        },
+        "Successfully fetched orders from database based on uid.",
+        true
+      )
+    );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Something went wrong while fetching user's order from database on id.",
+          null,
+          error as string[]
+        )
+      );
+  }
+});
+export {
+  getOrderByUserIdFromDatabase,
+  addNewOrder,
+  updateOrder,
+  fetchOrders,
+  getOrderBasedOnUid,
+};

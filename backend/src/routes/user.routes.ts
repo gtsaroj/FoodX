@@ -57,5 +57,5 @@ router
 router
   .route("/bulk-delete")
   .delete(verifyJwt, verifyAdmin, rateLimiter(60, 5), deleteUsersInBulk);
-router.route("/:role").get(rateLimiter(60, 5), getUser);
+router.route("/:role").get(getUser);
 export default router;
