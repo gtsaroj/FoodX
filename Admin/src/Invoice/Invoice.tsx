@@ -19,6 +19,7 @@ export interface InvoiceDocumentProp {
     customerDetails: {
       name: string;
       phoneNumber: number;
+      userId: string;
     };
     orderDetails: {
       products: Product[];
@@ -40,6 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9", // Light background for better readability
   },
   section: {
+    border: "1px solid #d3d3d3",
     marginBottom: 10,
   },
   header: {
@@ -135,7 +137,7 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={styles.title}>FoodX Nepal</Text>
               <Text>Texas college of IT and management</Text>
-              <Text>mitrapark, chahabil</Text>
+              <Text>Mitrapark, chahabil</Text>
               <Text
                 style={{
                   color: "gray",
@@ -186,7 +188,12 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                   Invoice To
                 </Text>
               </View>
-              <Text>Name : {order.customerDetails.name}</Text>
+              <Text>User : {order.customerDetails.userId}</Text>
+              <Text>
+                Name :{" "}
+                {order.customerDetails.name.charAt(0).toUpperCase() +
+                  order?.customerDetails?.name.slice(1)}
+              </Text>
               <Text>
                 Contact No :{" "}
                 {order.customerDetails.phoneNumber || "+977-9825506216"}
@@ -210,7 +217,14 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
           {/* Itemized List */}
           <View style={styles.section}>
             <View style={styles.table}>
-              <View style={styles.tableRow}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  borderBottom: "1pt solid #ddd",
+                  paddingVertical: 5,
+                  backgroundColor: "#d3d3d3",
+                }}
+              >
                 <Text style={[styles.tableCol, styles.tableCell]}>Item</Text>
                 <Text style={[styles.tableCol, styles.tableCell]}>
                   Quantity
@@ -266,6 +280,8 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={{ fontSize: "13px" }}>Total</Text>
               <Text style={{ fontSize: "13px" }}>
+                {" "}
+                Rs.
                 {order.orderDetails?.products?.reduce(
                   (productAcc, product) =>
                     productAcc +
@@ -289,7 +305,9 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={{ fontSize: "13px" }}>Status</Text>
               <Text style={{ fontSize: "13px" }}>
-                {order.orderDetails.status}
+                {order.orderDetails.status &&
+                  order.orderDetails.status?.charAt(0).toUpperCase() +
+                    order.orderDetails.status?.slice(1)}
               </Text>
             </View>
           </View>

@@ -19,9 +19,12 @@ import { Button } from "../../Components/Common/Button/Button";
 
 const AllCustomers = () => {
   const [totalData, setTotalData] = useState<number>();
-  const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "customer" | "admin" | "chef" | string;
-    sortFilter?: string;
+  const [filter, setFilter] = useState<{
+    typeFilter?: {
+      type?: "admin" | "customer" | "chef" | undefined;
+      id?: string;
+    };
+    sortFilter?: { sort?: string; id?: string };
   }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);
@@ -224,9 +227,10 @@ const AllCustomers = () => {
     if (value.length <= 0)
       return handleCustomerData({
         path:
-          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+          "customer",
         direction: "next",
-        filter: (isFilter?.sortFilter as keyof User) || "fullName",
+        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
         pageSize: pagination.perPage,
         sort: sortOrder || "asc",
         currentFirstDoc: null,
@@ -249,9 +253,10 @@ const AllCustomers = () => {
   useEffect(() => {
     handleCustomerData({
       path:
-        (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+        "customer",
       direction: "next",
-      filter: (isFilter?.sortFilter as keyof User) || "fullName",
+      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
       pageSize: pagination.perPage,
       sort: sortOrder || "asc",
       currentFirstDoc: null,
@@ -259,8 +264,8 @@ const AllCustomers = () => {
     });
   }, [
     pagination.perPage,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
+    filter?.sortFilter?.sort,
+    filter?.typeFilter?.type,
     sortOrder,
   ]);
 
@@ -271,12 +276,12 @@ const AllCustomers = () => {
         setLoading(true);
         const customers = await getUsers({
           path:
-            (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
+            (filter?.typeFilter?.type as "customer" | "admin" | "chef") ||
             "customer",
           pageSize: pagination.perPage,
           direction: pagination.pageDirection || "next",
-          filter: (isFilter?.sortFilter as keyof User) || "fullName",
-          sort: (isFilter?.sortFilter as "asc" | "desc") || "asc",
+          filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+          sort: (sortOrder as "asc" | "desc") || "asc",
           currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
           currentLastDoc: currentDoc && currentDoc.currentLastDoc,
         });
@@ -318,9 +323,10 @@ const AllCustomers = () => {
   }, [
     pagination.currentPage,
     pagination.perPage,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
+    filter?.sortFilter?.sort,
+    filter?.typeFilter?.type,
     pagination.pageDirection,
+    sortOrder,
   ]);
 
   return (
@@ -353,32 +359,38 @@ const AllCustomers = () => {
               dataLength={bulkSelectedCustomer.length}
               deleteFn={() => setIsBulkDelete(true)}
             />
-            {isFilter?.sortFilter && (
+            {filter?.sortFilter?.sort && (
               <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {isFilter.sortFilter.toLowerCase()}
+                    {filter.sortFilter.sort?.toLowerCase()}
                   </span>
                 </div>
                 <button
                   onClick={() =>
-                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                    setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { id: "", sort: "" },
+                    }))
                   }
                 >
                   <X className="text-[var(--danger-text)] " size={20} />
                 </button>
               </div>
             )}
-            {isFilter?.typeFilter && (
+            {filter?.typeFilter?.type && (
               <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {isFilter.typeFilter.toLowerCase()}
+                    {filter.typeFilter.type?.toLowerCase()}
                   </span>
                 </div>
                 <button
                   onClick={() =>
-                    setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                    setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { id: "", type: undefined },
+                    }))
                   }
                 >
                   <X className="text-[var(--danger-text)] " size={20} />
@@ -389,6 +401,8 @@ const AllCustomers = () => {
         </div>
         <div>
           <Button
+            selectedTypes={[filter?.typeFilter?.id as string]}
+            selectedCheck={[filter?.sortFilter?.id as string]}
             bodyStyle={{
               width: "400px",
               top: "3rem",
@@ -406,20 +420,32 @@ const AllCustomers = () => {
               </div>
             }
             checkFn={{
-              checkSortFn: (isChecked, value) => {
+              checkSortFn: (isChecked, value, id) => {
                 if (!isChecked) {
-                  return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+                  return setFilter((prev) => ({
+                    ...prev,
+                    sortFilter: { id: "", sort: "" },
+                  }));
                 }
                 if (isChecked) {
-                  setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    sortFilter: { id: id, sort: value },
+                  }));
                 }
               },
-              checkTypeFn: (isChecked, value) => {
+              checkTypeFn: (isChecked, value, id) => {
                 if (!isChecked) {
-                  return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+                  return setFilter((prev) => ({
+                    ...prev,
+                    typeFilter: { id: "", type: undefined },
+                  }));
                 }
                 if (isChecked) {
-                  setIsFilter((prev) => ({ ...prev, typeFilter: value }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    typeFilter: { id: id, type: value },
+                  }));
                 }
               },
             }}
@@ -429,7 +455,7 @@ const AllCustomers = () => {
               { label: "Chef", value: "chef", id: "fkldjs" },
             ]}
             sort={[
-              { label: "Orders", value: "totalOrder", id: "flksjd" },
+              { label: "Order", value: "totalOrder", id: "flksjd" },
               { label: "Amount", value: "totalSpent", id: "lfkjds" },
             ]}
             sortFn={(type: "asc" | "desc") => setSortOrder(type)}
@@ -458,7 +484,7 @@ const AllCustomers = () => {
           },
           edit: (id) => {
             const findCustomer = initialCustomer?.find(
-              (customer) => customer.uid == id
+              (customer) => customer.id == id
             );
             setCustomerModal(findCustomer);
             setIsEdit(false);

@@ -22,7 +22,7 @@ import { aggregateCategories } from "../Category/category";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<Category[]>([]);
-  const [isFilter, setIsFilter] = useState<string>();
+  const [filter, setFilter] = useState<{ sort?: string; id?: string }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [bulkSelectedCategory, setBulkSelectedCategory] = useState<
     { id?: string }[]
@@ -169,8 +169,8 @@ const AllCategories = () => {
       }
       setInitialCategory(sortedCustomers as Category[]);
     };
-    handleSelect(isFilter as string);
-  }, [isFilter, sortOrder]);
+    handleSelect(filter?.sort as string);
+  }, [filter?.sort, sortOrder]);
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
@@ -207,14 +207,18 @@ const AllCategories = () => {
               />
             </div>
             <div>
-              {isFilter && (
+              {filter?.sort && (
                 <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                   <div className="flex gap-1 items-center justify-center">
                     <span className="  text-[15px] text-[var(--dark-secondary-text)]">
-                      {isFilter.toLowerCase()}
+                      {filter.sort.charAt(0).toUpperCase() +
+                        filter?.sort?.slice(1).toLowerCase()}
                     </span>
                   </div>
-                  <button onClick={() => setIsFilter("")} className=" ">
+                  <button
+                    onClick={() => setFilter({ id: "", sort: "" })}
+                    className=" "
+                  >
                     <X className="text-[var(--danger-text)] " size={20} />
                   </button>
                 </div>
@@ -222,46 +226,45 @@ const AllCategories = () => {
             </div>
           </div>
         </div>
-        <div>
-          <Button
-            sortFn={(value) => setSortOrder(value)}
-            bodyStyle={{
-              width: "400px",
-              top: "3rem",
-              left: "-18rem",
-            }}
-            parent={
-              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                <Filter
-                  strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
-                />
-                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                  Filter
-                </p>
-              </div>
-            }
-            sort={[
-              { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
-              { label: "Revenue", value: "revenue", id: "flksdj" },
-              {
-                label: "Orders",
-                value: "orders",
-                id: "kfljsffldkl;'",
-              },
-            ]}
-            checkFn={{
-              checkSortFn: (isChecked, value) => {
-                if (!isChecked) {
-                  return setIsFilter("");
-                }
-                if (isChecked) {
-                  setIsFilter(value);
-                }
-              },
-            }}
-          />
-        </div>
+        <Button
+          selectedCheck={[filter?.id as string]}
+          sortFn={(value) => setSortOrder(value)}
+          bodyStyle={{
+            width: "400px",
+            top: "3rem",
+            left: "-18rem",
+          }}
+          parent={
+            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+              <Filter
+                strokeWidth={2.5}
+                className="size-5 text-[var(--dark-secondary-text)]"
+              />
+              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                Filter
+              </p>
+            </div>
+          }
+          sort={[
+            { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
+            { label: "Revenue", value: "revenue", id: "flksdj" },
+            {
+              label: "Orders",
+              value: "orders",
+              id: "kfljsffldkl;'",
+            },
+          ]}
+          checkFn={{
+            checkSortFn: (isChecked, value, id) => {
+              if (!isChecked) {
+                return setFilter({ id: "", sort: "" });
+              }
+              if (isChecked) {
+                setFilter({ sort: value, id: id });
+              }
+            },
+          }}
+        />
       </div>
       <CategoryTable
         totalData={initialCategory?.length}

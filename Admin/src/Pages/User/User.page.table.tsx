@@ -89,7 +89,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
       colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
       render: (item: User) => (
         <div className=" w-[120px] text-[var(--dark-text)]  ">
-          <p>Rs {item.totalSpent}</p>
+          <p>Rs. {item.totalSpent || 0}</p>
         </div>
       ),
     },

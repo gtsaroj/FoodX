@@ -19,10 +19,13 @@ const Logs = () => {
     currentFirst: string;
     currentLastDoc: string;
   }>();
-  const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "adminLogs" | "chefLogs" | "customerLogs" | string;
-    sortFilter?: string;
-    actionFilter?: keyof LogActionModal | string;
+  const [filter, setFilter] = useState<{
+    typeFilter?: {
+      type?: "adminLogs" | "chefLogs" | "customerLogs" | string;
+      id?: string;
+    };
+    sortFilter?: { sort?: string; id?: string };
+    actionFilter?: { id?: string; action?: keyof LogActionModal | string };
   }>();
   const [sort, setSort] = useState<"asc" | "desc">("desc");
 
@@ -95,22 +98,23 @@ const Logs = () => {
     // Fetch logs with the new filters applied
     getAllRoleLogs({
       path:
-        (isFilter?.typeFilter as "customerLogs" | "adminLogs" | "chefLogs") ||
-        "adminLogs",
-      filter: (isFilter?.sortFilter as keyof LogCardProps) || "name",
+        (filter?.typeFilter?.type as
+          | "customerLogs"
+          | "adminLogs"
+          | "chefLogs") || "adminLogs",
+      filter: (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
       pageSize: 5,
       sort,
       currentFirstDoc: null,
       currentLastDoc: null,
       direction: "next",
-      action: isFilter?.actionFilter as LogActionModal["action"],
+      action: filter?.actionFilter?.action as LogActionModal["action"],
     });
   }, [
-    isFilter?.typeFilter,
-    isFilter?.actionFilter,
-    isFilter?.sortFilter,
+    filter?.typeFilter?.type,
+    filter?.actionFilter?.action,
+    filter?.sortFilter?.sort,
     sort,
-   
   ]);
 
   return (
@@ -122,48 +126,60 @@ const Logs = () => {
               Audit Logs
             </p>
             <div className="flex items-center justify-start gap-2">
-              {isFilter?.sortFilter && (
+              {filter?.sortFilter?.sort && (
                 <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                   <div className="flex gap-1 items-center justify-center">
                     <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                      {isFilter.sortFilter.toLowerCase()}
+                      {filter.sortFilter?.sort?.charAt(0).toUpperCase() +
+                        filter?.sortFilter?.sort?.slice(1).toLowerCase()}
                     </span>
                   </div>
                   <button
                     onClick={() =>
-                      setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                      setFilter((prev) => ({
+                        ...prev,
+                        sortFilter: { id: "", sort: "" },
+                      }))
                     }
                   >
                     <X className="text-[var(--danger-text)] " size={20} />
                   </button>
                 </div>
               )}
-              {isFilter?.typeFilter && (
+              {filter?.typeFilter?.type && (
                 <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                   <div className="flex gap-1 items-center justify-center">
                     <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                      {isFilter.typeFilter.toLowerCase()}
+                      {filter.typeFilter.type.charAt(0).toUpperCase() +
+                        filter?.typeFilter?.type?.slice(1).toLowerCase()}
                     </span>
                   </div>
                   <button
                     onClick={() =>
-                      setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                      setFilter((prev) => ({
+                        ...prev,
+                        typeFilter: { id: "", type: "" },
+                      }))
                     }
                   >
                     <X className="text-[var(--danger-text)] " size={20} />
                   </button>
                 </div>
               )}
-              {isFilter?.actionFilter && (
+              {filter?.actionFilter?.action && (
                 <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                   <div className="flex gap-1 items-center justify-center">
                     <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                      {isFilter.actionFilter.toLowerCase()}
+                      {filter.actionFilter.action?.charAt(0).toUpperCase() +
+                        filter?.actionFilter?.action?.slice(1).toUpperCase()}
                     </span>
                   </div>
                   <button
                     onClick={() =>
-                      setIsFilter((prev) => ({ ...prev, actionFilter: "" }))
+                      setFilter((prev) => ({
+                        ...prev,
+                        actionFilter: { action: "", id: "" },
+                      }))
                     }
                   >
                     <X className="text-[var(--danger-text)] " size={20} />
@@ -174,6 +190,9 @@ const Logs = () => {
           </div>
           <div>
             <Button
+              selectedAction={[filter?.actionFilter?.id as string]}
+              selectedCheck={[filter?.sortFilter?.id as string]}
+              selectedTypes={[filter?.typeFilter?.id as string]}
               bodyStyle={{
                 width: "400px",
                 top: "3rem",
@@ -223,31 +242,46 @@ const Logs = () => {
               ]}
               sortFn={(value) => setSort(value)}
               checkFn={{
-                checkTypeFn: (isChecked, type) => {
+                checkTypeFn: (isChecked, type, id) => {
                   if (!isChecked) {
-                    setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
-                  }
-                  if (isChecked) {
-                    setIsFilter((prev) => ({ ...prev, typeFilter: type }));
-                  }
-                },
-                checkSortFn: (isChecked, value) => {
-                  if (!isChecked) {
-                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
-                  }
-                  if (isChecked) {
-                    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
-                  }
-                },
-                checkActionFn: (isChecked, action) => {
-                  if (!isChecked) {
-                    return setIsFilter((prev) => ({
+                    setFilter((prev) => ({
                       ...prev,
-                      actionFilter: "",
+                      typeFilter: { id: "", type: "" },
                     }));
                   }
                   if (isChecked) {
-                    setIsFilter((prev) => ({ ...prev, actionFilter: action }));
+                    setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { id: id, type: type },
+                    }));
+                  }
+                },
+                checkSortFn: (isChecked, value, id) => {
+                  if (!isChecked) {
+                    setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { id: "", sort: "" },
+                    }));
+                  }
+                  if (isChecked) {
+                    setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { sort: value, id: id },
+                    }));
+                  }
+                },
+                checkActionFn: (isChecked, action, id) => {
+                  if (!isChecked) {
+                    return setFilter((prev) => ({
+                      ...prev,
+                      actionFilter: { action: "", id: "" },
+                    }));
+                  }
+                  if (isChecked) {
+                    setFilter((prev) => ({
+                      ...prev,
+                      actionFilter: { action: action, id: id },
+                    }));
                   }
                 },
               }}
@@ -268,18 +302,17 @@ const Logs = () => {
               next={() =>
                 getAllRoleLogs({
                   path:
-                    (isFilter?.typeFilter as
+                    (filter?.typeFilter as
                       | "customerLogs"
                       | "adminLogs"
                       | "chefLogs") || "adminLogs",
-                  filter:
-                    (isFilter?.sortFilter as keyof LogCardProps) || "name",
+                  filter: (filter?.sortFilter as keyof LogCardProps) || "name",
                   pageSize: 5,
                   sort,
                   currentFirstDoc: currentDoc?.currentFirst,
                   currentLastDoc: currentDoc?.currentLastDoc,
                   direction: "next",
-                  action: isFilter?.actionFilter as keyof LogCardProps["action"],
+                  action: filter?.actionFilter as keyof LogCardProps["action"],
                 })
               }
               loader={

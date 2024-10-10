@@ -14,6 +14,7 @@ import { Button } from "../../Components/Common/Button/Button";
 import Modal from "../../Components/Common/Popup/Popup";
 import TicketView from "../../Components/Tickets/Ticket.view";
 import { addNotification } from "../../Services/notification.services";
+import toast from "react-hot-toast";
 
 const TicketAdminPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,11 +23,13 @@ const TicketAdminPage = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 7 });
+    pageDirection?: "prev" | "next";
+  }>({ currentPage: 1, perPage: 5 });
   const [filter, setFilter] = useState<{
-    sort?: "asc" | "desc";
-    status?: TicketStatus["status"];
-  }>({ sort: "asc" });
+    id: string;
+    sort?: TicketStatus["status"] | undefined;
+  }>();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
@@ -41,7 +44,11 @@ const TicketAdminPage = () => {
       colStyle: { width: "200px", justifyContent: "start", textAlign: "start" },
       render: (value: TicketModel) => (
         <div className="w-[200px] text-[var(--dark-text)] tracking-wide  flex items-center justify-start gap-3 ">
-          <span> {value.name}</span>
+          <span>
+            {" "}
+            {value?.name?.charAt(0).toUpperCase() + value?.name?.slice(1) ||
+              "User"}
+          </span>
         </div>
       ),
     },
@@ -110,6 +117,8 @@ const TicketAdminPage = () => {
     },
   ];
 
+  console.log(filter);
+
   const updateTicketFn = async (newStatus: TicketStatus["status"]) => {
     const messages = {
       pending: {
@@ -130,21 +139,28 @@ const TicketAdminPage = () => {
         title: "Ticket Rejected",
       },
     };
-    await updateTicket({ id: id as string, newStatus: newStatus });
-    const { message, title } = messages[newStatus];
-    const findTicket = tickets?.find((ticket) => ticket.id === id);
-    await addNotification({
-      message: message,
-      title: title,
-      userId: findTicket?.uid as string,
-    });
+    const loading = toast.loading("Updating...");
+    try {
+      await updateTicket({ id: id as string, newStatus: newStatus });
+      const { message, title } = messages[newStatus];
+      const findTicket = tickets?.find((ticket) => ticket.id === id);
+      await addNotification({
+        message: message,
+        title: title,
+        userId: findTicket?.uid as string,
+      });
+    } catch (error) {
+      toast.error("Something went wrong, please try after 2 mins");
+    }
     const updateTickets = tickets?.map((ticket) => {
       if (ticket.id === id) {
         return { ...ticket, status: newStatus };
+      } else {
+        return ticket; // Always return the ticket, modified or not
       }
     });
     setTickets(updateTickets as TicketModel[]);
-    return;
+    toast.dismiss(loading);
   };
 
   const fetchTickets = async ({
@@ -188,26 +204,26 @@ const TicketAdminPage = () => {
   useEffect(() => {
     fetchTickets({
       pageSize: pagination.perPage,
-      sort: (filter.sort as "asc" | "desc") || "asc",
+      sort: (sortOrder as "asc" | "desc") || "asc",
       direction: "next",
       currentFirstDoc: null,
       currentLastDoc: null,
-      status: filter.status || undefined,
+      status: filter?.sort || undefined,
     });
-  }, [filter.sort, filter.status, pagination.perPage]);
+  }, [sortOrder, filter?.sort, pagination.perPage]);
 
   useEffect(() => {
-    if (pagination.currentPage > 1 && currentDoc?.currentLastDoc) {
+    if (pagination.currentPage > 1 && pagination.pageDirection) {
       const fetchNextPage = async () => {
         setLoading(true);
         try {
           const response = (await getTickets({
             pageSize: pagination.perPage,
-            sort: (filter.sort as "asc" | "desc") || "asc",
-            direction: "next",
+            sort: (sortOrder as "asc" | "desc") || "asc",
+            direction: pagination.pageDirection || "next",
             currentFirstDoc: currentDoc?.currentFirstDoc || null,
             currentLastDoc: currentDoc?.currentLastDoc || null,
-            status: filter.status || undefined,
+            status: filter?.sort || undefined,
           })) as {
             tickets: TicketType[];
             currentFirstDoc: string;
@@ -229,7 +245,13 @@ const TicketAdminPage = () => {
       };
       fetchNextPage();
     }
-  }, [pagination.currentPage, pagination.perPage, filter.sort, filter.status]);
+  }, [
+    pagination.currentPage,
+    pagination.pageDirection,
+    pagination.perPage,
+    sortOrder,
+    filter?.sort,
+  ]);
 
   const findTicket =
     !isView && id && tickets?.find((ticket) => ticket.id === id);
@@ -247,17 +269,17 @@ const TicketAdminPage = () => {
             </p>
           </div>
           <div className="flex items-center justify-start gap-2">
-            {filter?.status && (
+            {filter?.sort && (
               <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {filter.status && filter.status.toLowerCase()}
+                    {filter.sort &&
+                      filter.sort.charAt(0).toUpperCase() +
+                        filter.sort.slice(1)}
                   </span>
                 </div>
                 <button
-                  onClick={() =>
-                    setFilter((prev) => ({ ...prev, status: undefined }))
-                  }
+                  onClick={() => setFilter({ id: "", sort: undefined })}
                   className=" "
                 >
                   <X className="text-[var(--danger-text)] " size={20} />
@@ -267,9 +289,8 @@ const TicketAdminPage = () => {
           </div>
         </div>
         <Button
-          sortFn={(value: "asc" | "desc") =>
-            setFilter((prev) => ({ ...prev, sort: value }))
-          }
+          selectedCheck={[filter?.id as string]}
+          sortFn={(value: "asc" | "desc") => setSortOrder(value)}
           bodyStyle={{
             width: "400px",
             top: "3.5rem",
@@ -301,11 +322,9 @@ const TicketAdminPage = () => {
             },
           ]}
           checkFn={{
-            checkSortFn: (isChecked, value) => {
-              if (!isChecked)
-                setFilter((prev) => ({ ...prev, status: undefined }));
-              if (isChecked && value)
-                setFilter((prev) => ({ ...prev, status: value }));
+            checkSortFn: (isChecked, value, id) => {
+              if (!isChecked) return setFilter({ id: "", sort: undefined });
+              setFilter({ id: id, sort: value });
             },
           }}
         />
@@ -313,6 +332,9 @@ const TicketAdminPage = () => {
 
       <div className=" py-6">
         <Table
+          handlePageDirection={(pageDirection) =>
+            setPagination((prev) => ({ ...prev, pageDirection: pageDirection }))
+          }
           loading={loading}
           columns={Columns}
           data={tickets as TicketModel[]}

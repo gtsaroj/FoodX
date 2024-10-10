@@ -7,7 +7,7 @@ export interface AddNotification {
 export interface Notification extends Omit<AddNotification, "userId"> {
   id: string;
   uid: string;
-  time: string;
+  createdAt: { _seconds: number; _nanoseconds: number };
 }
 
 export interface FetchNotification extends Pick<Notification, "uid"> {

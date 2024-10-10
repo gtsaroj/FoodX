@@ -142,7 +142,7 @@ function Table<T extends { id: string }>({
                 currentData.map((item, index) => (
                   <tr
                     className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-8 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
-                    key={(item.id ? item.id : item.uid) || index}
+                    key={(item?.id ? item.id : item?.uid) || index}
                   >
                     {!!actions?.checkFn && !disableActions && (
                       <th className="w-[30px]">

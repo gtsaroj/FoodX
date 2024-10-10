@@ -40,9 +40,9 @@ const FoodPage: React.FC = () => {
 
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">();
-  const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "products" | "specials";
-    sortFilter?: string;
+  const [filter, setFilter] = useState<{
+    typeFilter?: { type?: "products" | "specials"; id?: string };
+    sortFilter?: { sort?: string; id?: string };
   }>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -127,21 +127,29 @@ const FoodPage: React.FC = () => {
   //Sorting
   const handleTypeCheck = async (
     isChecked: boolean,
-    value: "specials" | "products"
+    value: "specials" | "products",
+    id: string
   ) => {
     if (!isChecked)
-      return setIsFilter((prev) => ({ ...prev, typeFilter: undefined }));
-    setIsFilter((prev) => ({ ...prev, typeFilter: value }));
+      return setFilter((prev) => ({
+        ...prev,
+        typeFilter: { type: undefined, id: undefined },
+      }));
+    setFilter((prev) => ({ ...prev, typeFilter: { type: value, id: id } }));
   };
 
   const handleSortCheck = async (
     isChecked: boolean,
-    value: "price" | "orders" | "revenue"
+    value: "price" | "orders" | "revenue",
+    id: string
   ) => {
-    if (!isChecked) return setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
-    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+    if (!isChecked)
+      return setFilter((prev) => ({
+        ...prev,
+        sortFilter: { id: undefined, sort: undefined },
+      }));
+    setFilter((prev) => ({ ...prev, sortFilter: { id: id, sort: value } }));
   };
-
   // delete products
   const handleDelete = async (id: string, type: "specials" | "products") => {
     if (!id && !type) return toast.error(`${id} || ${type} not found`);
@@ -236,12 +244,16 @@ const FoodPage: React.FC = () => {
 
   useEffect(() => {
     const filterAndSortProducts = async () => {
-      let filteredProducts = [...fetchedProducts];
+      let filteredProducts = fetchedProducts;
 
       // Filter products based on type
-      if (isFilter?.typeFilter) {
+      if (filter?.typeFilter?.type) {
         const specialProducts = await getSpecialProducts(
-          `${isFilter.typeFilter === "products" ? "all" : isFilter.typeFilter}`
+          `${
+            filter!.typeFilter!.type === "products"
+              ? "all"
+              : filter!.typeFilter!.type
+          }`
         );
         filteredProducts = await aggregateProducts(specialProducts.data);
       } else {
@@ -249,43 +261,48 @@ const FoodPage: React.FC = () => {
         getProducts();
         return;
       }
+
       setFetchedProducts(filteredProducts);
     };
 
     filterAndSortProducts();
-  }, [isFilter?.typeFilter]);
+  }, [filter?.typeFilter?.type]);
 
   useEffect(() => {
-    let filterProducts = fetchedProducts as Product[];
-    // Sort products based on sortFilter
-    if (isFilter?.sortFilter || sortOrder) {
-      filterProducts = [...fetchedProducts]?.sort((a, b) => {
-        const aValue = a[isFilter?.sortFilter as keyof Product];
-        const bValue = b[isFilter?.sortFilter as keyof Product];
+    let filteredProducts = fetchedProducts;
 
-        // Ascending Order
+    // Sort products based on sortFilter and sortOrder
+    if (
+      filter?.sortFilter?.sort &&
+      (sortOrder === "asc" || sortOrder === "desc")
+    ) {
+      filteredProducts = [...fetchedProducts].sort((a, b) => {
+        const aValue = a[filter?.sortFilter?.sort as keyof Product];
+        const bValue = b[filter?.sortFilter?.sort as keyof Product];
+
         if (sortOrder === "asc") {
           if (typeof aValue === "number" && typeof bValue === "number") {
             return aValue - bValue; // Numeric comparison
           } else if (typeof aValue === "string" && typeof bValue === "string") {
-            return aValue.localeCompare(bValue); // Lexical comparison for strings
+            return aValue.localeCompare(bValue); // Lexical comparison
           }
         }
 
-        // Descending Order
         if (sortOrder === "desc") {
           if (typeof aValue === "number" && typeof bValue === "number") {
             return bValue - aValue; // Numeric comparison
           } else if (typeof aValue === "string" && typeof bValue === "string") {
-            return bValue.localeCompare(aValue); // Lexical comparison for strings
+            return bValue.localeCompare(aValue); // Lexical comparison
           }
         }
 
-        return 0; // Fallback when types don't match or sort order is invalid
+        return 0; // Fallback if the values are neither string nor number
       });
     }
-    setFetchedProducts(filterProducts);
-  }, [isFilter?.sortFilter, sortOrder]);
+
+    setFetchedProducts(filteredProducts);
+  }, [filter?.sortFilter?.sort, sortOrder]);
+
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7 ">
@@ -308,39 +325,47 @@ const FoodPage: React.FC = () => {
               <p className="text-[16px] tracking-widest ">Item</p>
             </button>
             <Button
-              sortFn={(value) => setSortOrder(value)}
-              bodyStyle={{
-                width: "400px",
-                top: "3.5rem",
-                left: "-18rem",
-              }}
-              parent={
-                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                  <Filter
-                    strokeWidth={2.5}
-                    className="size-5 text-[var(--dark-secondary-text)]"
-                  />
-                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                    Filter
-                  </p>
-                </div>
-              }
-              types={[
-                { label: "Specials", value: "specials", id: "fklsdjf" },
-                { label: "products", value: "products", id: "fkjdls" },
-              ]}
-              sort={[
-                { label: "Price", value: "price", id: "jfhkdj" },
-                { label: "Orders", value: "orders", id: "fkdsj" },
-                { label: "Revenue", value: "revenue", id: "flkjdsf" },
-              ]}
-              checkFn={{
-                checkSortFn: (isChecked, value) =>
-                  handleSortCheck(isChecked, value),
-                checkTypeFn: (isChecked, type) =>
-                  handleTypeCheck(isChecked, type),
-              }}
-            />
+            selectedCheck={[filter?.sortFilter?.id as string]}
+            selectedTypes={[filter?.typeFilter?.id as string]}
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            types={[
+              { label: "Specials", value: "specials", id: "fklsdjf" },
+              { label: "products", value: "products", id: "fkjdls" },
+            ]}
+            sort={[
+              { label: "Price", value: "price", id: "jfhkdj" },
+              { label: "Order", value: "order", id: "fkdsj" },
+              { label: "Revenue", value: "revenue", id: "flkjdsf" },
+            ]}
+            checkFn={{
+              checkTypeFn: (
+                isChecked: boolean,
+                value: "specials" | "products",
+                id
+              ) => handleTypeCheck(isChecked, value, id),
+              checkSortFn: (
+                isChecked: boolean,
+                value: "orders" | "revenue",
+                id
+              ) => handleSortCheck(isChecked, value, id),
+            }}
+          />
           </div>
         </div>
       </div>
@@ -363,40 +388,48 @@ const FoodPage: React.FC = () => {
           />
         </div>
         <div className="flex items-center justify-start gap-2">
-          {isFilter?.sortFilter && (
-            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="text-[15px] text-[var(--dark-secondary-text)] ">
-                  {isFilter.sortFilter && isFilter.sortFilter.toLowerCase()}
-                </span>
+        {filter?.sortFilter?.sort && (
+              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className=" text-[15px] text-[var(--dark-secondary-text)]">
+                    {filter.sortFilter.sort &&
+                      filter.sortFilter.sort.toLowerCase()}
+                  </span>
+                </div>
+                <button
+                  onClick={() =>
+                    setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { id: undefined, sort: undefined },
+                    }))
+                  }
+                  className=" "
+                >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
               </div>
-              <button
-                onClick={() =>
-                  setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
-                }
-                className=" "
-              >
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
-          {isFilter?.typeFilter && (
-            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                  {isFilter.typeFilter && isFilter.typeFilter.toLowerCase()}
-                </span>
+            )}
+            {filter?.typeFilter?.type && (
+              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="    text-[15px] text-[var(--dark-secondary-text)]">
+                    {filter.typeFilter.type &&
+                      filter.typeFilter.type.toLowerCase()}
+                  </span>
+                </div>
+                <button
+                  onClick={() =>
+                    setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { id: undefined, type: undefined },
+                    }))
+                  }
+                  className=" "
+                >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
               </div>
-              <button
-                onClick={() =>
-                  setIsFilter((prev) => ({ ...prev, typeFilter: undefined }))
-                }
-                className=" "
-              >
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
+            )}
         </div>
       </div>
 

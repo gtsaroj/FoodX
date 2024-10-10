@@ -1,4 +1,4 @@
-import { Download, Filter, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
@@ -9,7 +9,7 @@ import { Button } from "../../Components/Common/Button/Button";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [loading, setLoading] = useState<boolean>(false);
   const [pagination, setPagination] = useState<{
     currentPage: number;
@@ -20,9 +20,12 @@ const CustomerList: React.FC = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
-  const [isFilter, setIsFilter] = useState<{
-    typeFilter?: "admin" | "customer" | "chef" | string;
-    sortFilter?: "asc" | "desc";
+  const [filter, setFilter] = useState<{
+    typeFilter?: {
+      type?: "admin" | "customer" | "chef" | undefined;
+      id?: string;
+    };
+    sortFilter?: { sort?: string; id?: string };
   }>();
   const [totalData, setTotalData] = useState<number>();
 
@@ -72,9 +75,10 @@ const CustomerList: React.FC = () => {
     if (value.length <= 0)
       return handleCustomerData({
         path:
-          (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+          "customer",
         direction: "next",
-        filter: (isFilter?.sortFilter as keyof User) || "fullName",
+        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
         pageSize: pagination.perPage,
         sort: sortOrder || "asc",
         currentFirstDoc: null,
@@ -97,9 +101,10 @@ const CustomerList: React.FC = () => {
   useEffect(() => {
     handleCustomerData({
       path:
-        (isFilter?.typeFilter as "admin" | "customer" | "chef") || "customer",
+        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+        "customer",
       direction: "next",
-      filter: (isFilter?.sortFilter as keyof User) || "fullName",
+      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
       pageSize: pagination.perPage,
       sort: sortOrder || "asc",
       currentFirstDoc: null,
@@ -107,8 +112,8 @@ const CustomerList: React.FC = () => {
     });
   }, [
     pagination.perPage,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
+    filter?.sortFilter?.sort,
+    filter?.typeFilter?.type,
     sortOrder,
   ]);
 
@@ -118,12 +123,12 @@ const CustomerList: React.FC = () => {
         setLoading(true);
         const customers = await getUsers({
           path:
-            (isFilter?.typeFilter as "customer" | "admin" | "chef") ||
+            (filter?.typeFilter?.type as "customer" | "admin" | "chef") ||
             "customer",
           pageSize: pagination.perPage,
           direction: pagination?.pageDirection || "next",
-          filter: (isFilter?.sortFilter as keyof User) || "fullName",
-          sort: isFilter?.sortFilter || "asc",
+          filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+          sort: sortOrder || "asc",
           currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
           currentLastDoc: currentDoc && currentDoc.currentLastDoc,
         });
@@ -154,8 +159,8 @@ const CustomerList: React.FC = () => {
   }, [
     pagination.currentPage,
     pagination.perPage,
-    isFilter?.sortFilter,
-    isFilter?.typeFilter,
+    filter?.sortFilter?.sort,
+    filter?.typeFilter?.type,
     pagination.pageDirection,
   ]);
 
@@ -174,6 +179,8 @@ const CustomerList: React.FC = () => {
           <div className="flex  items-center justify-center gap-2">
             {/* Filter button */}
             <Button
+              selectedTypes={[filter?.typeFilter?.id as string]}
+              selectedCheck={[filter?.sortFilter?.id as string]}
               bodyStyle={{
                 width: "400px",
                 top: "3.5rem",
@@ -191,27 +198,38 @@ const CustomerList: React.FC = () => {
                 </div>
               }
               checkFn={{
-                checkSortFn: (isChecked: boolean, value: string) => {
+                checkSortFn: (
+                  isChecked: boolean,
+                  value: string,
+                  id: string
+                ) => {
                   if (!isChecked) {
-                    return setIsFilter((prev) => ({
+                    return setFilter((prev) => ({
                       ...prev,
-                      sortFilter: "" as "asc" | "desc",
+                      sortFilter: { id: "", sort: "" },
                     }));
                   }
 
-                  setIsFilter((prev) => ({
+                  setFilter((prev) => ({
                     ...prev,
-                    sortFilter: value as "asc" | "desc",
+                    sortFilter: { sort: value, id: id },
                   }));
                 },
                 checkTypeFn: (
                   isChecked: boolean,
-                  value: "admin" | "chef" | "customer"
+                  value: "admin" | "chef" | "customer",
+                  id: string
                 ) => {
                   if (!isChecked) {
-                    return setIsFilter((prev) => ({ ...prev, typeFilter: "" }));
+                    return setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { type: undefined, id: "" },
+                    }));
                   }
-                  setIsFilter((prev) => ({ ...prev, typeFilter: value }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    typeFilter: { id: id, type: value },
+                  }));
                 },
               }}
               types={[
@@ -220,9 +238,9 @@ const CustomerList: React.FC = () => {
                 { label: "Chef", value: "chef", id: "fkldjs" },
               ]}
               sort={[
-                { label: "Orders", value: "orders", id: "flksjd" },
-                { label: "Amount", value: "amount", id: "lfkjds" },
-                { label: "Role", value: "role", id: "fldkjs" },
+                { label: "Fullname", value: "fullName", id: "flksjd" },
+                { label: "Spent", value: "totalSpent", id: "lfkjds" },
+                { label: "Order", value: "totalOrder", id: "fldkjs" },
               ]}
               sortFn={(type: "asc" | "desc") =>
                 setSortOrder(type as "asc" | "desc")
@@ -244,18 +262,18 @@ const CustomerList: React.FC = () => {
             placeholder="Search for products"
           />
         </form>
-        {isFilter?.sortFilter && (
+        {filter?.sortFilter?.sort && (
           <div className="flex px-2 py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {isFilter.sortFilter?.toLocaleLowerCase()}
+                {filter.sortFilter?.sort?.toLocaleLowerCase()}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({
+                setFilter((prev) => ({
                   ...prev,
-                  sortFilter: "" as "desc" | "asc",
+                  sortFilter:{id:"",sort:""}
                 }))
               }
               className=" "
@@ -264,16 +282,16 @@ const CustomerList: React.FC = () => {
             </button>
           </div>
         )}
-        {isFilter?.typeFilter && (
+        {filter?.typeFilter?.type && (
           <div className="flex px-2 py-0.5 gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {isFilter.typeFilter?.toLocaleLowerCase()}
+                {filter.typeFilter?.type?.toLocaleLowerCase()}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({ ...prev, typeFilter: "" }))
+                setFilter((prev) => ({ ...prev, typeFilter: {id:"",type:undefined} }))
               }
             >
               <X className="text-[var(--danger-text)] " size={20} />

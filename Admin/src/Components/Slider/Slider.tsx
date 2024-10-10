@@ -205,7 +205,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
                 {user.userInfo.role === "admin" && (
                   <li
                     onClick={() => setUrl("contact/admin-tickets")}
-                    className=" text-[14px] flex items-center  justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28]  hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
+                    className=" text-[14px] flex items-center   justify-start gap-5 cursor-pointer dark:hover:bg-[#121b28]  hover:bg-[#e8e8e8]  w-full p-3 rounded duration-150"
                   >
                     <Ticket />
                     Tickets
