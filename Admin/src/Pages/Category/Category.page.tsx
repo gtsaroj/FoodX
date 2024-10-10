@@ -27,8 +27,7 @@ export const CategoryPage: React.FC = () => {
   const [initialCategory, setInitialCategory] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDeleted] = useState<boolean>(false);
-  const [isFilter, setIsFilter] = useState<string>();
-
+  const [filter, setFilter] = useState<{ sort?: string; id?: string }>();
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("asc");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
@@ -114,7 +113,7 @@ export const CategoryPage: React.FC = () => {
     initialCategory?.forEach((category) =>
       dispatch(categoryAdd(category.name))
     );
-  }, [initialCategory, dispatch, isFilter?.length]);
+  }, [initialCategory, dispatch]);
 
   useEffect(() => {
     getAllCategories();
@@ -151,8 +150,8 @@ export const CategoryPage: React.FC = () => {
       }
       setInitialCategory(sortedCustomers as Category[]);
     };
-    handleSelect(isFilter as string);
-  }, [isFilter, sortOrder]);
+    handleSelect(filter?.sort as string);
+  }, [filter?.sort, sortOrder]);
 
   const SearchingCategories = async (value: string) => {
     if (value.length <= 0) return getAllCategories();
@@ -209,43 +208,44 @@ export const CategoryPage: React.FC = () => {
               <p className="text-[16px] tracking-widest ">Item</p>
             </button>
             <Button
-              sortFn={(value) => setSortOrder(value)}
-              bodyStyle={{
-                width: "400px",
-                top: "3.5rem",
-                left: "-18rem",
-              }}
-              parent={
-                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                  <Filter
-                    strokeWidth={2.5}
-                    className="size-5 text-[var(--dark-secondary-text)]"
-                  />
-                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                    Filter
-                  </p>
-                </div>
-              }
-              sort={[
-                { label: "Rank", value: "rank", id: "fkkfjsoadsj" },
-                { label: "Revenue", value: "revenue", id: "flfdshskfjksdj" },
-                {
-                  label: "Orders",
-                  value: "orders",
-                  id: "kfljsf",
-                },
-              ]}
-              checkFn={{
-                checkSortFn: (isChecked, value) => {
-                  if (!isChecked) {
-                    return setIsFilter("");
-                  }
-                  if (isChecked) {
-                    setIsFilter(value);
-                  }
-                },
-              }}
-            />
+            selectedCheck={[filter?.id as string]}
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            sort={[
+              { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
+              { label: "Revenue", value: "revenue", id: "flksdj" },
+              {
+                label: "Orders",
+                value: "orders",
+                id: "kfljsffldkl;'",
+              },
+            ]}
+            checkFn={{
+              checkSortFn: (isChecked, value, id) => {
+                if (!isChecked) {
+                  return setFilter({ id: "", sort: "" });
+                }
+                if (isChecked) {
+                  setFilter({ sort: value, id: id });
+                }
+              },
+            }}
+          />
           </div>
         </div>
       </div>
@@ -271,18 +271,22 @@ export const CategoryPage: React.FC = () => {
           />
         </div>
         <div>
-          {isFilter && (
-            <div className="flex px-1 py-0.5 w-full gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-              <div className="flex gap-1 items-center justify-center">
-                <span className="  text-[15px] text-[var(--dark-secondary-text)]">
-                  {isFilter.toLowerCase()}
-                </span>
-              </div>
-              <button onClick={() => setIsFilter("")} className=" ">
-                <X className="text-[var(--danger-text)] " size={20} />
-              </button>
-            </div>
-          )}
+        {filter?.sort && (
+                <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                  <div className="flex gap-1 items-center justify-center">
+                    <span className="  text-[15px] text-[var(--dark-secondary-text)]">
+                      {filter.sort.charAt(0).toUpperCase() +
+                        filter?.sort?.slice(1).toLowerCase()}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setFilter({ id: "", sort: "" })}
+                    className=" "
+                  >
+                    <X className="text-[var(--danger-text)] " size={20} />
+                  </button>
+                </div>
+              )}
         </div>
       </div>
       <CategoryTable

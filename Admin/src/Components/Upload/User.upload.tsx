@@ -6,6 +6,7 @@ import { User } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
 import { updateRole, updateUser } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
+import { ro } from "date-fns/locale";
 
 interface UpdateCategoryType {
   label: string;
@@ -44,6 +45,7 @@ interface UpdateCustomerProp {
 }
 
 const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
+  
   const [newData, setNewData] = useState<string>("");
   const [field, setField] = useState<"image" | "name" | "role">("name");
 
@@ -106,6 +108,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
         onSubmit={(event) => handleSubmit(event)}
       >
         <Selector
+          
           categoryOption={UpdateCategoryOption}
           setField={(value) => setField(value as "image" | "role" | "name")}
         />
@@ -151,7 +154,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
           </div>
         ) : field === "role" ? (
           <Selector
-            categoryOption={roleOptions}
+            categoryOption={roleOptions?.filter((role)=> role.value !== customerInfo.role) }
             setField={(value) => setNewData(value as string)}
           />
         ) : (

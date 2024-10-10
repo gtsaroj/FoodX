@@ -15,6 +15,9 @@ import { CalendarCheck } from "lucide-react";
 import dayjs, { Dayjs } from "dayjs";
 
 interface ButtonProp {
+  selectedCheck?: string[];
+  selectedTypes?: string[];
+  selectedAction?: string[];
   action?: { label: string; value: string; id: string }[];
   parentStyle?: React.CSSProperties;
   bodyStyle?: React.CSSProperties;
@@ -23,10 +26,10 @@ interface ButtonProp {
   types?: { label: ReactNode | string; value: string; id: string }[];
   sortFn?: (type: "asc" | "desc") => void;
   checkFn?: {
-    checkTypeFn?: (isChecked: boolean, type: any) => void;
-    checkSortFn?: (isChecked: boolean, type: any) => void;
-    checkActionFn?: (isChecked: boolean, type: any) => void;
-    dateActionFn?: (from:Dayjs, to:Dayjs) => void;
+    checkTypeFn?: (isChecked: boolean, type: any, id: string) => void;
+    checkSortFn?: (isChecked: boolean, type: any, id: string) => void;
+    checkActionFn?: (isChecked: boolean, type: any, id: string) => void;
+    dateActionFn?: (from: Dayjs, to: Dayjs) => void;
   };
 }
 
@@ -38,20 +41,14 @@ export const Button: React.FC<ButtonProp> = ({
   checkFn,
   sortFn,
   action,
+  selectedCheck,
+  selectedTypes,
+  selectedAction,
 }) => {
   const [show, setShow] = useState<boolean>(false);
   const [isShowTo, setIsShowTo] = useState<boolean>(false);
   const [isShowFrom, setIsShowFrom] = useState<boolean>(false);
   const reference = useRef<HTMLInputElement>();
-  const [checkedTypeState, setCheckedTypeState] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [checkedSortState, setCheckedSortState] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [checkActionState, setCheckActionState] = useState<{
-    [key: string]: boolean;
-  }>({});
 
   //date
   const [from, setFrom] = useState<dayjs.Dayjs>();
@@ -62,9 +59,8 @@ export const Button: React.FC<ButtonProp> = ({
     value: string,
     isChecked: boolean
   ) => {
-    setCheckedTypeState({ [id]: isChecked });
     if (checkFn?.checkTypeFn) {
-      checkFn.checkTypeFn(isChecked, value);
+      checkFn.checkTypeFn(isChecked, value, id);
     }
   };
 
@@ -82,15 +78,13 @@ export const Button: React.FC<ButtonProp> = ({
     value: string,
     isChecked: boolean
   ) => {
-    setCheckedSortState({ [id]: isChecked });
     if (checkFn?.checkSortFn) {
-      checkFn.checkSortFn(isChecked, value);
+      checkFn.checkSortFn(isChecked, value, id);
     }
   };
   const handleActionBox = (id: string, value: string, isChecked: boolean) => {
-    setCheckActionState({ [id]: isChecked });
     if (checkFn?.checkActionFn) {
-      checkFn.checkActionFn(isChecked, value);
+      checkFn.checkActionFn(isChecked, value, id);
     }
   };
 
@@ -175,7 +169,7 @@ export const Button: React.FC<ButtonProp> = ({
                           );
                         }}
                         id={data.id}
-                        checked={checkedTypeState[data.id] || false}
+                        checked={selectedTypes?.includes(data?.id) || false}
                         type="checkbox"
                         className="w-4 h-4 cursor-pointer accent-black"
                         ref={reference as any}
@@ -207,7 +201,7 @@ export const Button: React.FC<ButtonProp> = ({
                 />
               </div>
             </div>
-            <div className=" flex  overflow-auto items-center justify-around gap-10">
+            <div className=" flex  flex-wrap items-center justify-start gap-10">
               {sort?.map(
                 (data) =>
                   checkFn?.checkSortFn &&
@@ -225,7 +219,7 @@ export const Button: React.FC<ButtonProp> = ({
                           );
                         }}
                         id={data.id}
-                        checked={checkedSortState[data.id] || false}
+                        checked={selectedCheck?.includes(data.id)}
                         type="checkbox"
                         className="w-4 h-4 cursor-pointer accent-slate-950  "
                       />
@@ -265,7 +259,7 @@ export const Button: React.FC<ButtonProp> = ({
                           );
                         }}
                         id={data.id}
-                        checked={checkActionState[data.id] || false}
+                        checked={selectedAction?.includes(data.id) || false}
                         type="checkbox"
                         className="w-4 h-4 cursor-pointer accent-black"
                       />

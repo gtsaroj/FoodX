@@ -74,7 +74,7 @@ const Pagination: React.FC<PaginationProps> = ({
             }`}
             onClick={() => {
               handlePageChange(currentPage + 1);
-              handlePageDirection("next");
+              handlePageDirection &&  handlePageDirection("next");
             }}
             disabled={currentPage === totalPages}
           >

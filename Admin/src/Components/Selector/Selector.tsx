@@ -29,7 +29,7 @@ export const Selector: React.FC<SelectorPop> = ({
       </div>
       <div
         className={` bg-[var(--light-foreground)] ${
-          categoryOption!.length > 4 ? "h-[150px] " : ""
+          categoryOption!.length >= 4 ? "h-[130px] " : ""
         } scrollbar-custom overflow-auto left-0 top-14 z-[1000] shadow shadow-[#0000003a] rounded-b-lg absolute flex flex-col  gap-1 w-full transition-all duration-300  ${
           show
             ? "max-h-64 opacity-100"

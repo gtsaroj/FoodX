@@ -34,9 +34,9 @@ const OrderList = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
-  const [isFilter, setIsFilter] = useState<{
-    dateFilter?: any;
-    sortFilter?: string;
+  const [filter, setFilter] = useState<{
+    // dateFilter?: any;
+    sortFilter?: { id?: string; sort?: string };
   }>();
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
@@ -94,7 +94,7 @@ const OrderList = () => {
         currentFirstDoc: null,
         currentLastDoc: null,
         direction: "next",
-        filter: (isFilter?.sortFilter as keyof Order) || "orderRequest",
+        filter: (filter?.sortFilter?.sort as keyof Order) || "orderRequest",
         sort: "desc",
       });
     setInitialOrders(filterOrder);
@@ -129,10 +129,10 @@ const OrderList = () => {
       pageSize: pagination.perPage,
       currentFirstDoc: null,
       currentLastDoc: null,
-      filter: (isFilter?.sortFilter as keyof Order) || "uid",
+      filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
       sort: sortOrder || "asc",
     });
-  }, [pagination.perPage, sortOrder, isFilter?.sortFilter]);
+  }, [pagination.perPage, sortOrder, filter?.sortFilter]);
 
   useEffect(() => {
     if (pagination.currentPage > 1 && pagination.pageDirecton) {
@@ -144,7 +144,7 @@ const OrderList = () => {
             pageSize: pagination.perPage,
             currentLastDoc: currentDoc && currentDoc.currentLastDoc,
             currentFirstDoc: currentDoc && currentDoc.currentFirstDoc,
-            filter: (isFilter?.sortFilter as keyof Order) || "uid",
+            filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
             sort: sortOrder || "desc",
             direction: pagination.pageDirecton || "next",
           });
@@ -204,6 +204,7 @@ const OrderList = () => {
     pagination.perPage,
     sortOrder,
     pagination.pageDirecton,
+    filter?.sortFilter?.sort,
   ]);
 
   useEffect(() => {
@@ -257,6 +258,7 @@ const OrderList = () => {
             customerDetails: {
               name: matchedOrder?.name as string,
               phoneNumber: user?.phoneNumber || "N/A", // Ensure correct type for phoneNumber
+              userId : matchedOrder?.uid || "N/A"
             },
             invoiceData: {
               invoiceDate: dayjs().format("YYYY-MM-DD"),
@@ -295,6 +297,7 @@ const OrderList = () => {
               <p className="text-[16px]   tracking-widest ">Export</p>
             </button>
             <Button
+              selectedCheck={[filter?.sortFilter?.id as string]}
               sortFn={(value) => setSortOrder(value)}
               bodyStyle={{
                 width: "400px",
@@ -322,12 +325,18 @@ const OrderList = () => {
                 },
               ]}
               checkFn={{
-                checkSortFn: (isChecked, value) => {
+                checkSortFn: (isChecked, value, id) => {
                   if (!isChecked) {
-                    setIsFilter((prev) => ({ ...prev, sortFilter: "" }));
+                   return  setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { id: "", sort: "" },
+                    }));
                   }
                   if (isChecked) {
-                    setIsFilter((prev) => ({ ...prev, sortFilter: value }));
+                    setFilter((prev) => ({
+                      ...prev,
+                      sortFilter: { id: id, sort: value },
+                    }));
                   }
                 },
               }}
@@ -348,16 +357,21 @@ const OrderList = () => {
             placeholder="Search for products"
           />
         </form>
-        {isFilter?.sortFilter && (
+        {filter?.sortFilter?.sort && (
           <div className="flex items-center rounded-md border-[1px] border-[var(--dark-border)]  justify-between px-1 gap-2 py-1  ">
             <div className="flex  items-center justify-center">
               <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                {isFilter.sortFilter && isFilter.sortFilter}
+                {filter.sortFilter.sort &&
+                  filter.sortFilter.sort.charAt(0).toUpperCase() +
+                    filter?.sortFilter?.sort.slice(1).toLocaleLowerCase()}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({ ...prev, sortFilter: "" }))
+                setFilter((prev) => ({
+                  ...prev,
+                  sortFilter: { id: "", sort: "" },
+                }))
               }
               className=" "
             >

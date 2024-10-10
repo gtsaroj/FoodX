@@ -38,6 +38,19 @@ export const getFullName = async (uid: string): Promise<string | null> => {
   }
 };
 
+export const getChefDetails = async (uid: string): Promise<string | null> => {
+  try {
+    // If chef name is not found, try to get the admin's full name
+    const chefData = await getUser({ role: "chef" }, uid);
+    if (chefData?.data?.data && chefData?.data?.data?.fullName) {
+      return chefData!.data.data.fullName;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getUserInfo = async (uid: string) => {
   const user = await getUser({ role: "customer" }, uid);
   if (user) return user.data.data;
@@ -104,10 +117,10 @@ export const getTopCustomers = async () => {
       // Safely handle undefined values by assigning 0 as a default if undefined
       const spentA = a?.totalSpent ?? 0;
       const spentB = b?.totalSpent ?? 0;
-    
+
       return spentB - spentA;
     });
-    
+
     return sortBySpent;
     return sortBySpent.slice(0, 5);
   } catch (error) {
