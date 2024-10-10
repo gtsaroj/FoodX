@@ -19,6 +19,7 @@ export interface InvoiceDocumentProp {
     customerDetails: {
       name: string;
       phoneNumber: number;
+      userId: string
     };
     orderDetails: {
       products: Product[];
@@ -106,7 +107,6 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
       <Page key={index} wrap={false} size="A4" style={styles.page}>
         <View
           style={{
-            
             padding: "4px",
             width: "100%",
             display: "flex",
@@ -136,7 +136,7 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={styles.title}>FoodX Nepal</Text>
               <Text>Texas college of IT and management</Text>
-              <Text>mitrapark, chahabil</Text>
+              <Text>Mitrapark, chahabil</Text>
               <Text
                 style={{
                   color: "gray",
@@ -187,8 +187,14 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                   Invoice To
                 </Text>
               </View>
-              <Text>{order.customerDetails.name}</Text>
+              <Text>User : {order.customerDetails.userId}</Text>
               <Text>
+                Name :{" "}
+                {order.customerDetails.name.charAt(0).toUpperCase() +
+                  order?.customerDetails?.name.slice(1)}
+              </Text>
+              <Text>
+                Contact No :{" "}
                 {order.customerDetails.phoneNumber || "+977-9825506216"}
               </Text>
             </View>
@@ -210,7 +216,14 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
           {/* Itemized List */}
           <View style={styles.section}>
             <View style={styles.table}>
-              <View style={styles.tableRow}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  borderBottom: "1pt solid #ddd",
+                  paddingVertical: 5,
+                  backgroundColor: "#d3d3d3",
+                }}
+              >
                 <Text style={[styles.tableCol, styles.tableCell]}>Item</Text>
                 <Text style={[styles.tableCol, styles.tableCell]}>
                   Quantity
@@ -228,10 +241,11 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
                     {item.quantity}
                   </Text>
                   <Text style={[styles.tableCol, styles.tableCell]}>
-                    Rs. {item.price.toFixed(2)}
+                    Rs. {Number(item.price).toFixed(2)}
                   </Text>
                   <Text style={[styles.tableCol, styles.tableCell]}>
-                    Rs. {(item.price * item.quantity).toFixed(2)}
+                    Rs.{" "}
+                    {(Number(item.price) * Number(item.quantity)).toFixed(2)}
                   </Text>
                 </View>
               ))}
@@ -265,10 +279,13 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={{ fontSize: "13px" }}>Total</Text>
               <Text style={{ fontSize: "13px" }}>
+                {" "}
+                Rs.
                 {order.orderDetails?.products?.reduce(
                   (productAcc, product) =>
-                    productAcc + product?.price * product?.quantity,
-                  1
+                    productAcc +
+                    Number(product.price) * Number(product.quantity),
+                  0
                 )}
               </Text>
             </View>
@@ -287,7 +304,9 @@ const InvoiceDocument: React.FC<InvoiceDocumentProp> = ({ orders }) => (
             >
               <Text style={{ fontSize: "13px" }}>Status</Text>
               <Text style={{ fontSize: "13px" }}>
-                {order.orderDetails.status}
+                {order.orderDetails.status &&
+                  order.orderDetails.status?.charAt(0).toUpperCase() +
+                    order.orderDetails.status?.slice(1)}
               </Text>
             </View>
           </View>
