@@ -270,6 +270,7 @@ export const OrderHistory = () => {
                 customerDetails: {
                   name: authUser!.fullName as string,
                   phoneNumber: parseInt(authUser!.phoneNumber as string),
+                  userId: authUser.uid as string
                 },
               },
             ]}
