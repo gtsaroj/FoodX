@@ -66,12 +66,12 @@ export const PieChartAnalytics = () => {
           <span className="text-xl tracking-wider text-[var(--dark-text)]  ">
             Top Categories
           </span>
-          <p className="text-[16px] tracking-wider h-full   text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
+          {/* <p className="text-[16px] tracking-wider h-full   text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[1px] ">
               <MoveUp strokeWidth={3} size={12} />
             </span>
-          </p>
+          </p> */}
         </div>
         <Button
           selectedTypes={[filter?.normalFilter?.id as string]}
@@ -80,7 +80,7 @@ export const PieChartAnalytics = () => {
             top: "3rem",
             left: "-18rem",
           }}
-          types={[{ label: "Previous", value: "previous", id: "fkldsj;fs" }]}
+          types={[{ label: "Previous", value: "previouks", id: "fkldsj;fs" }]}
           parent={
             <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
               <Filter
