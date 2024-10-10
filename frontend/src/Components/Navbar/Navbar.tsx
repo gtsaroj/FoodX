@@ -219,7 +219,7 @@ export const Navbar: React.FC = () => {
                   setSearchValue(event.target.value);
                 }}
                 type="text"
-                className={` w-full  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-2`}
+                className={` w-full  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-5`}
               />
               <button
                 className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
