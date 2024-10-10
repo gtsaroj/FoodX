@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { monthlyBarData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
-import { Filter, MoveUp, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import { AddRevenue } from "../../models/revenue.model";
 import { getRevenue } from "../../Services/revenue.services";
 import { RotatingLines } from "react-loader-spinner";

@@ -1,7 +1,7 @@
 import { PieChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
-import { Filter, MoveUp, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import dayjs from "dayjs";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";

@@ -6,7 +6,6 @@ import { User } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
 import { updateRole, updateUser } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
-import { ro } from "date-fns/locale";
 
 interface UpdateCategoryType {
   label: string;
