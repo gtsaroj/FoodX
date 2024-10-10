@@ -14,7 +14,7 @@ export const PieChartAnalytics = () => {
 
   const [filter, setIsFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
-    normalFilter?: string;
+    normalFilter?: { previous: string; id: string };
   }>();
 
   const getPiechartData = async ({ startDate, endDate }: AddRevenue) => {
@@ -34,7 +34,7 @@ export const PieChartAnalytics = () => {
   };
 
   useEffect(() => {
-    if (filter?.normalFilter) {
+    if (filter?.normalFilter?.previous) {
       getPiechartData({
         startDate: dayjs()
           .subtract(1, "month")
@@ -54,7 +54,7 @@ export const PieChartAnalytics = () => {
       });
     }
   }, [
-    filter?.normalFilter,
+    filter?.normalFilter?.previous,
     filter?.dateFilter?.endDate,
     filter?.dateFilter?.startDate,
   ]);
@@ -74,6 +74,7 @@ export const PieChartAnalytics = () => {
           </p>
         </div>
         <Button
+          selectedTypes={[filter?.normalFilter?.id as string]}
           bodyStyle={{
             width: "400px",
             top: "3rem",
@@ -92,12 +93,18 @@ export const PieChartAnalytics = () => {
             </div>
           }
           checkFn={{
-            checkTypeFn: (isChecked: boolean, value: string) => {
+            checkTypeFn: (isChecked: boolean, value: string, id) => {
               if (!isChecked) {
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }));
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: "", previous: "" },
+                }));
               }
               if (isChecked) {
-                setIsFilter((prev) => ({ ...prev, normalFilter: value }));
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: id, previous: value },
+                }));
               }
             },
             dateActionFn: (firstDate, secondDate) => {
@@ -137,16 +144,19 @@ export const PieChartAnalytics = () => {
             </button>
           </div>
         )}
-        {filter?.normalFilter && (
+        {filter?.normalFilter?.previous && (
           <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+                {filter.normalFilter?.previous.toLocaleLowerCase().slice(0, 15)}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: "", previous: "u" },
+                }))
               }
               className=" "
             >

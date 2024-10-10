@@ -166,3 +166,14 @@ const getOrderWeeklyTotal = (
 
   return weeklyOrders;
 };
+
+export const calculateTotalOrders = (data: { time: string; orders: number }[]) => {
+  
+  return data.reduce((total, current) => total + current.orders, 0);
+};
+
+export const calculateTotalRevenue = (data: { time: string; revenue: number }[]) => {
+  
+  return data.reduce((total, current) => total + current.revenue, 0);
+};
+
