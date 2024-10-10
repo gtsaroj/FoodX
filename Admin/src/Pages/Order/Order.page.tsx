@@ -8,7 +8,6 @@ import {
   status,
 } from "../../models/order.model";
 import { debounce } from "../../Utility/debounce";
-import { SearchOrder } from "../../Utility/order.utils";
 
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
@@ -40,6 +39,7 @@ const OrderList = () => {
   }>();
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
+  const [haveUserId, setHaveUserId] = useState<string>();
 
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
@@ -50,6 +50,7 @@ const OrderList = () => {
         currentLastDoc: data.currentLastDoc || null,
         filter: data.filter,
         sort: data.sort,
+        userId: data.userId,
       });
 
       const allOrder = (await orders.data) as {
@@ -81,26 +82,16 @@ const OrderList = () => {
       setInitialOrders(getaggregateDataPromises as OrderModal[]);
     } catch (error) {
       setLoading(false);
-      throw new Error("Unable to display orders data" + error);
+      setInitialOrders([])
     }
     setLoading(false);
   };
 
   const handleChange = (value: string) => {
-    const filterOrder = SearchOrder(initialOrders, value);
-    if (value?.length === 0)
-      getAllOrders({
-        pageSize: pagination.perPage,
-        currentFirstDoc: null,
-        currentLastDoc: null,
-        direction: "next",
-        filter: (filter?.sortFilter?.sort as keyof Order) || "orderRequest",
-        sort: "desc",
-      });
-    setInitialOrders(filterOrder);
+    setHaveUserId(value);
   };
 
-  const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
+  const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
     initialOrders,
   ]);
 
@@ -131,8 +122,9 @@ const OrderList = () => {
       currentLastDoc: null,
       filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
       sort: sortOrder || "asc",
+      userId: haveUserId || undefined,
     });
-  }, [pagination.perPage, sortOrder, filter?.sortFilter]);
+  }, [pagination.perPage, sortOrder, filter?.sortFilter, haveUserId]);
 
   useEffect(() => {
     if (pagination.currentPage > 1 && pagination.pageDirecton) {
@@ -147,6 +139,7 @@ const OrderList = () => {
             filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
             sort: sortOrder || "desc",
             direction: pagination.pageDirecton || "next",
+            userId: haveUserId || undefined,
           });
           const getAllOrder = orders.data as {
             currentFirstDoc: string;
@@ -204,6 +197,7 @@ const OrderList = () => {
     sortOrder,
     pagination.pageDirecton,
     filter?.sortFilter?.sort,
+    haveUserId
   ]);
 
   useEffect(() => {
