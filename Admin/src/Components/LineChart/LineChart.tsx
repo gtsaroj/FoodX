@@ -4,16 +4,23 @@ import "./LineChart.css";
 import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import dayjs from "dayjs";
-import { monthlyRevenue, revenueData, totalMonthOrder } from "./LineChartData";
+import {
+  calculateTotalOrders,
+  calculateTotalRevenue,
+  monthlyRevenue,
+  revenueData,
+  totalMonthOrder,
+} from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
 import { AddRevenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
-
 
 export const WeekReveneuChart: React.FC = () => {
   const [initialData, setInitialData] =
     useState<{ time: string; revenue: number }[]>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [percentageChange, setPercentageChange] = useState<string>();
+
   const getLineChartData = async () => {
     setLoading(true);
     try {
@@ -24,7 +31,7 @@ export const WeekReveneuChart: React.FC = () => {
       const totalData = revenueData(response.data);
       setInitialData(totalData);
     } catch (error) {
-      throw new Error("Error while fetching revenue " + error);
+      setInitialData([]);
     }
     setLoading(false);
   };
@@ -33,15 +40,63 @@ export const WeekReveneuChart: React.FC = () => {
     getLineChartData();
   }, []);
 
+  const calculatePercentageChange = async () => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
+        endDate: dayjs().format("YYYY-MM-DD"),
+      });
+      const previousMonthData = revenueData(response?.data);
+      const totalCurrent = calculateTotalRevenue(
+        initialData as { time: string; revenue: number }[]
+      );
+      const totalPrevious = calculateTotalRevenue(previousMonthData);
+      if (totalPrevious === 0) {
+        setPercentageChange("N/A"); // Handle zero previous orders
+      } else {
+        const percentage =
+          ((totalCurrent - totalPrevious) / totalPrevious) * 100;
+        setPercentageChange(percentage.toFixed(2));
+      }
+    } catch (error) {
+      setPercentageChange("N/A");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    calculatePercentageChange();
+  }, []);
+
+  console.log(initialData);
+
   return (
     <div className="flex  flex-col items-center justify-center w-full gap-5 px-3 py-5 rounded">
       <div className="flex items-center justify-between w-full gap-3 px-2">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
           <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-[16px] text-[var(--green-text)] p-1 flex justify-center items-center gap-0.5  rounded-lg">
-            10%
-            <span>
-              <MoveUp size={12} className="mb-[3px]" />
+          <p
+            className={`text-[16px]  tracking-wider  ${
+              percentageChange?.includes("-") ||
+              percentageChange?.includes("N/A")
+                ? "text-red-600"
+                : "text-[var(--green-text)]  "
+            } flex justify-center items-center gap-0.5  rounded-lg`}
+          >
+            <span>{percentageChange}%</span>
+            <span className="mb-[2px]">
+              <MoveUp
+                className={` ${
+                  percentageChange === "N/A"
+                    ? "invisible"
+                    : percentageChange?.includes("-")
+                    ? "rotate-180 "
+                    : ""
+                }`}
+                strokeWidth={3}
+                size={12}
+              />
             </span>
           </p>
         </div>
@@ -104,6 +159,7 @@ export const WeekReveneuChart: React.FC = () => {
             ]}
             series={[
               {
+                id: "revenue",
                 data: initialData?.map((order) => order["revenue"]),
                 type: "line",
                 color: "#45c241",
@@ -126,10 +182,10 @@ export const MonthlyRevenueChart: React.FC = () => {
     { time: string; revenue: number }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [percentageChange, setPercentageChange] = useState<string>();
   const [filter, setFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
-    normalFilter?: string;
+    normalFilter?: { previous: string; id?: string };
   }>();
 
   const syncData = () => {
@@ -178,7 +234,7 @@ export const MonthlyRevenueChart: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filter?.normalFilter) {
+    if (filter?.normalFilter?.previous) {
       getPreviousChartData({
         startDate: dayjs()
           .subtract(1, "month")
@@ -199,26 +255,76 @@ export const MonthlyRevenueChart: React.FC = () => {
       });
     }
   }, [
-    filter?.normalFilter,
+    filter?.normalFilter?.previous,
     filter?.dateFilter?.startDate,
     filter?.dateFilter?.endDate,
   ]);
 
+  const calculatePercentageChange = async () => {
+    setLoading(true);
+    try {
+      const response = await getRevenue({
+        startDate: dayjs()
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD"),
+        endDate: dayjs()
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD"),
+      });
+      const previousMonthData = monthlyRevenue(response.data);
+      const totalCurrent = calculateTotalRevenue(initialData);
+      const totalPrevious = calculateTotalRevenue(previousMonthData);
+      if (totalPrevious === 0) {
+        setPercentageChange("N/A"); // Handle zero previous orders
+      } else {
+        const percentage =
+          ((totalCurrent - totalPrevious) / totalPrevious) * 100;
+        setPercentageChange(percentage.toFixed(2));
+      }
+    } catch (error) {
+      setPercentageChange("N/A");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    calculatePercentageChange();
+  }, []);
   const { allKeys } = syncData();
 
   return (
     <div className="flex px-5 flex-col h-[430px] items-center justify-start w-full gap-1 p-3 rounded">
       <div className="flex  items-center   justify-between w-full gap-3 ">
         <div className="text-left text-xl  text-[var(--dark-text)] flex justify-center items-center gap-2">
-          <p className="text-nowrap">Weekly Revenue</p>
-          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
-            <span>10%</span>
+          <p className="text-nowrap">Monthly Revenue</p>
+          <p
+            className={`text-[16px]  tracking-wider  ${
+              percentageChange?.includes("-") ||
+              percentageChange?.includes("N/A")
+                ? "text-red-600"
+                : "text-[var(--green-text)]  "
+            } flex justify-center items-center gap-0.5  rounded-lg`}
+          >
+            <span>{percentageChange}%</span>
             <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={12} />
+              <MoveUp
+                className={` ${
+                  percentageChange === "N/A"
+                    ? "invisible"
+                    : percentageChange?.includes("-")
+                    ? "rotate-180 "
+                    : ""
+                }`}
+                strokeWidth={3}
+                size={12}
+              />
             </span>
           </p>
         </div>
         <Button
+          selectedTypes={[filter?.normalFilter?.id as string]}
           bodyStyle={{
             width: "400px",
             top: "3rem",
@@ -232,12 +338,18 @@ export const MonthlyRevenueChart: React.FC = () => {
             },
           ]}
           checkFn={{
-            checkTypeFn: (isChecked: boolean, value: string) => {
+            checkTypeFn: (isChecked: boolean, value: string, id: string) => {
               if (!isChecked) {
-                setFilter((prev) => ({ ...prev, normalFilter: "" }));
+                setFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { previous: "", id: "" },
+                }));
               }
               if (isChecked) {
-                setFilter((prev) => ({ ...prev, normalFilter: value }));
+                setFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { previous: value, id: id },
+                }));
               }
             },
             dateActionFn: (from, to) => {
@@ -288,16 +400,19 @@ export const MonthlyRevenueChart: React.FC = () => {
             </button>
           </div>
         )}
-        {filter?.normalFilter && (
+        {filter?.normalFilter?.previous && (
           <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+                {filter.normalFilter?.previous.toLocaleLowerCase().slice(0, 15)}
               </span>
             </div>
             <button
               onClick={() =>
-                setFilter((prev) => ({ ...prev, normalFilter: "" }))
+                setFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { previous: "", id: "" },
+                }))
               }
               className=" "
             >
@@ -389,7 +504,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
   >([]);
   const [filter, setIsFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
-    normalFilter?: string;
+    normalFilter?: { previous: string; id: string };
   }>();
   const [previousData, setPreviousData] = useState<
     {
@@ -398,6 +513,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
     }[]
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [percentageChange, setPercentageChange] = useState<string>();
 
   const getOrders = async ({ startDate, endDate }: AddRevenue) => {
     setLoading(true);
@@ -445,7 +561,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filter?.normalFilter) {
+    if (filter?.normalFilter?.previous) {
       getPreviousOrders({
         startDate: dayjs()
           .subtract(1, "month")
@@ -468,8 +584,39 @@ export const MonthlyOrderLinechart: React.FC = () => {
   }, [
     filter?.dateFilter?.startDate,
     filter?.dateFilter?.endDate,
-    filter?.normalFilter,
+    filter?.normalFilter?.previous,
   ]);
+
+  const calculatePercentageChange = async () => {
+    try {
+      const response = await getRevenue({
+        startDate: dayjs()
+          .subtract(1, "month")
+          .startOf("month")
+          .format("YYYY-MM-DD"),
+        endDate: dayjs()
+          .subtract(1, "month")
+          .endOf("month")
+          .format("YYYY-MM-DD"),
+      });
+      const previousMonthData = totalMonthOrder(response.data);
+      const totalCurrent = calculateTotalOrders(initialData);
+      const totalPrevious = calculateTotalOrders(previousMonthData);
+      if (totalPrevious === 0) {
+        setPercentageChange("N/A"); // Handle zero previous orders
+      } else {
+        const percentage =
+          ((totalCurrent - totalPrevious) / totalPrevious) * 100;
+        setPercentageChange(percentage.toFixed(2));
+      }
+    } catch (error) {
+      setPercentageChange("N/A");
+    }
+  };
+
+  useEffect(() => {
+    calculatePercentageChange();
+  }, []);
 
   const { allKeys } = syncData();
 
@@ -477,15 +624,33 @@ export const MonthlyOrderLinechart: React.FC = () => {
     <div className="flex flex-col p-2 items-center justify-center w-full rounded">
       <div className="flex items-center justify-between w-full gap-3 ">
         <div className="  text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-2">
-          <p className="text-nowrap">Weekly Order</p>
-          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
-            <span>10%</span>
+          <p className="text-nowrap">Monthly Order</p>
+          <p
+            className={`text-[16px]  tracking-wider  ${
+              percentageChange?.includes("-") ||
+              percentageChange?.includes("N/A")
+                ? "text-red-600"
+                : "text-[var(--green-text)]  "
+            } flex justify-center items-center gap-0.5  rounded-lg`}
+          >
+            <span>{percentageChange}%</span>
             <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={12} />
+              <MoveUp
+                className={` ${
+                  percentageChange === "N/A"
+                    ? "invisible"
+                    : percentageChange?.includes("-")
+                    ? "rotate-180 "
+                    : ""
+                }`}
+                strokeWidth={3}
+                size={12}
+              />
             </span>
           </p>
         </div>
         <Button
+          selectedTypes={[filter?.normalFilter?.id as string]}
           bodyStyle={{
             width: "400px",
             top: "3rem",
@@ -493,12 +658,18 @@ export const MonthlyOrderLinechart: React.FC = () => {
           }}
           types={[{ label: "Previous", value: "previous", id: "8933840fhn" }]}
           checkFn={{
-            checkTypeFn: (isChecked: boolean, value: string) => {
+            checkTypeFn: (isChecked: boolean, value: string, id) => {
               if (!isChecked) {
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }));
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: "", previous: "" },
+                }));
               }
               if (isChecked) {
-                setIsFilter((prev) => ({ ...prev, normalFilter: value }));
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: id, previous: value },
+                }));
               }
             },
             dateActionFn: (firstDate, secondDate) => {
@@ -549,16 +720,19 @@ export const MonthlyOrderLinechart: React.FC = () => {
             </button>
           </div>
         )}
-        {filter?.normalFilter && (
+        {filter?.normalFilter?.previous && (
           <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+                {filter.normalFilter?.previous.toLocaleLowerCase().slice(0, 15)}
               </span>
             </div>
             <button
               onClick={() =>
-                setIsFilter((prev) => ({ ...prev, normalFilter: "" }))
+                setIsFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: "", previous: "" },
+                }))
               }
               className=" "
             >
@@ -627,6 +801,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
             ]}
             series={[
               {
+                id: "revenue",
                 data: initialData?.map((order) => order["orders"] || null),
                 type: "line",
                 color: "#45c241",

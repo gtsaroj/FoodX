@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { monthlyBarData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
-import { Filter, MoveUp, X } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import { AddRevenue } from "../../models/revenue.model";
 import { getRevenue } from "../../Services/revenue.services";
 import { RotatingLines } from "react-loader-spinner";
@@ -16,7 +16,7 @@ export const MonthlyOrderChart: React.FC = () => {
   const [dataKey, setDataKey] = useState<string[]>([]);
   const [filter, setFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
-    normalFilter?: string;
+    normalFilter?: { previous: string; id: string };
   }>();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -55,7 +55,7 @@ export const MonthlyOrderChart: React.FC = () => {
   };
 
   useEffect(() => {
-    if (filter?.normalFilter) {
+    if (filter?.normalFilter?.previous) {
       getPreviousBarData({
         startDate: dayjs()
           .subtract(1, "month")
@@ -75,11 +75,11 @@ export const MonthlyOrderChart: React.FC = () => {
       });
     }
   }, [
-    filter?.normalFilter,
+    filter?.normalFilter?.previous,
     filter?.dateFilter?.startDate,
     filter?.dateFilter?.endDate,
   ]);
-
+  // const [percentageChange, setPercentageChange] = useState<string>();
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
     const allKeys = new Set();
     data.forEach((item) => {
@@ -89,21 +89,52 @@ export const MonthlyOrderChart: React.FC = () => {
     return [...allKeys];
   };
 
+  // const calculatePercentageChange = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const response = await getRevenue({
+  //       startDate: dayjs()
+  //         .subtract(1, "month")
+  //         .startOf("month")
+  //         .format("YYYY-MM-DD"),
+  //       endDate: dayjs()
+  //         .subtract(1, "month")
+  //         .endOf("month")
+  //         .format("YYYY-MM-DD"),
+  //     });
+  //     const previousMonthData =  monthlyBarData(response.data);
+  //     // const totalCurrent = calculateTotalOrders(initialData);
+  //     // const totalPrevious = calculateTotalOrders(previousMonthData);
+  //     // if (totalPrevious === 0) {
+  //     //   setPercentageChange("N/A"); // Handle zero previous orders
+  //     // } else {
+  //     //   const percentage =
+  //     //     ((totalCurrent - totalPrevious) / totalPrevious) * 100;
+  //     //   setPercentageChange(percentage.toFixed(2));
+  //     // }
+  //   } catch (error) {
+  //     setPercentageChange("N/A");
+  //   }
+  //   setLoading(false);
+  // };
+
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
     <div className={`w-full p-2 h-[450px]`}>
       <div className="w-full py-2  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
         <div className="flex items-center justify-start gap-2">
           <span>Top Products</span>
-          <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
+          {/* <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
             <span>10%</span>
             <span className="mb-[2px]">
               <MoveUp strokeWidth={3} size={12} />
             </span>
-          </p>
+          </p> */}
+
         </div>
         <div>
           <Button
+            selectedAction={[filter?.normalFilter?.id as string]}
             bodyStyle={{
               width: "400px",
               top: "3rem",
@@ -121,12 +152,18 @@ export const MonthlyOrderChart: React.FC = () => {
               </div>
             }
             checkFn={{
-              checkActionFn: (isChecked: boolean, value: string) => {
+              checkActionFn: (isChecked: boolean, value: string, id) => {
                 if (!isChecked) {
-                  setFilter((prev) => ({ ...prev, normalFilter: "" }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    normalFilter: { id: "", previous: "" },
+                  }));
                 }
                 if (isChecked) {
-                  setFilter((prev) => ({ ...prev, normalFilter: value }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    normalFilter: { id: id, previous: value },
+                  }));
                 }
               },
               dateActionFn: (firstDate, secondDate) => {
@@ -170,16 +207,19 @@ export const MonthlyOrderChart: React.FC = () => {
             </button>
           </div>
         )}
-        {filter?.normalFilter && (
+        {filter?.normalFilter?.previous && (
           <div className="flex px-1 py-0.5 gap-1 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+                {filter.normalFilter?.previous.toLocaleLowerCase().slice(0, 15)}
               </span>
             </div>
             <button
               onClick={() =>
-                setFilter((prev) => ({ ...prev, normalFilter: "" }))
+                setFilter((prev) => ({
+                  ...prev,
+                  normalFilter: { id: "", previous: "" },
+                }))
               }
               className=" "
             >

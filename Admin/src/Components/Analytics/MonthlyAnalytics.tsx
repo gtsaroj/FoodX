@@ -15,8 +15,9 @@ export const MonthlyAnalytics: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [filter, setFilter] = useState<{
-    dateFilter?: { startDate: string; endDate: string };
-    normalFilter?: string;
+    dateFilter?: { startDate: string; endDate: string; id?: string };
+
+    normalFilter?: { previous: string; id?: string };
   }>();
 
   const getDailyData = async (data: AddRevenue) => {
@@ -48,7 +49,7 @@ export const MonthlyAnalytics: React.FC = () => {
         filter?.dateFilter?.startDate ||
         dayjs().subtract(2, "month").format("YYYY-MM-DD"),
       endDate:
-        (filter?.normalFilter &&
+        (filter?.normalFilter?.previous &&
           dayjs().subtract(2, "month").endOf("month").format("YYYY-MM-DD")) ||
         filter?.dateFilter?.endDate ||
         dayjs().format("YYYY-MM-DD"),
@@ -56,7 +57,7 @@ export const MonthlyAnalytics: React.FC = () => {
   }, [
     filter?.dateFilter?.startDate,
     filter?.dateFilter?.endDate,
-    filter?.normalFilter,
+    filter?.normalFilter?.previous,
   ]);
 
   return (
@@ -77,7 +78,7 @@ export const MonthlyAnalytics: React.FC = () => {
                   onClick={() =>
                     setFilter((prev) => ({
                       ...prev,
-                      dateFilter: { endDate: "", startDate: "" },
+                      dateFilter: { endDate: "", startDate: "", id: "" },
                     }))
                   }
                   className=" "
@@ -90,12 +91,17 @@ export const MonthlyAnalytics: React.FC = () => {
               <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                    {filter.normalFilter?.toLocaleLowerCase().slice(0, 15)}
+                    {filter.normalFilter?.previous
+                      .toLocaleLowerCase()
+                      .slice(0, 15)}
                   </span>
                 </div>
                 <button
                   onClick={() =>
-                    setFilter((prev) => ({ ...prev, normalFilter: "" }))
+                    setFilter((prev) => ({
+                      ...prev,
+                      normalFilter: { previous: "", id: "" },
+                    }))
                   }
                   className=" "
                 >
@@ -105,6 +111,7 @@ export const MonthlyAnalytics: React.FC = () => {
             )}
           </div>
           <Button
+            selectedTypes={[filter?.normalFilter?.id as string]}
             bodyStyle={{
               width: "400px",
               top: "3rem",
@@ -118,14 +125,20 @@ export const MonthlyAnalytics: React.FC = () => {
               },
             ]}
             checkFn={{
-              checkTypeFn: (isChecked: boolean) => {
+              checkTypeFn: (isChecked: boolean, id: string) => {
                 if (!isChecked) {
-                  setFilter((prev) => ({ ...prev, normalFilter: "" }));
+                  setFilter((prev) => ({
+                    ...prev,
+                    normalFilter: { previous: "", id: "" },
+                  }));
                 }
                 if (isChecked) {
                   setFilter((prev) => ({
                     ...prev,
-                    normalFilter: dayjs().format("YYYY-MM-Dd"),
+                    normalFilter: {
+                      previous: dayjs().format("YYYY-MM-Dd"),
+                      id: id,
+                    },
                   }));
                 }
               },

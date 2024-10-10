@@ -302,11 +302,11 @@ const Logs = () => {
               next={() =>
                 getAllRoleLogs({
                   path:
-                    (filter?.typeFilter as
+                    (filter?.typeFilter?.type as
                       | "customerLogs"
                       | "adminLogs"
                       | "chefLogs") || "adminLogs",
-                  filter: (filter?.sortFilter as keyof LogCardProps) || "name",
+                  filter: (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
                   pageSize: 5,
                   sort,
                   currentFirstDoc: currentDoc?.currentFirst,
