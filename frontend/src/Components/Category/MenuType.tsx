@@ -23,16 +23,21 @@ export const MenuType: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const [categoriesTag, setCategoriesTag] = useState<Category[]>([]);
-  const [initialTag, setInitialTag] = useState<Category>();
+  const [initialTag, setInitialTag] = useState<Category>({
+    id: "",
+    image: "",
+    name: "",
+  });
 
   const getMenuProducts = async () => {
     setLoading(true);
     try {
-      const response = await getProductsByTag(initialTag!.id);
+      const response = await getProductsByTag(initialTag?.id as string);
       const specialProducts = await getSpecialProducts();
       const aggregateSpecialData = specialProducts?.data?.filter(
-        (product: Product) => product.tagId === initialTag!.id
+        (product: Product) => product?.tagId === initialTag?.id
       );
+
       setInitialData([...response.data, ...aggregateSpecialData]);
     } catch (error) {
       throw new Error("Error while getting products by tag" + error);
@@ -45,8 +50,10 @@ export const MenuType: React.FC = () => {
       setLoading(true);
       try {
         const response = await getCategories();
-        setCategoriesTag(response.data);
-        setInitialTag(response.data[0]);
+        if (response?.data) {
+          setCategoriesTag(response.data);
+          setInitialTag(response?.data[0]);
+        }
       } catch (error) {
         throw new Error("Error fetching tags:" + error);
       }
@@ -55,10 +62,10 @@ export const MenuType: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    
-    getMenuProducts();
+    if (initialTag?.id) {
+      getMenuProducts();
+    }
   }, [initialTag?.id]);
-
 
   return (
     <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">

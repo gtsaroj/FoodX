@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from "axios";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { Store } from "./Store";
 import { authLogout } from "./Reducer/user.reducer";
@@ -20,13 +20,13 @@ makeRequest.interceptors.response.use(
     return response;
   },
   async (error) => {
-
     const status = error.response ? error.response.status : null;
 
     if (status === 401) {
       const refreshToken = Cookies.get("refreshToken");
       if (!refreshToken) {
-        Store.dispatch(authLogout())
+        Store.dispatch(authLogout());
+        toast.error("Your session was expired")
         return Promise.reject("You have not access, please login again...");
       }
       Cookies.remove("accessToken");
@@ -48,10 +48,11 @@ makeRequest.interceptors.response.use(
       //  try with original request
       return await makeRequest(error.config);
     }
-     console.log(error)
+
     if (status === 403) {
+      sessionStorage.setItem("Error", error);
       Cookies.remove("refreshToken");
-      toast.error("Session Expired, Please Login Again");
+      toast.error("Refresh token is used or expired");
       return Promise.reject("You have not access, please login again...");
     }
 

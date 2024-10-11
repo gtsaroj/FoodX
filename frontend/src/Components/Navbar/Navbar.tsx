@@ -80,10 +80,10 @@ export const Navbar: React.FC = () => {
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const FilterRef = useRef<HTMLDivElement>(null);
+  const FilterRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
-  const favouriteReference = useRef<HTMLDivElement>();
-  const notificationReference = useRef<HTMLDivElement>();
+  const favouriteReference = useRef<HTMLDivElement | null>(null);
+  const notificationReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -271,7 +271,7 @@ export const Navbar: React.FC = () => {
               />
               <div
                 className={`w-[10px] duration-150 ${
-                  isFavourite.favourite.length > 0 ? "visible" : "hidden"
+                  isFavourite.favourite.length > 0 && authUser.role ? "visible" : "hidden"
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
             </div>

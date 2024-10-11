@@ -13,8 +13,8 @@ import { signInAction } from "../../Actions/user.actions";
 export const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("sarojgt326@gmail.com");
+  const [password, setPassword] = useState<string>("sarcasm.conc");
   const [show, setShow] = useState<boolean>(false);
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"

@@ -18,10 +18,11 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
         className="flex items-center  justify-between"
       >
         <input
+          
           type="text"
           className="w-full text-[var(--dark-text)] bg-[var(--light-foreground)] py-2.5 tracking-wider  outline-none cursor-pointer "
           readOnly
-          value={showField}
+          value={showField || ""}
           placeholder="Select option"
         />
         <ChevronDown className="text-[var(--dark-secondary-text)] cursor-pointer " />
