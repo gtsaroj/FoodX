@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  RecentOrder, status } from "../../../models/order.model";
+import { RecentOrder, status } from "../../../models/order.model";
 import dayjs from "dayjs";
 import { StatusChanger } from "../../../Pages/Order/Order.table.page";
 import toast from "react-hot-toast";
@@ -30,10 +30,12 @@ export const OrderCard: React.FC<RecentOrder> = ({
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
+
     try {
       await updateOrderStatus({
         id: id as string,
         status: newStatus!,
+        price: id === orderId ? price : 0,
       });
       setIsNewStatus(newStatus!);
       toast.dismiss(toastLoader);

@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { CardAnalytic } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
+
 export const aggregateCurrentDayData = (orders: Revenue[]) => {
   const today = dayjs().format("YYYY-MM-DD");
 
@@ -47,7 +48,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
 
     return dailyAnalyticsData;
   } catch (error) {
-    throw new Error(`Failed to aggregate analytics card data: ${error}`);
+    return null;
   }
 };
 

@@ -23,9 +23,10 @@ export const getBanners = async (data: { path: "sponsors" | "banners" }) => {
       method: "get",
       url: `banners/${data.path}`,
     });
-    return response.data.data;
+
+  return response.data.data
   } catch (error) {
-    throw new Error("Unable to fetch banners" + error);
+    return null;
   }
 };
 export const deleteBanner = async (data: {
@@ -50,7 +51,7 @@ export const bulkDeleteBanner = async (data: {
   try {
     const response = await makeRequest({
       method: "delete",
-      data: { ids: [...data.id] },
+      data: { ids: [...data.id], path: data.path },
       url: "banners/bulk-delete",
     });
     return response.data.data;

@@ -31,11 +31,12 @@ export const getOrderByUser = async (id: string) => {
 export const updateOrderStatus = async (data: {
   id: string;
   status: string;
+  price : number
 }) => {
   try {
     const response = await makeRequest({
       method: "put",
-      data: { id: data.id, status: data.status },
+      data: { id: data.id, status: data.status, price: data.price },
       url: "orders/update-order",
     });
     return response.data.data;

@@ -80,9 +80,9 @@ export const PieChartAnalytics = () => {
             top: "3rem",
             left: "-18rem",
           }}
-          types={[{ label: "Previous", value: "previouks", id: "fkldsj;fs" }]}
+          types={[{ label: "Previous", value: "previous", id: "fkldsj;fs" }]}
           parent={
-            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">k
               <Filter
                 strokeWidth={2.5}
                 className="size-5 text-[var(--dark-secondary-text)]"
