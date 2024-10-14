@@ -7,27 +7,31 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { DesktopSlider, MobileSlider } from "./Components/Slider/Slider";
-import Analytics from "./Pages/Analytics/Analytics";
-import OrderList from "./Pages/Order/Order.page";
-import CustomerList from "./Pages/User/User.page";
-import TicketPage from "./Pages/Ticket/Ticket.chef.page";
-import { AdminProfile } from "./Pages/Profile/AdminProfile";
-import BannerPage from "./Pages/Banner/Banner.page";
-import FoodPage from "./Pages/Product/Product.page";
-import Login from "./Auth/Login/Login";
-import { Register } from "./Auth/Register/Register";
 import { PrivateRoute } from "./PrivateRoute";
 import { useSelector } from "react-redux";
-import { RootState } from "./Store";
-import NotFoundPage from "./Pages/404Page/NotFoundPage";
-import Footer from "./Components/Footer/Footer";
-import { CategoryPage } from "./Pages/Category/Category.page";
-import Navbar from "./Components/Navbar/Navbar";
-import { WelcomePage } from "./Pages/Page.Welcome";
 import { UserRole } from "./models/user.model";
 import { socket } from "./Utility/socket.util";
-import TicketAdminPage from "./Pages/Ticket/Ticket.admin.page";
+import { RootState } from "./Store";
+import "./index.css"
+
+const DesktopSlider = React.lazy(() => import('./Components/Slider/Slider').then(module => ({ default: module.DesktopSlider })));
+const MobileSlider = React.lazy(() => import('./Components/Slider/Slider').then(module => ({ default: module.MobileSlider })));
+const Analytics = React.lazy(() => import('./Pages/Analytics/Analytics'));
+const OrderList = React.lazy(() => import('./Pages/Order/Order.page'));
+const CustomerList = React.lazy(() => import('./Pages/User/User.page'));
+const TicketPage = React.lazy(() => import('./Pages/Ticket/Ticket.chef.page'));
+const AdminProfile = React.lazy(() => import('./Pages/Profile/AdminProfile').then(module => ({ default: module.AdminProfile })));
+const BannerPage = React.lazy(() => import('./Pages/Banner/Banner.page'));
+const FoodPage = React.lazy(() => import('./Pages/Product/Product.page'));
+const Login = React.lazy(() => import('./Auth/Login/Login'));
+const Register = React.lazy(() => import('./Auth/Register/Register').then(module => ({ default: module.Register })));
+const NotFoundPage = React.lazy(() => import('./Pages/404Page/NotFoundPage'));
+const Footer = React.lazy(() => import('./Components/Footer/Footer'));
+const CategoryPage = React.lazy(() => import('./Pages/Category/Category.page').then(module => ({ default: module.CategoryPage })));
+const Navbar = React.lazy(() => import('./Components/Navbar/Navbar'));
+const WelcomePage = React.lazy(() => import('./Pages/Page.Welcome').then(module => ({ default: module.WelcomePage })));
+const TicketAdminPage = React.lazy(() => import('./Pages/Ticket/Ticket.admin.page'));
+
 
 const MainPage = () => {
   return (
