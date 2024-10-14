@@ -250,23 +250,21 @@ export const MobileSlider: React.FC = () => {
     const closeModal = (event: MouseEvent) => {
       if (
         profileReference.current &&
-        !profileReference.current.contains(event.target as any)
+        !profileReference.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
       if (
         notificationReference.current &&
-        !notificationReference.current.contains(event.target as any)
+        !notificationReference.current.contains(event.target as Node)
       ) {
         setOpenNotification(false);
       }
     };
-    if (isOpen) {
+    if (isOpen || openNotification) {
       document.addEventListener("mousedown", closeModal);
     }
-    if (openNotification) {
-      document.addEventListener("mousedown", closeModal);
-    }
+
     if (isDark) {
       document.body.classList.add("dark");
     }
@@ -277,7 +275,7 @@ export const MobileSlider: React.FC = () => {
     return () => {
       document.removeEventListener("mousedown", closeModal);
     };
-  }, [isDark, isOpen]);
+  }, [isDark, isOpen,openNotification]);
   const reference = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.root.user.userInfo);
 

@@ -24,7 +24,6 @@ const AdminProfile = React.lazy(() => import('./Pages/Profile/AdminProfile').the
 const BannerPage = React.lazy(() => import('./Pages/Banner/Banner.page'));
 const FoodPage = React.lazy(() => import('./Pages/Product/Product.page'));
 const Login = React.lazy(() => import('./Auth/Login/Login'));
-const Register = React.lazy(() => import('./Auth/Register/Register').then(module => ({ default: module.Register })));
 const NotFoundPage = React.lazy(() => import('./Pages/404Page/NotFoundPage'));
 const Footer = React.lazy(() => import('./Components/Footer/Footer'));
 const CategoryPage = React.lazy(() => import('./Pages/Category/Category.page').then(module => ({ default: module.CategoryPage })));
@@ -93,16 +92,6 @@ const App: React.FC = () => {
               <Navigate to={`/${auth.userInfo.role}`} replace />
             ) : (
               <Login role={userRole as UserRole["role"]} />
-            )
-          }
-        />
-        <Route
-          path="register/"
-          element={
-            showContent ? (
-              <Navigate to={`/${auth.userInfo.role}`} replace />
-            ) : (
-              <Register />
             )
           }
         />
