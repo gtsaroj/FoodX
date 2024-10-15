@@ -14,9 +14,9 @@ const addFavourite = asyncHandler(
     const { uid, productId } = req.body;
     try {
       await addProductInFavourite(uid, productId);
-      await redisClient.del("favourites");
+      await redisClient.del(`favourites:${uid}`);
       const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set("favourites", JSON.stringify(updatedFavourites), {
+      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
         EX: 600,
       });
       return res
@@ -49,9 +49,9 @@ const removeFavourites = asyncHandler(
     try {
       const { uid, productId } = req.body;
       await removeItemFromFavourite(uid, productId);
-      await redisClient.del("favourites");
+      await redisClient.del(`favourites:${uid}`);
       const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set("favourites", JSON.stringify(updatedFavourites), {
+      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
         EX: 600,
       });
       return res
@@ -85,7 +85,7 @@ const getFavourites = asyncHandler(
       const uid = req.params.uid;
       const favouritesData = await getFavouritesFromFirestore(uid);
       await redisClient.setEx(
-        "favourites",
+        `favourites:${uid}`,
         600,
         JSON.stringify(favouritesData)
       );
