@@ -200,12 +200,12 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         style={{
           background: color.backgroundColor,
         }}
-        className="w-full hover:opacity-[0.9] duration-150 absolute z-[2] h-full"
+        className="w-full bg-slate-300 hover:opacity-[0.9] duration-150 absolute z-[2] h-full"
       >
-        <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-5   ">
+        <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-8   ">
           <img
             src={prop.image}
-            className="w-[150px] h-[180px] rounded-3xl "
+            className="w-[260px] scale-[1.05] h-[180px] rounded-3xl "
             alt=""
             loading="lazy"
           />
