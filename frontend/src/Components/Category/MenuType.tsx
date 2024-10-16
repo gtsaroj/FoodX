@@ -111,7 +111,7 @@ export const MenuType: React.FC = () => {
       </div>
 
       <div className="flex  w-full flex-col items-start rounded-md bg-[var(--light-foreground)] px-8 gap-5  py-5">
-        <p className="text-2xl px-5 pt-4 text-[var(--dark-text)] font-bold tracking-wider">
+        <p className="text-2xl  pt-4 text-[var(--dark-text)] font-bold tracking-wider">
           {initialTag?.name}
         </p>
 

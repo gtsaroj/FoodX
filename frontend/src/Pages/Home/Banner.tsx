@@ -23,7 +23,7 @@ const Banner: React.FC = () => {
   }, []);
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="lg:h-[600px] lg:w-[800px] flex items-center min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[500px] md:h-[450px] duration-500 xl:w-[1000px] flex-grow">
+      <div className="lg:h-[600px] lg:min-w-[700px] flex items-center min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[500px] md:h-[450px] duration-500 xl:w-[1000px] flex-grow">
         {loading ? (
           <div className="w-full rounded-xl  gap-4 flex ">
             <Skeleton
@@ -63,8 +63,8 @@ export const Sponsor: React.FC = () => {
   }, []);
 
   return (
-    <div className="md:flex hidden items-center justify-center w-full h-full">
-      <div className="lg:h-[540px]  h-[300px] max-w-md md:w-[300px] sm:h-[350px] md:h-[382px] duration-500  flex-grow">
+    <div className="lg:flex hidden items-center justify-center w-full h-full">
+      <div className="lg:h-[540px]  h-[300px] max-w-md sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         {loading ? (
           <div className="w-full rounded-xl  gap-4 flex ">
             <Skeleton
