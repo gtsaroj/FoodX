@@ -36,8 +36,11 @@ const Cart: React.FC = () => {
     const toastLoader = toast.loading("Loading...");
 
     try {
-      if (!store?.cart?.products?.some((data) => data.id === product.id)) {
-        await addProductToCart(store.auth.userInfo.uid as string, product.id);
+      if (
+        store?.auth?.userInfo?.uid &&
+        !store?.cart?.products?.some((data) => data.id === product.id)
+      ) {
+        await addProductToCart(store?.auth.userInfo?.uid as string, product.id);
       }
       dispatch(
         addToCart({
@@ -89,11 +92,31 @@ const Cart: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (store?.auth?.success && store?.cart?.products.length <= 0) {
-      fetchProductsOfCartFn();
+  const addNewProductToCartFn = async () => {
+    const productsId = store?.cart?.products?.map((product) => product.id);
+    try {
+      const fetchProductOfCart = await getProductsOfCart(
+        store?.auth?.userInfo?.uid as string
+      );
+      const newProductsId = productsId?.filter(
+        (id) => !fetchProductOfCart?.products.includes(id)
+      );
+      if (newProductsId.length > 0) {
+        newProductsId?.forEach(async (product) => {
+          await addProductToCart(store?.auth?.userInfo?.uid as string, product);
+        });
+      }
+    } catch (error) {
+      throw new Error("Error while adding new Product id " + error);
     }
-  }, [store?.auth?.success, store.cart.products]);
+  };
+
+  useEffect(() => {
+    if (store?.auth?.success) {
+      fetchProductsOfCartFn();
+      addNewProductToCartFn();
+    }
+  }, [store?.auth?.userInfo.uid]);
 
   return (
     // Desktop

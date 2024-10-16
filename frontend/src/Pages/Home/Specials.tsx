@@ -23,7 +23,7 @@ const Specials: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-5 py-8 rounded">
+    <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-8 py-8 rounded">
       <div className="w-full  py-5">
         <h2 className="text-xl md:text-3xl font-bold tracking-wide text-[var(--dark-text)]">
           Today's Specials 🎉
