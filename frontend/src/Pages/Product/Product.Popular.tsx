@@ -24,7 +24,7 @@ export const PopularProduct = () => {
   }, []);
 
   return (
-    <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 px-5   py-3   bg-[var(--light-foreground)]   rounded items-start justify-center ">
+    <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 px-5   py-8   bg-[var(--light-foreground)]   rounded items-start justify-center ">
       <h1 className="text-[25px] font-semibold  tracking-wider ">
         Popular products
       </h1>
