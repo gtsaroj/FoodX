@@ -20,10 +20,12 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   const removeProductFromCartFn = async (productId: string) => {
     const toastLoader = toast.loading("Loading...");
     try {
-      await removeProductFromCart(
-        store?.auth?.userInfo?.uid as string,
-        productId
-      );
+      if (store?.auth?.success) {
+        await removeProductFromCart(
+          store?.auth?.userInfo?.uid as string,
+          productId
+        );
+      }
       dispatch(removeCart(prop.id));
     } catch (error) {
       toast.error(error as string);
