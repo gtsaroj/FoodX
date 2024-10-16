@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SingleCard } from "../../Components/Card/Card.Product.Cart";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
@@ -6,23 +6,94 @@ import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../../Reducer/product.reducer";
 import { Loader } from "../../Components/Loader/Loader";
+import toast from "react-hot-toast";
+import { Product } from "../../models/product.model";
+import {
+  addProductToCart,
+  getProductsOfCart,
+} from "../../Services/cart.services";
+import {
+  getNormalProducts,
+  getSpecialProducts,
+} from "../../Services/product.services";
 
 const Cart: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
-  const selectedProducts = useSelector(
-    (state: RootState) => state.root.cart.products
-  );
+  const store = useSelector((state: RootState) => state.root);
 
   const navigate = useNavigate();
   const Total = () => {
     let total = 0;
-    selectedProducts?.forEach(
+    store?.cart?.products?.forEach(
       (singleProduct) => (total += singleProduct.price * singleProduct.quantity)
     );
     return total;
   };
   const dispatch = useDispatch<AppDispatch>();
+
+  const addProductToCartFn = async (product: Product) => {
+    const toastLoader = toast.loading("Loading...");
+
+    try {
+      if (!store?.cart?.products?.some((data) => data.id === product.id)) {
+        await addProductToCart(store.auth.userInfo.uid as string, product.id);
+      }
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+          quantity: 1,
+          tagId: product.tagId,
+        })
+      );
+    } catch (error) {
+      toast.error(error as string);
+    }
+    toast.dismiss(toastLoader);
+  };
+
+  const fetchProductsOfCartFn = async () => {
+    setLoading(true);
+    try {
+      const response = (await getProductsOfCart(
+        store?.auth?.userInfo?.uid as string
+      )) as { products: string[] };
+      const [normalProducts, specialsProducts] = [
+        await getNormalProducts(),
+        await getSpecialProducts(),
+      ];
+      const products = [
+        ...normalProducts.data,
+        ...specialsProducts.data,
+      ] as Product[];
+      const filterProducts = products?.filter((product) =>
+        response.products.includes(product.id as string)
+      );
+      filterProducts?.forEach((product) => {
+        dispatch(
+          addToCart({
+            id: product.id,
+            name: product.name,
+            image: product.image,
+            price: product.price,
+            quantity: 1,
+            tagId: product.tagId,
+          })
+        );
+      });
+    } catch (error) {
+      throw new Error("Error while fetching products of cart" + error);
+    }
+  };
+
+  useEffect(() => {
+    if (store?.auth?.success && store?.cart?.products.length <= 0) {
+      fetchProductsOfCartFn();
+    }
+  }, [store?.auth?.success, store.cart.products]);
 
   return (
     // Desktop
@@ -32,18 +103,8 @@ const Cart: React.FC = () => {
       }}
       onDrop={(event) => {
         const productData = event.dataTransfer.getData("product");
-
         const product = JSON.parse(productData);
-        dispatch(
-          addToCart({
-            id: product.id,
-            name: product.name,
-            image: product.image,
-            price: product.price,
-            quantity: 1,
-            tag: product.tag,
-          })
-        );
+        addProductToCartFn(product);
       }}
       className="flex flex-col w-full justify-between h-full gap-3    sm:px-[30px]"
     >
@@ -55,8 +116,8 @@ const Cart: React.FC = () => {
         <div
           className={`flex flex-col relative h-[400px] items-center gap-2 w-full py-5 scrollbar-custom duration-200  pr-3 overflow-auto`}
         >
-          {selectedProducts.length > 0 ? (
-            selectedProducts?.map((singleSelectedProduct) => (
+          {store?.cart?.products?.length > 0 ? (
+            store?.cart?.products?.map((singleSelectedProduct) => (
               <SingleCard
                 prop={singleSelectedProduct}
                 key={singleSelectedProduct.id}

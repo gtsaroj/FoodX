@@ -15,6 +15,7 @@ import {
   addToFavourite,
   removeFavourite,
 } from "../../Reducer/favourite.reducer";
+import { addProductToCart } from "../../Services/cart.services";
 
 interface MenuProp {
   prop: Product;
@@ -91,6 +92,28 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         })
       );
     }
+  };
+
+  const addProductToCartFn = async () => {
+    const toastLoader = toast.loading("Loading...");
+
+    try {
+      await addProductToCart(authUser.uid as string, prop.id);
+      setActiveCart((prevValue) => !prevValue);
+      dispatch(
+        addToCart({
+          id: prop.id,
+          name: prop.name,
+          image: prop.image,
+          price: prop.price,
+          quantity: 1,
+          tagId: prop.tagId,
+        })
+      );
+    } catch (error) {
+      toast.error(error as string);
+    }
+    toast.dismiss(toastLoader);
   };
 
   useEffect(() => {
@@ -174,22 +197,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
               />
             </div>
           ) : (
-            <ShoppingCart
-              className=""
-              onClick={() => {
-                setActiveCart((prevValue) => !prevValue);
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    name: prop.name,
-                    image: prop.image,
-                    price: prop.price,
-                    quantity: 1,
-                    tagId: prop.tagId,
-                  })
-                );
-              }}
-            />
+            <ShoppingCart className="" onClick={() => addProductToCartFn()} />
           )}
         </div>
         <div

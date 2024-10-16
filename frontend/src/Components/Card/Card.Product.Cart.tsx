@@ -1,8 +1,10 @@
 import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { Product } from "../../models/product.model";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Store";
 import { Trash2 } from "lucide-react";
+import { removeProductFromCart } from "../../Services/cart.services";
+import toast from "react-hot-toast";
 
 interface SingleCardProp {
   prop: Product;
@@ -13,6 +15,21 @@ export const SingleCard: React.FC<SingleCardProp> = ({
 }: SingleCardProp) => {
   // const [InitialQuantity, setInitialQuantity] = useState<number>(1);
   const dispatch = useDispatch<AppDispatch>();
+  const store = useSelector((state: RootState) => state.root);
+
+  const removeProductFromCartFn = async (productId: string) => {
+    const toastLoader = toast.loading("Loading...");
+    try {
+      await removeProductFromCart(
+        store?.auth?.userInfo?.uid as string,
+        productId
+      );
+      dispatch(removeCart(prop.id));
+    } catch (error) {
+      toast.error(error as string);
+    }
+    toast.dismiss(toastLoader);
+  };
 
   return (
     <div
@@ -38,7 +55,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
             <button
               onClick={() => {
                 if (prop.quantity <= 1) {
-                  dispatch(removeCart(prop.id));
+                  removeProductFromCartFn(prop.id);
                 } else {
                   dispatch(
                     addToCart({
@@ -78,7 +95,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
       </div>
       <div
         onClick={() => {
-          dispatch(removeCart(prop.id));
+          removeProductFromCartFn(prop.id);
         }}
         className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
