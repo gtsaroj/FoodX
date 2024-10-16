@@ -168,11 +168,10 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   return (
     <div
       key={notification.uid}
-      className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative  border-b-[1px] text-[var(--dark-text)] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
-        className={`sm:w-[280px] w-[215px] ${
-          open ? "sm:h-[80px] h-[120px]" : "h-[20px]"
+        className={`sm:w-[280px] w-[215px]
         } duration-150 `}
       >
         <div
@@ -186,7 +185,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
         </div>
         <p
           className={`text-sm  duration-150 ${
-            open ? "visible opacity-[100] " : " invisible opacity-0"
+            open ? "visible opacity-[100] " : " hidden opacity-0"
           } `}
         >
           {notification.message}

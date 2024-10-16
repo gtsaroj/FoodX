@@ -61,7 +61,7 @@ const TicketPage: React.FC = () => {
 
       setTickets(tickets.tickets);
     } catch (error) {
-      toast.error("Unable to fetch ticket");
+      toast.error(error as any);
       throw new Error("Unable to fetch tickets" + error);
     }
     setLoading(false);

@@ -8,7 +8,6 @@ import {
   status,
 } from "../../models/order.model";
 import { debounce } from "../../Utility/debounce";
-import { SearchOrder } from "../../Utility/order.utils";
 
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
@@ -40,6 +39,7 @@ const OrderList = () => {
   }>();
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
+  const [haveUserId, setHaveUserId] = useState<string>();
 
   const getAllOrders = async (data: GetOrderModal) => {
     setLoading(true);
@@ -50,6 +50,7 @@ const OrderList = () => {
         currentLastDoc: data.currentLastDoc || null,
         filter: data.filter,
         sort: data.sort,
+        userId: data.userId,
       });
 
       const allOrder = (await orders.data) as {
@@ -81,26 +82,16 @@ const OrderList = () => {
       setInitialOrders(getaggregateDataPromises as OrderModal[]);
     } catch (error) {
       setLoading(false);
-      throw new Error("Unable to display orders data" + error);
+      setInitialOrders([])
     }
     setLoading(false);
   };
 
   const handleChange = (value: string) => {
-    const filterOrder = SearchOrder(initialOrders, value);
-    if (value?.length === 0)
-      getAllOrders({
-        pageSize: pagination.perPage,
-        currentFirstDoc: null,
-        currentLastDoc: null,
-        direction: "next",
-        filter: (filter?.sortFilter?.sort as keyof Order) || "orderRequest",
-        sort: "desc",
-      });
-    setInitialOrders(filterOrder);
+    setHaveUserId(value);
   };
 
-  const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
+  const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
     initialOrders,
   ]);
 
@@ -131,8 +122,9 @@ const OrderList = () => {
       currentLastDoc: null,
       filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
       sort: sortOrder || "asc",
+      userId: haveUserId || undefined,
     });
-  }, [pagination.perPage, sortOrder, filter?.sortFilter]);
+  }, [pagination.perPage, sortOrder, filter?.sortFilter, haveUserId]);
 
   useEffect(() => {
     if (pagination.currentPage > 1 && pagination.pageDirecton) {
@@ -147,6 +139,7 @@ const OrderList = () => {
             filter: (filter?.sortFilter?.sort as keyof Order) || "uid",
             sort: sortOrder || "desc",
             direction: pagination.pageDirecton || "next",
+            userId: haveUserId || undefined,
           });
           const getAllOrder = orders.data as {
             currentFirstDoc: string;
@@ -161,22 +154,21 @@ const OrderList = () => {
           setTotalData(getAllOrder.length);
           const aggregateData = getAllOrder?.orders.map(async (item, index) => {
             const getUserName = await getFullName(item.uid as string);
-            const productNames = item.products?.map(
-              (product) =>
-                (product.name as string) + " × " + product.quantity + ", "
-            );
+
             return {
               uid: item.uid,
               id: item.orderId as string,
               name: getUserName || "User",
-              products: productNames,
+              products: item.products,
               rank:
                 (pagination.currentPage - 1) * pagination.perPage + (index + 1),
-              orderRequest: dayjs(item.orderRequest).format("MMM D, h:mm A"),
+              orderRequest: dayjs(item.orderRequest).format(
+                " YYYY MMM D, h:mm A"
+              ),
 
               delivered:
                 (item.orderFullfilled &&
-                  dayjs(item.orderFullfilled).format("MMM D, h:mm A")) ||
+                  dayjs(item.orderFullfilled).format(" YYYY MMM D, h:mm A")) ||
                 "",
               status: item.status,
             };
@@ -205,6 +197,7 @@ const OrderList = () => {
     sortOrder,
     pagination.pageDirecton,
     filter?.sortFilter?.sort,
+    haveUserId
   ]);
 
   useEffect(() => {
@@ -215,8 +208,12 @@ const OrderList = () => {
         {
           id: order.orderId as string,
           name: userName as string,
-          orderRequest: order.orderRequest as string,
-          orderFullfilled: order.orderFullfilled as string,
+          orderRequest: dayjs(order.orderRequest).format(
+            "YYYY MMM D, h:mm A"
+          ) as string,
+          orderFullfilled: dayjs(order.orderFullfilled).format(
+            "YYYY MMM D, h:mm A"
+          ) as string,
           products: order.products as Product[],
           rank: 1,
           status: order.status as keyof status["status"],
@@ -258,10 +255,10 @@ const OrderList = () => {
             customerDetails: {
               name: matchedOrder?.name as string,
               phoneNumber: user?.phoneNumber || "N/A", // Ensure correct type for phoneNumber
-              userId : matchedOrder?.uid || "N/A"
+              userId: matchedOrder?.uid || "N/A",
             },
             invoiceData: {
-              invoiceDate: dayjs().format("YYYY-MM-DD"),
+              invoiceDate: matchedOrder?.orderRequest || "N/A",
               invoiceNumber: order,
             },
           };
@@ -327,7 +324,7 @@ const OrderList = () => {
               checkFn={{
                 checkSortFn: (isChecked, value, id) => {
                   if (!isChecked) {
-                   return  setFilter((prev) => ({
+                    return setFilter((prev) => ({
                       ...prev,
                       sortFilter: { id: "", sort: "" },
                     }));

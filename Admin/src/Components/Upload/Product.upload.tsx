@@ -61,30 +61,29 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
       },
     };
     try {
-      const addProduct = await addProducts(convertOGProduct);
+      await addProducts(convertOGProduct);
       await addLogs({
         action: "create",
         detail: ` Product :  ${addFood.product.id}`,
         date: new Date(),
       });
-      if (addProduct) return toast.success("Succesfully Added");
-      setAddFood(() => ({
-        collection: "",
-        product: {
-          id: "",
-          image: "",
-          name: "",
-          price: "",
-          quantity: "",
-          tagId: "",
-        },
-      }));
-
-      closeModal();
+      toast.success("Succesfully Added");
     } catch (error) {
       toast.error("Error while adding product ");
       throw new Error("Error while uploading products" + error);
     }
+    closeModal();
+    setAddFood(() => ({
+      collection: "",
+      product: {
+        id: "",
+        image: "",
+        name: "",
+        price: "",
+        quantity: "",
+        tagId: "",
+      },
+    }));
   };
   useEffect(() => {
     categories();

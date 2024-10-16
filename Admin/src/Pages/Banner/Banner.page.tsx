@@ -5,7 +5,6 @@ import UploadBanner from "../../Components/Upload/Banner.Upload";
 import Table from "../../Components/Common/Table/Table";
 import { BannerModel } from "../../models/banner.model";
 import { ColumnProps } from "../../models/table.model";
-import UpdateBanner from "../../Components/Upload/Banner.update.upload";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import toast from "react-hot-toast";
 import {
@@ -20,7 +19,6 @@ import dayjs from "dayjs";
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
   const [initialBanner, setInitialBanner] = useState<BannerModel[]>([]);
-  const [isEdit, setIsEdit] = useState<boolean>(true);
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [idAndPath, setIdAndPath] = useState<{
     id: string;
@@ -55,6 +53,13 @@ const FoodPage: React.FC = () => {
       ),
     },
     {
+      fieldName: "Type",
+      colStyle: { width: "200px", justifyContent: "start", textAlign: "start" },
+      render: (item: BannerModel) => (
+        <div className="w-[200px]">{item.path}</div>
+      ),
+    },
+    {
       fieldName: "Image",
       colStyle: {
         width: "200px",
@@ -84,13 +89,15 @@ const FoodPage: React.FC = () => {
     setLoading(true);
     const banners = [];
     try {
-      const normalBanner = (await getBanners({
-        path: "banners",
-      })) as { banners: BannerModel[] };
+      const [normalBanner, sponsorBanner] = [
+        (await getBanners({
+          path: "banners",
+        })) as { banners: BannerModel[] },
+        (await getBanners({
+          path: "sponsors",
+        })) as { banners: BannerModel[] },
+      ];
 
-      const sponsorBanner = (await getBanners({
-        path: "sponsors",
-      })) as { banners: BannerModel[] };
       if (normalBanner) {
         const fetchNormalBanner = normalBanner?.banners?.map((banner) => {
           return {
@@ -301,16 +308,6 @@ const FoodPage: React.FC = () => {
               path: findBanner?.path as "sponsors" | "banners",
             });
           },
-          editFn: (value: string) => {
-            setIsEdit(false);
-            const findBanner = initialBanner?.find(
-              (banner) => banner.id === value
-            );
-            setIdAndPath({
-              id: findBanner?.id as string,
-              path: findBanner?.path as "sponsors" | "banners",
-            });
-          },
           checkFn: (id: string, isChecked: boolean) =>
             handleBulkSelected(id, isChecked),
           checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
@@ -320,14 +317,6 @@ const FoodPage: React.FC = () => {
 
       <Modal close={isModalOpen} closeModal={closeModal}>
         <UploadBanner closeModal={closeModal} />
-      </Modal>
-
-      <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
-        <UpdateBanner
-          id={idAndPath.id}
-          path={idAndPath.path}
-          closeModal={() => setIsEdit(true)}
-        />
       </Modal>
       {isDelete && (
         <Delete

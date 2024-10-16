@@ -14,11 +14,12 @@ const Navbar = () => {
     ).matches;
     return prefersDarkScheme;
   });
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
 
-  const notificationReference = useRef<HTMLDivElement>();
-  const profileReference = useRef<HTMLDivElement>();
+  const notificationReference = useRef<HTMLDivElement | null>(null);
+  const profileReference = useRef<HTMLDivElement | null>(null);
 
   const user = useSelector(
     (state: RootState) => state.root.user.userInfo
@@ -28,34 +29,35 @@ const Navbar = () => {
     const closeModal = (event: MouseEvent) => {
       if (
         profileReference.current &&
-        !profileReference.current.contains(event.target as any)
+        !profileReference.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
       }
       if (
         notificationReference.current &&
-        !notificationReference.current.contains(event.target as any)
+        !notificationReference.current.contains(event.target as Node)
       ) {
         setOpenNotification(false);
       }
     };
-    if (isOpen) {
+
+    if (isOpen || openNotification) {
       document.addEventListener("mousedown", closeModal);
     }
-    if (openNotification) {
-      document.addEventListener("mousedown", closeModal);
-    }
+
+    return () => {
+      document.removeEventListener("mousedown", closeModal);
+    };
+  }, [isOpen, openNotification]);
+
+  useEffect(() => {
     if (isDark) {
       document.body.classList.add("dark");
     }
     if (!isDark) {
       document.body.classList.remove("dark");
     }
-
-    return () => {
-      document.removeEventListener("mousedown", closeModal);
-    };
-  }, [isDark, isOpen]);
+  });
 
   return (
     <div className="w-full  shadow-md shadow-[var(--light-foreground)] border-b-2 border-[var(--light-background)] h-[80px] hidden xl:flex justify-between  items-center gap-5 px-5 py-4">
@@ -83,7 +85,6 @@ const Navbar = () => {
               className="size-7 text-[var(--dark-text)] cursor-pointer "
             />
             <div
-              ref={notificationReference as any}
               className={`absolute w-[300px] z-30 duration-150 ${
                 openNotification
                   ? "visible opacity-100 -translate-y-0 "

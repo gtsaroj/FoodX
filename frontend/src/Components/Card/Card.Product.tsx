@@ -123,7 +123,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           event.dataTransfer.setData("product", JSON.stringify(prop));
         }}
         className={
-          " card h-full  w-[250px] group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start"
+          " card h-full  w-full min-w-[250px]    sm:w-[250px] group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start"
         }
       >
         <div className="">

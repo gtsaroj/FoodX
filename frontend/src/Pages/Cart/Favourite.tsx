@@ -25,9 +25,9 @@ const Favourite: React.FC = () => {
         await getNormalProducts(),
         await getSpecialProducts(),
       ];
-      console.log(response.data);
+
       const products = [...response.data, ...specialsProduct.data] as Product[];
-      console.log(selectedProducts);
+
       const aggregateProducts = products?.filter((data) =>
         selectedProducts.includes(data.id)
       );

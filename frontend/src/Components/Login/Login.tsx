@@ -13,8 +13,8 @@ import { signInAction } from "../../Actions/user.actions";
 export const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("sarojgt326@gmail.com");
+  const [password, setPassword] = useState<string>("sarcasm.conc");
   const [show, setShow] = useState<boolean>(false);
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -103,7 +103,7 @@ export const LoginContainer: React.FC = () => {
             >
               Forgot Password?
             </p>
-            <button className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            <button disabled={loading} className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />

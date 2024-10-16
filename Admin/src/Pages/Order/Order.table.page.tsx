@@ -28,7 +28,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
   pagination,
   action,
   selectedData,
-  handlePageDirection
+  handlePageDirection,
 }) => {
   const [id, setId] = useState<string>();
   const [selectedId, setSelectedId] = useState<string>();
@@ -39,10 +39,16 @@ export const OrderTable: React.FC<orderTableProp> = ({
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
+    const order = initialOrder?.find((od) => od.id === id);
     try {
       await updateOrderStatus({
         id: id as string,
         status: newStatus as string,
+        price: order?.products?.reduce(
+          (orderAcc, order) =>
+            orderAcc + Number(order?.price) * Number(order.quantity),
+          0
+        ) as number,
       });
       const refreshProducts = orders?.map((order) => {
         if (order.id === id) {
@@ -199,7 +205,9 @@ export const OrderTable: React.FC<orderTableProp> = ({
   return (
     <div className="w-full overflow-auto rounded-t-md">
       <Table
-        handlePageDirection={(pageDirection)=> handlePageDirection(pageDirection)}
+        handlePageDirection={(pageDirection) =>
+          handlePageDirection(pageDirection)
+        }
         selectedData={selectedData}
         totalData={totalData}
         data={initialOrder as any}

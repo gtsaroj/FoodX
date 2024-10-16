@@ -212,7 +212,7 @@ function Table<T extends { id: string }>({
                           }}
                         >
                           <FaEye className=" size-5 " />
-                          <span className="text-[15px] text-[var(--dark-text)] ">
+                          <span className="text-[15px] text-white ">
                             View
                           </span>
                         </div>

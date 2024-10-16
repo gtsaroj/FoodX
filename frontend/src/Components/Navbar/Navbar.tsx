@@ -80,10 +80,10 @@ export const Navbar: React.FC = () => {
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const FilterRef = useRef<HTMLDivElement>(null);
+  const FilterRef = useRef<HTMLDivElement | null>(null);
   const profileRef = useRef<HTMLDivElement | null>(null);
-  const favouriteReference = useRef<HTMLDivElement>();
-  const notificationReference = useRef<HTMLDivElement>();
+  const favouriteReference = useRef<HTMLDivElement | null>(null);
+  const notificationReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -129,7 +129,6 @@ export const Navbar: React.FC = () => {
     setLoading(true);
     try {
       const filter = await searchProducts(value);
-      console.log(filter);
       setSearchData(filter);
     } catch (error) {
       throw new Error("Error while search product" + error);
@@ -138,7 +137,7 @@ export const Navbar: React.FC = () => {
   };
 
   const searchProducts = async (value: string) => {
-    console.log(value);
+  
     const [specialProducts, normalProducts] = [
       await getSpecialProducts(),
       await getNormalProducts(),
@@ -271,7 +270,7 @@ export const Navbar: React.FC = () => {
               />
               <div
                 className={`w-[10px] duration-150 ${
-                  isFavourite.favourite.length > 0 ? "visible" : "hidden"
+                  isFavourite.favourite.length > 0 && authUser.role ? "visible" : "hidden"
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
             </div>
@@ -331,7 +330,7 @@ export const Navbar: React.FC = () => {
                       : "invisible opacity-0 "
                   } w-full absolute right-[19.3rem] top-[45px]  `}
                 >
-                  <Profile user={authUser} />
+                  <Profile closeModal={()=> setCloseProfile(!closeProfile)} user={authUser} />
                 </div>
               </div>
             )}

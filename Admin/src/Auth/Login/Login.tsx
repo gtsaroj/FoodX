@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../../Components/Navbar/AuthNavbar";
@@ -45,6 +45,17 @@ const LoginContainer: React.FC<LoginProp> = ({ role }) => {
     setEmail("");
     setDataSend(false);
   };
+
+  useEffect(() => {
+    if (role === "admin") {
+      setEmail("testuser326@gmail.com");
+      setPassword("sarcasm.conc");
+    }
+    if (role === "chef") {
+      setEmail("sarojgt36@gmail.com");
+      setPassword("sarcasm.conc");
+    }
+  }, [role]);
 
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-8">
@@ -119,14 +130,9 @@ const LoginContainer: React.FC<LoginProp> = ({ role }) => {
                 "Submit"
               )}
             </button>
-            <p
-              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"
-              onClick={() => navigate("/register")}
-            >
-              Don't have an account?{" "}
-              <span className="hover:text-[var(--primary-color)]">
-                Register Here.
-              </span>
+            <p className="text-[var(--dark-secondary-text)] text-sm text-center mt-2 select-none">
+              Access to the admin panel is restricted. Please contact your
+              administrator for access.
             </p>
           </form>
         </div>

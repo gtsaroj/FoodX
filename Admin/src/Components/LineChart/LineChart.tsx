@@ -16,8 +16,9 @@ import { AddRevenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
 
 export const WeekReveneuChart: React.FC = () => {
-  const [initialData, setInitialData] =
-    useState<{ time: string; revenue: number }[]>();
+  const [initialData, setInitialData] = useState<
+    { time: string; revenue: number }[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [percentageChange, setPercentageChange] = useState<string>();
 
@@ -66,10 +67,10 @@ export const WeekReveneuChart: React.FC = () => {
   };
 
   useEffect(() => {
-    calculatePercentageChange();
-  }, []);
-
-  console.log(initialData);
+    if (initialData.length) {
+      calculatePercentageChange();
+    }
+  }, [initialData.length]);
 
   return (
     <div className="flex  flex-col items-center justify-center w-full gap-5 px-3 py-5 rounded">
@@ -110,7 +111,7 @@ export const WeekReveneuChart: React.FC = () => {
               loading...
             </span>
           </div>
-        ) : (
+        ) : initialData?.length > 0 ? (
           <LineChart
             sx={{
               "& .MuiLineElement-root": {
@@ -167,6 +168,8 @@ export const WeekReveneuChart: React.FC = () => {
             ]}
             grid={{ vertical: true, horizontal: true }}
           ></LineChart>
+        ) : (
+          ""
         )}
       </div>
     </div>
@@ -290,8 +293,10 @@ export const MonthlyRevenueChart: React.FC = () => {
   };
 
   useEffect(() => {
-    calculatePercentageChange();
-  }, []);
+    if (initialData?.length) {
+      calculatePercentageChange();
+    }
+  }, [initialData?.length]);
   const { allKeys } = syncData();
 
   return (
@@ -615,8 +620,10 @@ export const MonthlyOrderLinechart: React.FC = () => {
   };
 
   useEffect(() => {
-    calculatePercentageChange();
-  }, []);
+    if (initialData?.length) {
+      calculatePercentageChange();
+    }
+  }, [initialData.length]);
 
   const { allKeys } = syncData();
 
@@ -701,7 +708,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
         {filter?.dateFilter?.startDate && filter.dateFilter.endDate && (
           <div className="flex px-1 overflow-hidden py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
-              <span className="text-[15px] w-[110px] text-[var(--dark-secondary-text)]">
+              <span className="text-[15px] w-[180px] text-[var(--dark-secondary-text)]">
                 {filter.dateFilter?.startDate +
                   " to " +
                   filter.dateFilter.endDate}
@@ -724,7 +731,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
           <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
             <div className="flex gap-1 items-center justify-center">
               <span className="text-[15px] text-[var(--dark-secondary-text)]">
-                {filter.normalFilter?.previous.toLocaleLowerCase().slice(0, 15)}
+                {filter.normalFilter?.previous.charAt(0).toUpperCase() + filter.normalFilter.previous.slice(1) }
               </span>
             </div>
             <button

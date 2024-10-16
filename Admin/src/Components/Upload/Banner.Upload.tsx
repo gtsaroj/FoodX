@@ -15,7 +15,7 @@ import { Selector } from "../Selector/Selector";
 interface UploadBannerProp {
   closeModal: () => void;
 }
-const UploadBanner: React.FC<UploadBannerProp> = () => {
+const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
@@ -36,6 +36,7 @@ const UploadBanner: React.FC<UploadBannerProp> = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!image && !name) return toast.error("All files are required");
+    const toastLoader = toast.loading("Loading...");
     try {
       if (banner === "banners") {
         await addBanner({
@@ -47,7 +48,6 @@ const UploadBanner: React.FC<UploadBannerProp> = () => {
           action: "create",
           date: new Date(),
           detail: `Banner : ${name} `,
-          
         });
         setImage("");
         setName("");
@@ -63,12 +63,16 @@ const UploadBanner: React.FC<UploadBannerProp> = () => {
           date: new Date(),
           detail: `sponsor : ${name} `,
         });
-        setImage("");
-        setName("");
       }
+      toast.dismiss(toastLoader);
+      toast.success("Banner successfully added.");
     } catch (error) {
-      throw new Error("Unable to add new banner" + error);
+      toast.error(error as string);
+      console.log(` Error > banner.upload.tsx ` + error);
     }
+    setImage("");
+    setName("");
+    closeModal();
   };
 
   return (
@@ -112,8 +116,8 @@ const UploadBanner: React.FC<UploadBannerProp> = () => {
           </div>
           {/* Third Row */}
           <div
-            onClick={() => fileRef.current?.click()}
-            className="w-full h-[300px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
+            onClick={() => (image ? "" : fileRef.current?.click())}
+            className="w-full h-[400px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
           >
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -127,12 +131,9 @@ const UploadBanner: React.FC<UploadBannerProp> = () => {
               className="hidden"
             />
             {image ? (
-              <div className="w-full   overflow-hidden transition-all hover:bg-[var(--light-secondary-text)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px]">
+              <div className="w-full h-full absolute top-0">
                 {" "}
-                <img
-                  className="w-full h-[230px] object-fill"
-                  src={image as string}
-                />
+                <img className="w-full h-full  " src={image as string} />
               </div>
             ) : (
               <div className="absolute  w-full flex flex-col items-center bottom-24 justify-center gap-1">

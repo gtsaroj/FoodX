@@ -17,25 +17,26 @@ import { RootState } from "../../Store.ts";
 // } from "../Components/LineChart/LineChart";
 
 const Dasboard: React.FC = () => {
-  const user = useSelector((state: RootState) => state.root.user.userInfo);
+
+  const user = useSelector((state: RootState) => state.root.user);
   return (
-    <div className="flex flex-col  items-center justify-center w-full gap-16 px-3 py-5 pb-5 2xl:container">
-      <Revenue />
-      <div className="flex flex-col items-start justify-between w-full px-3 gap-7 lg:flex-row">
-        <RecentOrders />
-        <RecentTickets />
-      </div>
-      <div className="flex flex-col items-center justify-between w-full px-5 gap-7 md:flex-row">
-        <div className="flex  w-full border-[var(--dark-border)] border-[1px] rounded-lg">
-          <WeekReveneuChart />
-        </div>
-        {user.role === "admin" && (
-          <div className="hidden min-w-[350px] lg:block">
-            <TopCustomers />
-          </div>
-        )}
-      </div>
-    </div>
+ user?.success &&    <div className="flex flex-col  items-center justify-center w-full gap-16 px-3 py-5 pb-5 2xl:container">
+ <Revenue />
+ <div className="flex flex-col items-start justify-between w-full px-3 gap-7 lg:flex-row">
+   <RecentOrders />
+   <RecentTickets />
+ </div>
+ <div className="flex flex-col items-center justify-between w-full px-5 gap-7 md:flex-row">
+   <div className="flex  w-full border-[var(--dark-border)] border-[1px] rounded-lg">
+     <WeekReveneuChart />
+   </div>
+   {user?.userInfo?.role === "admin" && (
+     <div className="hidden min-w-[350px] lg:block">
+       <TopCustomers />
+     </div>
+   )}
+ </div>
+</div>
   );
 };
 

@@ -11,9 +11,9 @@ const Specials: React.FC = () => {
     try {
       const response = await getSpecialProducts();
       const products = response.data as Product[];
-      console.log(products);
       setInitialProducts(products);
     } catch (error) {
+    setInitialProducts
       throw new Error("Error while getting special products" + error);
     }
   };
@@ -31,9 +31,7 @@ const Specials: React.FC = () => {
       </div>
       <div className="grid grid-cols-5 gap-8 " id="specials">
         <div className="  flex flex-col gap-9 items-center justify-center rounded-md px-5   col-span-5 lg:col-span-3">
-          <div
-            className="w-full  h-full  item-scrollbar  overflow-y-hidden  overflow-x-scroll"
-          >
+          <div className="w-full  h-full  item-scrollbar  overflow-y-hidden  overflow-x-scroll">
             <SpecialCardsContainer
               products={
                 initalProducts?.length > 0 ? initalProducts?.slice(0, 4) : []

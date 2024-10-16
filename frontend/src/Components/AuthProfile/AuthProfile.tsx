@@ -10,9 +10,10 @@ import { User } from "../../models/user.model";
 
 interface Prop {
   user: User;
+  closeModal : ()=>void;
 }
 
-const Profile: React.FC<Prop> = ({ user }: Prop) => {
+const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
         toast.dismiss(toastLoader);
         toast.success("Logged out successfully!");
       } else {
-        throw new Error("Logout failed");
+      console.log(` Error : authProfile`)
       }
     } catch (error) {
       toast.dismiss(toastLoader);
@@ -39,6 +40,7 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
       // throw new Error("Error logging out." + error);
     }
     setLoading(false);
+    closeModal()
   };
 
   return (
@@ -48,7 +50,10 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
           Currently in
         </p>
         <div
-          onClick={() => navigate("/profile")}
+          onClick={() => {
+            navigate("/profile")
+            closeModal()
+          }}
           className="flex items-center justify-start gap-3 cursor-pointer w-full hover:bg-[var(--light-background)] p-1 rounded-md"
         >
           <div>
@@ -73,7 +78,10 @@ const Profile: React.FC<Prop> = ({ user }: Prop) => {
         <p className="text-[13px] text-[var(--dark-text)]">More options</p>
         <div className="flex flex-col items-baseline justify-start gap-1 w-full">
           <button
-            onClick={() => navigate("/orders")}
+            onClick={() => {
+              navigate("/orders")
+              closeModal()
+            }}
             className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[var(--light-background)] w-full text-[17px] py-1.5 px-4 "
           >
             View Orders

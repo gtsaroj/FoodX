@@ -40,7 +40,7 @@ export const RecentProduct = () => {
   };
 
   useEffect(() => {
-    getProducts();
+  authUser?.success ?   getProducts() :""
   }, []);
 
   const navigate = useNavigate();

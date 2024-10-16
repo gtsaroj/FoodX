@@ -1,10 +1,6 @@
 {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
   "hosting": {
-    "site": "foodx-admin",
+    "target": "admin",
     "rewrites": [
       {
         "source": "**",
@@ -12,9 +8,6 @@
       }
     ],
     "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
-  },
-  "storage": {
-    "rules": "storage.rules"
+    "ignore": ["firebase.json", "/.*", "/node_modules/"]
   }
 }
