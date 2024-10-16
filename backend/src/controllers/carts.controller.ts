@@ -1,22 +1,22 @@
-import {
-  addProductInFavourite,
-  getFavouritesFromFirestore,
-  removeItemFromFavourite,
-} from "../firebase/db/favourite.firestore.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
 import { redisClient } from "../utils/Redis.js";
+import {
+  addCartInFirestore,
+  removeItemFromCart,
+  getCartsFromFirestore,
+} from "../firebase/db/cart.firestore.js";
 
-const addFavourite = asyncHandler(
+const addCarts = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     const { uid, productId } = req.body;
     try {
-      await addProductInFavourite(uid, productId);
-      await redisClient.del(`favourites:${uid}`);
-      const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
+      await addCartInFirestore(uid, productId);
+      await redisClient.del(`carts:${uid}`);
+      const updatedCart = await getCartsFromFirestore(uid);
+      await redisClient.set(`carts:${uid}`, JSON.stringify(updatedCart), {
         EX: 600,
       });
       return res
@@ -24,8 +24,8 @@ const addFavourite = asyncHandler(
         .json(
           new ApiResponse(
             200,
-            updatedFavourites,
-            "Item successfully added into favourites.",
+            updatedCart,
+            "Item successfully added into cart.",
             true
           )
         );
@@ -35,7 +35,7 @@ const addFavourite = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while adding item into favourites.",
+            "Error while adding item into carts.",
             null,
             error as string[]
           )
@@ -44,14 +44,14 @@ const addFavourite = asyncHandler(
   }
 );
 
-const removeFavourites = asyncHandler(
+const removeCarts = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     try {
       const { uid, productId } = req.body;
-      await removeItemFromFavourite(uid, productId);
-      await redisClient.del(`favourites:${uid}`);
-      const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
+      await removeItemFromCart(uid, productId);
+      await redisClient.del(`carts:${uid}`);
+      const updatedCart = await getCartsFromFirestore(uid);
+      await redisClient.set(`carts:${uid}`, JSON.stringify(updatedCart), {
         EX: 600,
       });
       return res
@@ -59,8 +59,8 @@ const removeFavourites = asyncHandler(
         .json(
           new ApiResponse(
             200,
-            updatedFavourites,
-            "Item successfully removed from favourites.",
+            updatedCart,
+            "Item successfully removed from carts.",
             true
           )
         );
@@ -70,7 +70,7 @@ const removeFavourites = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while removing item from favourites.",
+            "Error while removing item from carts.",
             null,
             error as string[]
           )
@@ -79,23 +79,19 @@ const removeFavourites = asyncHandler(
   }
 );
 
-const getFavourites = asyncHandler(
+const getCarts = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     try {
       const uid = req.params.uid;
-      const favouritesData = await getFavouritesFromFirestore(uid);
-      await redisClient.setEx(
-        `favourites:${uid}`,
-        600,
-        JSON.stringify(favouritesData)
-      );
+      const cartsData = await getCartsFromFirestore(uid);
+      await redisClient.setEx(`carts:${uid}`, 600, JSON.stringify(cartsData));
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            favouritesData,
-            "Favourites items successfully fetched.",
+            cartsData,
+            "Cart items successfully fetched.",
             true
           )
         );
@@ -105,7 +101,7 @@ const getFavourites = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while fetching item from favourites.",
+            "Error while fetching item from carts.",
             null,
             error as string[]
           )
@@ -114,4 +110,4 @@ const getFavourites = asyncHandler(
   }
 );
 
-export { addFavourite, removeFavourites, getFavourites };
+export { addCarts, removeCarts, getCarts };
