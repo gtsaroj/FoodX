@@ -98,7 +98,8 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     const toastLoader = toast.loading("Loading...");
 
     try {
-      await addProductToCart(authUser.uid as string, prop.id);
+      if (authUser?.uid)
+        await addProductToCart(authUser.uid as string, prop.id);
       setActiveCart((prevValue) => !prevValue);
       dispatch(
         addToCart({
