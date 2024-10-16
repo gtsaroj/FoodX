@@ -10,7 +10,6 @@ import {
 } from "../../Services/product.services";
 import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
-import { useExtractColors } from "../../Utility/colors.utility";
 
 export interface categoriesTagOption {
   name: string;
