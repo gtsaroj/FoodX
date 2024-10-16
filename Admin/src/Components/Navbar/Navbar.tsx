@@ -14,6 +14,7 @@ const Navbar = () => {
     ).matches;
     return prefersDarkScheme;
   });
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
 
@@ -48,6 +49,15 @@ const Navbar = () => {
       document.removeEventListener("mousedown", closeModal);
     };
   }, [isOpen, openNotification]);
+
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    }
+    if (!isDark) {
+      document.body.classList.remove("dark");
+    }
+  });
 
   return (
     <div className="w-full  shadow-md shadow-[var(--light-foreground)] border-b-2 border-[var(--light-background)] h-[80px] hidden xl:flex justify-between  items-center gap-5 px-5 py-4">
