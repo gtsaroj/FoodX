@@ -115,7 +115,7 @@ export const MenuType: React.FC = () => {
           {initialTag?.name}
         </p>
 
-        <div className=" w-full  flex sm:flex-row flex-col gap-8  sm:gap-20 sm:justify-start items-center   ">
+        <div className=" w-full  flex sm:flex-row flex-col gap-8 sm:flex-wrap  sm:gap-20 sm:justify-evenly lg:justify-start items-center   ">
           {!loading ? (
             initialData?.length <= 0 ? (
               <div className="w-full flex flex-col items-center justify-center text-center p-4">
