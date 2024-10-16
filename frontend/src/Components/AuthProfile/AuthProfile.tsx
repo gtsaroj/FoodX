@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { User } from "../../models/user.model";
+import { resetCart } from "../../Reducer/product.reducer";
 
 interface Prop {
   user: User;
@@ -27,6 +28,7 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
       if (response.status === 200) {
         await signOutUser();
         dispatch(authLogout());
+        dispatch(resetCart())
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
         toast.dismiss(toastLoader);
