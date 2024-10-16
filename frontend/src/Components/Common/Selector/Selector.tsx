@@ -12,7 +12,7 @@ export const Selector: React.FC<SelectorPop> = ({ action, children }) => {
   const [showField, setShowField] = useState<string>(children[0]?.name);
   const [haveScroll, setHaveScroll] = useState<boolean>(false);
   return (
-    <div className="w-[350px] rounded-t-xl relative group/selector py-1 gap-2 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">
+    <div className="sm:w-[350px]  w-full rounded-t-xl relative group/selector py-1 gap-2 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">
       <div
         onClick={() => setShow(!show)}
         className="flex items-center  justify-between"

@@ -36,7 +36,7 @@ export const RegisterContainer: React.FC = () => {
   const uploadRef = useRef<HTMLInputElement | null>(null);
 
   const [ShowPassword, setShowPassword] = useState(false);
-  const [DataSend, SetDataSend] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -75,9 +75,10 @@ export const RegisterContainer: React.FC = () => {
     try {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
+        setLoading(true);
         const { avatar, password, email, lastName, firstName, phoneNumber } =
           RegisterValue;
-        SetDataSend(false);
+
         const imageUrl = await storeImageInFirebase(avatar, {
           folder: "users",
         });
@@ -95,17 +96,17 @@ export const RegisterContainer: React.FC = () => {
         navigate("/email-verification");
       }
     } catch (error) {
-      console.log(error);
-      RegisterValue.avatar = "";
-      RegisterValue.firstName = "";
-      RegisterValue.lastName = "";
-      RegisterValue.password = "";
-      RegisterValue.confirmpassword = "";
-      RegisterValue.email = "";
-      RegisterValue.phoneNumber = "";
       toast.error(`User already logged in`);
-      SetDataSend(true);
     }
+    console.log(error);
+    RegisterValue.avatar = "";
+    RegisterValue.firstName = "";
+    RegisterValue.lastName = "";
+    RegisterValue.password = "";
+    RegisterValue.confirmpassword = "";
+    RegisterValue.email = "";
+    RegisterValue.phoneNumber = "";
+    setLoading(false);
   };
 
   return (
@@ -303,10 +304,11 @@ export const RegisterContainer: React.FC = () => {
           </div>
           <div className="flex flex-col items-center w-full gap-3 ">
             <button
+              disabled={loading}
               type="submit"
               className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
             >
-              {DataSend ? (
+              {!loading ? (
                 "Submit"
               ) : (
                 <div className="flex items-center justify-center gap-2">
@@ -333,8 +335,8 @@ export const Register = () => {
     <div className="flex flex-col items-center justify-between w-full h-screen 2xl:justify-center lg:py-5">
       <RegisterContainer />
       <div className="w-full pt-10 ">
-      <AuthFooter/>
+        <AuthFooter />
+      </div>
     </div>
-   </div>
   );
 };

@@ -2,6 +2,7 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss/components";
 
+
 @layer base {
   :root {
     --color: #1ba13dd2;
@@ -94,6 +95,8 @@
     overflow-x: hidden;
     background: var(--body-bg);
     scroll-behavior: smooth;
+    margin: 0;
+    padding: 0;
   }
 
   .fade-in img {

@@ -129,7 +129,6 @@ export const Navbar: React.FC = () => {
     setLoading(true);
     try {
       const filter = await searchProducts(value);
-      console.log(filter);
       setSearchData(filter);
     } catch (error) {
       throw new Error("Error while search product" + error);
@@ -138,7 +137,7 @@ export const Navbar: React.FC = () => {
   };
 
   const searchProducts = async (value: string) => {
-    console.log(value);
+  
     const [specialProducts, normalProducts] = [
       await getSpecialProducts(),
       await getNormalProducts(),
@@ -331,7 +330,7 @@ export const Navbar: React.FC = () => {
                       : "invisible opacity-0 "
                   } w-full absolute right-[19.3rem] top-[45px]  `}
                 >
-                  <Profile user={authUser} />
+                  <Profile closeModal={()=> setCloseProfile(!closeProfile)} user={authUser} />
                 </div>
               </div>
             )}
