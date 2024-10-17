@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
       document.body.classList.remove("dark");
     }
   }, [isDark]);
-  
+
   const getFavouireProducts = async () => {
     try {
       const response = await getFavourites(authUser.uid as string);
@@ -85,6 +85,9 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
+    socket.on("connet", () => {
+      console.log(socket.id);
+    });
   }, []);
 
   return (
@@ -107,8 +110,6 @@ export const App: React.FC = () => {
   const [showContent, SetShowContent] = useState<boolean>(false);
   const auth = useSelector((state: RootState) => state.root.auth);
 
-
-
   useEffect(() => {
     auth.success ? SetShowContent(true) : SetShowContent(false);
   }, [auth]);
@@ -124,7 +125,7 @@ export const App: React.FC = () => {
           path="/register"
           element={showContent ? <Navigate to={"/"} /> : <Register />}
         />
-         <Route
+        <Route
           path="/email-verification"
           element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
         />
@@ -133,9 +134,9 @@ export const App: React.FC = () => {
           <Route path="/" element={<HomePage />}>
             <Route index element={<Home />} />
             <Route path="/cart" element={<CartPage />}></Route>
-            <Route  element={<PrivateRoute userRole={["customer"]} />} >
-            <Route path="/profile" element={<AdminProfile />} />
-          </Route>
+            <Route element={<PrivateRoute userRole={["customer"]} />}>
+              <Route path="/profile" element={<AdminProfile />} />
+            </Route>
             <Route
               element={
                 <PrivateRoute userRole={["customer", "chef", "admin"]} />
