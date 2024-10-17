@@ -31,12 +31,18 @@ export const getOrderByUser = async (id: string) => {
 export const updateOrderStatus = async (data: {
   id: string;
   status: string;
-  price : number
+  price: number;
 }) => {
   try {
+    const getSocketId = localStorage.getItem("sid");
     const response = await makeRequest({
       method: "put",
-      data: { id: data.id, status: data.status, price: data.price },
+      data: {
+        id: data.id,
+        status: data.status,
+        price: data.price,
+        socketId: getSocketId,
+      },
       url: "orders/update-order",
     });
     return response.data.data;
@@ -44,4 +50,3 @@ export const updateOrderStatus = async (data: {
     throw new Error("unable to update order status" + error);
   }
 };
-

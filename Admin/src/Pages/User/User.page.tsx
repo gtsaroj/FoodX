@@ -166,8 +166,8 @@ const CustomerList: React.FC = () => {
 
   return (
     <div className="flex flex-col items-start justify-center w-full gap-5 px-5 py-2 2xl:container">
-      <div className="flex items-center justify-between w-full px-2 pt-5">
-        <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+      <div className="flex sm:flex-row flex-col gap-3  items-end sm:items-center justify-between w-full px-2 pt-5">
+        <div className="flex w-full text-start flex-col -space-y-1.5 items-start justify-center gap-1">
           <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
             All Customers
           </h4>

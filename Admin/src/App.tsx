@@ -12,25 +12,46 @@ import { useSelector } from "react-redux";
 import { UserRole } from "./models/user.model";
 import { socket } from "./Utility/socket.util";
 import { RootState } from "./Store";
-import "./index.css"
+import "./index.css";
 
-const DesktopSlider = React.lazy(() => import('./Components/Slider/Slider').then(module => ({ default: module.DesktopSlider })));
-const MobileSlider = React.lazy(() => import('./Components/Slider/Slider').then(module => ({ default: module.MobileSlider })));
-const Analytics = React.lazy(() => import('./Pages/Analytics/Analytics'));
-const OrderList = React.lazy(() => import('./Pages/Order/Order.page'));
-const CustomerList = React.lazy(() => import('./Pages/User/User.page'));
-const TicketPage = React.lazy(() => import('./Pages/Ticket/Ticket.chef.page'));
-const AdminProfile = React.lazy(() => import('./Pages/Profile/AdminProfile').then(module => ({ default: module.AdminProfile })));
-const BannerPage = React.lazy(() => import('./Pages/Banner/Banner.page'));
-const FoodPage = React.lazy(() => import('./Pages/Product/Product.page'));
-const Login = React.lazy(() => import('./Auth/Login/Login'));
-const NotFoundPage = React.lazy(() => import('./Pages/404Page/NotFoundPage'));
-const Footer = React.lazy(() => import('./Components/Footer/Footer'));
-const CategoryPage = React.lazy(() => import('./Pages/Category/Category.page').then(module => ({ default: module.CategoryPage })));
-const Navbar = React.lazy(() => import('./Components/Navbar/Navbar'));
-const WelcomePage = React.lazy(() => import('./Pages/Page.Welcome').then(module => ({ default: module.WelcomePage })));
-const TicketAdminPage = React.lazy(() => import('./Pages/Ticket/Ticket.admin.page'));
-
+const DesktopSlider = React.lazy(() =>
+  import("./Components/Slider/Slider").then((module) => ({
+    default: module.DesktopSlider,
+  }))
+);
+const MobileSlider = React.lazy(() =>
+  import("./Components/Slider/Slider").then((module) => ({
+    default: module.MobileSlider,
+  }))
+);
+const Analytics = React.lazy(() => import("./Pages/Analytics/Analytics"));
+const OrderList = React.lazy(() => import("./Pages/Order/Order.page"));
+const CustomerList = React.lazy(() => import("./Pages/User/User.page"));
+const TicketPage = React.lazy(() => import("./Pages/Ticket/Ticket.chef.page"));
+const AdminProfile = React.lazy(() =>
+  import("./Pages/Profile/AdminProfile").then((module) => ({
+    default: module.AdminProfile,
+  }))
+);
+const BannerPage = React.lazy(() => import("./Pages/Banner/Banner.page"));
+const FoodPage = React.lazy(() => import("./Pages/Product/Product.page"));
+const Login = React.lazy(() => import("./Auth/Login/Login"));
+const NotFoundPage = React.lazy(() => import("./Pages/404Page/NotFoundPage"));
+const Footer = React.lazy(() => import("./Components/Footer/Footer"));
+const CategoryPage = React.lazy(() =>
+  import("./Pages/Category/Category.page").then((module) => ({
+    default: module.CategoryPage,
+  }))
+);
+const Navbar = React.lazy(() => import("./Components/Navbar/Navbar"));
+const WelcomePage = React.lazy(() =>
+  import("./Pages/Page.Welcome").then((module) => ({
+    default: module.WelcomePage,
+  }))
+);
+const TicketAdminPage = React.lazy(
+  () => import("./Pages/Ticket/Ticket.admin.page")
+);
 
 const MainPage = () => {
   return (
@@ -68,8 +89,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
+
+    socket.on("connect", () =>
+      localStorage.setItem("sid", socket.id as string)
+    );
+
     return () => {
-      socket.off("chef");
+      socket.off("connect");
     };
   });
   return (

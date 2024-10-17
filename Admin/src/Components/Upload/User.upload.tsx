@@ -51,13 +51,13 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
   const fileRef = useRef<HTMLImageElement>();
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!customerInfo.uid && !newData && !field)
+    if (!customerInfo.id && !newData && !field)
       return toast.error(`All field required`);
     const toastLoader = toast.loading("Updating user role...");
     try {
       if (field == "role") {
         await updateRole({
-          id: customerInfo.uid as string,
+          id: customerInfo.id as string,
           role: customerInfo.role as string,
           newRole: newData,
         });
@@ -71,7 +71,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
         return;
       }
       await updateUser({
-        id: customerInfo.uid as string,
+        id: customerInfo.id as string,
         role: customerInfo.role as "admin" | "customer" | "chef",
         field: field,
         newData: newData,
