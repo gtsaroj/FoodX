@@ -5,6 +5,7 @@ import { ColumnProps } from "../../models/table.model";
 import { ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../Services/order.services";
+import { addNotification } from "../../Services/notification.services";
 
 interface orderTableProp {
   totalData: number;
@@ -50,6 +51,13 @@ export const OrderTable: React.FC<orderTableProp> = ({
           0
         ) as number,
       });
+      if (newStatus === "completed") {
+        await addNotification({
+          message: "Your order has been successfully completed.",
+          title: "Order Completed",
+          userId: order?.uid as string,
+        });
+      }
       const refreshProducts = orders?.map((order) => {
         if (order.id === id) {
           return { ...order, status: newStatus };
