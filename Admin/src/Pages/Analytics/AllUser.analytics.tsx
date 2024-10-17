@@ -331,9 +331,9 @@ const AllCustomers = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex flex-col w-full items-start justify-center gap-3">
-          <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+      <div className="flex flex-col justify-center gap-3 items-start w-full ">
+        <div className="flex w-full  sm:flex-row gap-3 flex-col items-end sm:items-center justify-between  ">
+          <div className="flex w-full py-1 text-start flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Customers
             </h4>
@@ -341,125 +341,125 @@ const AllCustomers = () => {
               {totalData || 0} entries found
             </p>
           </div>
-          <div className="flex w-full items-center justify-start gap-2">
-            <form
-              action=""
-              className="relative text-[var(--darkt-text)] w-full sm:w-auto "
-            >
-              <input
-                id="search"
-                type="search"
-                onChange={(event) => debouncedHandleChange(event?.target.value)}
-                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                placeholder="Search for products"
-              />
-            </form>
-            <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
-            <DeleteButton
-              dataLength={bulkSelectedCustomer.length}
-              deleteFn={() => setIsBulkDelete(true)}
-            />
-            {filter?.sortFilter?.sort && (
-              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {filter.sortFilter.sort?.toLowerCase()}
-                  </span>
+          <div>
+            <Button
+              selectedTypes={[filter?.typeFilter?.id as string]}
+              selectedCheck={[filter?.sortFilter?.id as string]}
+              bodyStyle={{
+                width: "400px",
+                top: "3rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                  <Filter
+                    strokeWidth={2.5}
+                    className="size-5 text-[var(--dark-secondary-text)]"
+                  />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                    Filter
+                  </p>
                 </div>
-                <button
-                  onClick={() =>
-                    setFilter((prev) => ({
+              }
+              checkFn={{
+                checkSortFn: (isChecked, value, id) => {
+                  if (!isChecked) {
+                    return setFilter((prev) => ({
                       ...prev,
                       sortFilter: { id: "", sort: "" },
-                    }))
+                    }));
                   }
-                >
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
-              </div>
-            )}
-            {filter?.typeFilter?.type && (
-              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                    {filter.typeFilter.type?.toLowerCase()}
-                  </span>
-                </div>
-                <button
-                  onClick={() =>
+                  if (isChecked) {
                     setFilter((prev) => ({
                       ...prev,
-                      typeFilter: { id: "", type: undefined },
-                    }))
+                      sortFilter: { id: id, sort: value },
+                    }));
                   }
-                >
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
-              </div>
-            )}
+                },
+                checkTypeFn: (isChecked, value, id) => {
+                  if (!isChecked) {
+                    return setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { id: "", type: undefined },
+                    }));
+                  }
+                  if (isChecked) {
+                    setFilter((prev) => ({
+                      ...prev,
+                      typeFilter: { id: id, type: value },
+                    }));
+                  }
+                },
+              }}
+              types={[
+                { label: "Admin", value: "admin", id: "sfksdjlk" },
+                { label: "Customer", value: "customer", id: "fkldsjfks" },
+                { label: "Chef", value: "chef", id: "fkldjs" },
+              ]}
+              sort={[
+                { label: "Order", value: "totalOrder", id: "flksjd" },
+                { label: "Amount", value: "totalSpent", id: "lfkjds" },
+              ]}
+              sortFn={(type: "asc" | "desc") => setSortOrder(type)}
+            />
           </div>
         </div>
-        <div>
-          <Button
-            selectedTypes={[filter?.typeFilter?.id as string]}
-            selectedCheck={[filter?.sortFilter?.id as string]}
-            bodyStyle={{
-              width: "400px",
-              top: "3rem",
-              left: "-18rem",
-            }}
-            parent={
-              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                <Filter
-                  strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
-                />
-                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                  Filter
-                </p>
+        <div className="flex w-full items-center justify-start gap-2">
+          <form
+            action=""
+            className="relative text-[var(--darkt-text)] w-full sm:w-auto "
+          >
+            <input
+              id="search"
+              type="search"
+              onChange={(event) => debouncedHandleChange(event?.target.value)}
+              className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+              placeholder="Search for products"
+            />
+          </form>
+          <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
+          <DeleteButton
+            dataLength={bulkSelectedCustomer.length}
+            deleteFn={() => setIsBulkDelete(true)}
+          />
+          {filter?.sortFilter?.sort && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                  {filter.sortFilter.sort?.toLowerCase()}
+                </span>
               </div>
-            }
-            checkFn={{
-              checkSortFn: (isChecked, value, id) => {
-                if (!isChecked) {
-                  return setFilter((prev) => ({
+              <button
+                onClick={() =>
+                  setFilter((prev) => ({
                     ...prev,
                     sortFilter: { id: "", sort: "" },
-                  }));
+                  }))
                 }
-                if (isChecked) {
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+          {filter?.typeFilter?.type && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                  {filter.typeFilter.type?.toLowerCase()}
+                </span>
+              </div>
+              <button
+                onClick={() =>
                   setFilter((prev) => ({
-                    ...prev,
-                    sortFilter: { id: id, sort: value },
-                  }));
-                }
-              },
-              checkTypeFn: (isChecked, value, id) => {
-                if (!isChecked) {
-                  return setFilter((prev) => ({
                     ...prev,
                     typeFilter: { id: "", type: undefined },
-                  }));
+                  }))
                 }
-                if (isChecked) {
-                  setFilter((prev) => ({
-                    ...prev,
-                    typeFilter: { id: id, type: value },
-                  }));
-                }
-              },
-            }}
-            types={[
-              { label: "Admin", value: "admin", id: "sfksdjlk" },
-              { label: "Customer", value: "customer", id: "fkldsjfks" },
-              { label: "Chef", value: "chef", id: "fkldjs" },
-            ]}
-            sort={[
-              { label: "Order", value: "totalOrder", id: "flksjd" },
-              { label: "Amount", value: "totalSpent", id: "lfkjds" },
-            ]}
-            sortFn={(type: "asc" | "desc") => setSortOrder(type)}
-          />
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <CustomerTable

@@ -174,9 +174,9 @@ const AllCategories = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      <div className="flex sm:flex-row flex-col items-start sm:items-center justify-between flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex flex-col w-full items-start justify-center gap-3">
-          <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+      <div className="flex flex-col justify-center gap-3 items-start w-full ">
+        <div className="flex w-full  sm:flex-row gap-3 flex-col items-end sm:items-center justify-between">
+          <div className="flex w-full text-start py-1 flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Categories
             </h4>
@@ -184,87 +184,86 @@ const AllCategories = () => {
               {initialCategory?.length || 0} entries found
             </p>
           </div>
-
-          <div className="flex   items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
-            <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
-              {" "}
-              <form
-                action=""
-                className="relative text-[var(--dark-text)] w-full sm:w-auto "
-              >
-                <input
-                  id="search"
-                  type="search"
-                  onChange={(event) => debouncingSearch(event?.target.value)}
-                  className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                  placeholder="Search for products"
+          <Button
+            selectedCheck={[filter?.id as string]}
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
                 />
-              </form>
-              <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
-              <DeleteButton
-                deleteFn={() => setIsBulkDelete(true)}
-                dataLength={bulkSelectedCategory.length}
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            sort={[
+              { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
+              { label: "Revenue", value: "revenue", id: "flksdj" },
+              {
+                label: "Orders",
+                value: "orders",
+                id: "kfljsffldkl;'",
+              },
+            ]}
+            checkFn={{
+              checkSortFn: (isChecked, value, id) => {
+                if (!isChecked) {
+                  return setFilter({ id: "", sort: "" });
+                }
+                if (isChecked) {
+                  setFilter({ sort: value, id: id });
+                }
+              },
+            }}
+          />
+        </div>
+        <div className="flex   items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
+          <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
+            {" "}
+            <form
+              action=""
+              className="relative text-[var(--dark-text)] w-full sm:w-auto "
+            >
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debouncingSearch(event?.target.value)}
+                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+                placeholder="Search for products"
               />
-            </div>
-            <div>
-              {filter?.sort && (
-                <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-                  <div className="flex gap-1 items-center justify-center">
-                    <span className="  text-[15px] text-[var(--dark-secondary-text)]">
-                      {filter.sort.charAt(0).toUpperCase() +
-                        filter?.sort?.slice(1).toLowerCase()}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setFilter({ id: "", sort: "" })}
-                    className=" "
-                  >
-                    <X className="text-[var(--danger-text)] " size={20} />
-                  </button>
+            </form>
+            <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
+            <DeleteButton
+              deleteFn={() => setIsBulkDelete(true)}
+              dataLength={bulkSelectedCategory.length}
+            />
+          </div>
+          <div>
+            {filter?.sort && (
+              <div className="flex px-2 py-0.5 w-full gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+                <div className="flex gap-1 items-center justify-center">
+                  <span className="  text-[15px] text-[var(--dark-secondary-text)]">
+                    {filter.sort.charAt(0).toUpperCase() +
+                      filter?.sort?.slice(1).toLowerCase()}
+                  </span>
                 </div>
-              )}
-            </div>
+                <button
+                  onClick={() => setFilter({ id: "", sort: "" })}
+                  className=" "
+                >
+                  <X className="text-[var(--danger-text)] " size={20} />
+                </button>
+              </div>
+            )}
           </div>
         </div>
-        <Button
-          selectedCheck={[filter?.id as string]}
-          sortFn={(value) => setSortOrder(value)}
-          bodyStyle={{
-            width: "400px",
-            top: "3rem",
-            left: "-18rem",
-          }}
-          parent={
-            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-              <Filter
-                strokeWidth={2.5}
-                className="size-5 text-[var(--dark-secondary-text)]"
-              />
-              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                Filter
-              </p>
-            </div>
-          }
-          sort={[
-            { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
-            { label: "Revenue", value: "revenue", id: "flksdj" },
-            {
-              label: "Orders",
-              value: "orders",
-              id: "kfljsffldkl;'",
-            },
-          ]}
-          checkFn={{
-            checkSortFn: (isChecked, value, id) => {
-              if (!isChecked) {
-                return setFilter({ id: "", sort: "" });
-              }
-              if (isChecked) {
-                setFilter({ sort: value, id: id });
-              }
-            },
-          }}
-        />
       </div>
       <CategoryTable
         totalData={initialCategory?.length}
