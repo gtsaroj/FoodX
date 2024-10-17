@@ -32,16 +32,16 @@ export const updateOrderStatus = async (data: {
   id: string;
   status: string;
   price: number;
+  userId: string;
 }) => {
   try {
-    const getSocketId = localStorage.getItem("sid");
     const response = await makeRequest({
       method: "put",
       data: {
         id: data.id,
         status: data.status,
         price: data.price,
-        socketId: getSocketId,
+        userId: data.userId,
       },
       url: "orders/update-order",
     });

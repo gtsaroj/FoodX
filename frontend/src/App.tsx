@@ -85,9 +85,6 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
-    socket.on("connet", () => {
-      console.log(socket.id);
-    });
   }, []);
 
   return (

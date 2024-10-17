@@ -50,8 +50,9 @@ export const OrderTable: React.FC<orderTableProp> = ({
             orderAcc + Number(order?.price) * Number(order.quantity),
           0
         ) as number,
-      }); 
-    
+        userId: order?.uid as string,
+      });
+
       if (newStatus === "completed" && order?.uid) {
         await addNotification({
           message: "Your order has been successfully completed.",
