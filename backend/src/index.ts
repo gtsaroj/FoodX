@@ -10,14 +10,18 @@ app.get("/test", (_, res) => {
   res.json("Tesing..");
 });
 
+export const userSocketMap: Record<string, string> = {};
 io.use(verifySocketUser);
 
 io.on("connection", (socket) => {
   const user = socket.user;
+  const userId = user!.uid;
+  userSocketMap[userId] = socket.id;
   if (user?.role === "chef") {
     socket.join("chef");
   }
   socket.on("disconnect", () => {
+    delete userSocketMap[userId];
     socket.disconnect();
   });
 });

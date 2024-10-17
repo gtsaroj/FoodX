@@ -9,6 +9,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { User } from "../models/user.model.js";
 import { io } from "../app.js";
+import { userSocketMap } from "../index.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: any, res: any) => {
@@ -93,7 +94,8 @@ const addNewOrder = asyncHandler(
 
 const updateOrder = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const { id, status, price, socketId } = req.body;
+    const { id, status, price, userId } = req.body;
+    const socketId = userSocketMap[userId];
     try {
       const totalPrice = +price;
       const updatedOrder = await updateOrderStatusInDatabase(
