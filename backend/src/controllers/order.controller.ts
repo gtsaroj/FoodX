@@ -93,21 +93,22 @@ const addNewOrder = asyncHandler(
 
 const updateOrder = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const { id, status, price } = req.body;
+    const { id, status, price, socketId } = req.body;
     try {
       const totalPrice = +price;
-      const updatedProduct = await updateOrderStatusInDatabase(
+      const updatedOrder = await updateOrderStatusInDatabase(
         id,
         status,
         totalPrice
       );
+      io.to(socketId).emit("order_status", { ...updatedOrder, id, status });
       return res
         .status(200)
         .json(
           new ApiResponse(
             200,
-            { updatedProduct },
-            "Product updated successfully.",
+            { updatedOrder },
+            "Order updated successfully.",
             true
           )
         );
@@ -117,7 +118,7 @@ const updateOrder = asyncHandler(
         .json(
           new ApiError(
             500,
-            "Error while updating products.",
+            "Error while updating order.",
             null,
             error as string[]
           )

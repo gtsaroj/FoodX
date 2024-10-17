@@ -88,8 +88,9 @@ const updateOrderStatusInDatabase = async (
     });
 
     await batch.commit();
+    const order = (await orderRef.get()).data();
 
-    return doc;
+    return order;
   } catch (error) {
     throw new ApiError(440, "Error updating orders in database.");
   }
