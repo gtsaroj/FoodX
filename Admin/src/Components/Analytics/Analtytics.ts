@@ -24,6 +24,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       (acc, order) => acc + order.orders?.length,
       0
     );
+    console.log(currentDayOrder)
     const revenueToday = getRevenue([currentDayOrder] as Revenue[]);
 
     const dailyAnalyticsData: CardAnalytic[] = [
@@ -111,7 +112,7 @@ const getRevenue = (revenue: Revenue[]) => {
       ),
     0
   );
-
+   console.log(total)
   if (!total) return 0;
   return total;
 };

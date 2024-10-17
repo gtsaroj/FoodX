@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { StatusChanger } from "../../../Pages/Order/Order.table.page";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../../Services/order.services";
+import { addNotification } from "../../../Services/notification.services";
 
 // interface OrderCardProps {
 //   orderId: string;
@@ -20,6 +21,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
   price,
   status,
   orderRequest,
+  uid,
 }) => {
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [id, setId] = useState<string>();
@@ -37,6 +39,13 @@ export const OrderCard: React.FC<RecentOrder> = ({
         status: newStatus!,
         price: id === orderId ? price : 0,
       });
+      if (newStatus === "completed") {
+        await addNotification({
+          message: "Your order has been successfully completed.",
+          title: "Order Completed",
+          userId: uid as string,
+        });
+      }
       setIsNewStatus(newStatus!);
       toast.dismiss(toastLoader);
       toast.success("Succussfully updated");

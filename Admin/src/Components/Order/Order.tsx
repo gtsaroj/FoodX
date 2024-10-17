@@ -100,6 +100,7 @@ export const RecentOrders = () => {
             recentOrder.length > 0 ? (
               recentOrder?.map((order, index) => (
                 <OrderCard
+                  uid={order.uid}
                   image={order?.image}
                   orderId={order?.orderId}
                   price={order?.price}
