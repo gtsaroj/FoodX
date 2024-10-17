@@ -291,7 +291,7 @@ const Logs = () => {
 
         <div
           id="scrollableDiv"
-          className="flex items-start scrollbar-custom px-2   overflow-auto justify-start flex-grow w-full"
+          className="flex items-start scrollbar-custom px-2 scroll-smooth   overflow-auto justify-start flex-grow w-full"
         >
           <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
@@ -306,7 +306,8 @@ const Logs = () => {
                       | "customerLogs"
                       | "adminLogs"
                       | "chefLogs") || "adminLogs",
-                  filter: (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
+                  filter:
+                    (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
                   pageSize: 5,
                   sort,
                   currentFirstDoc: currentDoc?.currentFirst,

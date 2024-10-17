@@ -289,9 +289,9 @@ const AllProductAnalytics = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
-      <div className="flex sm:items-center justify-between  sm:flex-row flex-col items-start flex-grow w-full gap-5 px-3 pb-6">
-        <div className="flex flex-col w-full items-start justify-center gap-3">
-          <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
+      <div className="flex flex-col justify-center gap-3 items-start w-full">
+        <div className="flex w-full  sm:flex-row flex-col items-end sm:items-center justify-between ">
+        <div className="flex w-full text-start py-2 flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Products
             </h4>
@@ -299,8 +299,50 @@ const AllProductAnalytics = () => {
               {fetchedProducts?.length || 0} entries found
             </p>
           </div>
-
-          <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
+          <Button
+          selectedCheck={[filter?.sortFilter?.id as string]}
+          selectedTypes={[filter?.typeFilter?.id as string]}
+          sortFn={(value) => setSortOrder(value)}
+          bodyStyle={{
+            width: "400px",
+            top: "3rem",
+            left: "-18rem",
+          }}
+          parent={
+            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+              <Filter
+                strokeWidth={2.5}
+                className="size-5 text-[var(--dark-secondary-text)]"
+              />
+              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                Filter
+              </p>
+            </div>
+          }
+          types={[
+            { label: "Specials", value: "specials", id: "fklsdjf" },
+            { label: "products", value: "products", id: "fkjdls" },
+          ]}
+          sort={[
+            { label: "Price", value: "price", id: "jfhkdj" },
+            { label: "Order", value: "order", id: "fkdsj" },
+            { label: "Revenue", value: "revenue", id: "flkjdsf" },
+          ]}
+          checkFn={{
+            checkTypeFn: (
+              isChecked: boolean,
+              value: "specials" | "products",
+              id
+            ) => handleTypeCheck(isChecked, value, id),
+            checkSortFn: (
+              isChecked: boolean,
+              value: "orders" | "revenue",
+              id
+            ) => handleSortCheck(isChecked, value, id),
+          }}
+        />
+        </div>
+        <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
             {" "}
             <form
               action=""
@@ -362,50 +404,7 @@ const AllProductAnalytics = () => {
               </div>
             )}
           </div>
-        </div>
 
-        <Button
-          selectedCheck={[filter?.sortFilter?.id as string]}
-          selectedTypes={[filter?.typeFilter?.id as string]}
-          sortFn={(value) => setSortOrder(value)}
-          bodyStyle={{
-            width: "400px",
-            top: "3rem",
-            left: "-18rem",
-          }}
-          parent={
-            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-              <Filter
-                strokeWidth={2.5}
-                className="size-5 text-[var(--dark-secondary-text)]"
-              />
-              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                Filter
-              </p>
-            </div>
-          }
-          types={[
-            { label: "Specials", value: "specials", id: "fklsdjf" },
-            { label: "products", value: "products", id: "fkjdls" },
-          ]}
-          sort={[
-            { label: "Price", value: "price", id: "jfhkdj" },
-            { label: "Order", value: "order", id: "fkdsj" },
-            { label: "Revenue", value: "revenue", id: "flkjdsf" },
-          ]}
-          checkFn={{
-            checkTypeFn: (
-              isChecked: boolean,
-              value: "specials" | "products",
-              id
-            ) => handleTypeCheck(isChecked, value, id),
-            checkSortFn: (
-              isChecked: boolean,
-              value: "orders" | "revenue",
-              id
-            ) => handleSortCheck(isChecked, value, id),
-          }}
-        />
       </div>
       <FoodTable
         totalData={fetchedProducts?.length as number}

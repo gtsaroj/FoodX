@@ -332,8 +332,8 @@ const AllCustomers = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex flex-col justify-center gap-3 items-start w-full ">
-        <div className="flex w-full  sm:flex-row gap-3 flex-col items-end sm:items-center justify-between  ">
-          <div className="flex w-full py-1 text-start flex-col -space-y-1.5 items-start justify-center gap-1">
+        <div className="flex w-full  sm:flex-row flex-col items-end sm:items-center justify-between  ">
+          <div className="flex w-full py-2 text-start flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Customers
             </h4>

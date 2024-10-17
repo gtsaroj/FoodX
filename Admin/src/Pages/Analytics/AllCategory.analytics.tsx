@@ -175,8 +175,8 @@ const AllCategories = () => {
   return (
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex flex-col justify-center gap-3 items-start w-full ">
-        <div className="flex w-full  sm:flex-row gap-3 flex-col items-end sm:items-center justify-between">
-          <div className="flex w-full text-start py-1 flex-col -space-y-1.5 items-start justify-center gap-1">
+        <div className="flex w-full  sm:flex-row  flex-col items-end sm:items-center justify-between">
+          <div className="flex w-full text-start py-2 flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Categories
             </h4>
@@ -224,7 +224,7 @@ const AllCategories = () => {
             }}
           />
         </div>
-        <div className="flex   items-start sm:items-center justify-start w-full gap-8 sm:gap-2 ">
+        <div className="flex   items-start sm:items-center justify-between w-full  sm:gap-2 ">
           <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
             {" "}
             <form

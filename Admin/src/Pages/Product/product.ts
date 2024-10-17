@@ -44,6 +44,5 @@ export const aggregateProducts = async (allProducts: Product[]) => {
         ? 1
         : (product.order && Math.round((product.order / maxOrders)*5)) || 0,
   }));
-  console.log(ratedProducts)
   return ratedProducts;
 };
