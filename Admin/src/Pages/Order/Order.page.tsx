@@ -18,6 +18,8 @@ import { Invoice, InvoiceDocumentProp } from "../../Invoice/Invoice";
 import { Product } from "../../models/product.model";
 import Modal from "../../Components/Common/Popup/Popup";
 import { socket } from "../../Utility/socket.util";
+import { customToast } from "../../Components/Toast/Toast";
+import Bell from "../../assets/order.mp3";
 
 const OrderList = () => {
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
@@ -203,6 +205,7 @@ const OrderList = () => {
   useEffect(() => {
     const handleNewOrder = async (order: Order) => {
       // Assuming getFullName is asynchronous
+
       const userName = await getFullName(order.uid as string);
       setInitialOrders((prev) => [
         {
@@ -221,8 +224,17 @@ const OrderList = () => {
         },
         ...prev.map((o) => ({ ...o, rank: o.rank! + 1 })),
       ]);
-      toast.success(`${userName} was orderered products.`);
+      const audio = new Audio(Bell);
+      audio.play();
+      customToast({
+        orderId: order.orderId,
+        products: order.products,
+        orderRequest: order.orderRequest,
+        name: userName as string,
+        note: order.note as string,
+      });
     };
+
     // Listen for the 'new_order' event
     socket.on("new_order", handleNewOrder);
 

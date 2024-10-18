@@ -13,6 +13,9 @@ import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 import { socket } from "./Utility/socket.utility.ts";
 import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
+import { Order as OrderType, OrderStatus } from "./models/order.model.ts";
+import { addNotification } from "./Services/notification.services.ts";
+import { CustomToast } from "./Components/Toast/Toast.tsx";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -48,6 +51,7 @@ const AdminProfile = React.lazy(() =>
   }))
 );
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
+import Bell from "./assets/order.mp3";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -91,6 +95,32 @@ const HomePage: React.FC = () => {
 
     return () => {
       socket.off("connect");
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleNotification = async (
+      order: OrderType,
+      id: string,
+      orderStatus: OrderStatus["status"]
+    ) => {
+      if (orderStatus !== "completed") return;
+      if (authUser.uid) {
+        await addNotification({
+          title: `Order ${orderStatus}`,
+          message: ` Your order was ${orderStatus} at ${order.orderFullFilled} `,
+          userId: authUser?.uid as string,
+        });
+      }
+      const audio = new Audio(Bell);
+      audio.play();
+      CustomToast(order, id, orderStatus);
+    };
+
+    socket?.on("order_status", handleNotification);
+
+    return () => {
+      socket.off("order_status", handleNotification);
     };
   }, []);
 
