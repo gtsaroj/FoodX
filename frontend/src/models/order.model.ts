@@ -6,7 +6,7 @@ export interface Order {
   uid: string;
   products: Product[];
   orderRequest: string;
-  orderFullFilled?: string;
+  orderFullfilled?: string;
   status?: OrderStatus["status"];
   updateAt?: string;
   note?: string;
