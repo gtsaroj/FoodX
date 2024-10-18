@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "admin",
+    "site": "foodx-admin",
     "rewrites": [
       {
         "source": "**",
