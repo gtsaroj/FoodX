@@ -23,6 +23,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
   orderRequest,
   uid,
 }) => {
+  console.log(orderId, uid)
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [isNewStatus, setIsNewStatus] = useState<status["status"]>(status);
@@ -38,6 +39,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
         id: id as string,
         status: newStatus!,
         price: id === orderId ? price : 0,
+        userId: uid as string,
       });
       if (newStatus === "completed") {
         await addNotification({
