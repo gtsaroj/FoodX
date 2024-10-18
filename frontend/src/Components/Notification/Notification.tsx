@@ -16,8 +16,9 @@ import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
 import { socket } from "../../Utility/socket.utility";
-import { Order } from "../../models/order.model";
+import { Order, OrderStatus } from "../../models/order.model";
 import toast from "react-hot-toast";
+import { CustomToast } from "../Toast/Toast";
 interface Notifications {
   isOpen: boolean;
 }
@@ -99,19 +100,6 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
     }
   };
 
-  useEffect(() => {
-    const handleNotification = (order: Order) => {
-      if (order.status === "completed") {
-        toast.success("Your order was completed");
-      }
-    };
-
-    socket?.on("order", handleNotification);
-
-    return () => {
-      socket.off("order", handleNotification);
-    };
-  }, []);
 
   return (
     <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
