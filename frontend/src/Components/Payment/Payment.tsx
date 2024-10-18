@@ -36,7 +36,7 @@ export const Payment: React.FC = () => {
         orderRequest: dayjs().format("YYYY-MM-DD"),
         uid: store.auth.userInfo.uid as string,
         note: note,
-        orderFullFilled: "",
+        orderFullfilled: "",
         revenue: store.cart.products.reduce(
           (acc, product) => acc + product.price * product.quantity,
           0

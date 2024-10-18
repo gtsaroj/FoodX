@@ -51,7 +51,6 @@ const AdminProfile = React.lazy(() =>
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
 import CustomToast from "./Components/Toast/Toast.tsx";
-import toast from "react-hot-toast";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
