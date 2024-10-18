@@ -5,8 +5,7 @@ import {
   ResponseNotification,
 } from "../../models/notification.model";
 import {
-  addNotification,
-  deleteNotification,
+    deleteNotification,
   fetchNotifications,
 } from "../../Services/notification.services";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -15,10 +14,6 @@ import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
-import { socket } from "../../Utility/socket.utility";
-import { Order, OrderStatus } from "../../models/order.model";
-import toast from "react-hot-toast";
-import { CustomToast } from "../Toast/Toast";
 interface Notifications {
   isOpen: boolean;
 }
