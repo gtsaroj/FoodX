@@ -5,6 +5,7 @@ import {
   ResponseNotification,
 } from "../../models/notification.model";
 import {
+  addNotification,
   deleteNotification,
   fetchNotifications,
 } from "../../Services/notification.services";
@@ -14,6 +15,9 @@ import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
+import { socket } from "../../Utility/socket.utility";
+import { Order } from "../../models/order.model";
+import toast from "react-hot-toast";
 interface Notifications {
   isOpen: boolean;
 }
@@ -94,6 +98,20 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
       throw new Error("Error while remove notifcation " + error);
     }
   };
+
+  useEffect(() => {
+    const handleNotification = (order: Order) => {
+      if (order.status === "completed") {
+        toast.success("Your order was completed");
+      }
+    };
+
+    socket?.on("order", handleNotification);
+
+    return () => {
+      socket.off("order", handleNotification);
+    };
+  }, []);
 
   return (
     <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">

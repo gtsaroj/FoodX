@@ -82,7 +82,7 @@ const OrderList = () => {
       setInitialOrders(getaggregateDataPromises as OrderModal[]);
     } catch (error) {
       setLoading(false);
-      setInitialOrders([])
+      setInitialOrders([]);
     }
     setLoading(false);
   };
@@ -197,7 +197,7 @@ const OrderList = () => {
     sortOrder,
     pagination.pageDirecton,
     filter?.sortFilter?.sort,
-    haveUserId
+    haveUserId,
   ]);
 
   useEffect(() => {
@@ -206,6 +206,7 @@ const OrderList = () => {
       const userName = await getFullName(order.uid as string);
       setInitialOrders((prev) => [
         {
+          uid: order.uid,
           id: order.orderId as string,
           name: userName as string,
           orderRequest: dayjs(order.orderRequest).format(
