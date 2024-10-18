@@ -100,7 +100,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
-        className="w-full h-[350px] flex overflow-x-hidden   justify-center pr-4 scrollbar-custom"
+        className="w-full h-[350px] flex overflow-x-hidden   justify-center pr-4 "
       >
         <InfiniteScroll
           scrollableTarget={"notification"}

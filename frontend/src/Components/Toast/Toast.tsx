@@ -20,8 +20,6 @@ import dayjs from "dayjs";
 const customToast = (
   id: string,
   order: Order,
-  orderStatus: OrderStatus["status"],
-  user: User
 ) => {
   // const { uid, products, orderFullfilled } = order;
 
