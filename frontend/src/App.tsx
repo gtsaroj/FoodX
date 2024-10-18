@@ -85,6 +85,13 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     socket.connect();
+    socket.on("connect", () => {
+      localStorage.setItem("sid", socket.id as string);
+    });
+
+    return () => {
+      socket.off("connect");
+    };
   }, []);
 
   return (
