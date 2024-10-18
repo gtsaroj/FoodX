@@ -1,6 +1,6 @@
 import { toast } from "react-hot-toast";
-import { Order, OrderStatus } from "../../models/order.model";
-import { User } from "../../models/user.model";
+import { Order } from "../../models/order.model";
+
 import dayjs from "dayjs";
 
 
