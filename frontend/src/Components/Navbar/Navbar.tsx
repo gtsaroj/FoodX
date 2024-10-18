@@ -2,10 +2,13 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
   Bell,
+  BringToFront,
   Heart,
   Menu,
   Phone,
   Search,
+  Settings,
+  ShoppingBag,
   UserCircleIcon,
   X,
 } from "lucide-react";
@@ -22,10 +25,17 @@ import {
   getNormalProducts,
   getSpecialProducts,
 } from "../../Services/product.services";
-import { addToCart } from "../../Reducer/product.reducer";
+import { addToCart, resetCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
 import { NotificationPage } from "../Notification/Notification";
+import { FaHouseUser } from "react-icons/fa";
+import { makeRequest } from "../../makeRequest";
+import { signOutUser } from "../../firebase/Authentication";
+import { authLogout } from "../../Reducer/user.reducer";
+import Cookies from "js-cookie";
+import Avatar from "../../assets/logo/avatar.png";
+
 const navbarItems = [
   {
     name: "Home",
@@ -137,7 +147,6 @@ export const Navbar: React.FC = () => {
   };
 
   const searchProducts = async (value: string) => {
-  
     const [specialProducts, normalProducts] = [
       await getSpecialProducts(),
       await getNormalProducts(),
@@ -161,21 +170,21 @@ export const Navbar: React.FC = () => {
     >
       <div className="flex items-center justify-start gap-4">
         <div ref={menuReference as any} className="flex w-full md:hidden ">
-          <button onClick={() => setOpen(!open)}>
+          <button className="" onClick={() => setOpen(!open)}>
             {open ? (
-              <X className="md:size-10 size-8" />
+              <X className="md:size-10 cursor-pointer size-8" />
             ) : (
-              <Menu className="md:size-10 size-8 " />
+              <Menu className="md:size-10 cursor-pointer size-8 " />
             )}
           </button>
           <div
-            className={`w-full  duration-150 ${
+            className={`w-full backdrop-blur-lg z-[100]  duration-150 ${
               open
-                ? "top-24 opacity-100 "
-                : " opacity-0 bg-transparent top-[-1000px] "
-            } left-0 flex justify-start items-center absolute bg-[var(--light-background)]  `}
+                ? "top-0 left-0 opacity-100 "
+                : " opacity-0 bg-transparent left-[-1000px] "
+            }  flex justify-start items-center absolute   `}
           >
-            <NavbarContainer />
+            <MobileSlider open={open} action={() => setOpen(!open)} />
           </div>
         </div>
         {/* Logo */}
@@ -270,7 +279,9 @@ export const Navbar: React.FC = () => {
               />
               <div
                 className={`w-[10px] duration-150 ${
-                  isFavourite.favourite.length > 0 && authUser.role ? "visible" : "hidden"
+                  isFavourite.favourite.length > 0 && authUser.role
+                    ? "visible"
+                    : "hidden"
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
             </div>
@@ -330,7 +341,10 @@ export const Navbar: React.FC = () => {
                       : "invisible opacity-0 "
                   } w-full absolute right-[19.3rem] top-[45px]  `}
                 >
-                  <Profile closeModal={()=> setCloseProfile(!closeProfile)} user={authUser} />
+                  <Profile
+                    closeModal={() => setCloseProfile(!closeProfile)}
+                    user={authUser}
+                  />
                 </div>
               </div>
             )}
@@ -354,6 +368,132 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
     </nav>
+  );
+};
+
+interface MobileSliderProp {
+  action: () => void;
+  open: boolean;
+}
+
+export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
+  const user = useSelector((state: RootState) => state.root.auth.userInfo);
+
+  const dispatch = useDispatch<AppDispatch>();
+
+  const reference = useRef<HTMLDivElement | null>(null);
+
+  const handleLogout = async () => {
+    const toastLoader = toast.loading("Logging out, please wait...");
+
+    try {
+      const response = await makeRequest.post("/users/logout");
+
+      if (response.status === 200) {
+        await signOutUser();
+        dispatch(authLogout());
+        dispatch(resetCart());
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        toast.dismiss(toastLoader);
+        toast.success("Logged out successfully!");
+      } else {
+        console.log(` Error : authProfile`);
+      }
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      toast.error("Error logging out. Please try again.");
+      // throw new Error("Error logging out." + error);
+    }
+  };
+
+  useEffect(() => {
+    const handleScroll = (event: MouseEvent) => {
+      if (
+        reference.current &&
+        !reference.current.contains(event.target as Node)
+      ) {
+        action();
+      }
+    };
+    if (open) {
+      window.addEventListener("mousedown", handleScroll);
+    }
+
+    return () => {
+      window.removeEventListener("mousedown", handleScroll);
+    };
+  });
+
+  const navigate = useNavigate();
+  return (
+    <div
+      ref={reference}
+      className="w-[300px]  gap-10 px-3 py-7 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
+    >
+      <div className="w-full flex justify-end">
+        <button onClick={() => action()} className="">
+          <X className="size-7 hover:text-red-600 duration-150" />
+        </button>
+      </div>
+      <div className="w-full pl-3 flex items-center justify-start gap-5">
+        <div className="w-[60px] h-[60px] ">
+          <img
+            className="w-full h-full rounded-lg"
+            src={user?.avatar || Avatar}
+            alt=""
+          />
+        </div>
+        {
+          <div className="flex flex-col items-start justify-center ">
+            <p className=" text-lg tracking-wider ">
+              {user?.fullName || "Guest"}
+            </p>
+            <span className=" text-gray-300 text-xs ">
+              {user?.email || "guest@gmail.com"}
+            </span>
+          </div>
+        }
+      </div>
+      <div className="flex w-full items-start justify-start flex-grow h-full overflow-auto">
+        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-7">
+          <li
+            onClick={() => navigate("/")}
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+          >
+            <FaHouseUser className="size-5" />
+            <span>Home</span>
+          </li>
+          <li
+            onClick={() => navigate("cart")}
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+          >
+            <ShoppingBag className="size-5" />
+            <span>Cart</span>
+          </li>
+          <li
+            onClick={() => navigate("orders")}
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+          >
+            <BringToFront className="size-5" />
+            <span>Order</span>
+          </li>
+          <li
+            onClick={() => navigate("profile")}
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+          >
+            <Settings className="size-5" />
+            <span>Setting</span>
+          </li>
+        </ul>
+      </div>
+      <button
+        onClick={() => handleLogout()}
+        className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  mb-7  w-full p-3 rounded duration-150"
+      >
+        Logout
+      </button>
+    </div>
   );
 };
 
