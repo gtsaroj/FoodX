@@ -3,25 +3,19 @@ import { Order, OrderStatus } from "../../models/order.model";
 import { User } from "../../models/user.model";
 import dayjs from "dayjs";
 
-interface CustomToastProp {
-  order: Order;
-  id: string;
-  orderStatus: OrderStatus["status"];
-  user: User;
-}
 
-const getStatusColor = (status: OrderStatus["status"]) => {
-  switch (status) {
-    case "completed":
-      return "bg-green-100 text-green-800 border-green-600";
-    case "cancelled":
-      return "bg-red-100 text-red-800 border-red-600";
-    case "preparing":
-      return "bg-yellow-100 text-yellow-800 border-yellow-600";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-600";
-  }
-};
+// const getStatusColor = (status: OrderStatus["status"]) => {
+//   switch (status) {
+//     case "completed":
+//       return "bg-green-100 text-green-800 border-green-600";
+//     case "cancelled":
+//       return "bg-red-100 text-red-800 border-red-600";
+//     case "preparing":
+//       return "bg-yellow-100 text-yellow-800 border-yellow-600";
+//     default:
+//       return "bg-gray-100 text-gray-800 border-gray-600";
+//   }
+// };
 
 const customToast = (
   id: string,
@@ -29,7 +23,7 @@ const customToast = (
   orderStatus: OrderStatus["status"],
   user: User
 ) => {
-  const { uid, products, orderFullfilled } = order;
+  // const { uid, products, orderFullfilled } = order;
 
   const messages: { [key: string]: string } = {
     preparing:

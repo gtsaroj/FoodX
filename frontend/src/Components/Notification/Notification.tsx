@@ -5,7 +5,7 @@ import {
   ResponseNotification,
 } from "../../models/notification.model";
 import {
-    deleteNotification,
+  deleteNotification,
   fetchNotifications,
 } from "../../Services/notification.services";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -95,13 +95,12 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
     }
   };
 
-
   return (
-    <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+    <div className="p-4   sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
-        className="w-full h-[350px] flex   justify-center pr-4 scrollbar-custom"
+        className="w-full h-[350px] flex overflow-x-hidden   justify-center pr-4 scrollbar-custom"
       >
         <InfiniteScroll
           scrollableTarget={"notification"}
@@ -169,10 +168,10 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   return (
     <div
       key={notification.uid}
-      className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative overflow-x-hidden border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
-        className={`sm:w-[300px] w-[215px] 
+        className={`sm:w-[280px] w-[215px] 
          duration-150 `}
       >
         <div
@@ -192,7 +191,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
           {notification.message}
         </p>
       </div>
-      <button className=" text-balance text-gray-300 " onClick={() => setOpen(!open)}>
+      <button onClick={() => setOpen(!open)}>
         {" "}
         <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
       </button>
