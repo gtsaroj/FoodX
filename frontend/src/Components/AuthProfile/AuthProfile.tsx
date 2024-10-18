@@ -19,7 +19,7 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+    const handleLogout = async () => {
     const toastLoader = toast.loading("Logging out, please wait...");
     setLoading(true);
     try {
