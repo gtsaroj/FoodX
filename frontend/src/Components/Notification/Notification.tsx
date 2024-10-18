@@ -96,11 +96,11 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   };
 
   return (
-    <div className="p-4   sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+    <div className="p-4  sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
-        className="w-full h-[350px] flex overflow-x-hidden   justify-center pr-4 "
+        className="w-full h-[350px] flex  scrollbar-custom   justify-center pr-4 "
       >
         <InfiniteScroll
           scrollableTarget={"notification"}
@@ -168,7 +168,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   return (
     <div
       key={notification.uid}
-      className="relative overflow-x-hidden border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
         className={`sm:w-[280px] w-[215px] 

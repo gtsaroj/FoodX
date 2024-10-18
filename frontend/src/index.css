@@ -142,7 +142,7 @@
   }
 
   .scrollbar-custom::-webkit-scrollbar {
-    width: 3px; /* Adjust scrollbar width */
+    width: 4.5px; /* Adjust scrollbar width */
     height: 5px;
   }
 
