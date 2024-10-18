@@ -13,9 +13,7 @@ import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 import { socket } from "./Utility/socket.utility.ts";
 import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
-import { Order as OrderType, OrderStatus } from "./models/order.model.ts";
-import { addNotification } from "./Services/notification.services.ts";
-import { CustomToast } from "./Components/Toast/Toast.tsx";
+import { OrderStatus, Order as OrderType } from "./models/order.model.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -52,6 +50,8 @@ const AdminProfile = React.lazy(() =>
 );
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
+import CustomToast from "./Components/Toast/Toast.tsx";
+import toast from "react-hot-toast";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -88,41 +88,29 @@ const HomePage: React.FC = () => {
   }, [authUser.uid]);
 
   useEffect(() => {
-    socket.connect();
-    socket.on("connect", () => {
-      localStorage.setItem("sid", socket.id as string);
-    });
-
-    return () => {
-      socket.off("connect");
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleNotification = async (
-      order: OrderType,
-      id: string,
-      orderStatus: OrderStatus["status"]
-    ) => {
-      if(orderStatus !== "prepared") return;
-      if (authUser.uid) {
-        await addNotification({
-          title: `Order ${orderStatus}`,
-          message: ` Your order was ${orderStatus} at ${order.orderFullFilled} `,
-          userId: authUser?.uid as string,
-        });
+    const handleNotification = async (order: OrderType) => {
+      try {
+        const audio = new Audio(Bell);
+        await audio.play().catch((err) => console.log(err));
+        CustomToast(
+          order.orderId,
+          order,
+          order.status as OrderStatus["status"],
+          authUser
+        );
+      } catch (error) {
+        console.error("Error while getting info of update order", error);
       }
-      const audio = new Audio(Bell);
-      audio.play();
-      CustomToast(order, id, orderStatus);
     };
 
+    // Set up the socket event listener
     socket?.on("order_status", handleNotification);
 
+    // Cleanup the listener on component unmount
     return () => {
-      socket.off("order_status", handleNotification);
+      socket?.off("order_status", handleNotification);
     };
-  }, []);
+  }, [socket, authUser]); // Ensure socket and authUser are included in dependencies
 
   return (
     <div className="flex items-center justify-center w-full h-full min-w-[100vw]  ">

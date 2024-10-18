@@ -1,67 +1,89 @@
 import { toast } from "react-hot-toast";
 import { Order, OrderStatus } from "../../models/order.model";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
+import { User } from "../../models/user.model";
+import dayjs from "dayjs";
 
-export const CustomToast = (
-  order: Order,
+interface CustomToastProp {
+  order: Order;
+  id: string;
+  orderStatus: OrderStatus["status"];
+  user: User;
+}
+
+const getStatusColor = (status: OrderStatus["status"]) => {
+  switch (status) {
+    case "completed":
+      return "bg-green-100 text-green-800 border-green-600";
+    case "cancelled":
+      return "bg-red-100 text-red-800 border-red-600";
+    case "preparing":
+      return "bg-yellow-100 text-yellow-800 border-yellow-600";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-600";
+  }
+};
+
+const customToast = (
   id: string,
-  orderStatus: OrderStatus["status"]
+  order: Order,
+  orderStatus: OrderStatus["status"],
+  user: User
 ) => {
-  const { uid,  products } = order;
-  const user = useSelector((state: RootState) => state.root.auth.userInfo);
+  const { uid, products, orderFullfilled } = order;
+
+  const messages: { [key: string]: string } = {
+    preparing:
+      "Your order is being prepared. It won't be long until it's ready to enjoy.",
+    prepared:
+      "Your order is prepared. Thank you for waiting patiently. Please visit us to receive your order.",
+    completed:
+      "Your order has been completed. Thank you for ordering. Enjoy your meal!",
+    cancelled: "Your order has been cancelled. Please visit us to support us.",
+  };
 
   toast.custom(
     (t) => (
       <div
-        className={`${
-          t.visible ? "animate-pulse" : "animate-pulse"
-        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 9999,
-        }}
+        className={` ${
+          t.visible
+            ? "visible opacity-100"
+            : "invisible opacity-0 translate-x-48"
+        } w-[380px] flex flex-col  translate-x-0 duration-150 items-start bg-white  justify-between gap-5 p-2 rounded-lg`}
       >
-        <div className="flex-1 w-0 p-4">
-          <div className="flex items-start">
-            {/* Order details */}
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                {user?.uid === uid ? user.fullName : "Your"} Order is Ready!
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Order #{id} is now{" "}
-                <span className="font-semibold">{orderStatus}</span>
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Items: <span className="font-semibold">{products.length}</span>
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Ready at:{" "}
-                <span className="font-semibold">{order.orderFullFilled}</span>
-              </p>
-            </div>
+        <div className="w-full flex items-center justify-between">
+          <div className="flex flex-col items-start justify-center">
+            <h1 className=" text-[16px] tracking-wide ">
+              Your order is {order.status} !!
+            </h1>
+            <p className="text-xs flex items-center gap-1 tracking-wide text-gray-400 ">
+              Order ID:{" "}
+              <span className="text-[10.4px] text-gray-500 ">{id}</span>
+            </p>
+          </div>
+          <div className="text-xs flex flex-col items-start justify-center gap-1 text-gray-500 ">
+            <p>
+              {order.status === "completed"
+                ? dayjs(order.orderFullfilled).format("YYYY-MM-DD")
+                : dayjs(order.orderRequest).format("YYYY-MM-DD")}
+            </p>
+            <p>
+              {order.status === "completed"
+                ? dayjs(order.orderFullfilled).format("h:mm A")
+                : dayjs(order.orderRequest).format("h:mm A")}
+            </p>
           </div>
         </div>
-
-        {/* Close Button */}
-        <div className="flex border-l border-gray-200">
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-            aria-label="Close notification"
-          >
-            Close
-          </button>
-        </div>
+        <p className="text-[14px] text-gray-500 ">
+          {messages[order?.status as keyof typeof messages] ||
+            "Status unknown."}
+        </p>
       </div>
     ),
     {
-      duration: Infinity, // Keeps the toast visible until manually dismissed
-      position: "bottom-right", // Adjusts the position to bottom-center
+      position: "top-right",
+      duration: 5000, // Auto-dismiss after 5 seconds
     }
   );
 };
+
+export default customToast;

@@ -172,27 +172,27 @@ const NoticationContainer: React.FC<NotificationProp> = ({
       className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
-        className={`sm:w-[280px] w-[215px] 
+        className={`sm:w-[300px] w-[215px] 
          duration-150 `}
       >
         <div
           onClick={() => setOpen(!open)}
           className="w-full flex  items-center justify-between pr-5"
         >
-          <h4 className="font-semibold">{notification.title}</h4>
+          <h4 className="tracking-wider text-[15px] ">{notification.title}</h4>
           <p className="text-xs text-gray-500">
             {dayjs.unix(notification?.createdAt?._seconds).format("YYYY-MM-DD")}
           </p>
         </div>
         <p
-          className={`text-sm  duration-150 ${
+          className={`text-sm text-gray-400 duration-150 ${
             open ? "flex opacity-[100] " : " hidden opacity-0"
           } `}
         >
           {notification.message}
         </p>
       </div>
-      <button onClick={() => setOpen(!open)}>
+      <button className=" text-balance text-gray-300 " onClick={() => setOpen(!open)}>
         {" "}
         <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
       </button>
