@@ -104,7 +104,7 @@ const HomePage: React.FC = () => {
       id: string,
       orderStatus: OrderStatus["status"]
     ) => {
-      if (orderStatus !== "completed") return;
+      if(orderStatus !== "prepared") return;
       if (authUser.uid) {
         await addNotification({
           title: `Order ${orderStatus}`,
