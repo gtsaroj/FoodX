@@ -68,7 +68,8 @@ const updateOrderStatusInDatabase = async (
       doc = await orderRef.update({
         status,
       });
-      return doc;
+      const getDocData = (await orderRef.get()).data();
+      return getDocData;
     }
     doc = await orderRef.update({
       status,

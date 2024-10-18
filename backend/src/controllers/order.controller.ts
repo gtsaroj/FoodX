@@ -95,11 +95,7 @@ const addNewOrder = asyncHandler(
 const updateOrder = asyncHandler(
   async (req: express.Request, res: express.Response) => {
     const { id, status, price, userId } = req.body;
-    console.log(userId)
-    console.log("==============================")
     const socketId = userSocketMap[userId];
-    console.log(socketId)
-    console.log("==============================")
     try {
       const totalPrice = +price;
       const updatedOrder = await updateOrderStatusInDatabase(
