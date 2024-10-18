@@ -13,7 +13,7 @@ import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 import { socket } from "./Utility/socket.utility.ts";
 import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
-import { OrderStatus, Order as OrderType } from "./models/order.model.ts";
+import {  Order as OrderType } from "./models/order.model.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
