@@ -17,7 +17,6 @@ io.on("connection", (socket) => {
   const user = socket.user;
   const userId = user!.uid;
   userSocketMap[userId] = socket.id;
-  console.log(`socket id: ${userSocketMap[userId]}`);
   if (user?.role === "chef") {
     socket.join("chef");
   }
