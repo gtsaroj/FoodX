@@ -91,12 +91,7 @@ const HomePage: React.FC = () => {
       try {
         const audio = new Audio(Bell);
         await audio.play().catch((err) => console.log(err));
-        CustomToast(
-          order.orderId,
-          order,
-          order.status as OrderStatus["status"],
-          authUser
-        );
+        CustomToast(order.orderId, order);
       } catch (error) {
         console.error("Error while getting info of update order", error);
       }
