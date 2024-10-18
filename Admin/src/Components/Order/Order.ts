@@ -24,6 +24,7 @@ export const getRecentOrders = async (orders: Order[]) => {
           );
 
           return {
+            uid : item.uid,
             orderId: item.orderId,
             image: user.avatar as string,
             products: productNames,
