@@ -8,8 +8,9 @@ import { OrderCard } from "../Common/Cards/ OrderCard";
 import { Empty } from "../Common/Empty/Empty";
 import { getRecentOrders } from "./Order";
 import { getFullName } from "../../Utility/user.utils";
-import toast from "react-hot-toast";
+import Bell from "../../assets/order.mp3";
 import { socket } from "../../Utility/socket.util";
+import { customToast } from "../Toast/Toast";
 
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
@@ -66,7 +67,15 @@ export const RecentOrders = () => {
       const new_order = (await getRecentOrders([order])) as RecentOrder[];
 
       setRecentOrder((prev) => [...new_order, ...prev]);
-      toast.success(`${userName} was orderered products.`);
+      const audio = new Audio(Bell);
+      audio.play();
+      customToast({
+        orderId: order.orderId,
+        products: order.products,
+        orderRequest: order.orderRequest,
+        name: userName as string,
+        note: order.note as string,
+      });
     };
 
     // Listen for the 'new_order' event
