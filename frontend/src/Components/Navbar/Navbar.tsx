@@ -4,6 +4,7 @@ import {
   Bell,
   BringToFront,
   Heart,
+  LogOut,
   Menu,
   Phone,
   Search,
@@ -172,9 +173,9 @@ export const Navbar: React.FC = () => {
         <div ref={menuReference as any} className="flex w-full md:hidden ">
           <button className="" onClick={() => setOpen(!open)}>
             {open ? (
-              <X className="md:size-10 cursor-pointer size-8" />
+              <X className="cursor-pointer md:size-10 size-8" />
             ) : (
-              <Menu className="md:size-10 cursor-pointer size-8 " />
+              <Menu className="cursor-pointer md:size-10 size-8 " />
             )}
           </button>
           <div
@@ -431,12 +432,12 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
       ref={reference}
       className="w-[300px]  gap-10 px-3 py-7 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
-      <div className="w-full flex justify-end">
+      <div className="flex justify-end w-full">
         <button onClick={() => action()} className="">
-          <X className="size-7 hover:text-red-600 duration-150" />
+          <X className="duration-150 size-7 hover:text-red-600" />
         </button>
       </div>
-      <div className="w-full pl-3 flex items-center justify-start gap-5">
+      <div className="flex items-center justify-start w-full gap-5 pl-3">
         <div className="w-[60px] h-[60px] ">
           <img
             className="w-full h-full rounded-lg"
@@ -446,16 +447,16 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         </div>
         {
           <div className="flex flex-col items-start justify-center ">
-            <p className=" text-lg tracking-wider ">
+            <p className="text-lg tracking-wider ">
               {user?.fullName || "Guest"}
             </p>
-            <span className=" text-gray-300 text-xs ">
+            <span className="text-xs text-gray-300 ">
               {user?.email || "guest@gmail.com"}
             </span>
           </div>
         }
       </div>
-      <div className="flex w-full items-start justify-start flex-grow h-full overflow-auto">
+      <div className="flex items-start justify-start flex-grow w-full h-full overflow-auto">
         <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-7">
           <li
             onClick={() => navigate("/")}
@@ -491,6 +492,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         onClick={() => handleLogout()}
         className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  mb-7  w-full p-3 rounded duration-150"
       >
+        <LogOut className="size-5" />
         Logout
       </button>
     </div>
