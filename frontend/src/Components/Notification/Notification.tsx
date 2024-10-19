@@ -184,7 +184,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
           </p>
         </div>
         <p
-          className={`text-sm text-gray-400 duration-150 ${
+          className={`text-sm text-gray-400 p-1 duration-150 ${
             open ? "flex opacity-[100] " : " hidden opacity-0"
           } `}
         >
