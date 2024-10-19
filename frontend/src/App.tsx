@@ -13,7 +13,7 @@ import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
 import { socket } from "./Utility/socket.utility.ts";
 import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
-import {  Order as OrderType } from "./models/order.model.ts";
+import { Order as OrderType } from "./models/order.model.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
 const Login = React.lazy(() => import("./Components/Login/Login"));
 const Header = React.lazy(() =>
@@ -51,6 +51,7 @@ const AdminProfile = React.lazy(() =>
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
 import CustomToast from "./Components/Toast/Toast.tsx";
+import OrderSuccess from "./Pages/Order.Success.page.tsx";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -166,6 +167,13 @@ export const App: React.FC = () => {
               }
             >
               <Route path="/cart/checkout" element={<CheckoutPage />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/order/success" element={<OrderSuccess />} />
             </Route>
           </Route>
         </Route>

@@ -193,7 +193,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
   return (
     <div
       onClick={() => action({ ...prop })}
-      className="w-full  min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative h-[240px] z-30"
+      className="w-full min-w-[150px] h-[200px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
       key={prop.id}
     >
       <div
@@ -205,7 +205,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-8   ">
           <img
             src={prop.image}
-            className="w-[260px] scale-[1.05] h-[180px] rounded-3xl "
+            className="w-[260px] scale-[1] sm:scale-[1.05] h-[180px] rounded-3xl "
             alt=""
             loading="lazy"
           />
