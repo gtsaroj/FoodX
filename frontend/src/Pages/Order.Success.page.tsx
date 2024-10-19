@@ -26,7 +26,7 @@ const OrderSuccess: React.FC = () => {
   //     }
   //   }, [products, state]);
   return products?.length > 0 ? (
-    <div className="w-full flex flex-col py-10 items-center justify-center gap-5 ">
+    <div className="w-full flex flex-col px-5 py-10 items-center justify-center gap-5 ">
       {/* Success Icon and Message */}
       <div className="w-full flex flex-col items-center">
         <div className="flex  size-20 items-center rounded-full bg-green-100 justify-center mb-6">
@@ -44,7 +44,7 @@ const OrderSuccess: React.FC = () => {
       {/* Order Summary */}
       <div className="min-w-[250px]   w-[400px] min-h-[230px] h-[350px] ">
         <img
-          className="w-full scale-[1.4] h-full"
+          className="w-full scale-[1.1] sm:scale-[1.4] h-full"
           src={Success}
           alt="Success"
         />
