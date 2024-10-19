@@ -2,26 +2,31 @@ import React, { useState } from "react";
 import "react-loading-skeleton/dist/skeleton.css";
 import toast from "react-hot-toast";
 import { addOrder } from "../../Services/order.services";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../Store";
 import dayjs from "dayjs";
 import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
 import { addNotification } from "../../Services/notification.services";
+import { useNavigate } from "react-router-dom";
+import { socket } from "../../Utility/socket.utility";
+import { Order } from "../../models/order.model";
+import { resetCart } from "../../Reducer/product.reducer";
 // import { Product } from "../../models/product.model";
 
 export const Payment: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("esewa");
   const [note, setNote] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  // const [discount, setDiscount] = useState<number>();
-  // const [order, setOrder] = useState<Product[]>();
+
+  const navigate = useNavigate();
 
   const handlePaymentSelection = (paymentMethod: string) => {
     setSelectedPayment(paymentMethod);
   };
 
   const store = useSelector((state: RootState) => state.root);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handlePayment = async () => {
     if (!selectedPayment) {
@@ -53,7 +58,18 @@ export const Payment: React.FC = () => {
         title: "Order Confirmed!",
         message: `Order placed successfully! We're processing your ${store?.cart?.products?.length} item. Thank you for shopping with us!"`,
       });
-      toast.success("Ordered Sucessfully!");
+
+      // const handleOrder = (order: Order) => {
+      //   navigate(`/order/success/:${order?.orderId}`, {
+      //     state: { orderDetails: order },
+      //   });
+      // };
+
+      // socket.on("new_order", handleOrder);
+      navigate("/order/success", {
+        state: store.cart,
+      });
+      dispatch(resetCart());
     } catch (error) {
       toast.error("Error while payment");
       setLoading(true);

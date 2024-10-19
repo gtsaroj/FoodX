@@ -64,7 +64,7 @@ export const Sponsor: React.FC = () => {
 
   return (
     <div className="lg:flex hidden items-center justify-center w-full h-full">
-      <div className="lg:h-[540px]  h-[300px] max-w-md sm:h-[350px] md:h-[382px] duration-500  flex-grow">
+      <div className="lg:h-[602px]  h-[300px] max-w-md sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         {loading ? (
           <div className="w-full rounded-xl  gap-4 flex ">
             <Skeleton
@@ -77,11 +77,9 @@ export const Sponsor: React.FC = () => {
             />
           </div>
         ) : (
-          <img
-            src={initialData[0]?.image}
-            className="w-full rounded-xl h-full"
-            alt="sponsor banner"
-          />
+          <div className="w-full  h-full">
+            <Carousel props={initialData} />
+          </div>
         )}
       </div>
     </div>
