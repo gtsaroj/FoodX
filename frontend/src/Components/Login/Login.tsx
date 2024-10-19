@@ -43,8 +43,8 @@ export const LoginContainer: React.FC = () => {
     <div className="flex items-center justify-center w-full h-full  px-3 py-8">
       <div className="w-full  bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
         <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
-          <h1 className="md:hidden">Login</h1>
-          <h1 className="hidden md:block">Login with Email</h1>
+          <h1 className="md:hidden text-[var(--dark-text)] ">Login</h1>
+          <h1 className="hidden md:block text-[var(--dark-text)] ">Login with Email</h1>
         </div>
         <div className="px-3 py-4">
           <form
