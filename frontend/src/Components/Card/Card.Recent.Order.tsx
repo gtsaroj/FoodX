@@ -31,9 +31,13 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
             {item.time.split(" ")[1]} {item.time.split(" ")[2]}
           </p>
         </div>
-        <div className="flex pb-5 text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-border)] items-center justify-start">
+        <div
+          className={`flex pb-5 ${
+            item?.products.length > 4 ? "h-12" : ""
+          } overflow-auto text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-border)]  justify-start`}
+        >
           {item.products.map(
-            (product) => `${product.name} × ${product.quantity}`
+            (product) => `${product.name} × ${product.quantity} ,`
           )}
         </div>
         <div className="flex  items-center justify-between w-full">

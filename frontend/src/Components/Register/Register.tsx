@@ -110,22 +110,24 @@ export const RegisterContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-start w-full py-10 lg:flex-row lg:items-center lg:justify-evenly ">
+    <div className="flex flex-col items-start w-full px-3 lg:py-10 lg:flex-row lg:gap-3 gap-6  justify-between lg:items-center lg:justify-evenly ">
       <div className="bg-[var(--light-foreground)] lg:bg-transparent w-full lg:w-auto py-2  mb-4 ">
         <img src={logo} alt="" className="lg:w-[500px]  w-[150px]  " />
       </div>
-      <div className="flex flex-col items-center justify-center w-full px-5 lg:w-auto sm:px-3 ">
-        <div className=" px-5 pb-[10px] text-[25px] font-bold text-[var(--primary-color)]  text-center">
-          <h1 className="md:hidden">Sign In</h1>
-          <h1 className="hidden md:block">Sign In With Email</h1>
-        </div>
+      <div className="flex flex-col items-center justify-center w-full  lg:w-auto ">
+        <h1 className=" px-5 pb-7 text-[25px] font-bold text-[var(--primary-color)]  text-center">
+          <span className="md:hidden text-[var(--dark-text)] ">Sign in</span>
+          <span className="hidden md:block text-[var(--dark-text)] ">
+            Sign in with email
+          </span>
+        </h1>
 
         <form
           action=""
           onSubmit={handleFormSubmit}
           className=" flex flex-col  sm:w-[550px] w-full  items-center gap-3 bg-[var(--light-foreground)] p-6 rounded-lg text-[var(--dark-text)] "
         >
-          <div className="relative flex flex-col items-center justify-center gap-1 duration-150 group/image">
+          <div className="relative flex flex-col sm:mb-6 mb-2 items-center justify-center gap-1 duration-150 group/image">
             {SelectedImage ? (
               <img
                 src={URL.createObjectURL(SelectedImage)}
@@ -164,7 +166,7 @@ export const RegisterContainer: React.FC = () => {
             </div>
           </div>
           {/* fullname */}
-          <div className="flex items-center gap-[10px] justify-between w-full">
+          <div className="flex sm:flex-row flex-col items-center gap-[10px] justify-between w-full">
             <div className="flex w-full flex-col items-start h-[65px] lg:h-[73px]">
               <label htmlFor={RegisterValue["firstName"]}>First Name</label>
               <input
@@ -236,7 +238,7 @@ export const RegisterContainer: React.FC = () => {
             )}
           </div>
           {/* passwords */}
-          <div className="w-full flex justify-center items-center gap-[10px]">
+          <div className="w-full flex sm:flex-row flex-col justify-center items-center gap-[10px]">
             <div className="flex w-full flex-col h-[65px] lg:h-[73px]  items-start  relative cursor-pointer">
               <label htmlFor="password" className="font-Poppins text-[15px]">
                 Password
@@ -252,13 +254,13 @@ export const RegisterContainer: React.FC = () => {
               />
 
               <div
-                className="absolute top-[29px] lg:top-[33px] text-[var(--dark-secondary-text)]  right-[14px] w-[15px] h-[15px]"
+                className="absolute top-[30px] lg:top-[33px] text-[var(--dark-secondary-text)]  right-[14px] w-[15px] h-[15px]"
                 onClick={() => setShowPassword(!ShowPassword)}
               >
                 {ShowPassword ? (
-                  <Eye className="size-5 text-[var(--dark-secondary-text)] " />
+                  <Eye className=" size-5 sm:size-6  " />
                 ) : (
-                  <EyeOff className="size-5 text-[var(--dark-secondary-text)] " />
+                  <EyeOff className=" size-5 sm:size-6  " />
                 )}
               </div>
 
@@ -290,9 +292,9 @@ export const RegisterContainer: React.FC = () => {
                 onClick={() => setShowPassword(!ShowPassword)}
               >
                 {ShowPassword ? (
-                  <Eye className="size-5 text-[var(--dark-secondary-text)] " />
+                  <Eye className=" size-5 sm:size-6  " />
                 ) : (
-                  <EyeOff className="size-5 text-[var(--dark-secondary-text)] " />
+                  <EyeOff className=" size-5 sm:size-6  " />
                 )}
               </div>
               {ValidateError["confirmpassword"] && (
@@ -306,7 +308,7 @@ export const RegisterContainer: React.FC = () => {
             <button
               disabled={loading}
               type="submit"
-              className=" w-full h-[40px] text-lg  rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white sm:text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5"
+              className="sm:h-[40px] h-[37px] w-full rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white  text-lg sm:text-xl  tracking-wider font-semibold transition-colors duration-500 ease-in-out mt-5"
             >
               {!loading ? (
                 "Submit"

@@ -3,7 +3,6 @@ import { Order } from "../../models/order.model";
 
 import dayjs from "dayjs";
 
-
 // const getStatusColor = (status: OrderStatus["status"]) => {
 //   switch (status) {
 //     case "completed":
@@ -17,10 +16,7 @@ import dayjs from "dayjs";
 //   }
 // };
 
-const customToast = (
-  id: string,
-  order: Order,
-) => {
+const customToast = (id: string, order: Order) => {
   // const { uid, products, orderFullfilled } = order;
 
   const messages: { [key: string]: string } = {
