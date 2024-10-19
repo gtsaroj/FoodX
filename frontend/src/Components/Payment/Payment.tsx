@@ -9,8 +9,7 @@ import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
 import { addNotification } from "../../Services/notification.services";
 import { useNavigate } from "react-router-dom";
-import { socket } from "../../Utility/socket.utility";
-import { Order } from "../../models/order.model";
+
 import { resetCart } from "../../Reducer/product.reducer";
 // import { Product } from "../../models/product.model";
 

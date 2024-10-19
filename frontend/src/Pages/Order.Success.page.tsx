@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import Success from "../assets/success.png";
 
 import { Check } from "lucide-react";
-import { Product } from "../models/product.model";
+
 import { useSelector } from "react-redux";
 import { RootState } from "../Store";
 
