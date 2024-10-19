@@ -108,18 +108,20 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
     </div>
   ) : (
     <div
-      className={`flex items-center justify-between w-full h-full gap-5 p-5 border border-[var(--dark-border)] rounded`}
+      className={`flex items-center justify-between overflow-hidden w-full h-full gap-2 sm:gap-5 sm:px-5 sm:py-5 px-1 py-3 border border-[var(--dark-border)] rounded`}
     >
       <div className="flex gap-5">
         <div className=" relative group/editable max-w-[80px] max-h-[80px] overflow-hidden rounded-full">
           {edit ? (
             <img src={updateAvatar} alt="" />
           ) : (
-            <img
+                <div className=" sm:w-[80px] w-[50px] h-[50px] sm:h-[80px] ">
+                   <img
               src={props?.avatar}
               alt="user profile"
-              className={`w-[80px] h-[80px]`}
+              className={`w-full h-full`}
             />
+            </div>
           )}
           <div
             className={`absolute group-hover/editable:visible ${

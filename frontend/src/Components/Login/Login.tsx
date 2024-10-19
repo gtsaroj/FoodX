@@ -62,7 +62,7 @@ export const LoginContainer: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-[var(--dark-border)] border-[1px]  bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] border-[1px] sm:text-[16px] text-[14px]  bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
             </div>
             <div className="relative flex flex-col gap-2">
@@ -77,7 +77,7 @@ export const LoginContainer: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--dark-border)] border-[1px] bg-transparent rounded-md h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] sm:text-[16px] text-[14px] border-[1px] bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (
@@ -85,14 +85,14 @@ export const LoginContainer: React.FC = () => {
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <Eye size={23} />
+                  <Eye className=" size-5 sm:size-6  " />
                 </div>
               ) : (
                 <div
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <EyeOff size={23} />
+                  <EyeOff className=" size-5 sm:size-6  " />
                 </div>
               )}
             </div>
@@ -103,7 +103,10 @@ export const LoginContainer: React.FC = () => {
             >
               Forgot Password?
             </p>
-            <button disabled={loading} className="h-[40px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white text-xl font-bold tracking-wide transition-colors duration-500 ease-in-out mt-5 ">
+            <button
+              disabled={loading}
+              className="sm:h-[40px] h-[37px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white  text-lg sm:text-xl  tracking-wider font-semibold transition-colors duration-500 ease-in-out mt-5 "
+            >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   Sending <ClipLoader color="white" size={"20px"} />

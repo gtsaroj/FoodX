@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={Store}>
       <PersistGate persistor={persistor} loading={"loading"}>
         <App />
-        <Toaster position="top-right" />
+        <Toaster position="top-center" />
       </PersistGate>  
     </Provider>
   </Suspense>

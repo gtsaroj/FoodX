@@ -38,7 +38,7 @@ const Modal: React.FC<ModelProp> = ({
 
   return (
     <div
-      className={`md:w-[600px] bg-[var(--popup-bg)] w-full py-9 overflow-hidden   min-w-[100vw] px-7 sm:min-h-[100vh] sm:h-full h-screen   justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}
+      className={`md:w-[600px] bg-[var(--popup-bg)] w-full py-9 overflow-hidden   min-w-[100vw] px-3 sm:px-7 sm:min-h-[100vh] sm:h-full h-screen   justify-center flex items-center fixed top-0 left-0 backdrop-blur-[9.5px] flex-grow-[1] duration-150 ease-in-out`}
       style={{
         opacity: !close ? 1 : 0,
         zIndex: !close ? 50 : -3,
@@ -46,7 +46,7 @@ const Modal: React.FC<ModelProp> = ({
     >
       <div
         className={` overflow-auto ${
-          isExport ? "pt-16" : "p-4"
+          isExport ? "pt-16" : "sm:p-4 p-0 "
         } rounded  bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150  relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  `}
         ref={modalRef}
       >
