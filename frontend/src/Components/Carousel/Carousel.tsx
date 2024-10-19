@@ -4,8 +4,9 @@ import { Banner } from "../../models/banner.model";
 
 interface CarouselProp {
   props: Banner[];
+  time: number;
 }
-const Carousel: React.FC<CarouselProp> = ({ props }) => {
+const Carousel: React.FC<CarouselProp> = ({ props, time }) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
   const imageRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<any>();
@@ -30,9 +31,12 @@ const Carousel: React.FC<CarouselProp> = ({ props }) => {
   };
 
   const autoPlay = () => {
-    sliderRef.current = setInterval(() => {
-      nextSlide();
-    }, 3000);
+    sliderRef.current = setInterval(
+      () => {
+        nextSlide();
+      },
+      time <= 0 ? 3000 : time
+    );
   };
 
   useEffect(() => {

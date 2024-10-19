@@ -13,8 +13,8 @@ import { signInAction } from "../../Actions/user.actions";
 export const LoginContainer: React.FC = () => {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState<string>("sarojgt326@gmail.com");
-  const [password, setPassword] = useState<string>("sarcasm.conc");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [show, setShow] = useState<boolean>(false);
   const [passwordType, setPasswordType] = useState<"password" | "text">(
     "password"
@@ -40,7 +40,7 @@ export const LoginContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-full  px-3 py-8">
+    <div className="flex items-center justify-center w-full h-full px-3 py-8">
       <div className="w-full  bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
         <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1 className="md:hidden text-[var(--dark-text)] ">Login</h1>
@@ -85,14 +85,14 @@ export const LoginContainer: React.FC = () => {
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <Eye className=" size-5 sm:size-6  " />
+                  <Eye className=" size-5 sm:size-6" />
                 </div>
               ) : (
                 <div
                   className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
-                  <EyeOff className=" size-5 sm:size-6  " />
+                  <EyeOff className=" size-5 sm:size-6" />
                 </div>
               )}
             </div>

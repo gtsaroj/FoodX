@@ -25,7 +25,7 @@ const Banner: React.FC = () => {
     <div className="flex items-center justify-center w-full h-full">
       <div className="lg:h-[600px] lg:min-w-[700px] flex items-center min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[500px] md:h-[450px] duration-500 xl:w-[1000px] flex-grow">
         {loading ? (
-          <div className="w-full rounded-xl  gap-4 flex ">
+          <div className="flex w-full gap-4 rounded-xl ">
             <Skeleton
               borderRadius={"13px"}
               width="980px"
@@ -36,7 +36,7 @@ const Banner: React.FC = () => {
             />
           </div>
         ) : (
-          <Carousel props={initialData} />
+          <Carousel props={initialData} time={5000} />
         )}
       </div>
     </div>
@@ -63,10 +63,10 @@ export const Sponsor: React.FC = () => {
   }, []);
 
   return (
-    <div className="lg:flex hidden items-center justify-center w-full h-full">
+    <div className="items-center justify-center hidden w-full h-full lg:flex">
       <div className="lg:h-[602px]  h-[300px] max-w-md sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         {loading ? (
-          <div className="w-full rounded-xl  gap-4 flex ">
+          <div className="flex w-full gap-4 rounded-xl ">
             <Skeleton
               borderRadius={"13px"}
               width="450px"
@@ -77,8 +77,8 @@ export const Sponsor: React.FC = () => {
             />
           </div>
         ) : (
-          <div className="w-full  h-full">
-            <Carousel props={initialData} />
+          <div className="w-full h-full">
+            <Carousel props={initialData} time={25000} />
           </div>
         )}
       </div>
