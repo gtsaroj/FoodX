@@ -61,7 +61,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     }
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
@@ -114,7 +114,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           tagId: prop.tagId,
         })
       );
-      navigate("/cart")
     } catch (error) {
       toast.error(error as string);
     }
@@ -154,10 +153,10 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           " card h-full  w-full min-w-[250px]    sm:w-[250px] group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start"
         }
       >
-        <div className="">
+        <div className="w-full h-[150px] sm:h-[180px] ">
           <img
             src={prop?.image}
-            className="w-full h-[180px] object-cover object-center rounded-t-md"
+            className="w-full h-full object-cover object-center rounded-t-md"
           />
         </div>
         <div className="flex items-center text-[var(--dark-text)] justify-between gap-1 px-5 pt-4 pb-2">

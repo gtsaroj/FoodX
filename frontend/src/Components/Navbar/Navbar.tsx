@@ -36,6 +36,7 @@ import { signOutUser } from "../../firebase/Authentication";
 import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
+import Cart from "../../Pages/Cart/Cart";
 
 const navbarItems = [
   {
@@ -88,6 +89,7 @@ export const Navbar: React.FC = () => {
   const [openFavourite, setOpenFavourite] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
+  const [openCart, setOpenCart] = useState<boolean>(false);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -95,6 +97,7 @@ export const Navbar: React.FC = () => {
   const profileRef = useRef<HTMLDivElement | null>(null);
   const favouriteReference = useRef<HTMLDivElement | null>(null);
   const notificationReference = useRef<HTMLDivElement | null>(null);
+  const cartReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,6 +120,12 @@ export const Navbar: React.FC = () => {
         setOpen(false);
       }
       if (
+        cartReference.current &&
+        !cartReference.current.contains(event.target as any)
+      ) {
+        setOpenCart(false);
+      }
+      if (
         notificationReference.current &&
         !notificationReference.current.contains(event.target as any)
       ) {
@@ -124,7 +133,13 @@ export const Navbar: React.FC = () => {
       }
     };
 
-    if (!closeProfile || !openFavourite || !open || openNotification) {
+    if (
+      !closeProfile ||
+      !openFavourite ||
+      !open ||
+      openNotification ||
+      !openCart
+    ) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
@@ -133,7 +148,8 @@ export const Navbar: React.FC = () => {
     };
   }, [closeProfile, openFavourite]);
   const navigate = useNavigate();
-  const isFavourite = useSelector((state: RootState) => state.root.favourite);
+  const store = useSelector((state: RootState) => state.root);
+  
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
@@ -271,8 +287,30 @@ export const Navbar: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/*cart */}
+          <div ref={cartReference} className="relative">
+            <ShoppingBag onClick={() => setOpenCart(!openCart)} className="cursor-pointer size-7 " />
+            <div
+                className={`w-[10px] duration-150 ${
+                  store?.cart?.products.length > 0 && authUser.role
+                    ? "visible"
+                    : "hidden"
+                } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
+              ></div>
+            <div
+              className={`absolute ${
+                openCart
+                  ? "visible opacity-100 translate-y-0"
+                  : "invisible translate-y-10 opacity-0"
+              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
+            >
+              <Cart action={()=>setOpenCart(!openCart)} />
+          
+            </div>
+          </div>
+
           <div className="relative " ref={favouriteReference as any}>
-            {/* Favourite icon */}
             <div className="relative">
               <Heart
                 onClick={() => setOpenFavourite(!openFavourite)}
@@ -280,7 +318,7 @@ export const Navbar: React.FC = () => {
               />
               <div
                 className={`w-[10px] duration-150 ${
-                  isFavourite.favourite.length > 0 && authUser.role
+                  store?.favourite?.favourite.length > 0 && authUser.role
                     ? "visible"
                     : "hidden"
                 } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
@@ -305,6 +343,8 @@ export const Navbar: React.FC = () => {
               </Modal>
             )}
           </div>
+
+          {/* profile */}
           {authUser.fullName && (
             <div ref={notificationReference as any} className="relative">
               <Bell
@@ -430,9 +470,12 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
   return (
     <div
       ref={reference}
-      className="w-[300px]  gap-10 px-3 py-7 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
+      className="w-[300px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
-      <div className="flex justify-end w-full">
+      <div className="flex justify-between py-3  items-start w-full">
+        <div className=" w-[200px] h-[63px] ">
+          <img className="w-full h-full" src={CollegeLogo} alt="" />
+        </div>
         <button onClick={() => action()} className="">
           <X className="duration-150 size-7 hover:text-red-600" />
         </button>
@@ -456,8 +499,8 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           </div>
         }
       </div>
-      <div className="flex items-start justify-start flex-grow w-full h-full overflow-auto">
-        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-7">
+      <div className="flex pt-5 items-start justify-start flex-grow w-full h-full overflow-auto">
+        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-10">
           <li
             onClick={() => {
               navigate("/");

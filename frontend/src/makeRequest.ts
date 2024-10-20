@@ -8,6 +8,7 @@ import { authLogout } from "./Reducer/user.reducer";
 let isRefreshing = false;
 // Queue to store requests waiting for the token to refresh
 let failedRequestsQueue: Array<(token: string) => void> = [];
+let hasLoggedOut = false;
 
 export const makeRequest: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL, // Ensure this is set correctly in the environment file
@@ -26,6 +27,8 @@ makeRequest.interceptors.request.use(
   }
 );
 
+
+
 makeRequest.interceptors.response.use(
   (response) => {
     return response;
@@ -39,9 +42,12 @@ makeRequest.interceptors.response.use(
 
       if (!refreshToken) {
         // No refresh token, force logout
-        Store.dispatch(authLogout());
-        toast.error("Your session has expired. Please log in again.");
-        return Promise.reject("Unauthorized: No refresh token available.");
+        if (!hasLoggedOut) {
+          hasLoggedOut = true;
+          Store.dispatch(authLogout());
+          toast.error("Your session has expired. Please log in again.");
+          return Promise.reject("Unauthorized: No refresh token available.");
+        }
       }
 
       if (!isRefreshing) {
@@ -54,7 +60,8 @@ makeRequest.interceptors.response.use(
             { refreshToken }
           );
 
-          const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data.data;
+          const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+            response.data.data;
 
           // Store the new tokens in cookies
           Cookies.set("accessToken", newAccessToken, { secure: true });
