@@ -10,14 +10,58 @@ import {
   getSpecialProducts,
 } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
+import { resetFavourite } from "../../Reducer/favourite.reducer";
+import { addProductToCart } from "../../Services/cart.services";
 
 const Favourite: React.FC = () => {
-  const selectedProducts = useSelector(
-    (state: RootState) => state.root.favourite.favourite
-  );
+  const store = useSelector((state: RootState) => state.root);
   const [initialProducts, setInitialProducts] = useState<Product[]>([]);
 
   const dispatch = useDispatch<AppDispatch>();
+
+  const addProductToCartFn = () => {
+    const toastLoader = toast.loading("Loading...");
+    try {
+      const products = store?.cart?.products;
+      const unExistProductInCart = initialProducts?.filter(
+        (product) => !products.some((id) => id.id === product.id)
+      );
+      if (unExistProductInCart.length <= 0) {
+        toast.dismiss(toastLoader);
+        toast.success("Product already exist.");
+        dispatch(resetFavourite());
+        return;
+      }
+
+      if (unExistProductInCart?.length > 0) {
+        unExistProductInCart?.forEach(
+          async (product) =>
+            await addProductToCart(
+              store?.auth?.userInfo?.uid as string,
+              product.id
+            )
+        );
+      }
+      unExistProductInCart?.forEach((prop) => {
+        dispatch(
+          addToCart({
+            id: prop.id,
+            name: prop.name,
+            image: prop.image,
+            price: prop.price,
+            quantity: 1,
+            tag: prop.tag,
+          })
+        );
+      });
+      toast.dismiss(toastLoader);
+      toast.success("Succesfully added!");
+      dispatch(resetFavourite());
+    } catch (error) {
+      toast.dismiss(toastLoader);
+      throw new Error("Error while adding product to cart " + error);
+    }
+  };
 
   const getAllProducts = async () => {
     try {
@@ -29,7 +73,7 @@ const Favourite: React.FC = () => {
       const products = [...response.data, ...specialsProduct.data] as Product[];
 
       const aggregateProducts = products?.filter((data) =>
-        selectedProducts.includes(data.id)
+        store?.favourite?.favourite?.includes(data.id)
       );
       setInitialProducts(aggregateProducts);
     } catch (error) {
@@ -39,7 +83,7 @@ const Favourite: React.FC = () => {
 
   useEffect(() => {
     getAllProducts();
-  }, [selectedProducts]);
+  }, [store.favourite.favourite]);
 
   return (
     <div className="flex flex-col  h-[580px]  rounded-lg  w-[350px]   pb-7 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
@@ -65,25 +109,13 @@ const Favourite: React.FC = () => {
         )}
       </div>
 
-      <div className="flex flex-col  py-3 px-3  w-full gap-5">
-        <div className="py-3 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
+      <div className="flex flex-col py-2  sm:py-3 px-3  w-full gap-5">
+        <div className="sm:py-3 py-2 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
           <button
             onClick={() => {
-              initialProducts?.forEach((prop) => {
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    name: prop.name,
-                    image: prop.image,
-                    price: prop.price,
-                    quantity: 1,
-                    tag: prop.tag,
-                  })
-                );
-              });
-              toast.success("Succesfully added!");
+              addProductToCartFn();
             }}
-            className="text-white tracking-wider text-xl font-bold"
+            className="text-white tracking-wider text-lg sm:text-xl font-semibold"
           >
             Add to cart
           </button>

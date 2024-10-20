@@ -179,9 +179,9 @@ export const Navbar: React.FC = () => {
             )}
           </button>
           <div
-            className={`w-full backdrop-blur-lg z-[100]  duration-150 ${
+            className={`w-full  backdrop-blur-lg z-[100]  duration-150 ${
               open
-                ? "top-0 left-0 opacity-100 "
+                ? "top-0  left-0 opacity-100 "
                 : " opacity-0 bg-transparent left-[-1000px] "
             }  flex justify-start items-center absolute   `}
           >
@@ -459,28 +459,40 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
       <div className="flex items-start justify-start flex-grow w-full h-full overflow-auto">
         <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-7">
           <li
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              action();
+            }}
             className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
           >
             <FaHouseUser className="size-5" />
             <span>Home</span>
           </li>
           <li
-            onClick={() => navigate("cart")}
+            onClick={() => {
+              navigate("cart");
+              action();
+            }}
             className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
           >
             <ShoppingBag className="size-5" />
             <span>Cart</span>
           </li>
           <li
-            onClick={() => navigate("orders")}
+            onClick={() => {
+              navigate("orders");
+              action();
+            }}
             className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
           >
             <BringToFront className="size-5" />
             <span>Order</span>
           </li>
           <li
-            onClick={() => navigate("profile")}
+            onClick={() => {
+              navigate("profile");
+              action();
+            }}
             className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
           >
             <Settings className="size-5" />
@@ -489,7 +501,10 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         </ul>
       </div>
       <button
-        onClick={() => handleLogout()}
+        onClick={() => {
+          handleLogout();
+          action();
+        }}
         className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  mb-7  w-full p-3 rounded duration-150"
       >
         <LogOut className="size-5" />
