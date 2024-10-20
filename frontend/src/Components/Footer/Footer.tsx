@@ -79,7 +79,7 @@ const Footer: React.FC = () => {
                   Checkout
                 </a>
                 <a
-                  href="/order"
+                  href="/orders"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
                   Orders

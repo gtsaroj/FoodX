@@ -37,6 +37,7 @@ import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
+import { TopProduct } from "../../Pages/Product/Top.product";
 
 const navbarItems = [
   {
@@ -90,6 +91,7 @@ export const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [openCart, setOpenCart] = useState<boolean>(false);
+  // const [openOrder, setOpenOrder] = useState<boolean>(false);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -98,6 +100,8 @@ export const Navbar: React.FC = () => {
   const favouriteReference = useRef<HTMLDivElement | null>(null);
   const notificationReference = useRef<HTMLDivElement | null>(null);
   const cartReference = useRef<HTMLDivElement | null>(null);
+  // const topOrderReference = useRef<HTMLDivElement | null>(null);
+  const searchReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -131,6 +135,18 @@ export const Navbar: React.FC = () => {
       ) {
         setOpenNotification(false);
       }
+      // if (
+      //   topOrderReference.current &&
+      //   !topOrderReference.current.contains(event.target as any)
+      // ) {
+      //   setOpenOrder(false);
+      // }
+      if (
+        searchReference.current &&
+        !searchReference.current.contains(event.target as any)
+      ) {
+        setOpenSearch(false);
+      }
     };
 
     if (
@@ -138,7 +154,9 @@ export const Navbar: React.FC = () => {
       !openFavourite ||
       !open ||
       openNotification ||
-      !openCart
+      !openCart ||
+      !openOrder ||
+      !openSearch
     ) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -149,7 +167,6 @@ export const Navbar: React.FC = () => {
   }, [closeProfile, openFavourite]);
   const navigate = useNavigate();
   const store = useSelector((state: RootState) => state.root);
-  
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
@@ -223,7 +240,7 @@ export const Navbar: React.FC = () => {
       {/*  Product Search */}
       <div className="h-full flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full gap-3 place-items-center">
-          <div>
+          <div ref={searchReference}>
             <button
               className={`py-2.5 rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
@@ -260,44 +277,56 @@ export const Navbar: React.FC = () => {
                   : "invisible opacity-0 -translate-y-10 "
               } w-full h-full top-[10rem]  flex justify-end right-0 px-3 absolute`}
             >
-              <div className="w-full md:w-[500px] border-[var(--dark-border)] rounded-lg border-[1px] shadow  px-4 py-3 scrollbar-custom  overflow-y-auto bg-[var(--light-foreground)] h-[60vh] ">
-                {loading ? (
-                  <div className="flex items-center justify-center w-full h-full">
-                    <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
-                      <RotatingLines
-                        strokeColor="var(--dark-secondary-text)"
-                        width="27"
-                      />{" "}
-                      <span> Loading...Please wait!</span>
-                    </p>
-                  </div>
-                ) : (
-                  searchData?.map((data) => (
-                    <SearchProductCard
-                      id={data.id}
-                      image={data.image}
-                      name={data.name}
-                      price={data.price}
-                      quantity={data.quantity}
-                      key={data.id}
-                      tag={data.tag}
-                    />
-                  ))
-                )}
+              <div className="border-[1px] px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
+                <span
+                  className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
+                >
+                  {searchData && searchData?.length > 0
+                    ? `${searchData?.length} products available`
+                    : `No products available`}
+                </span>
+                <div className="w-full md:w-[500px] pr-4 rounded-lg  shadow   scrollbar-custom  overflow-y-auto h-[60vh]  ">
+                  {loading ? (
+                    <div className="flex items-center justify-center w-full  h-full">
+                      <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
+                        <RotatingLines
+                          strokeColor="var(--dark-secondary-text)"
+                          width="27"
+                        />{" "}
+                        <span> Loading...Please wait!</span>
+                      </p>
+                    </div>
+                  ) : (
+                    searchData?.map((data) => (
+                      <SearchProductCard
+                        id={data.id}
+                        image={data.image}
+                        name={data.name}
+                        price={data.price}
+                        quantity={data.quantity}
+                        key={data.id}
+                        tag={data.tag}
+                      />
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/*cart */}
           <div ref={cartReference} className="relative">
-            <ShoppingBag onClick={() => setOpenCart(!openCart)} className="cursor-pointer size-7 " />
+            <ShoppingBag
+              onClick={() => setOpenCart(!openCart)}
+              className="cursor-pointer size-7 "
+            />
             <div
-                className={`w-[10px] duration-150 ${
-                  store?.cart?.products.length > 0 && authUser.role
-                    ? "visible"
-                    : "hidden"
-                } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
-              ></div>
+              className={`w-[10px] duration-150 ${
+                store?.cart?.products.length > 0 && authUser.role
+                  ? "visible"
+                  : "hidden"
+              } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
+            ></div>
             <div
               className={`absolute ${
                 openCart
@@ -305,10 +334,27 @@ export const Navbar: React.FC = () => {
                   : "invisible translate-y-10 opacity-0"
               } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
             >
-              <Cart action={()=>setOpenCart(!openCart)} />
-          
+              <Cart action={() => setOpenCart(!openCart)} />
             </div>
           </div>
+          {/* top products */}
+          {/* <div ref={topOrderReference} className="relative">
+            <button
+              onClick={() => setOpenOrder(!openOrder)}
+              className="scale-[1.4]"
+            >
+              🔥
+            </button>
+            <div
+              className={`absolute ${
+                openOrder
+                  ? "visible opacity-100 translate-y-0"
+                  : "invisible translate-y-10 opacity-0"
+              } duration-150 top-10 rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[550px]`}
+            >
+              <TopProduct />
+            </div>
+          </div> */}
 
           <div className="relative " ref={favouriteReference as any}>
             <div className="relative">
@@ -352,7 +398,7 @@ export const Navbar: React.FC = () => {
                 className="cursor-pointer size-7 "
               />
               <div
-                className={`absolute  w-[300px] z-30 duration-150 ${
+                className={`absolute  w-[350px] z-30 duration-150 ${
                   openNotification
                     ? "visible opacity-100 -translate-y-0 "
                     : "invisible opacity-0 translate-y-10"
@@ -610,8 +656,17 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
           {data.name}
         </h1>
-        <p className="text-[14px] text-[var(--dark-secondary-text)]">
-          Rs.{data.price} &bull; {data.quantity} left
+        <p
+          className={`text-[14px] text-[var(--dark-secondary-text)] ${
+            data?.quantity < 20
+              ? "text-orange-400"
+              : data.quantity <= 0
+              ? "text-red-500"
+              : ""
+          } `}
+        >
+          Rs.{data.price}{" "}
+          {data.quantity <= 20 ? ` • ${data.quantity}  left` : ""}
         </p>
         {data.tag && (
           <span className="text-[12px] text-[var(--primary-color)]">

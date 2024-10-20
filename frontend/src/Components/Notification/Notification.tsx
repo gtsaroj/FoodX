@@ -171,20 +171,33 @@ const NoticationContainer: React.FC<NotificationProp> = ({
       className="relative border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
-        className={`sm:w-[280px] w-[215px] 
+        className={`sm:w-[280px] w-[230px] 
          duration-150 `}
       >
         <div
           onClick={() => setOpen(!open)}
-          className="w-full flex  items-center justify-between pr-5"
+          className="w-full flex   items-center justify-between pr-5"
         >
-          <h4 className="tracking-wider text-[15px] ">{notification.title}</h4>
-          <p className="text-xs text-gray-500">
+          <div>
+            <h4 className="tracking-wider text-[15px] ">
+              {notification.title}
+            </h4>
+            <p className=" text-[10px] text-[var(--dark-secondary-text)] ">
+             <span className="text-xs ">Order Id:</span>   {notification.id}
+            </p>
+          </div>
+
+          <div className="">
+          <p className="text-[11px] text-gray-500">
             {dayjs.unix(notification?.createdAt?._seconds).format("YYYY-MM-DD")}
+            </p>
+            <p className="text-xs text-gray-500">
+            {dayjs.unix(notification?.createdAt?._seconds).format("h:mm A")}
           </p>
+         </div>
         </div>
         <p
-          className={`text-sm text-gray-400 p-1 duration-150 ${
+          className={`text-xs text-gray-400 p-1 duration-150 ${
             open ? "flex opacity-[100] " : " hidden opacity-0"
           } `}
         >
