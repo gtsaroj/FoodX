@@ -80,7 +80,12 @@ const Cart: React.FC<CardProp> = ({ action }) => {
       const filterProducts = products?.filter((product) =>
         response.products.includes(product.id as string)
       );
-      filterProducts?.forEach((product) => {
+
+      const isProductExist = filterProducts?.filter(
+        (product) =>
+          !store?.cart?.products.some((data) => product.id === data.id)
+      );
+      isProductExist?.forEach((product) => {
         dispatch(
           addToCart({
             id: product.id,

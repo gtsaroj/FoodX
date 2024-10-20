@@ -52,12 +52,24 @@ export const getChefDetails = async (uid: string): Promise<string | null> => {
 };
 
 export const getUserInfo = async (uid: string) => {
-  const user = await getUser({ role: "customer" }, uid);
-  if (user) return user.data.data;
-  const chef = await getUser({ role: "chef" }, uid);
-  if (chef) return chef.data.data;
-  const admin = await getUser({ role: "admin" }, uid);
-  if (admin) return admin.data.data;
+  try {
+    // Try fetching user data for different roles
+    const user = await getUser({ role: "customer" }, uid);
+    console.log(user);
+    if (user?.data.statusCode === 200) return user.data.data;
+
+    const chef = await getUser({ role: "chef" }, uid);
+    if (chef) return chef.data.data;
+
+    const admin = await getUser({ role: "admin" }, uid);
+    if (admin) return admin.data.data;
+
+    return null;
+  } catch (error) {
+    console.error(`Error fetching user info for UID ${uid}:`, error);
+
+    return null;
+  }
 };
 
 // aggregate Customer Data

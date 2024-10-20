@@ -12,9 +12,10 @@ import avatar from "../../assets/logo/avatar.png";
 import logo from "../../assets/logo/Fx.png";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { signUpAction } from "../../Actions/user.actions";
+import { LoginProp } from "../Login/Login";
+import { signUp } from "../../Services/user.services";
 
-export const RegisterContainer: React.FC = () => {
+export const RegisterContainer: React.FC<LoginProp> = ({ role }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<RegisterModal>({
@@ -88,11 +89,10 @@ export const RegisterContainer: React.FC = () => {
           email,
           password,
           avatar: imageUrl,
-          role: "admin" as UserRole["role"],
+          role: role as UserRole["role"],
         };
+        await signUp(ConvertedForm);
         navigate("/email-verification");
-        await dispatch(signUpAction(ConvertedForm));
-        toast.success("Congratulations!, You logged in");
       }
     } catch (error) {
       toast.error(`User already logged in`);
@@ -275,10 +275,7 @@ export const RegisterContainer: React.FC = () => {
                 id="confirmpassword"
                 value={RegisterValue.confirmpassword}
                 onChange={(e) =>
-                  handleInputChange(
-                    e,
-                    "confirmpassword" as keyof RegisterModal
-                  )
+                  handleInputChange(e, "confirmpassword" as keyof RegisterModal)
                 }
                 className="outline-none  relative py-[5px] lg:py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
               />
@@ -327,10 +324,10 @@ export const RegisterContainer: React.FC = () => {
   );
 };
 
-export const Register = () => {
+export const Register: React.FC<LoginProp> = ({ role }) => {
   return (
     <div className="flex w-full h-screen flex-col items-center justify-between 2xl:justify-center lg:py-5">
-      <RegisterContainer />
+      <RegisterContainer role={role} />
       <div className="w-full pt-10 ">
         <AuthFooter />
       </div>
