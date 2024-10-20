@@ -11,7 +11,7 @@ import ClipLoader from "react-spinners/HashLoader";
 import { signInAction } from "../../Actions/user.actions";
 import { UserRole } from "../../models/user.model";
 
-interface LoginProp {
+export interface LoginProp {
   role: UserRole["role"];
 }
 const LoginContainer: React.FC<LoginProp> = ({ role }) => {

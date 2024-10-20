@@ -77,23 +77,39 @@ export const signUp = async (data: Register) => {
     });
 
     const ressponseData = response.data.data;
-    Cookies.set("accessToken", ressponseData.accessToken);
-    Cookies.set("refreshToken", ressponseData.refreshToken);
-    const role = await getRoleFromAccessToken();
-    ressponseData.userInfo.role = await role;
-    await addLogs({
-      action: "create",
-      date: new Date(),
-      detail: `${
-        ressponseData.userInfo.fullName
-      } created new Account at ${new Date()} `,
-      userId: ressponseData.userInfo.uid,
-      userRole: ressponseData.userInfo.role,
-    });
-
-    return ressponseData.userInfo;
+    localStorage.setItem("uid", ressponseData || ressponseData.uid);
+    return;
   } catch (error) {
     throw new Error("Unable to create new user");
+  }
+};
+
+export const verifyNewUser = async (otp: number, uid: string) => {
+  try {
+    const response = await makeRequest({
+      method: "post",
+      url: "otp/verify",
+      data: { code: otp, uid: uid },
+    });
+    toast.success("Congratulations! You logged in");
+    const user = response.data.data;
+    Cookies.set("accessToken", user.accessToken);
+    Cookies.set("refreshToken", user.refreshToken);
+    localStorage.removeItem("time");
+    localStorage.removeItem("uid");
+    await addLogs({
+      action: "register",
+      date: new Date(),
+      detail: `${
+        user.userInfo.fullName
+      } signed up at ${new Date().toLocaleString()}`,
+      userId: user.userInfo.uid,
+      userRole: user.userInfo.role,
+    });
+
+    return user.userInfo;
+  } catch (error) {
+    throw new Error("Error while verify user " + error);
   }
 };
 

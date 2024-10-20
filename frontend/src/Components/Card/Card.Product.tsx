@@ -16,6 +16,7 @@ import {
   removeFavourite,
 } from "../../Reducer/favourite.reducer";
 import { addProductToCart } from "../../Services/cart.services";
+import { getPopularProducts } from "../../Services/product.services";
 
 interface MenuProp {
   prop: Product;
@@ -117,6 +118,22 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
     toast.dismiss(toastLoader);
   };
 
+  const [initialData, setInitialData] = useState<Product[]>([]);
+
+  const getProducts = async () => {
+    try {
+      const response = await getPopularProducts();
+
+      setInitialData(response.data);
+    } catch (error) {
+      throw new Error("Error while getting popular products" + error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
   useEffect(() => {
     const findQuantity = selectedProductsQuantity?.find(
       (singleProduct) => singleProduct.id === prop.id
@@ -153,7 +170,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
         <div className="w-full h-[150px] sm:h-[180px] ">
           <img
             src={prop?.image}
-            className="object-cover object-center w-full h-full rounded-t-md"
+            className="w-full h-full object-cover object-center rounded-t-md"
           />
         </div>
         <div className="flex items-center text-[var(--dark-text)] justify-between gap-1 px-5 pt-4 pb-2">
@@ -201,23 +218,37 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
             <ShoppingCart className="" onClick={() => addProductToCartFn()} />
           )}
         </div>
-        <div
-          onClick={() => {
-            if (isAuthUser) {
-              isFavourite(prop.id)
-                ? removeFavouriteProduct()
-                : addFavouriteProduct();
-            } else {
-              setIsNotAuthenticated(false);
-            }
-          }}
-          className="absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--dark-text)] right-2 top-2"
-        >
-          <Heart
-            className={`size-6 hover:scale-[1.05] duration-150 hover:text-[var(--danger-bg)]  text-[var(--dark-text)] ${
-              isAuthUser ? heartColor : ""
-            } `}
-          />
+        <div className="w-full">
+          <div
+            className={` ${
+              initialData?.findIndex((product) => product.id === prop.id) !== -1
+                ? "visible"
+                : "invisible"
+            } absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer  text-[var(--dark-text)] left-0 top-2`}
+          >
+            <p className={`text-[var(--dark-text)] text-sm tracking-`}>
+              #{initialData?.findIndex((product) => product.id === prop.id) + 1}{" "}
+              🔥
+            </p>
+          </div>
+          <div
+            onClick={() => {
+              if (isAuthUser) {
+                isFavourite(prop.id)
+                  ? removeFavouriteProduct()
+                  : addFavouriteProduct();
+              } else {
+                setIsNotAuthenticated(false);
+              }
+            }}
+            className="absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer group-hover/heart:visible invisible duration-150 group-hover/heart:opacity-100 opacity-0 text-[var(--dark-text)] right-2 top-2"
+          >
+            <Heart
+              className={`size-6 hover:scale-[1.05] duration-150 hover:text-[var(--danger-bg)]  text-[var(--dark-text)] ${
+                isAuthUser ? heartColor : ""
+              } `}
+            />
+          </div>
         </div>
       </div>
       <Modal

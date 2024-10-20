@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as userService from "../Services/user.services";
-import { Register } from "../models/user.model";
+
 import { UpdateProfileInfo } from "../Pages/Profile/AdminProfile";
 
 export const signInAction = createAsyncThunk(
@@ -22,11 +22,11 @@ export const signInAction = createAsyncThunk(
     }
   }
 );
-export const signUpAction = createAsyncThunk(
-  "auth/signup",
-  async (data: Register, thunkApi) => {
+export const verifyAction = createAsyncThunk(
+  "auth/signUp",
+  async ({ otp, uid }: { otp: number; uid: string }, thunkApi) => {
     try {
-      const response = await userService.signUp({ ...data });
+      const response = await userService.verifyNewUser(otp, uid);
       return response;
     } catch (error) {
       return thunkApi.rejectWithValue(

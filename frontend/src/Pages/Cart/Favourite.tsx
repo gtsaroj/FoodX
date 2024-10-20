@@ -10,7 +10,6 @@ import {
   getSpecialProducts,
 } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
-import { resetFavourite } from "../../Reducer/favourite.reducer";
 import { addProductToCart } from "../../Services/cart.services";
 
 const Favourite: React.FC = () => {
@@ -29,7 +28,7 @@ const Favourite: React.FC = () => {
       if (unExistProductInCart.length <= 0) {
         toast.dismiss(toastLoader);
         toast.success("Product already exist.");
-        dispatch(resetFavourite());
+
         return;
       }
 
@@ -56,7 +55,6 @@ const Favourite: React.FC = () => {
       });
       toast.dismiss(toastLoader);
       toast.success("Succesfully added!");
-      dispatch(resetFavourite());
     } catch (error) {
       toast.dismiss(toastLoader);
       throw new Error("Error while adding product to cart " + error);
@@ -109,17 +107,15 @@ const Favourite: React.FC = () => {
         )}
       </div>
 
-      <div className="flex flex-col py-2  sm:py-3 px-3  w-full gap-5">
-        <div className="sm:py-3 py-2 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  ">
-          <button
-            onClick={() => {
-              addProductToCartFn();
-            }}
-            className="text-white tracking-wider text-lg sm:text-xl font-semibold"
-          >
-            Add to cart
-          </button>
-        </div>
+      <div
+        onClick={() => {
+          addProductToCartFn();
+        }}
+        className="sm:py-3 py-2 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
+      >
+        <button className="text-white tracking-wider text-lg sm:text-xl font-semibold">
+          Add to cart
+        </button>
       </div>
     </div>
   );

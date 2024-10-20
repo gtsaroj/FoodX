@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { User } from "../models/user.model";
 import {
-  signUpAction,
+  verifyAction,
   signInAction,
   updateUserAction,
 } from "../Actions/user.actions";
@@ -52,15 +52,15 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     // action to add new user
-    builder.addCase(signUpAction.pending, (state) => {
+    builder.addCase(verifyAction.pending, (state) => {
       state.loading = false;
     });
-    builder.addCase(signUpAction.fulfilled, (state, action) => {
+    builder.addCase(verifyAction.fulfilled, (state, action) => {
       state.loading = false;
       state.success = true;
       state.userInfo = action.payload;
     });
-    builder.addCase(signUpAction.rejected, (state) => {
+    builder.addCase(verifyAction.rejected, (state) => {
       state.loading = false;
       (state.success = false),
         (state.userInfo = {

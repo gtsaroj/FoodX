@@ -116,7 +116,7 @@ const App: React.FC = () => {
               <Login role={userRole as UserRole["role"]} />
             )
           }
-        />
+        />z
         <Route
           element={
             <PrivateRoute role={[{ role: "admin" }, { role: "chef" }]} />

@@ -40,7 +40,14 @@ export const RecentOrders = () => {
         filter: filter as keyof Order,
       })) as { data: { orders: Order[] }; length: number };
       const recentOrders = await getRecentOrders(response.data.orders);
-      setRecentOrder(recentOrders);
+      console.log(recentOrders);
+      if (!recentOrders) {
+        setRecentOrder([]);
+        setLoading(false);
+        return;
+      }
+
+      setRecentOrder(recentOrders as RecentOrder[]);
     } catch (error) {
       setRecentOrder([]);
       throw new Error("Error while fetching recent orders" + error);
@@ -87,6 +94,8 @@ export const RecentOrders = () => {
     };
   }, []);
 
+  console.log(recentOrder);
+
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">
       <div className="flex items-center justify-between pb-7">
@@ -109,7 +118,7 @@ export const RecentOrders = () => {
             recentOrder.length > 0 ? (
               recentOrder?.map((order, index) => (
                 <OrderCard
-                  uid={order.uid}
+                  uid={order?.uid}
                   image={order?.image}
                   orderId={order?.orderId}
                   price={order?.price}

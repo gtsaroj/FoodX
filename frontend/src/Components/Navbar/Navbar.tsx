@@ -90,6 +90,7 @@ export const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [openCart, setOpenCart] = useState<boolean>(false);
+  // const [openOrder, setOpenOrder] = useState<boolean>(false);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -98,6 +99,8 @@ export const Navbar: React.FC = () => {
   const favouriteReference = useRef<HTMLDivElement | null>(null);
   const notificationReference = useRef<HTMLDivElement | null>(null);
   const cartReference = useRef<HTMLDivElement | null>(null);
+  // const topOrderReference = useRef<HTMLDivElement | null>(null);
+  const searchReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -131,6 +134,18 @@ export const Navbar: React.FC = () => {
       ) {
         setOpenNotification(false);
       }
+      // if (
+      //   topOrderReference.current &&
+      //   !topOrderReference.current.contains(event.target as any)
+      // ) {
+      //   setOpenOrder(false);
+      // }
+      if (
+        searchReference.current &&
+        !searchReference.current.contains(event.target as any)
+      ) {
+        setOpenSearch(false);
+      }
     };
 
     if (
@@ -138,7 +153,8 @@ export const Navbar: React.FC = () => {
       !openFavourite ||
       !open ||
       openNotification ||
-      !openCart
+      !openCart ||
+      !openSearch
     ) {
       document.addEventListener("mousedown", handleClickOutside);
     }
@@ -222,7 +238,7 @@ export const Navbar: React.FC = () => {
       {/*  Product Search */}
       <div className="h-full flex items-center text-[var(--dark-text)] px-3">
         <div className="flex items-center justify-center h-full gap-3 place-items-center">
-          <div>
+          <div ref={searchReference}>
             <button
               className={`py-2.5 rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
@@ -259,36 +275,45 @@ export const Navbar: React.FC = () => {
                   : "invisible opacity-0 -translate-y-10 "
               } w-full h-full top-[10rem]  flex justify-end right-0 px-3 absolute`}
             >
-              <div className="w-full md:w-[500px] border-[var(--dark-border)] rounded-lg border-[1px] shadow  px-4 py-3 scrollbar-custom  overflow-y-auto bg-[var(--light-foreground)] h-[60vh] ">
-                {loading ? (
-                  <div className="flex items-center justify-center w-full h-full">
-                    <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
-                      <RotatingLines
-                        strokeColor="var(--dark-secondary-text)"
-                        width="27"
-                      />{" "}
-                      <span> Loading...Please wait!</span>
-                    </p>
-                  </div>
-                ) : (
-                  searchData?.map((data) => (
-                    <SearchProductCard
-                      id={data.id}
-                      image={data.image}
-                      name={data.name}
-                      price={data.price}
-                      quantity={data.quantity}
-                      key={data.id}
-                      tag={data.tag}
-                    />
-                  ))
-                )}
+              <div className="border-[1px] px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
+                <span
+                  className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
+                >
+                  {searchData && searchData?.length > 0
+                    ? `${searchData?.length} products available`
+                    : `No products available`}
+                </span>
+                <div className="w-full md:w-[500px] pr-4 rounded-lg  shadow   scrollbar-custom  overflow-y-auto h-[60vh]  ">
+                  {loading ? (
+                    <div className="flex items-center justify-center w-full  h-full">
+                      <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
+                        <RotatingLines
+                          strokeColor="var(--dark-secondary-text)"
+                          width="27"
+                        />{" "}
+                        <span> Loading...Please wait!</span>
+                      </p>
+                    </div>
+                  ) : (
+                    searchData?.map((data) => (
+                      <SearchProductCard
+                        id={data.id}
+                        image={data.image}
+                        name={data.name}
+                        price={data.price}
+                        quantity={data.quantity}
+                        key={data.id}
+                        tag={data.tag}
+                      />
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/*cart */}
-          <div ref={cartReference} className="relative lg:hidden">
+          <div ref={cartReference} className="relative">
             <ShoppingBag
               onClick={() => setOpenCart(!openCart)}
               className="cursor-pointer size-7 "
@@ -305,11 +330,29 @@ export const Navbar: React.FC = () => {
                 openCart
                   ? "visible opacity-100 translate-y-0"
                   : "invisible translate-y-10 opacity-0"
-              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-3 right-[-100px] sm:right-[-40px] w-[342px] sm:min-w-[450px] sm:max-w-[600px] h-[600px]`}
+              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
             >
               <Cart action={() => setOpenCart(!openCart)} />
             </div>
           </div>
+          {/* top products */}
+          {/* <div ref={topOrderReference} className="relative">
+            <button
+              onClick={() => setOpenOrder(!openOrder)}
+              className="scale-[1.4]"
+            >
+              🔥
+            </button>
+            <div
+              className={`absolute ${
+                openOrder
+                  ? "visible opacity-100 translate-y-0"
+                  : "invisible translate-y-10 opacity-0"
+              } duration-150 top-10 rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[550px]`}
+            >
+              <TopProduct />
+            </div>
+          </div> */}
 
           <div className="relative " ref={favouriteReference as any}>
             <div className="relative">
@@ -353,7 +396,7 @@ export const Navbar: React.FC = () => {
                 className="cursor-pointer size-7 "
               />
               <div
-                className={`absolute  w-[300px] z-30 duration-150 ${
+                className={`absolute  w-[350px] z-30 duration-150 ${
                   openNotification
                     ? "visible opacity-100 -translate-y-0 "
                     : "invisible opacity-0 translate-y-10"
@@ -373,7 +416,7 @@ export const Navbar: React.FC = () => {
                   <img
                     className="w-10 rounded-full h-9 sm:w-11 sm:h-10"
                     src={authUser.avatar}
-                    alt="user avatar"
+                    alt=""
                   />
                 </div>
                 <div
@@ -473,12 +516,9 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
       ref={reference}
       className="w-[300px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
-      <div className="flex items-start justify-between w-full py-3">
-        <div
-          onClick={() => navigate("/")}
-          className=" w-[200px] h-[63px] cursor-pointer"
-        >
-          <img className="w-full h-full" src={CollegeLogo} alt="college logo" />
+      <div className="flex justify-between py-3  items-start w-full">
+        <div className=" w-[200px] h-[63px] ">
+          <img className="w-full h-full" src={CollegeLogo} alt="" />
         </div>
         <button onClick={() => action()} className="">
           <X className="duration-150 size-7 hover:text-red-600" />
@@ -489,7 +529,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           <img
             className="w-full h-full rounded-lg"
             src={user?.avatar || Avatar}
-            alt="user avatar"
+            alt=""
           />
         </div>
         {
@@ -503,7 +543,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           </div>
         }
       </div>
-      <div className="flex items-start justify-start flex-grow w-full h-full pt-5 overflow-auto">
+      <div className="flex pt-5 items-start justify-start flex-grow w-full h-full overflow-auto">
         <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-10">
           <li
             onClick={() => {
@@ -577,7 +617,7 @@ export const Header: React.FC = () => {
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
       <div className={"bg-[var(--primary-color)] "}>
-        <div className="flex items-center gap-5 px-5 py-2">
+        <div className="flex items-center px-5 py-2">
           <Phone className="text-[var(--secondary-color)]" size={25} />
           <p className="text-xs text-[var(--light-secondary-text)] ">
             01-4589134, 01-4588627,9801644462
@@ -614,8 +654,17 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
           {data.name}
         </h1>
-        <p className="text-[14px] text-[var(--dark-secondary-text)]">
-          Rs.{data.price} &bull; {data.quantity} left
+        <p
+          className={`text-[14px] text-[var(--dark-secondary-text)] ${
+            data?.quantity < 20
+              ? "text-orange-400"
+              : data.quantity <= 0
+              ? "text-red-500"
+              : ""
+          } `}
+        >
+          Rs.{data.price}{" "}
+          {data.quantity <= 20 ? ` • ${data.quantity}  left` : ""}
         </p>
         {data.tag && (
           <span className="text-[12px] text-[var(--primary-color)]">
