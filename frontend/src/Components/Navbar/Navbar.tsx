@@ -149,7 +149,6 @@ export const Navbar: React.FC = () => {
   }, [closeProfile, openFavourite]);
   const navigate = useNavigate();
   const store = useSelector((state: RootState) => state.root);
-  
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
@@ -289,24 +288,26 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/*cart */}
-          <div ref={cartReference} className="relative">
-            <ShoppingBag onClick={() => setOpenCart(!openCart)} className="cursor-pointer size-7 " />
+          <div ref={cartReference} className="relative lg:hidden">
+            <ShoppingBag
+              onClick={() => setOpenCart(!openCart)}
+              className="cursor-pointer size-7 "
+            />
             <div
-                className={`w-[10px] duration-150 ${
-                  store?.cart?.products.length > 0 && authUser.role
-                    ? "visible"
-                    : "hidden"
-                } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
-              ></div>
+              className={`w-[10px] duration-150 ${
+                store?.cart?.products.length > 0 && authUser.role
+                  ? "visible"
+                  : "hidden"
+              } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
+            ></div>
             <div
               className={`absolute ${
                 openCart
                   ? "visible opacity-100 translate-y-0"
                   : "invisible translate-y-10 opacity-0"
-              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
+              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-3 right-[-100px] sm:right-[-40px] w-[342px] sm:min-w-[450px] sm:max-w-[600px] h-[600px]`}
             >
-              <Cart action={()=>setOpenCart(!openCart)} />
-          
+              <Cart action={() => setOpenCart(!openCart)} />
             </div>
           </div>
 
@@ -372,7 +373,7 @@ export const Navbar: React.FC = () => {
                   <img
                     className="w-10 rounded-full h-9 sm:w-11 sm:h-10"
                     src={authUser.avatar}
-                    alt=""
+                    alt="user avatar"
                   />
                 </div>
                 <div
@@ -472,9 +473,12 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
       ref={reference}
       className="w-[300px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
-      <div className="flex justify-between py-3  items-start w-full">
-        <div className=" w-[200px] h-[63px] ">
-          <img className="w-full h-full" src={CollegeLogo} alt="" />
+      <div className="flex items-start justify-between w-full py-3">
+        <div
+          onClick={() => navigate("/")}
+          className=" w-[200px] h-[63px] cursor-pointer"
+        >
+          <img className="w-full h-full" src={CollegeLogo} alt="college logo" />
         </div>
         <button onClick={() => action()} className="">
           <X className="duration-150 size-7 hover:text-red-600" />
@@ -485,7 +489,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           <img
             className="w-full h-full rounded-lg"
             src={user?.avatar || Avatar}
-            alt=""
+            alt="user avatar"
           />
         </div>
         {
@@ -499,7 +503,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           </div>
         }
       </div>
-      <div className="flex pt-5 items-start justify-start flex-grow w-full h-full overflow-auto">
+      <div className="flex items-start justify-start flex-grow w-full h-full pt-5 overflow-auto">
         <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-10">
           <li
             onClick={() => {
@@ -573,7 +577,7 @@ export const Header: React.FC = () => {
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
       <div className={"bg-[var(--primary-color)] "}>
-        <div className="flex items-center px-5 py-2">
+        <div className="flex items-center gap-5 px-5 py-2">
           <Phone className="text-[var(--secondary-color)]" size={25} />
           <p className="text-xs text-[var(--light-secondary-text)] ">
             01-4589134, 01-4588627,9801644462
