@@ -40,17 +40,17 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
   return (
     <div
       key={prop.id}
-      className={`duration-1000 cursor-pointer  border-[1px] border-[var(--dark-border)]    group/cart relative flex gap-3 items-center h-[120px] w-full bg-[var(--light-foreground)] rounded-lg `}
+      className={`duration-1000 cursor-pointer  border-[1px] border-[var(--dark-border)]    group/cart relative flex gap-3 items-center h-[100px] sm:h-[120px] w-full bg-[var(--light-foreground)] rounded-lg `}
     >
       <div>
         <img
-          className="w-[120px]  h-[120px] object-cover shrink-0 object-center rounded-l-lg"
+          className="sm:w-[120px] w-[100px] h-[100px]  sm:h-[120px] object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />
       </div>
       <div className="flex h-full  flex-col gap-2 px-3 items-start justify-evenly ">
-        <p className="text-xl  text-[var(--dark-text)] font-bold tracking-wide">
+        <p className="sm:text-xl text-lg  text-[var(--dark-text)] font-semibold tracking-wide">
           {prop.name}
         </p>
         <p className="text-sm  text-[var(--dark-secondary-text)] ">

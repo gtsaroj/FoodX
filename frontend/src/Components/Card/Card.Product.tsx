@@ -16,6 +16,7 @@ import {
   removeFavourite,
 } from "../../Reducer/favourite.reducer";
 import { addProductToCart } from "../../Services/cart.services";
+import { useNavigate } from "react-router-dom";
 
 interface MenuProp {
   prop: Product;
@@ -59,6 +60,8 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
       throw new Error("Error while removing favourite cart product" + error);
     }
   };
+
+  const navigate = useNavigate()
 
   const selectedProductsQuantity = useSelector(
     (state: RootState) => state.root.cart.products
@@ -111,6 +114,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop }: MenuProp) => {
           tagId: prop.tagId,
         })
       );
+      navigate("/cart")
     } catch (error) {
       toast.error(error as string);
     }
