@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../../Store";
 import { ShoppingBag } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../../Reducer/product.reducer";
-import { Loader } from "../../Components/Loader/Loader";
+
 import toast from "react-hot-toast";
 import { Product } from "../../models/product.model";
 import {
@@ -16,8 +16,13 @@ import {
   getNormalProducts,
   getSpecialProducts,
 } from "../../Services/product.services";
+import { Loader } from "../../Components/Loader/Loader";
 
-const Cart: React.FC = () => {
+interface CardProp {
+  action?: () => void;
+}
+
+const Cart: React.FC<CardProp> = ({ action }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const store = useSelector((state: RootState) => state.root);
@@ -157,15 +162,16 @@ const Cart: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="flex border-t    flex-col w-full gap-5">
+      <div className="flex border-t-[1px] border-[var(--dark-border)]    flex-col w-full gap-5">
         <div className="flex justify-between p-2  text-[var(--dark-text)]">
-          <p className="text-lg font-bold tracking-wide">Total Amount:</p>
-          <p className="text-lg">
-            Rs <span>{Total()}</span>
+          <p className="text-lg font-semibold tracking-wider">Total Amount:</p>
+          <p className="sm:text-[18px] text-[15px] ">
+            Rs. <span>{Total()}</span>
           </p>
         </div>
         <button
           onClick={() => {
+            action && action();
             setLoading(true);
             navigate("/cart/checkout");
           }}

@@ -36,17 +36,17 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   return (
     <div
       key={prop.id}
-      className={`duration-1000  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
+      className={`duration-1000 h-[119px]  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
-      <div className=" h-full">
+      <div className="  w-[120px] sm:h-[110px] h-full  ">
         <img
-          className="w-[120px]  h-full sm:h-[120px] object-cover shrink-0 object-center rounded-l-lg"
+          className="w-full h-full  object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />
       </div>
-      <div className="flex flex-col gap-2 px-3 justfy-between">
-        <p className="text-xl text-[var(--dark-text)] font-bold tracking-wide">
+      <div className="flex flex-col py-1 gap-2 px-3 justfy-between">
+        <p className="sm:text-xl text-[15px]  text-[var(--dark-text)] font-bold tracking-wide">
           {prop.name}
         </p>
         <p className="text-sm text-[var(--dark-secondary-text)] ">
@@ -89,7 +89,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
               +
             </button>
           </div>
-          <p className=" text-sm  flex text-[var(--dark-secondary-text)] w-full items-center justify-center  px-[3px] py-[2px] rounded-sm">
+          <p className=" sm:text-sm text-xs  flex text-[var(--dark-secondary-text)] w-full items-center justify-center  px-[3px] py-[2px] rounded-sm">
             {" "}
             {prop.quantity} × {prop.price}
           </p>
