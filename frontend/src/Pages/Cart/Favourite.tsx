@@ -10,7 +10,6 @@ import {
   getSpecialProducts,
 } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
-import { resetFavourite } from "../../Reducer/favourite.reducer";
 import { addProductToCart } from "../../Services/cart.services";
 
 const Favourite: React.FC = () => {
