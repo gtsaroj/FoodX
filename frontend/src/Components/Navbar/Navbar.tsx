@@ -37,7 +37,6 @@ import { authLogout } from "../../Reducer/user.reducer";
 import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
-import { TopProduct } from "../../Pages/Product/Top.product";
 
 const navbarItems = [
   {
@@ -155,7 +154,6 @@ export const Navbar: React.FC = () => {
       !open ||
       openNotification ||
       !openCart ||
-      !openOrder ||
       !openSearch
     ) {
       document.addEventListener("mousedown", handleClickOutside);

@@ -49,14 +49,14 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
 
   return (
     <div className=" w-full shadow-sm sm:h-[130px] h-[110px] shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)]  ">
-      <div className="flex w-full items-stretch h-full justify-start gap-3">
-        <div className=" w-[100px] sm:w-[110px]   sm:h-[110px] h-[110px]">
+      <div className="flex items-stretch justify-start w-full h-full gap-3">
+        <div className=" w-[120px]  sm:h-[110px] h-[110px]">
           <img
             src={prop.image}
-            className="  w-[85px] sm:w-[110px]  h-full rounded-l-lg    "
+            className=" w-[120px] h-full rounded-l-lg    "
           ></img>
         </div>
-        <div className="flex h-full  flex-col  items-start justify-evenly">
+        <div className="flex flex-col items-start justify-center h-full gap-3">
           <p className="text-[var(--dark-text)] tracking-wide font-semibold  text-[15px] sm:text-[20px] w-full ">
             {prop.name}
           </p>
