@@ -8,7 +8,11 @@ import {
   updateTotalOrder,
   updateTotalSpent,
 } from "./user.firestore.js";
-import { findProductInDatabase, updateTotalSold } from "./product.firestore.js";
+import {
+  findProductInDatabase,
+  updateProductStockInFirestore,
+  updateTotalSold,
+} from "./product.firestore.js";
 
 const addNewOrderToDatabase = async (order: Order) => {
   const orderDocRef = db.collection("orders");
@@ -84,7 +88,20 @@ const updateOrderStatusInDatabase = async (
     await updateTotalSpent(role, uid, price);
     await updateTotalOrder(role, uid);
     products.forEach(async (product) => {
-      const { collection } = await findProductInDatabase(product.id);
+      const { collection, foundProduct } = await findProductInDatabase(
+        product.id
+      );
+      if (
+        foundProduct.quantity < product.quantity ||
+        foundProduct.quantity === 0
+      ) {
+        throw new ApiError(401, "Not enough stock");
+      }
+      await updateProductStockInFirestore(
+        collection,
+        product.id,
+        product.quantity
+      );
       await updateTotalSold(collection, product.id, product.quantity);
     });
 

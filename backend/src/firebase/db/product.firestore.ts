@@ -250,9 +250,9 @@ const searchProductInDatabase = async (query: string) => {
 };
 
 const findProductInDatabase = async (id: string) => {
-  const collections = ["products", "specials"];
+  const collections: ["products", "specials"] = ["products", "specials"];
   let foundProduct: ProductInfo | undefined = undefined;
-  let collectionName: string = "products";
+  let collectionName: "products" | "specials" = "products";
   try {
     for (const collection of collections) {
       const docRef = db.collection(collection).doc(id);
@@ -317,6 +317,26 @@ const getPopularProductsFromDatabase = async () => {
   }
 };
 
+const updateProductStockInFirestore = async (
+  collection: "products" | "specials",
+  id: string,
+  decreaseBy: number
+) => {
+  try {
+    const productRef = db.collection(collection).doc(id);
+    await productRef.update({
+      quantity: FieldValue.increment(-decreaseBy),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Error updating product stock in database.",
+      null,
+      error as string[]
+    );
+  }
+};
 export {
   addProductToFirestore,
   getProductByName,
@@ -330,4 +350,5 @@ export {
   findProductInDatabase,
   updateTotalSold,
   getPopularProductsFromDatabase,
+  updateProductStockInFirestore,
 };
