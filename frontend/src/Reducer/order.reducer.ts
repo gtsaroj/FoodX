@@ -2,44 +2,42 @@ import { createSlice } from "@reduxjs/toolkit";
 import { Order } from "../models/order.model";
 interface OrderType {
   order: Order[];
-  orderPerPage: number;
-  currentpage: 1;
 }
 
 const initialState: OrderType = {
   order: [],
-  orderPerPage: 5,
-  currentpage: 1,
 };
 
 const OrderSlice = createSlice({
   name: "order",
   initialState,
   reducers: {
-    addToList: (state, action) => {
-      const currentOrderIds = state.order.map((order) => order.orderId);
-      const newOrders = action.payload.filter(
-        (order: any) => !currentOrderIds.includes(order.orderId)
+    addOrder: (state, action) => {
+      const isOrderExist = state?.order?.some(
+        (order) => order.orderId === action.payload.orderId
       );
-
-      state.order.push(...newOrders);
+      if (!isOrderExist) {
+        state.order.push(action.payload);
+      }
     },
-    onNavigateNextPage: (state) => {
-      state.currentpage += 1;
+    removeOrder: (state, action) => {
+      state.order = state.order.filter(
+        (order) => order.orderId !== action.payload
+      );
     },
-    onNavigatePrevPage: (state) => {
-      state.currentpage < 1 ? 1 : (state.currentpage -= 1);
+    updateOrder: (state, action) => {
+      const findOrder = state?.order?.find(
+        (order) => order.orderId === action.payload.orderId
+      );
+      if (findOrder) {
+        findOrder.status = action.payload.status;
+      }
     },
-    onClickCurrentPage: (state, action) => {
-      state.currentpage = action.payload;
+    resetOrder: (state) => {
+      state.order = [];
     },
   },
 });
 
-export const {
-  addToList,
-  onNavigateNextPage,
-  onClickCurrentPage,
-  onNavigatePrevPage,
-} = OrderSlice.actions;
+export const { addOrder, removeOrder, resetOrder,updateOrder } = OrderSlice.actions;
 export default OrderSlice.reducer;

@@ -9,8 +9,10 @@ import { MoonLoader } from "react-spinners";
 import { addRevenue } from "../../Services/revenue.services";
 import { addNotification } from "../../Services/notification.services";
 import { useNavigate } from "react-router-dom";
+import { addOrder as addNewOrder } from "../../Reducer/order.reducer";
 
 import { resetCart } from "../../Reducer/product.reducer";
+import { removeProductFromCart } from "../../Services/cart.services";
 // import { Product } from "../../models/product.model";
 
 export const Payment: React.FC = () => {
@@ -35,7 +37,7 @@ export const Payment: React.FC = () => {
     }
     try {
       setLoading(true);
-      await addOrder({
+      const newOrder = await addOrder({
         products: store.cart.products,
         orderRequest: dayjs().format("YYYY-MM-DD"),
         uid: store.auth.userInfo.uid as string,
@@ -48,6 +50,19 @@ export const Payment: React.FC = () => {
         status: "pending",
         orderId: "",
       });
+      dispatch(
+        addNewOrder({
+          orderId: newOrder,
+          products: store?.cart?.products,
+          orderRequest: dayjs().format("YYYY-MM-DD"),
+          uid: store.auth.userInfo.uid as string,
+          revenue: store.cart.products.reduce(
+            (acc, product) => acc + product.price * product.quantity,
+            0
+          ),
+          status: "pending",
+        })
+      );
       await addRevenue({
         id: dayjs().format("YYYY-MM-DD"),
         orders: store.cart.products,
@@ -63,10 +78,16 @@ export const Payment: React.FC = () => {
       //     state: { orderDetails: order },
       //   });
       // };
-      
+
       // socket.on("new_order", handleOrder);
       navigate("/order/success", {
         state: store.cart,
+      });
+      store?.cart?.products.forEach(async (product) => {
+        await removeProductFromCart(
+          store?.auth?.userInfo?.uid as string,
+          product.id
+        );
       });
       dispatch(resetCart());
     } catch (error) {

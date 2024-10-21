@@ -196,169 +196,154 @@ export const Navbar: React.FC = () => {
   const debounceSearch = useCallback(debounce(handleSearch, 200), []);
 
   return (
-    <nav
-      ref={FilterRef}
-      className="w-full  backdrop-blur bg-[var(--body-bg)]  min-w-[100vw] z-[100] h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
-    >
-      <div className="flex items-center justify-start gap-4">
-        <div ref={menuReference as any} className="flex w-full md:hidden ">
-          <button className="" onClick={() => setOpen(!open)}>
-            {open ? (
-              <X className="cursor-pointer md:size-10 size-8" />
-            ) : (
-              <Menu className="cursor-pointer md:size-10 size-8 " />
-            )}
-          </button>
+    <div className=" h-full flex flex-col items-start">
+      <nav
+        ref={FilterRef}
+        className="w-full   bg-[var(--body-bg)]  min-w-[100vw] z-[100] h-[70px] sm:h-[100px] flex justify-between items-center px-5 gap-5 text-[var(--dark-secondary-text)] relative"
+      >
+        <div className="flex items-center justify-start gap-4">
+          <div ref={menuReference as any} className="flex w-full md:hidden ">
+            <button className="" onClick={() => setOpen(!open)}>
+              {open ? (
+                <X className="cursor-pointer md:size-10 size-8" />
+              ) : (
+                <Menu className="cursor-pointer md:size-10 size-8 " />
+              )}
+            </button>
+            <div
+              className={`w-full  backdrop-blur-lg z-[100]  duration-150 ${
+                open
+                  ? "top-0  left-0 opacity-100 "
+                  : " opacity-0 bg-transparent left-[-1000px] "
+              }  flex justify-start items-center absolute   `}
+            >
+              <MobileSlider open={open} action={() => setOpen(!open)} />
+            </div>
+          </div>
+          {/* Logo */}
           <div
-            className={`w-full  backdrop-blur-lg z-[100]  duration-150 ${
-              open
-                ? "top-0  left-0 opacity-100 "
-                : " opacity-0 bg-transparent left-[-1000px] "
-            }  flex justify-start items-center absolute   `}
+            className="items-center hidden cursor-pointer sm:flex shrink-0 "
+            onClick={() => navigate("/")}
           >
-            <MobileSlider open={open} action={() => setOpen(!open)} />
+            <img
+              src={CollegeLogo}
+              alt="college logo"
+              className="max-h-[80px]  w-[160px]  md:w-full h-full p-2  "
+            />
           </div>
         </div>
-        {/* Logo */}
-        <div
-          className="items-center hidden cursor-pointer sm:flex shrink-0 "
-          onClick={() => navigate("/")}
-        >
-          <img
-            src={CollegeLogo}
-            alt="college logo"
-            className="max-h-[80px]  w-[160px]  md:w-full h-full p-2  "
-          />
+        {/* Navbar  */}
+        <div className="hidden h-full md:flex">
+          <NavbarContainer />
         </div>
-      </div>
-      {/* Navbar  */}
-      <div className="hidden h-full md:flex">
-        <NavbarContainer />
-      </div>
-      {/*  Product Search */}
-      <div className="h-full flex items-center text-[var(--dark-text)] px-3">
-        <div className="flex items-center justify-center h-full gap-3 place-items-center">
-          <div ref={searchReference}>
-            <button
-              className={`py-2.5 sm:flex hidden rounded-r-lg duration-150`}
-              onClick={() => setOpenSearch(!openSearch)}
-            >
-              {openSearch ? <X className="" /> : <Search className="size-7 " />}
-            </button>
+        {/*  Product Search */}
+        <div className="h-full flex items-center text-[var(--dark-text)] px-3">
+          <div className="flex items-center justify-center h-full gap-3 place-items-center">
+            <div ref={searchReference}>
+              <button
+                className={`py-2.5 sm:flex hidden rounded-r-lg duration-150`}
+                onClick={() => setOpenSearch(!openSearch)}
+              >
+                {openSearch ? (
+                  <X className="" />
+                ) : (
+                  <Search className="size-7 " />
+                )}
+              </button>
 
-            <div
-              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 hidden sm:flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
-                openSearch
-                  ? "visible md:w-[500px] translate-y-0 opacity-100 "
-                  : "w-0 invisible opacity-0  -translate-y-10 "
-              } duration-150 top-[103px] right-0 md:left-auto left-0 `}
-            >
-              <input
-                value={searchValue}
-                onChange={(event) => {
-                  debounceSearch(event.target.value);
-                  setSearchValue(event.target.value);
-                }}
-                type="text"
-                className={` w-full sm:flex  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-5`}
-              />
-              <button
-                className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
-                onClick={() => setOpenSearch(false)}
+              <div
+                className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 hidden sm:flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
+                  openSearch
+                    ? "visible md:w-[500px] translate-y-0 opacity-100 "
+                    : "w-0 invisible opacity-0  -translate-y-10 "
+                } duration-150 top-[103px] right-0 md:left-auto left-0 `}
               >
-                <X className="hover:text-[var(--danger-bg)] size-5 md:size-6 " />
-              </button>
-              {/* mobile search */}
-            </div>
-            <div
-              className={`absolute sm:hidden w-[300px] left-2 bg-[var(--light-background)] mx-3 px-1 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 top-[86px] right-0 md:left-auto `}
-            >
-              <button
-                className="  py-2 px-2 rounded-r-lg bg-[var(--light-background)] "
-                onClick={() => setOpenSearch(false)}
-              >
-                <Search className="hover:text-[var(--danger-bg)] size-6 " />
-              </button>
-              <input
-                value={searchValue}
-                onChange={(event) => {
-                  debounceSearch(event.target.value);
-                  setSearchValue(event.target.value);
-                }}
-                placeholder="Search...."
-                type="text"
-                className={` w-full  duration-150  outline-none   bg-[var(--light-background)]   rounded-l-lg  py-1 px-5`}
-              />
-            </div>
-            <div
-              className={` duration-150 ${
-                searchValue?.length > 0
-                  ? "visible opacity-100 translate-y-0 "
-                  : "invisible opacity-0 -translate-y-10 "
-              } w-full h-full top-[10rem]   flex justify-end right-0 px-3 absolute`}
-            >
-              <div className="border-[1px] w-full rounded-lg sm:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
-                <span
-                  className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
+                <input
+                  value={searchValue}
+                  onChange={(event) => {
+                    debounceSearch(event.target.value);
+                    setSearchValue(event.target.value);
+                  }}
+                  type="text"
+                  className={` w-full sm:flex  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-5`}
+                />
+                <button
+                  className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
+                  onClick={() => setOpenSearch(false)}
                 >
-                  {searchData && searchData?.length > 0
-                    ? `${searchData?.length} products available`
-                    : `No products available`}
-                </span>
-                <div className="w-full md:w-[500px] pr-4 rounded-lg  shadow   scrollbar-custom  overflow-y-auto h-[60vh]  ">
-                  {loading ? (
-                    <div className="flex items-center justify-center w-full  h-full">
-                      <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
-                        <RotatingLines
-                          strokeColor="var(--dark-secondary-text)"
-                          width="27"
-                        />{" "}
-                        <span> Loading...Please wait!</span>
-                      </p>
-                    </div>
-                  ) : (
-                    searchData?.map((data) => (
-                      <SearchProductCard
-                        id={data.id}
-                        image={data.image}
-                        name={data.name}
-                        price={data.price}
-                        quantity={data.quantity}
-                        key={data.id}
-                        tag={data.tag}
-                      />
-                    ))
-                  )}
+                  <X className="hover:text-[var(--danger-bg)] size-5 md:size-6 " />
+                </button>
+              </div>
+              {/* mobile search */}
+              <div
+                className={` duration-150 ${
+                  searchValue?.length > 0
+                    ? "visible opacity-100 translate-y-0 "
+                    : "invisible opacity-0 -translate-y-10 "
+                } w-full h-full top-[10rem]   flex justify-end right-0 px-3 absolute`}
+              >
+                <div className="border-[1px] w-full rounded-lg sm:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
+                  <span
+                    className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
+                  >
+                    {searchData && searchData?.length > 0
+                      ? `${searchData?.length} products available`
+                      : `No products available`}
+                  </span>
+                  <div className="w-full md:w-[500px] pr-4 rounded-lg  shadow   scrollbar-custom  overflow-y-auto h-[60vh]  ">
+                    {loading ? (
+                      <div className="flex items-center justify-center w-full  h-full">
+                        <p className="text-[20px]  flex items-center justify-center gap-3 text-[var(--light-secondary-text)] font-semibold ">
+                          <RotatingLines
+                            strokeColor="var(--dark-secondary-text)"
+                            width="27"
+                          />{" "}
+                          <span> Loading...Please wait!</span>
+                        </p>
+                      </div>
+                    ) : (
+                      searchData?.map((data) => (
+                        <SearchProductCard
+                          id={data.id}
+                          image={data.image}
+                          name={data.name}
+                          price={data.price}
+                          quantity={data.quantity}
+                          key={data.id}
+                          tag={data.tag}
+                        />
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/*cart */}
-          <div ref={cartReference} className="relative">
-            <ShoppingBag
-              onClick={() => setOpenCart(!openCart)}
-              className="cursor-pointer size-7 "
-            />
-            <div
-              className={`w-[10px] duration-150 ${
-                store?.cart?.products.length > 0 && authUser.role
-                  ? "visible"
-                  : "hidden"
-              } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
-            ></div>
-            <div
-              className={`absolute ${
-                openCart
-                  ? "visible opacity-100 translate-y-0"
-                  : "invisible translate-y-10 opacity-0"
-              } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
-            >
-              <Cart action={() => setOpenCart(!openCart)} />
+            {/*cart */}
+            <div ref={cartReference} className="relative">
+              <ShoppingBag
+                onClick={() => setOpenCart(!openCart)}
+                className="cursor-pointer size-7 "
+              />
+              <div
+                className={`w-[10px] duration-150 ${
+                  store?.cart?.products.length > 0 && authUser.role
+                    ? "visible"
+                    : "hidden"
+                } top-[-3px] right-[3px] absolute h-[10px] rounded-full bg-[#a50c0c]`}
+              ></div>
+              <div
+                className={`absolute ${
+                  openCart
+                    ? "visible opacity-100 translate-y-0"
+                    : "invisible translate-y-10 opacity-0"
+                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
+              >
+                <Cart action={() => setOpenCart(!openCart)} />
+              </div>
             </div>
-          </div>
-          {/* top products */}
-          {/* <div ref={topOrderReference} className="relative">
+            {/* top products */}
+            {/* <div ref={topOrderReference} className="relative">
             <button
               onClick={() => setOpenOrder(!openOrder)}
               className="scale-[1.4]"
@@ -376,105 +361,129 @@ export const Navbar: React.FC = () => {
             </div>
           </div> */}
 
-          <div className="relative " ref={favouriteReference as any}>
-            <div className="relative">
-              <Heart
-                onClick={() => setOpenFavourite(!openFavourite)}
-                className="cursor-pointer size-7 "
-              />
-              <div
-                className={`w-[10px] duration-150 ${
-                  store?.favourite?.favourite.length > 0 && authUser.role
-                    ? "visible"
-                    : "hidden"
-                } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
-              ></div>
-            </div>
-            {/* Favourite container */}
-            <div
-              className={` sm:left-[-23rem] right-[-160px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
-                !openFavourite && authUser.fullName
-                  ? "visible z-10 translate-y-0 opacity-100 "
-                  : "-translate-y-2 invisible opacity-0 z-[-100]"
-              } `}
-            >
-              <Favourite />
-            </div>
-            {!openFavourite && !authUser.fullName && (
-              <Modal
-                close={openFavourite}
-                closeModal={() => setOpenFavourite(!openFavourite)}
-              >
-                <LoginContainer />
-              </Modal>
-            )}
-          </div>
-
-          {/* profile */}
-          {authUser.fullName && (
-            <div ref={notificationReference as any} className="relative">
-              <Bell
-                onClick={() => setOpenNotification(!openNotification)}
-                className="cursor-pointer size-7 "
-              />
-              <div
-                className={`absolute  w-[350px] z-30 duration-150 ${
-                  openNotification
-                    ? "visible opacity-100 -translate-y-0 "
-                    : "invisible opacity-0 translate-y-10"
-                }   sm:right-[4.7rem] right-[-40px]  top-8`}
-              >
-                <NotificationPage isOpen={openNotification} />
+            <div className="relative " ref={favouriteReference as any}>
+              <div className="relative">
+                <Heart
+                  onClick={() => setOpenFavourite(!openFavourite)}
+                  className="cursor-pointer size-7 "
+                />
+                <div
+                  className={`w-[10px] duration-150 ${
+                    store?.favourite?.favourite.length > 0 && authUser.role
+                      ? "visible"
+                      : "hidden"
+                  } top-[2px] right-0 absolute h-[10px] rounded-full bg-[#a50c0c]`}
+                ></div>
               </div>
+              {/* Favourite container */}
+              <div
+                className={` sm:left-[-23rem] right-[-160px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
+                  !openFavourite && authUser.fullName
+                    ? "visible z-10 translate-y-0 opacity-100 "
+                    : "-translate-y-2 invisible opacity-0 z-[-100]"
+                } `}
+              >
+                <Favourite />
+              </div>
+              {!openFavourite && !authUser.fullName && (
+                <Modal
+                  close={openFavourite}
+                  closeModal={() => setOpenFavourite(!openFavourite)}
+                >
+                  <LoginContainer />
+                </Modal>
+              )}
             </div>
-          )}
-          <div ref={profileRef} className="">
-            {authUser?.avatar && (
-              <div className="relative w-full">
+
+            {/* profile */}
+            {authUser.fullName && (
+              <div ref={notificationReference as any} className="relative">
+                <Bell
+                  onClick={() => setOpenNotification(!openNotification)}
+                  className="cursor-pointer size-7 "
+                />
+                <div
+                  className={`absolute  w-[350px] z-30 duration-150 ${
+                    openNotification
+                      ? "visible opacity-100 -translate-y-0 "
+                      : "invisible opacity-0 translate-y-10"
+                  }   sm:right-[4.7rem] right-[-40px]  top-8`}
+                >
+                  <NotificationPage isOpen={openNotification} />
+                </div>
+              </div>
+            )}
+            <div ref={profileRef} className="">
+              {authUser?.avatar && (
+                <div className="relative w-full">
+                  <div
+                    onClick={() => setCloseProfile(!closeProfile)}
+                    className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
+                  >
+                    <img
+                      className="w-10 rounded-full h-9 sm:w-11 sm:h-10"
+                      src={authUser.avatar}
+                      alt=""
+                    />
+                  </div>
+                  <div
+                    className={` duration-150 ${
+                      !closeProfile && authUser.fullName
+                        ? "visible opacity-100 "
+                        : "invisible opacity-0 "
+                    } w-full absolute right-[19.3rem] top-[45px]  `}
+                  >
+                    <Profile
+                      closeModal={() => setCloseProfile(!closeProfile)}
+                      user={authUser}
+                    />
+                  </div>
+                </div>
+              )}
+              {!authUser?.fullName && (
                 <div
                   onClick={() => setCloseProfile(!closeProfile)}
-                  className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
+                  className=""
                 >
-                  <img
-                    className="w-10 rounded-full h-9 sm:w-11 sm:h-10"
-                    src={authUser.avatar}
-                    alt=""
+                  <UserCircleIcon
+                    className=" transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
+                    size={30}
                   />
                 </div>
-                <div
-                  className={` duration-150 ${
-                    !closeProfile && authUser.fullName
-                      ? "visible opacity-100 "
-                      : "invisible opacity-0 "
-                  } w-full absolute right-[19.3rem] top-[45px]  `}
+              )}
+              {!closeProfile && !authUser?.fullName && (
+                <Modal
+                  close={closeProfile}
+                  closeModal={() => setCloseProfile(!closeProfile)}
                 >
-                  <Profile
-                    closeModal={() => setCloseProfile(!closeProfile)}
-                    user={authUser}
-                  />
-                </div>
-              </div>
-            )}
-            {!authUser?.fullName && (
-              <div onClick={() => setCloseProfile(!closeProfile)} className="">
-                <UserCircleIcon
-                  className=" transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0"
-                  size={30}
-                />
-              </div>
-            )}
-            {!closeProfile && !authUser?.fullName && (
-              <Modal
-                close={closeProfile}
-                closeModal={() => setCloseProfile(!closeProfile)}
-              >
-                <LoginContainer />
-              </Modal>
-            )}
+                  <LoginContainer />
+                </Modal>
+              )}
+            </div>
           </div>
         </div>
+      </nav>
+      <div
+        className={` sm:hidden w-[280px] left-2 bg-[var(--light-background)] text-[var(--dark-text)]  mx-3 px-1 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
+      >
+        <button
+          className="  py-1.5 px-2 rounded-r-lg bg-[var(--light-background)] "
+          onClick={() => setOpenSearch(false)}
+        >
+          <Search className="hover:text-[var(--danger-bg)] size-6 " />
+        </button>
+        <input
+          value={searchValue}
+          onChange={(event) => {
+            debounceSearch(event.target.value);
+            setSearchValue(event.target.value);
+          }}
+          placeholder="Search...."
+          type="text"
+          className={` w-full  duration-150  outline-none   bg-[var(--light-background)]   rounded-l-lg  py-1 px-5`}
+        />
       </div>
-    </nav>
+    </div>
   );
 };
 
@@ -649,7 +658,7 @@ export const Header: React.FC = () => {
       </div>
       <div
         className={
-          "fixed left-0 bg-[var(--light-background)] top-[41px] transition-transform ease-in-out duration-700 " +
+          "fixed left-0 bg-[var(--body-bg)] pb-1 top-[41px] transition-transform ease-in-out duration-700 " +
           (nav ? " translate-y-[-41px]" : " translate-y-0")
         }
       >
