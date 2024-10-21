@@ -33,5 +33,5 @@ export interface UserOrder {
   time: string; // Date formatted as MM/DD/YYYY
   status: string;
   amount: number;
-  payment: "esewa" | "cash" | "credit_card" | "other"; // Enum-like for payment methods
+  // payment: "esewa" | "cash" | "credit_card" | "other"; // Enum-like for payment methods
 }
