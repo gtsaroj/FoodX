@@ -76,7 +76,7 @@ const addNewOrder = asyncHandler(
       io.to("chef").emit("new_order", { ...order, orderId });
       return res
         .status(200)
-        .json(new ApiResponse(200, "", "Orders fetched successfully", true));
+        .json(new ApiResponse(200, orderId, "Orders fetched successfully", true));
     } catch (error) {
       return res
         .status(500)
