@@ -240,13 +240,14 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center justify-center h-full gap-3 place-items-center">
           <div ref={searchReference}>
             <button
-              className={`py-2.5 rounded-r-lg duration-150`}
+              className={`py-2.5 sm:flex hidden rounded-r-lg duration-150`}
               onClick={() => setOpenSearch(!openSearch)}
             >
               {openSearch ? <X className="" /> : <Search className="size-7 " />}
             </button>
+
             <div
-              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
+              className={`absolute md:right-3 bg-[var(--light-foreground)] mx-3 px-3 md:px-0 hidden sm:flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start ${
                 openSearch
                   ? "visible md:w-[500px] translate-y-0 opacity-100 "
                   : "w-0 invisible opacity-0  -translate-y-10 "
@@ -259,7 +260,7 @@ export const Navbar: React.FC = () => {
                   setSearchValue(event.target.value);
                 }}
                 type="text"
-                className={` w-full  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-5`}
+                className={` w-full sm:flex  duration-150  outline-none   bg-[var(--light-foreground)]   rounded-l-lg  py-2.5 px-5`}
               />
               <button
                 className="  py-2.5 px-2 rounded-r-lg bg-[var(--light-foreground)] "
@@ -267,15 +268,36 @@ export const Navbar: React.FC = () => {
               >
                 <X className="hover:text-[var(--danger-bg)] size-5 md:size-6 " />
               </button>
+              {/* mobile search */}
+            </div>
+            <div
+              className={`absolute sm:hidden w-[300px] left-2 bg-[var(--light-background)] mx-3 px-1 md:px-0 flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 top-[86px] right-0 md:left-auto `}
+            >
+              <button
+                className="  py-2 px-2 rounded-r-lg bg-[var(--light-background)] "
+                onClick={() => setOpenSearch(false)}
+              >
+                <Search className="hover:text-[var(--danger-bg)] size-6 " />
+              </button>
+              <input
+                value={searchValue}
+                onChange={(event) => {
+                  debounceSearch(event.target.value);
+                  setSearchValue(event.target.value);
+                }}
+                placeholder="Search...."
+                type="text"
+                className={` w-full  duration-150  outline-none   bg-[var(--light-background)]   rounded-l-lg  py-1 px-5`}
+              />
             </div>
             <div
               className={` duration-150 ${
-                openSearch && searchValue.length > 0
+                searchValue?.length > 0
                   ? "visible opacity-100 translate-y-0 "
                   : "invisible opacity-0 -translate-y-10 "
-              } w-full h-full top-[10rem]  flex justify-end right-0 px-3 absolute`}
+              } w-full h-full top-[10rem]   flex justify-end right-0 px-3 absolute`}
             >
-              <div className="border-[1px] px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
+              <div className="border-[1px] w-full rounded-lg sm:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
                 <span
                   className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
                 >

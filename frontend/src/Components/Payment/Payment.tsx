@@ -63,7 +63,7 @@ export const Payment: React.FC = () => {
       //     state: { orderDetails: order },
       //   });
       // };
-
+      
       // socket.on("new_order", handleOrder);
       navigate("/order/success", {
         state: store.cart,

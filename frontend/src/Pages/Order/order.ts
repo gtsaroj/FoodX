@@ -18,7 +18,7 @@ export const aggregateUserOrder = (userOrder: Order[]) => {
         time: dayjs(order.orderRequest).format("MM-DD-YYYY h:mm A"),
         status: order.status as string,
         amount: totalAmount,
-        payment: "esewa",
+       
       };
     });
     return aggregateData;
