@@ -25,7 +25,7 @@ export const PopularProduct = () => {
 
   return (
     <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 p-8   bg-[var(--light-foreground)]   rounded items-start justify-center ">
-      <h1 className="text-[25px] font-semibold  tracking-wider ">
+      <h1 className="sm:text-[25px] text-[20px] font-semibold  tracking-wider ">
         Popular products
       </h1>
       <div className="w-full flex flex-col gap-3  scrollbar-custom pb-5   overflow-auto  rounded items-start justify-center">
