@@ -343,7 +343,7 @@ export const Navbar: React.FC = () => {
                   openCart
                     ? "visible opacity-100 translate-y-0"
                     : "invisible translate-y-10 opacity-0"
-                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-129px] sm:right-[-139px] w-[342px] sm:w-[450px] h-[570px]`}
+                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${store?.auth?.success ? "right-[-129px] sm:right-[-139px] ":"sm:right-[-85px]  right-[-70px] "} w-[342px] sm:w-[450px] h-[585px]`}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>

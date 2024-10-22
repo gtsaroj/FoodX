@@ -15,7 +15,10 @@ import {
   addToFavourite,
   removeFavourite,
 } from "../../Reducer/favourite.reducer";
-import { addProductToCart } from "../../Services/cart.services";
+import {
+  addProductToCart,
+  removeProductFromCart,
+} from "../../Services/cart.services";
 import { getPopularProducts } from "../../Services/product.services";
 import { useQuery } from "react-query";
 
@@ -85,18 +88,22 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     ? "fill-red-600 text-red-600 "
     : "fill-transparent";
 
-  const handleClick = () => {
+  const handleClick = (productId?: string) => {
     setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
 
     const findQuantity = store?.cart?.products?.find(
-      (singleProduct) => singleProduct.id == prop.id
+      (singleProduct) => singleProduct.id == productId
     );
     if (findQuantity?.quantity && findQuantity?.quantity <= 1) {
-      dispatch(removeCart(prop.id));
+      removeProductFromCart(
+        store?.auth.userInfo?.uid as string,
+        productId as string
+      );
+      dispatch(removeCart(productId));
     } else {
       dispatch(
         addToCart({
-          id: prop.id,
+          id: productId,
           quantity: -1,
         })
       );
@@ -108,6 +115,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     const isProductExistInCart = store?.cart?.products?.some(
       (product) => product.id === prop.id
     );
+
     try {
       if (store?.auth?.userInfo?.uid && !isProductExistInCart) {
         await addProductToCart(store?.auth?.userInfo?.uid as string, prop.id);
@@ -138,7 +146,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     }
   };
 
-  const { data, } = useQuery("topProducts", getProducts, {
+  const { data } = useQuery("topProducts", getProducts, {
     staleTime: 3 * 60 * 1000,
   });
 
@@ -204,9 +212,8 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
-              <button onClick={() => handleClick()}>
+              <button onClick={() => handleClick(prop.id)}>
                 <Minus
-                  
                   className={` sm:size-5 size-3 hover:text-[var(--secondary-color)]`}
                   aria-disabled={"true"}
                 />
@@ -214,7 +221,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
 
               <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
               <Plus
-                
                 className=" sm:size-5 size-3 cursor-pointer hover:text-[var(--secondary-color)]"
                 onClick={() => {
                   setCartQuantity((prevValue) => prevValue + 1);

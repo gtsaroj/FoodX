@@ -11,6 +11,7 @@ import {
 import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
 import { useQuery } from "react-query";
+import { specialProducts } from "../../Hooks/useAllProducts";
 
 export interface categoriesTagOption {
   name: string;
@@ -28,16 +29,21 @@ export const MenuType: React.FC = () => {
     name: "",
   });
 
+  const { data: specials, isFetched } = specialProducts();
+
   const getMenuProducts = async () => {
     setLoading(true);
     try {
       const response = await getProductsByTag(initialTag?.id as string);
-      const specialProducts = await getSpecialProducts();
-      const aggregateSpecialData = specialProducts?.data?.filter(
+
+      const aggregateSpecialData = specials?.filter(
         (product: Product) => product?.tagId === initialTag?.id
       );
 
-      setInitialData([...response.data, ...aggregateSpecialData]);
+      setInitialData([
+        ...response.data,
+        ...(aggregateSpecialData as Product[]),
+      ]);
     } catch (error) {
       throw new Error("Error while getting products by tag" + error);
     }
@@ -57,14 +63,14 @@ export const MenuType: React.FC = () => {
   };
 
   const { data, isLoading } = useQuery("categories", CategoriesData, {
-    staleTime: 4 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
     if (initialTag?.id) {
       getMenuProducts();
     }
-  }, [initialTag.id]);
+  }, [initialTag?.id]);
 
   const gradientColorPalette = [
     "linear-gradient(135deg, rgba(255, 223, 186, 0.8), rgba(255, 150, 100, 0.8))", // Gradient for Pizza
