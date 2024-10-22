@@ -5,10 +5,6 @@ import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { FavouriteCard } from "../../Components/Card/Card.Favourite";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import { addProductToCart } from "../../Services/cart.services";
 import { useAllProducts } from "../../Hooks/useAllProducts";
@@ -88,7 +84,7 @@ const Favourite: React.FC = () => {
           My Favourite
         </h3>
       </div>
-      <div className="flex h-full px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
+      <div className="flex flex-col items-center w-full h-full gap-6 px-4 py-5 overflow-y-scroll duration-500">
         {initialProducts.length > 0 ? (
           initialProducts?.map((singleSelectedProduct) => (
             <FavouriteCard
@@ -97,8 +93,8 @@ const Favourite: React.FC = () => {
             />
           ))
         ) : (
-          <div className="flex flex-col items-center py-16 justify-center gap-10 sm:gap-2">
-            <ShoppingBag className=" cursor-pointer size-16" />
+          <div className="flex flex-col items-center justify-center gap-10 py-16 sm:gap-2">
+            <ShoppingBag className="cursor-pointer  size-16" />
 
             <h1 className="sm:text-[25px] text-[21px] ">
               Your Favourite is empty

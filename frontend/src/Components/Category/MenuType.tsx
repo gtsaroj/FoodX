@@ -6,7 +6,6 @@ import Skeleton from "react-loading-skeleton";
 
 import {
   getProductsByTag,
-  getSpecialProducts,
 } from "../../Services/product.services";
 import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
@@ -99,8 +98,8 @@ export const MenuType: React.FC = () => {
   ];
 
   return (
-    <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
-      <div className="w-full flex items-center  overflow-auto gap-4">
+    <div className="flex flex-col flex-wrap w-full gap-8 py-8 ">
+      <div className="flex items-center w-full gap-4 overflow-auto">
         {data?.map((tag, index) => (
           <FoodCategory
             action={(data) => setInitialTag(data)}
@@ -119,10 +118,10 @@ export const MenuType: React.FC = () => {
           {initialTag?.name}
         </p>
 
-        <div className=" w-full  flex   gap-8 flex-wrap  sm:gap-20   justify-center sm:justify-evenly lg:justify-start items-center   ">
+        <div className="flex flex-wrap items-center justify-center w-full gap-8  sm:gap-20 sm:justify-evenly lg:justify-start">
           {isLoading || !loading ? (
             initialData?.length <= 0 ? (
-              <div className="w-full flex flex-col items-center justify-center text-center p-4">
+              <div className="flex flex-col items-center justify-center w-full p-4 text-center">
                 <Frown className="size-32 text-[var(--dark-secondary-text)] " />
                 <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
                   No Products Found
@@ -138,7 +137,7 @@ export const MenuType: React.FC = () => {
               ))
             )
           ) : (
-            <div className="w-full gap-4 flex sm:flex-row flex-col items-center ">
+            <div className="flex flex-col items-center w-full gap-4 sm:flex-row ">
               <Skeleton
                 height={230}
                 width={330}
