@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { SpecialCards } from "../../Components/Card/Card.Product";
 import Cart from "../Cart/Cart";
 import { getSpecialProducts } from "../../Services/product.services";
@@ -17,7 +17,7 @@ const Specials: React.FC = () => {
     }
   };
 
-  const { data, error, isLoading } = useQuery("specials", specialProducts);
+  const { data } = useQuery("specials", specialProducts);
 
   return (
     <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-8 py-8 rounded">

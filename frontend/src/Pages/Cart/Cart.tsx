@@ -76,7 +76,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
     "productsOfCart",
     fetchProductsOfCartFn,
     {
-      enabled: store?.auth?.success,
+      enabled: store?.auth?.success && !store?.cart?.products,
     }
   );
 

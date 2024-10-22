@@ -138,7 +138,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     }
   };
 
-  const { data, isLoading, error } = useQuery("topProducts", getProducts, {
+  const { data, } = useQuery("topProducts", getProducts, {
     staleTime: 3 * 60 * 1000,
   });
 
@@ -196,7 +196,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         </div>
 
         <div
-          className={`p-2 ${
+          className={`p-1.5 ${
             activeCart
               ? ""
               : "duration-200 cursor-pointer hover:bg-[var(--primary-color)] hover:text-[var(--dark-text)]"
@@ -207,7 +207,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
               <button onClick={() => handleClick()}>
                 <Minus
                   
-                  className={` sm:size-6 size-3 hover:text-[var(--secondary-color)]`}
+                  className={` sm:size-5 size-3 hover:text-[var(--secondary-color)]`}
                   aria-disabled={"true"}
                 />
               </button>
@@ -215,7 +215,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
               <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
               <Plus
                 
-                className=" sm:size-6 size-3 cursor-pointer hover:text-[var(--secondary-color)]"
+                className=" sm:size-5 size-3 cursor-pointer hover:text-[var(--secondary-color)]"
                 onClick={() => {
                   setCartQuantity((prevValue) => prevValue + 1);
                   dispatch(
