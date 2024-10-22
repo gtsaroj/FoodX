@@ -3,6 +3,9 @@ import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { Store } from "./Store";
 import { authLogout } from "./Reducer/user.reducer";
+import { resetCart } from "./Reducer/product.reducer";
+import { resetFavourite } from "./Reducer/favourite.reducer";
+import { resetOrder } from "./Reducer/order.reducer";
 
 // Flag to track if the token is being refreshed
 let isRefreshing = false;
@@ -27,8 +30,6 @@ makeRequest.interceptors.request.use(
   }
 );
 
-
-
 makeRequest.interceptors.response.use(
   (response) => {
     return response;
@@ -45,6 +46,9 @@ makeRequest.interceptors.response.use(
         if (!hasLoggedOut) {
           hasLoggedOut = true;
           Store.dispatch(authLogout());
+          Store.dispatch(resetCart());
+          Store.dispatch(resetFavourite());
+          Store.dispatch(resetOrder());
           toast.error("Your session has expired. Please log in again.");
           return Promise.reject("Unauthorized: No refresh token available.");
         }

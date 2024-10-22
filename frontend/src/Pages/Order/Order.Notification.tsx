@@ -13,13 +13,11 @@ const OrderNotification = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const currentOrders = useSelector(
-    (state: RootState) => state.root.order.order
-  );
+  const store = useSelector((state: RootState) => state.root);
 
   useEffect(() => {
-    setInitialData(currentOrders);
-  }, [currentOrders]);
+    setInitialData(store.order.order);
+  }, [store.order.order]);
 
   useEffect(() => {
     const handleNotification = (order: Order) => {
@@ -66,7 +64,7 @@ const OrderNotification = () => {
     });
   }, [initialData, dispatch]);
 
-  return (
+  return store?.auth.success ? (
     <div className="sm:max-w-[400px]  w-full flex flex-col items-start justify-center gap-2.5">
       {initialData?.map((order) => (
         <div className="w-full  text-[var(--dark-text)] flex items-start gap-3 justify-start">
@@ -80,7 +78,7 @@ const OrderNotification = () => {
             <div className="w-full flex items-start gap-1.5">
               {orderStatus?.map((_, index) => (
                 <p
-                  key={index} 
+                  key={index}
                   className={`w-20 h-1 ${
                     order.status === "cancelled"
                       ? "bg-red-500"
@@ -146,6 +144,8 @@ const OrderNotification = () => {
         </div>
       ))}
     </div>
+  ) : (
+    ""
   );
 };
 

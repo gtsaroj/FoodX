@@ -114,7 +114,7 @@ export const MenuType: React.FC = () => {
           {initialTag?.name}
         </p>
 
-        <div className=" w-full  flex sm:flex-row flex-col gap-8 sm:flex-wrap  sm:gap-20 sm:justify-evenly lg:justify-start items-center   ">
+        <div className=" w-full  flex   gap-8 flex-wrap  sm:gap-20   justify-center sm:justify-evenly lg:justify-start items-center   ">
           {!loading ? (
             initialData?.length <= 0 ? (
               <div className="w-full flex flex-col items-center justify-center text-center p-4">
@@ -129,7 +129,7 @@ export const MenuType: React.FC = () => {
               </div>
             ) : (
               initialData?.map((singleObject, index) => (
-                <SpecialCards prop={singleObject} key={index} />
+                <SpecialCards style={true} prop={singleObject} key={index} />
               ))
             )
           ) : (
@@ -193,7 +193,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
   return (
     <div
       onClick={() => action({ ...prop })}
-      className="w-full min-w-[150px] h-[200px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
+      className="w-full min-w-[150px] h-[180px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
       key={prop.id}
     >
       <div
@@ -205,7 +205,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-8   ">
           <img
             src={prop.image}
-            className="w-[260px] scale-[1] sm:scale-[1.05] h-[180px] rounded-3xl "
+            className="sm:w-[260px] w-[240px] scale-[0.9] sm:scale-[1.05] h-[130px] sm:h-[180px] rounded-3xl "
             alt=""
             loading="lazy"
           />

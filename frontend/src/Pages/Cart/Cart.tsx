@@ -169,8 +169,8 @@ const Cart: React.FC<CardProp> = ({ action }) => {
       </div>
       <div className="flex border-t-[1px] border-[var(--dark-border)]    flex-col w-full gap-5">
         <div className="flex justify-between p-2  text-[var(--dark-text)]">
-          <p className="text-lg font-semibold tracking-wider">Total Amount:</p>
-          <p className="sm:text-[18px] text-[15px] ">
+          <p className="sm:text-lg text-[16px] font-semibold tracking-wider">Total Amount:</p>
+          <p className="sm:text-[18px] text-[14px] ">
             Rs. <span>{Total()}</span>
           </p>
         </div>
@@ -180,7 +180,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
             setLoading(true);
             navigate("/cart/checkout");
           }}
-          className="py-3 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider text-xl font-bold"
+          className="sm:py-3 py-1.5 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider sm:text-xl text-[16px] font-semibold"
         >
           Checkout
         </button>

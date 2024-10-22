@@ -29,7 +29,10 @@ const Banner: React.FC = () => {
             <Skeleton
               borderRadius={"13px"}
               width="980px"
-              height="545px"
+              style={{
+                minHeight: "300px",
+                maxHeight: "545px",
+              }}
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
               count={1}
@@ -66,7 +69,7 @@ export const Sponsor: React.FC = () => {
     <div className="items-center justify-center hidden w-full h-full lg:flex">
       <div className="lg:h-[602px]  h-[300px] max-w-md sm:h-[350px] md:h-[382px] duration-500  flex-grow">
         {loading ? (
-          <div className="flex w-full gap-4 rounded-xl ">
+          <div className="lg:flex hidden w-full gap-4 rounded-xl ">
             <Skeleton
               borderRadius={"13px"}
               width="450px"
