@@ -119,9 +119,9 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
           }
           loader={
             loader && (
-              <div className="flex flex-col h-full  items-center justify-center w-full pt-3 ">
+              <div className="flex relative flex-col h-full   items-center justify-center w-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
-                <div className="flex items-center w-[100px] h-full pt-28 justify-center gap-3">
+                <div className="flex items-center   w-full gap-2  min-[200px] h-full min-h-[200px] ">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
                   <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                     {" "}
@@ -187,7 +187,6 @@ const NoticationContainer: React.FC<NotificationProp> = ({
               {notification.id}
             </p>
           </div>
-
         </div>
         <p
           className={`text-xs text-gray-400 p-1 duration-150 ${
@@ -198,15 +197,17 @@ const NoticationContainer: React.FC<NotificationProp> = ({
         </p>
       </div>
       <div className="flex flex-col items-start justify-center gap-1">
-      <button onClick={() => setOpen(!open)}>
-        {" "}
-        <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
-      </button>
+        <button onClick={() => setOpen(!open)}>
+          {" "}
+          <ChevronDown
+            className={`${open ? "rotate-180" : ""} duration-200 `}
+          />
+        </button>
 
-      <div className=" flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs  text-[var(--dark-secondary-text)] ">
-            {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} { " "} ago
-          </div>
-     </div>
+        <div className=" flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs  text-[var(--dark-secondary-text)] ">
+          {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} ago
+        </div>
+      </div>
     </div>
   );
 };
