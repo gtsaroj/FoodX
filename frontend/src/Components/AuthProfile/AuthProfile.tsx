@@ -61,7 +61,7 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
           <div>
             <img
               src={user.avatar}
-              className="w-[100px] h-[77px] rounded-full"
+              className="sm:w-[100px] w-[60px] h-[55p] sm:h-[77px] rounded-full"
               alt=""
             />
           </div>

@@ -58,15 +58,15 @@ const Carousel: React.FC<CarouselProp> = ({ props, time }) => {
           backgroundImage: `url(${props[currentSlide]?.image})`,
         }}
       >
-        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] left-8 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
+        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] left-3 sm:left-8 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
           <ArrowLeft
-            className="hover:text-[var(--dark-text)] "
+            className="sm:size-6 size-5 hover:text-[var(--dark-text)] "
             onClick={prevSlide}
           />
         </div>
-        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] right-8 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
+        <div className="absolute cursor-pointer bg-[var(--dark-text)] text-[var(--light-text)] p-1 rounded-full group-hover:block hidden top-[50%] sm:right-8 right-3 -translate-x-0 translate-y-[-50%] hover:bg-[var(--secondary-color)]">
           <ArrowRight
-            className="hover:text-[var(--dark-text)] "
+         className="sm:size-6 size-5 hover:text-[var(--dark-text)] "
             onClick={nextSlide}
           />
         </div>
