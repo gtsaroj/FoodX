@@ -4,9 +4,7 @@ import { Product } from "../../models/product.model";
 import { getCategories } from "../../Services/category.services";
 import Skeleton from "react-loading-skeleton";
 
-import {
-  getProductsByTag,
-} from "../../Services/product.services";
+import { getProductsByTag } from "../../Services/product.services";
 import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
 import { useQuery } from "react-query";
@@ -28,7 +26,7 @@ export const MenuType: React.FC = () => {
     name: "",
   });
 
-  const { data: specials, isFetched } = specialProducts();
+  const { data: specials } = specialProducts();
 
   const getMenuProducts = async () => {
     setLoading(true);
@@ -118,7 +116,7 @@ export const MenuType: React.FC = () => {
           {initialTag?.name}
         </p>
 
-        <div className="flex flex-wrap items-center justify-center w-full gap-8  sm:gap-20 sm:justify-evenly lg:justify-start">
+        <div className="flex flex-wrap items-center justify-center w-full gap-8 sm:gap-20 sm:justify-evenly lg:justify-start">
           {isLoading || !loading ? (
             initialData?.length <= 0 ? (
               <div className="flex flex-col items-center justify-center w-full p-4 text-center">
