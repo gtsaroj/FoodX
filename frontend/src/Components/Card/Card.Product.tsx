@@ -105,12 +105,13 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
 
   const addProductToCartFn = async () => {
     const toastLoader = toast.loading("Loading...");
-    const isProductExistInCart = store?.cart?.products?.find(
+    const isProductExistInCart = store?.cart?.products?.some(
       (product) => product.id === prop.id
     );
     try {
-      if (store?.auth?.userInfo?.uid && !isProductExistInCart)
+      if (store?.auth?.userInfo?.uid && !isProductExistInCart) {
         await addProductToCart(store?.auth?.userInfo?.uid as string, prop.id);
+      }
       setActiveCart((prevValue) => !prevValue);
       dispatch(
         addToCart({
@@ -131,7 +132,6 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
   const getProducts = async (): Promise<Product[]> => {
     try {
       const response = await getPopularProducts();
-
       return response.data;
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
@@ -206,16 +206,16 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
               <button onClick={() => handleClick()}>
                 <Minus
-                  size={20}
-                  className={` hover:text-[var(--secondary-color)]`}
+                  
+                  className={` sm:size-6 size-3 hover:text-[var(--secondary-color)]`}
                   aria-disabled={"true"}
                 />
               </button>
 
               <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
               <Plus
-                size={20}
-                className=" cursor-pointer hover:text-[var(--secondary-color)]"
+                
+                className=" sm:size-6 size-3 cursor-pointer hover:text-[var(--secondary-color)]"
                 onClick={() => {
                   setCartQuantity((prevValue) => prevValue + 1);
                   dispatch(
