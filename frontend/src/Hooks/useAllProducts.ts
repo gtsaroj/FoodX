@@ -24,7 +24,10 @@ const getAllProducts = async (): Promise<Product[]> => {
 
 export const useAllProducts = () => {
   return useQuery<Product[]>("all", getAllProducts, {
-    staleTime: 0,
+    staleTime: 2 * 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnMount: true
+    
+    
   });
 };

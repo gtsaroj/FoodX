@@ -50,7 +50,7 @@ const AdminProfile = React.lazy(() =>
 );
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import CustomToast from "./Components/Toast/Toast.tsx";
 import OrderSuccess from "./Pages/Order.Success.page.tsx";
 

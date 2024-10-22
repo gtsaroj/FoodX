@@ -56,7 +56,7 @@ export const MenuType: React.FC = () => {
     }
   };
 
-  const { data, error, isLoading } = useQuery("categories", CategoriesData, {
+  const { data, isLoading } = useQuery("categories", CategoriesData, {
     staleTime: 4 * 60 * 1000,
   });
 

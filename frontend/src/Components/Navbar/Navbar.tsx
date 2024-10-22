@@ -22,10 +22,6 @@ import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
 import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../../Services/product.services";
 import { addToCart, resetCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
@@ -38,7 +34,7 @@ import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
 import { MdOutlineShoppingBag } from "react-icons/md";
-import { useQuery } from "react-query";
+import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { useAllProducts } from "../../Hooks/useAllProducts";
 
 const navbarItems = [
@@ -93,6 +89,12 @@ export const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [openCart, setOpenCart] = useState<boolean>(false);
+
+  const {
+    data: allProducts,
+
+    isFetched,
+  } = useAllProducts();
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -169,8 +171,10 @@ export const Navbar: React.FC = () => {
 
   const handleSearch = async (value: string) => {
     if (value.length <= 0) return;
-    setLoading(true);
+    if (!isFetched) return setLoading(isFetched);
+
     try {
+      setLoading(isFetched);
       const filter = await searchProducts(value);
       setSearchData(filter);
     } catch (error) {
@@ -179,19 +183,23 @@ export const Navbar: React.FC = () => {
     setLoading(false);
   };
 
-  const { data: allProducts } = useAllProducts();
-
   const searchProducts = async (value: string) => {
-    const filterProducts =
-      allProducts &&
-      allProducts.filter((product) =>
+    if (isFetched) {
+      const filterProducts = allProducts?.filter((product) =>
         product.name.toLowerCase().includes(value.toLowerCase())
       );
-    return filterProducts;
+      return filterProducts;
+    }
   };
 
-  const debounceSearch = useCallback(debounce(handleSearch, 200), [searchValue]);
-  
+  // useEffect(() => {
+  //   if (!searchValue) {
+  //     setSearchData(allProducts);
+  //   }
+  // }, [allProducts]);
+  const debounceSearch = useCallback(debounce(handleSearch, 200), [
+    searchValue,
+  ]);
 
   return (
     <div className=" h-full flex flex-col items-start">
@@ -278,7 +286,7 @@ export const Navbar: React.FC = () => {
                   searchValue?.length > 0
                     ? "visible opacity-100 translate-y-0 "
                     : "invisible opacity-0 -translate-y-10 "
-                } w-full h-full top-[8rem]   flex justify-end right-0 px-3 absolute`}
+                } w-full h-full top-[8rem] sm:top-[10rem]   flex justify-end right-0 px-3 absolute`}
               >
                 <div className="border-[1px] w-full rounded-lg md:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
                   <span
@@ -680,11 +688,11 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         alt={data.name}
       />
       <div className="flex-1">
-        <h1 className="text-[15px] font-medium tracking-wide text-[var(--dark-text)]">
+        <h1 className="sm:text-[15px] text-[12px] font-medium tracking-wide text-[var(--dark-text)]">
           {data.name}
         </h1>
         <p
-          className={`text-[14px] text-[var(--dark-secondary-text)] ${
+          className={`sm:text-[14px] text-xs text-[var(--dark-secondary-text)] ${
             data?.quantity < 20
               ? "text-orange-400"
               : data.quantity <= 0
@@ -702,7 +710,7 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         )}
       </div>
       <button
-        className="bg-[var(--primary-color)] text-white py-1 px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 text-[14px]"
+        className="bg-[var(--primary-color)] text-white py-2 px-2 sm:px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 sm:text-[14px]"
         onClick={() => {
           dispatch(
             addToCart({
@@ -716,7 +724,7 @@ export const SearchProductCard: React.FC<Product> = (data) => {
           toast.success("Product Added!");
         }}
       >
-        Add to Cart
+        <MdOutlineShoppingCartCheckout className="sm:size-6 size-5 text-[var(--dark-text)] " />
       </button>
     </div>
   );

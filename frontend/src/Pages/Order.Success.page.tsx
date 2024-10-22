@@ -44,7 +44,7 @@ const OrderSuccess: React.FC = () => {
       {/* Order Summary */}
       <div className="min-w-[250px]   w-[400px] min-h-[230px] h-[350px] ">
         <img
-          className="w-full scale-[1.1] sm:scale-[1.4] h-full"
+          className="w-full scale-[1.1] sm:scale-[1.3] h-full"
           src={Success}
           alt="Success"
         />
