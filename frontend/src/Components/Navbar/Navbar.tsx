@@ -38,6 +38,8 @@ import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
 import { MdOutlineShoppingBag } from "react-icons/md";
+import { useQuery } from "react-query";
+import { useAllProducts } from "../../Hooks/useAllProducts";
 
 const navbarItems = [
   {
@@ -179,18 +181,14 @@ export const Navbar: React.FC = () => {
     setLoading(false);
   };
 
+  const { data: allProducts } = useAllProducts();
+
   const searchProducts = async (value: string) => {
-    const [specialProducts, normalProducts] = [
-      await getSpecialProducts(),
-      await getNormalProducts(),
-    ];
-    const allProducts = [
-      ...specialProducts?.data,
-      ...normalProducts?.data,
-    ] as Product[];
-    const filterProducts = allProducts?.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
-    );
+    const filterProducts =
+      allProducts &&
+      allProducts.filter((product) =>
+        product.name.toLowerCase().includes(value.toLowerCase())
+      );
     return filterProducts;
   };
 

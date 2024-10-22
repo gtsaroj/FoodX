@@ -17,6 +17,7 @@ import {
 } from "../../Reducer/favourite.reducer";
 import { addProductToCart } from "../../Services/cart.services";
 import { getPopularProducts } from "../../Services/product.services";
+import { useQuery } from "react-query";
 
 interface MenuProp {
   prop: Product;
@@ -26,16 +27,25 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
   const [activeCart, setActiveCart] = useState<boolean>(false);
   const [cartQuantity, setCartQuantity] = useState<number>(1);
   const [isNotAuthenticated, setIsNotAuthenticated] = useState<boolean>(true);
-  const [initialData, setInitialData] = useState<Product[]>([]);
 
   const dispatch = useDispatch();
 
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  // const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  // const favourites = useSelector(
+  //   (state: RootState) => state.root.favourite.favourite
+  // );
+  // const selectedProductsQuantity = useSelector(
+  //   (state: RootState) => state.root.cart.products
+  // );
 
+  const store = useSelector((state: RootState) => state.root);
   const addFavouriteProduct = async () => {
     const toastId = toast.loading("Processing, please wait...");
     try {
-      await addFavourite({ uid: authUser.uid as string, productId: prop.id });
+      await addFavourite({
+        uid: store?.auth?.userInfo?.uid as string,
+        productId: prop.id,
+      });
       dispatch(addToFavourite(prop.id));
       toast.dismiss(toastId);
       toast.success("Item added!");
@@ -51,7 +61,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
 
     try {
       await removeFavourites({
-        uid: authUser.uid as string,
+        uid: store?.auth?.userInfo?.uid as string,
         productId: prop.id,
       });
       toast.dismiss(toastId);
@@ -64,15 +74,10 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     }
   };
 
-  const selectedProductsQuantity = useSelector(
-    (state: RootState) => state.root.cart.products
-  );
-  const favourites = useSelector(
-    (state: RootState) => state.root.favourite.favourite
-  );
-
   const isFavourite = (id: string) => {
-    return favourites?.some((singleProduct) => singleProduct === id);
+    return store?.favourite?.favourite?.some(
+      (singleProduct) => singleProduct === id
+    );
   };
   const isAuthUser = useSelector((state: RootState) => state.root.auth.success);
 
@@ -83,7 +88,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
   const handleClick = () => {
     setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
 
-    const findQuantity = selectedProductsQuantity?.find(
+    const findQuantity = store?.cart?.products?.find(
       (singleProduct) => singleProduct.id == prop.id
     );
     if (findQuantity?.quantity && findQuantity?.quantity <= 1) {
@@ -100,10 +105,12 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
 
   const addProductToCartFn = async () => {
     const toastLoader = toast.loading("Loading...");
-
+    const isProductExistInCart = store?.cart?.products?.find(
+      (product) => product.id === prop.id
+    );
     try {
-      if (authUser?.uid)
-        await addProductToCart(authUser.uid as string, prop.id);
+      if (store?.auth?.userInfo?.uid && !isProductExistInCart)
+        await addProductToCart(store?.auth?.userInfo?.uid as string, prop.id);
       setActiveCart((prevValue) => !prevValue);
       dispatch(
         addToCart({
@@ -121,22 +128,22 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     toast.dismiss(toastLoader);
   };
 
-  const getProducts = async () => {
+  const getProducts = async (): Promise<Product[]> => {
     try {
       const response = await getPopularProducts();
 
-      setInitialData(response.data);
+      return response.data;
     } catch (error) {
       throw new Error("Error while getting popular products" + error);
     }
   };
 
-  useEffect(() => {
-    getProducts();
-  }, []);
+  const { data, isLoading, error } = useQuery("topProducts", getProducts, {
+    staleTime: 3 * 60 * 1000,
+  });
 
   useEffect(() => {
-    const findQuantity = selectedProductsQuantity?.find(
+    const findQuantity = store?.cart?.products?.find(
       (singleProduct) => singleProduct.id === prop.id
     );
     if (findQuantity) {
@@ -148,7 +155,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
     if (isAuthUser) {
       setIsNotAuthenticated(true);
     }
-  }, [selectedProductsQuantity, isAuthUser]);
+  }, [store?.cart.products, isAuthUser]);
 
   return (
     <>
@@ -230,13 +237,14 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         <div className="w-full">
           <div
             className={` ${
-              initialData?.findIndex((product) => product.id === prop.id) !== -1
+              data?.findIndex((product) => product.id === prop.id) !== -1
                 ? "visible"
                 : "invisible"
             } absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer  text-[var(--dark-text)] left-0 top-2`}
           >
             <p className={`text-[var(--dark-text)] text-sm tracking-`}>
-              #{initialData?.findIndex((product) => product.id === prop.id) + 1}{" "}
+              #
+              {data && data?.findIndex((product) => product.id === prop.id) + 1}{" "}
               🔥
             </p>
           </div>

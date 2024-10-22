@@ -10,6 +10,7 @@ import {
 } from "../../Services/product.services";
 import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
+import { useQuery } from "react-query";
 
 export interface categoriesTagOption {
   name: string;
@@ -21,8 +22,6 @@ export const MenuType: React.FC = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
-
-  const [categoriesTag, setCategoriesTag] = useState<Category[]>([]);
   const [initialTag, setInitialTag] = useState<Category>({
     id: "",
     image: "",
@@ -45,21 +44,21 @@ export const MenuType: React.FC = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const CategoriesData = async () => {
-      setLoading(true);
-      try {
-        const response = await getCategories();
-        if (response?.data) {
-          setCategoriesTag(response.data);
-          setInitialTag(response?.data[0]);
-        }
-      } catch (error) {
-        throw new Error("Error fetching tags:" + error);
-      }
-    };
-    CategoriesData();
-  }, []);
+  const CategoriesData = async (): Promise<Category[]> => {
+    setLoading(true);
+    try {
+      const response = await getCategories();
+
+      setInitialTag(response?.data[0]);
+      return response.data;
+    } catch (error) {
+      throw new Error("Error fetching tags:" + error);
+    }
+  };
+
+  const { data, error, isLoading } = useQuery("categories", CategoriesData, {
+    staleTime: 4 * 60 * 1000,
+  });
 
   useEffect(() => {
     if (initialTag?.id) {
@@ -96,7 +95,7 @@ export const MenuType: React.FC = () => {
   return (
     <div className="flex w-full flex-col flex-wrap gap-8 py-8 ">
       <div className="w-full flex items-center  overflow-auto gap-4">
-        {categoriesTag?.map((tag, index) => (
+        {data?.map((tag, index) => (
           <FoodCategory
             action={(data) => setInitialTag(data)}
             prop={tag}
@@ -115,7 +114,7 @@ export const MenuType: React.FC = () => {
         </p>
 
         <div className=" w-full  flex   gap-8 flex-wrap  sm:gap-20   justify-center sm:justify-evenly lg:justify-start items-center   ">
-          {!loading ? (
+          {isLoading || !loading ? (
             initialData?.length <= 0 ? (
               <div className="w-full flex flex-col items-center justify-center text-center p-4">
                 <Frown className="size-32 text-[var(--dark-secondary-text)] " />

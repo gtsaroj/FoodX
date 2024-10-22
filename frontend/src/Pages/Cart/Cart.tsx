@@ -17,6 +17,8 @@ import {
   getSpecialProducts,
 } from "../../Services/product.services";
 import { Loader } from "../../Components/Loader/Loader";
+import { useQuery } from "react-query";
+import { useAllProducts } from "../../Hooks/useAllProducts";
 
 interface CardProp {
   action?: () => void;
@@ -63,22 +65,32 @@ const Cart: React.FC<CardProp> = ({ action }) => {
     toast.dismiss(toastLoader);
   };
 
-  const fetchProductsOfCartFn = async () => {
+  const { data: products } = useAllProducts();
+
+  const fetchProductsOfCartFn = async (): Promise<string[]> => {
     setLoading(true);
     try {
       const response = (await getProductsOfCart(
         store?.auth?.userInfo?.uid as string
       )) as { products: string[] };
-      const [normalProducts, specialsProducts] = [
-        await getNormalProducts(),
-        await getSpecialProducts(),
-      ];
-      const products = [
-        ...normalProducts.data,
-        ...specialsProducts.data,
-      ] as Product[];
+      return response.products;
+    } catch (error) {
+      throw new Error("Error while fetching products of cart" + error);
+    }
+  };
+
+  const { data: productIdsInCart } = useQuery(
+    "productsOfCart",
+    fetchProductsOfCartFn,
+    {
+      enabled: store?.auth?.success,
+    }
+  );
+
+  useEffect(() => {
+    if (productIdsInCart) {
       const filterProducts = products?.filter((product) =>
-        response.products.includes(product.id as string)
+        productIdsInCart.includes(product.id as string)
       );
 
       const isProductExist = filterProducts?.filter(
@@ -97,21 +109,16 @@ const Cart: React.FC<CardProp> = ({ action }) => {
           })
         );
       });
-    } catch (error) {
-      throw new Error("Error while fetching products of cart" + error);
     }
-  };
+  }, [productIdsInCart?.length]);
 
   const addNewProductToCartFn = async () => {
     const productsId = store?.cart?.products?.map((product) => product.id);
     try {
-      const fetchProductOfCart = await getProductsOfCart(
-        store?.auth?.userInfo?.uid as string
-      );
       const newProductsId = productsId?.filter(
-        (id) => !fetchProductOfCart?.products.includes(id)
+        (id) => !productIdsInCart?.some((data) => data === id)
       );
-      if (newProductsId.length > 0) {
+      if (newProductsId && productIdsInCart && productIdsInCart?.length > 0) {
         newProductsId?.forEach(async (product) => {
           await addProductToCart(store?.auth?.userInfo?.uid as string, product);
         });
@@ -123,10 +130,9 @@ const Cart: React.FC<CardProp> = ({ action }) => {
 
   useEffect(() => {
     if (store?.auth?.success) {
-      fetchProductsOfCartFn();
       addNewProductToCartFn();
     }
-  }, [store?.auth?.userInfo.uid]);
+  }, [store?.auth?.userInfo.uid, store?.cart.products, dispatch]);
 
   return (
     // Desktop
@@ -169,7 +175,9 @@ const Cart: React.FC<CardProp> = ({ action }) => {
       </div>
       <div className="flex border-t-[1px] border-[var(--dark-border)]    flex-col w-full gap-5">
         <div className="flex justify-between p-2  text-[var(--dark-text)]">
-          <p className="sm:text-lg text-[16px] font-semibold tracking-wider">Total Amount:</p>
+          <p className="sm:text-lg text-[16px] font-semibold tracking-wider">
+            Total Amount:
+          </p>
           <p className="sm:text-[18px] text-[14px] ">
             Rs. <span>{Total()}</span>
           </p>

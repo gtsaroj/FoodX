@@ -12,7 +12,6 @@ const favouriteSlice = createSlice({
   initialState: favouriteState,
   reducers: {
     addToFavourite: (state, action) => {
-      console.log(action);
       const productId = state.favourite.find(
         (product) => product === action.payload
       );

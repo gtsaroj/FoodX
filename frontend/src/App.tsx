@@ -50,6 +50,7 @@ const AdminProfile = React.lazy(() =>
 );
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import CustomToast from "./Components/Toast/Toast.tsx";
 import OrderSuccess from "./Pages/Order.Success.page.tsx";
 
@@ -131,54 +132,58 @@ export const App: React.FC = () => {
     auth.success ? SetShowContent(true) : SetShowContent(false);
   }, [auth]);
 
+  const queryClient = new QueryClient();
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/login"
-          element={showContent ? <Navigate to={"/"} /> : <Login />}
-        />
-        <Route
-          path="/register"
-          element={showContent ? <Navigate to={"/"} /> : <Register />}
-        />
-        <Route
-          path="/email-verification"
-          element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
-        />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route>
-          <Route path="/" element={<HomePage />}>
-            <Route index element={<Home />} />
-            <Route path="/cart" element={<CartPage />}></Route>
-            <Route element={<PrivateRoute userRole={["customer"]} />}>
-              <Route path="/profile" element={<AdminProfile />} />
-            </Route>
-            <Route
-              element={
-                <PrivateRoute userRole={["customer", "chef", "admin"]} />
-              }
-            >
-              <Route path="/orders" element={<Order />} />
-            </Route>
-            <Route
-              element={
-                <PrivateRoute userRole={["customer", "chef", "admin"]} />
-              }
-            >
-              <Route path="/cart/checkout" element={<CheckoutPage />} />
-            </Route>
-            <Route
-              element={
-                <PrivateRoute userRole={["customer", "chef", "admin"]} />
-              }
-            >
-              <Route path="/order/success" element={<OrderSuccess />} />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/login"
+            element={showContent ? <Navigate to={"/"} /> : <Login />}
+          />
+          <Route
+            path="/register"
+            element={showContent ? <Navigate to={"/"} /> : <Register />}
+          />
+          <Route
+            path="/email-verification"
+            element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
+          />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route>
+            <Route path="/" element={<HomePage />}>
+              <Route index element={<Home />} />
+              <Route path="/cart" element={<CartPage />}></Route>
+              <Route element={<PrivateRoute userRole={["customer"]} />}>
+                <Route path="/profile" element={<AdminProfile />} />
+              </Route>
+              <Route
+                element={
+                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
+                }
+              >
+                <Route path="/orders" element={<Order />} />
+              </Route>
+              <Route
+                element={
+                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
+                }
+              >
+                <Route path="/cart/checkout" element={<CheckoutPage />} />
+              </Route>
+              <Route
+                element={
+                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
+                }
+              >
+                <Route path="/order/success" element={<OrderSuccess />} />
+              </Route>
             </Route>
           </Route>
-        </Route>
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
