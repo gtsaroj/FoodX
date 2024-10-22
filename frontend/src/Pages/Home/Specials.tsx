@@ -4,21 +4,11 @@ import Cart from "../Cart/Cart";
 import { getSpecialProducts } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import Skeleton from "react-loading-skeleton";
-import { useQuery } from "react-query";
+
+import { specialProducts } from "../../Hooks/useAllProducts";
 
 const Specials: React.FC = () => {
-  const specialProducts = async (): Promise<Product[]> => {
-    try {
-      const response = await getSpecialProducts();
-      const products = response.data as Product[];
-      return products;
-    } catch (error) {
-      throw new Error("Error while getting special products" + error);
-    }
-  };
-
-  const { data } = useQuery("specials", specialProducts);
-
+  const { data } = specialProducts();
   return (
     <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-8 py-8 rounded">
       <div className="w-full  py-5">

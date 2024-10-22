@@ -11,6 +11,7 @@ import {
 } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import { addProductToCart } from "../../Services/cart.services";
+import { useAllProducts } from "../../Hooks/useAllProducts";
 
 const Favourite: React.FC = () => {
   const store = useSelector((state: RootState) => state.root);
@@ -61,27 +62,24 @@ const Favourite: React.FC = () => {
     }
   };
 
+  const { data: products, isFetched } = useAllProducts();
+
   const getAllProducts = async () => {
     try {
-      const [response, specialsProduct] = [
-        await getNormalProducts(),
-        await getSpecialProducts(),
-      ];
-
-      const products = [...response.data, ...specialsProduct.data] as Product[];
-
       const aggregateProducts = products?.filter((data) =>
         store?.favourite?.favourite?.includes(data.id)
       );
-      setInitialProducts(aggregateProducts);
+      setInitialProducts(aggregateProducts as Product[]);
     } catch (error) {
       throw new Error("Error while fetching  all products" + error);
     }
   };
 
   useEffect(() => {
-    getAllProducts();
-  }, [store.favourite.favourite]);
+    if (isFetched && products) {
+      getAllProducts();
+    }
+  }, [store.favourite.favourite, isFetched]);
 
   return (
     <div className="flex flex-col  h-[580px]  rounded-lg  w-[350px]   pb-7 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
@@ -102,7 +100,9 @@ const Favourite: React.FC = () => {
           <div className="flex flex-col items-center py-16 justify-center gap-10 sm:gap-2">
             <ShoppingBag className=" cursor-pointer size-16" />
 
-            <h1 className="sm:text-[25px] text-[21px] ">Your Favourite is empty</h1>
+            <h1 className="sm:text-[25px] text-[21px] ">
+              Your Favourite is empty
+            </h1>
           </div>
         )}
       </div>
