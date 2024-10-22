@@ -44,10 +44,10 @@ export const OrderHistory = () => {
           fieldName: "Id",
           colStyle: { width: "100px", textAlign: "start" },
           render: (item: UserOrder) => (
-            <div className=" !p-0 w-[100px]   relative cursor-pointer group/id text-center ">
+            <div className=" !p-0 w-[100px]  text-xs sm:text-[14px]  relative cursor-pointer group/id text-center ">
               #{item.id?.substring(0, 8)}
               <div
-                className=" top-[-27px] mx-2  text-[15px] -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
+                className=" top-[-27px] mx-2  text-[15px] text-xs sm:text-sm -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
              rounded shadow "
               >
                 #{item.id}
@@ -63,7 +63,7 @@ export const OrderHistory = () => {
             textAlign: "start",
           },
           render: (item: UserOrder) => (
-            <div className=" w-[200px]  flex items-center justify-start gap-1 text-[var(--dark-text)]">
+            <div className=" w-[200px] sm:text-[14px] text-xs  flex items-center justify-start gap-1 text-[var(--dark-text)]">
               <p>
                 {item.id == selectedId && isCollapsed
                   ? item.products.map(
@@ -95,7 +95,7 @@ export const OrderHistory = () => {
             textAlign: "start",
           },
           render: (item: UserOrder) => (
-            <div className=" w-[200px] flex flex-col items-start justify-center text-[var(--dark-text)] ">
+            <div className=" w-[200px] sm:text-[14px] text-xs flex flex-col items-start justify-center text-[var(--dark-text)] ">
               <span>{item.time}</span>
             </div>
           ),
@@ -109,7 +109,7 @@ export const OrderHistory = () => {
           },
           render: (item: UserOrder) => (
             <div
-              className=" w-[180px]  mb-2.5
+              className=" w-[180px] sm:text-[14px] text-xs  mb-2.5
             text-[var(--dark-text)]  "
             >
               <div
@@ -141,7 +141,7 @@ export const OrderHistory = () => {
             textAlign: "start",
           },
           render: (item: UserOrder) => (
-            <div className=" w-[140px]  flex flex-col items-start justify-center text-[var(--dark-text)] ">
+            <div className=" w-[140px] sm:text-[14px] text-xs  flex flex-col items-start justify-center text-[var(--dark-text)] ">
               <span>Rs. {item.amount}</span>
             </div>
           ),
@@ -228,7 +228,7 @@ export const OrderHistory = () => {
 
   return (
     <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var(--light-foreground)] px-5 py-4   rounded items-start justify-center">
-      <h1 className="text-[25px] font-semibold tracking-wider ">
+      <h1 className="sm:text-[25px] text-[21px] font-semibold tracking-wider ">
         Order History
       </h1>
 

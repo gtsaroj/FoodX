@@ -50,7 +50,7 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
         />
       </div>
       <div className="flex h-full  flex-col gap-2 px-3 items-start justify-evenly ">
-        <p className="sm:text-xl text-lg  text-[var(--dark-text)] font-semibold tracking-wide">
+        <p className="sm:text-[18px] text-[16px]  text-[var(--dark-text)] font-semibold tracking-wide">
           {prop.name}
         </p>
         <p className="text-sm  text-[var(--dark-secondary-text)] ">
@@ -59,9 +59,9 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
       </div>
       <div
         onClick={() => removeFavouriteProduct(prop.id)}
-        className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
+        className=" cursor-pointer duration-150 absolute px-2 sm:px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
-        <Trash2 className="text-white " />
+        <Trash2 className="text-white sm:size-6 size-5 " />
       </div>
     </div>
   );

@@ -38,7 +38,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
       key={prop.id}
       className={`duration-1000 h-[100px]  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
-      <div className="  w-[120px] sm:h-[110px] h-full  ">
+      <div className="  w-[120px]  h-full  ">
         <img
           className="w-full h-full  object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
@@ -46,7 +46,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         />
       </div>
       <div className="flex flex-col py-1.5 gap-2 px-3 justfy-between">
-        <p className="sm:text-xl text-[15px]  text-[var(--dark-text)] font-bold tracking-wide">
+        <p className="sm:text-[18px] text-[15px]  text-[var(--dark-text)] font-bold tracking-wide">
           {prop.name.length > 18 ? prop.name.substring(0,15) + "..." : prop.name  }
         </p>
         <p className="text-sm text-[var(--dark-secondary-text)] ">

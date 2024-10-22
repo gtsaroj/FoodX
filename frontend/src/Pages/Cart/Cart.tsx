@@ -181,7 +181,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
             setLoading(true);
             navigate("/cart/checkout");
           }}
-          className="sm:py-3 py-1.5 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider sm:text-xl text-[16px] font-semibold"
+          className=" py-1.5 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider sm:text-xl text-[16px] font-semibold"
         >
           Checkout
         </button>

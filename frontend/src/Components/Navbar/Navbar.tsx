@@ -280,7 +280,7 @@ export const Navbar: React.FC = () => {
                     : "invisible opacity-0 -translate-y-10 "
                 } w-full h-full top-[10rem]   flex justify-end right-0 px-3 absolute`}
               >
-                <div className="border-[1px] w-full rounded-lg sm:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
+                <div className="border-[1px] w-full rounded-lg md:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
                   <span
                     className={`text-xs    w-full text-[var(--dark-secondary-text)]`}
                   >
@@ -335,7 +335,7 @@ export const Navbar: React.FC = () => {
                   openCart
                     ? "visible opacity-100 translate-y-0"
                     : "invisible translate-y-10 opacity-0"
-                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-165px] sm:right-[-40px] w-[342px] sm:w-[450px] h-[600px]`}
+                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 right-[-129px] sm:right-[-139px] w-[342px] sm:w-[450px] h-[570px]`}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>
@@ -375,7 +375,7 @@ export const Navbar: React.FC = () => {
               </div>
               {/* Favourite container */}
               <div
-                className={` sm:left-[-23rem] right-[-160px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
+                className={` sm:left-[-23rem] right-[-143px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
                   !openFavourite && authUser.fullName
                     ? "visible z-10 translate-y-0 opacity-100 "
                     : "-translate-y-2 invisible opacity-0 z-[-100]"
@@ -405,7 +405,7 @@ export const Navbar: React.FC = () => {
                     openNotification
                       ? "visible opacity-100 -translate-y-0 "
                       : "invisible opacity-0 translate-y-10"
-                  }   sm:right-[4.7rem] right-[-40px]  top-8`}
+                  }   sm:right-[4.7rem] right-[-58px]  top-8`}
                 >
                   <NotificationPage isOpen={openNotification} />
                 </div>
@@ -429,7 +429,7 @@ export const Navbar: React.FC = () => {
                       !closeProfile && authUser.fullName
                         ? "visible opacity-100 "
                         : "invisible opacity-0 "
-                    } w-full absolute right-[19.3rem] top-[45px]  `}
+                    } w-full absolute right-[266px] sm:right-[19.3rem] top-[40px] sm:top-[53px]  `}
                   >
                     <Profile
                       closeModal={() => setCloseProfile(!closeProfile)}
@@ -459,7 +459,7 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
       <div
-        className={` sm:hidden w-[230px]  bg-[var(--light-background)] text-[var(--dark-text)]  mx-2 px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
+        className={` sm:hidden w-[280px]  bg-[var(--light-background)] text-[var(--dark-text)]  mx-2 px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
       >
         <button
           className="  py-1.5 px-1 text-[var(--dark-secondary-text)] rounded-r-lg bg-[var(--light-background)] "

@@ -46,9 +46,9 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
   };
 
   return (
-    <div className=" px-3 border border-[var(--dark-border)] shadow-md py-4 flex bg-[var(--light-foreground)] flex-col w-[350px]  rounded-md items-baseline justify-center gap-5">
+    <div className=" px-3 border border-[var(--dark-border)] shadow-md py-4 flex bg-[var(--light-foreground)] flex-col sm:w-[350px] w-[300px]  rounded-md items-baseline justify-center gap-5">
       <div className="flex flex-col items-baseline justify-center gap-1 w-full">
-        <p className="text-[17px] tracking-wide text-[var(--dark-text)]">
+        <p className="sm:text-[17px] text-[14px] tracking-wide text-[var(--dark-text)]">
           Currently in
         </p>
         <div
@@ -61,18 +61,18 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
           <div>
             <img
               src={user.avatar}
-              className="sm:w-[100px] w-[60px] h-[55p] sm:h-[77px] rounded-full"
+              className="sm:w-[100px] w-[60px] h-[50px] sm:h-[77px] rounded-full"
               alt=""
             />
           </div>
-          <div className="flex flex-col items-baseline justify-center gap-1 w-full">
+          <div className="flex flex-col items-baseline justify-center gap-0.5 w-full">
             <div className="flex justify-between w-full">
-              <p className="text-[var(--dark-text)] text-lg font-semibold">
+              <p className="text-[var(--dark-text)] text-[14px] sm:text-lg font-semibold">
                 {user.fullName}
               </p>
             </div>
 
-            <p className="text-sm ">{user.email}</p>
+            <p className="sm:text-sm text-xs text-[var(--dark-secondary-text)] ">{user.email}</p>
           </div>
         </div>
       </div>
@@ -84,14 +84,14 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
               navigate("/orders")
               closeModal()
             }}
-            className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[var(--light-background)] w-full text-[17px] py-1.5 px-4 "
+            className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[var(--light-background)] w-full text-[14px] sm:text-[17px] py-1.5 px-4 "
           >
             View Orders
           </button>
           <button
             disabled={loading}
             onClick={() => handleLogout()}
-            className=" flex justify-start items-center  rounded text-[var(--dark-text)]  w-full text-[17px] py-1.5 px-4 hover:bg-[var(--light-background)]"
+            className=" flex justify-start items-center  rounded text-[var(--dark-text)]  w-full text-[14px] sm:text-[17px]  py-1.5 px-4 hover:bg-[var(--light-background)]"
           >
             Logout
           </button>
