@@ -93,7 +93,6 @@ export const Navbar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [openCart, setOpenCart] = useState<boolean>(false);
-  // const [openOrder, setOpenOrder] = useState<boolean>(false);
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -102,7 +101,6 @@ export const Navbar: React.FC = () => {
   const favouriteReference = useRef<HTMLDivElement | null>(null);
   const notificationReference = useRef<HTMLDivElement | null>(null);
   const cartReference = useRef<HTMLDivElement | null>(null);
-  // const topOrderReference = useRef<HTMLDivElement | null>(null);
   const searchReference = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -192,7 +190,8 @@ export const Navbar: React.FC = () => {
     return filterProducts;
   };
 
-  const debounceSearch = useCallback(debounce(handleSearch, 200), []);
+  const debounceSearch = useCallback(debounce(handleSearch, 200), [searchValue]);
+  
 
   return (
     <div className=" h-full flex flex-col items-start">

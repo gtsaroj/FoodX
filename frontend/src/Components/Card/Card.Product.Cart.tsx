@@ -36,7 +36,7 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   return (
     <div
       key={prop.id}
-      className={`duration-1000 h-[119px]  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
+      className={`duration-1000 h-[100px]  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
       <div className="  w-[120px] sm:h-[110px] h-full  ">
         <img
@@ -45,9 +45,9 @@ export const SingleCard: React.FC<SingleCardProp> = ({
           alt=""
         />
       </div>
-      <div className="flex flex-col py-1 gap-2 px-3 justfy-between">
+      <div className="flex flex-col py-1.5 gap-2 px-3 justfy-between">
         <p className="sm:text-xl text-[15px]  text-[var(--dark-text)] font-bold tracking-wide">
-          {prop.name}
+          {prop.name.length > 18 ? prop.name.substring(0,15) + "..." : prop.name  }
         </p>
         <p className="text-sm text-[var(--dark-secondary-text)] ">
           Rs {prop.price}
@@ -99,9 +99,9 @@ export const SingleCard: React.FC<SingleCardProp> = ({
         onClick={() => {
           removeProductFromCartFn(prop.id);
         }}
-        className=" cursor-pointer duration-150 absolute px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
+        className=" cursor-pointer duration-150 absolute px-2 sm:px-3 bg-[#B32624] h-full  justify-center items-center right-0 flex rounded-tr-md  rounded-br-md invisible group-hover/cart:visible opacity-0 group-hover/cart:opacity-[1] "
       >
-        <Trash2 className="text-white size-6 " />
+        <Trash2 className="text-white sm:size-6 size-5 " />
       </div>
     </div>
   );

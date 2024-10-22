@@ -12,10 +12,6 @@ import {
   addProductToCart,
   getProductsOfCart,
 } from "../../Services/cart.services";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../../Services/product.services";
 import { Loader } from "../../Components/Loader/Loader";
 import { useQuery } from "react-query";
 import { useAllProducts } from "../../Hooks/useAllProducts";
@@ -25,10 +21,9 @@ interface CardProp {
 }
 
 const Cart: React.FC<CardProp> = ({ action }) => {
+  const { data: products } = useAllProducts();
   const [loading, setLoading] = useState<boolean>(false);
-
   const store = useSelector((state: RootState) => state.root);
-
   const navigate = useNavigate();
   const Total = () => {
     let total = 0;
@@ -64,8 +59,6 @@ const Cart: React.FC<CardProp> = ({ action }) => {
     }
     toast.dismiss(toastLoader);
   };
-
-  const { data: products } = useAllProducts();
 
   const fetchProductsOfCartFn = async (): Promise<string[]> => {
     setLoading(true);
@@ -148,7 +141,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
       className="flex flex-col w-full justify-between h-full gap-3    sm:px-[0px]"
     >
       <div className="flex flex-col items-start ">
-        <h3 className="w-full py-2 text-[25px] font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full py-2 sm:text-[25px] text-[21px] font-semibold tracking-wide text-[var(--dark-text)]">
           My Cart
         </h3>
 

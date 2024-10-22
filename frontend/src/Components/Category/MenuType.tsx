@@ -192,7 +192,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
   return (
     <div
       onClick={() => action({ ...prop })}
-      className="w-full min-w-[150px] h-[180px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
+      className="w-full min-w-[130px] h-[160px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
       key={prop.id}
     >
       <div
@@ -211,7 +211,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         </div>
         <h1
           style={{ color: color.textColor }}
-          className="absolute top-7 left-4 tracking-wider text-[17px]  font-semibold "
+          className="absolute top-7 left-4 tracking-wider text-[14px] sm:text-[17px]  font-semibold "
         >
           {prop.name}
         </h1>
