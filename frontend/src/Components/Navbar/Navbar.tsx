@@ -543,10 +543,10 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
   return (
     <div
       ref={reference}
-      className="w-[300px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
+      className="w-[250px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
       <div className="flex justify-between py-3  items-start w-full">
-        <div className=" w-[200px] h-[63px] ">
+        <div className=" w-[150px] h-[50px] ">
           <img className="w-full h-full" src={CollegeLogo} alt="" />
         </div>
         <button onClick={() => action()} className="">
@@ -563,8 +563,11 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         </div>
         {
           <div className="flex flex-col items-start justify-center ">
-            <p className="text-[16px] tracking-wider ">
-              {user?.fullName || "Guest"}
+            <p className="text-[15px] tracking-wider ">
+              {(user.fullName &&
+                user?.fullName.charAt(0).toUpperCase() +
+                  user?.fullName?.slice(1)) ||
+                "Guest"}
             </p>
             <span className="text-xs text-gray-300 ">
               {user?.email || "guest@gmail.com"}
@@ -573,13 +576,13 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         }
       </div>
       <div className="flex pt-5 items-start justify-start flex-grow w-full h-full overflow-auto">
-        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-10">
+        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-6 sm:gap-10">
           <li
             onClick={() => {
               navigate("/");
               action();
             }}
-            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28] text-[15px]   w-full p-3 rounded duration-150"
           >
             <FaHouseUser className="size-5" />
             <span>Home</span>
@@ -589,7 +592,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
               navigate("cart");
               action();
             }}
-            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  text-[15px]  w-full p-3 rounded duration-150"
           >
             <ShoppingBag className="size-5" />
             <span>Cart</span>
@@ -599,7 +602,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
               navigate("orders");
               action();
             }}
-            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  text-[15px]  w-full p-3 rounded duration-150"
           >
             <BringToFront className="size-5" />
             <span>Order</span>
@@ -609,7 +612,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
               navigate("profile");
               action();
             }}
-            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]    w-full p-3 rounded duration-150"
+            className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28] text-[15px]   w-full p-3 rounded duration-150"
           >
             <Settings className="size-5" />
             <span>Setting</span>
