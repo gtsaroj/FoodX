@@ -4,23 +4,20 @@ import Cart from "../Cart/Cart";
 import { getSpecialProducts } from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import Skeleton from "react-loading-skeleton";
+import { useQuery } from "react-query";
 
 const Specials: React.FC = () => {
-  const [initalProducts, setInitialProducts] = useState<Product[]>([]);
-  const specialProducts = async () => {
+  const specialProducts = async (): Promise<Product[]> => {
     try {
       const response = await getSpecialProducts();
       const products = response.data as Product[];
-      setInitialProducts(products);
+      return products;
     } catch (error) {
-      setInitialProducts;
       throw new Error("Error while getting special products" + error);
     }
   };
 
-  useEffect(() => {
-    specialProducts();
-  }, []);
+  const { data, error, isLoading } = useQuery("specials", specialProducts);
 
   return (
     <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-8 py-8 rounded">
@@ -32,18 +29,10 @@ const Specials: React.FC = () => {
       <div className="grid grid-cols-5 gap-8 " id="specials">
         <div className="  flex overflow-x-auto overflow-y-hidden scrollbar-custom flex-col gap-9 items-center justify-between rounded-md   col-span-5 lg:col-span-3">
           <div className="w-full  h-full  ">
-            <SpecialCardsContainer
-              products={
-                initalProducts?.length > 0 ? initalProducts?.slice(0, 4) : []
-              }
-            />
+            <SpecialCardsContainer products={data ? data?.slice(0, 4) : []} />
           </div>
           <div className={`w-full h-full `}>
-            <SpecialCardsContainer1
-              products={
-                initalProducts?.length > 0 ? initalProducts?.slice(4) : []
-              }
-            />
+            <SpecialCardsContainer1 products={data ? data?.slice(4) : []} />
           </div>
         </div>
         <div className="bg-[var(--light-background)] h-full hidden lg:flex lg:col-span-2 w-full px-5 py-5 rounded-md">

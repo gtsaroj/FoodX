@@ -54,7 +54,7 @@ export const RecentOrder = () => {
 
   return (
     <div className="w-full h-full flex text-[var(--dark-text)]  flex-col gap-6 bg-[var--light-foreground] px-5 py-4   rounded items-start justify-center">
-      <h1 className="text-[25px] tracking-wider font-semibold ">
+      <h1 className="sm:text-[25px] text-[21px] tracking-wider font-semibold ">
         Recent Orders
       </h1>
       <div className="flex items-center w-full h-full item-scrollbar   pb-4 gap-5 overflow-x-auto  ">

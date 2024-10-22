@@ -14,6 +14,7 @@ import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
 import { ChevronDown } from "lucide-react";
+import { getRemainingTime } from "../../Utility/date.utility";
 interface Notifications {
   isOpen: boolean;
 }
@@ -96,7 +97,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   };
 
   return (
-    <div className="p-4  sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+    <div className="p-2 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
       <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
@@ -120,7 +121,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
             loader && (
               <div className="flex flex-col h-full  items-center justify-center w-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
-                <div className="flex items-center w-full h-full pt-28 justify-center gap-3">
+                <div className="flex items-center w-[100px] h-full pt-28 justify-center gap-3">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
                   <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                     {" "}
@@ -168,7 +169,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   return (
     <div
       key={notification.uid}
-      className="relative border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
     >
       <div
         className={`sm:w-[280px] w-[230px] 
@@ -176,25 +177,17 @@ const NoticationContainer: React.FC<NotificationProp> = ({
       >
         <div
           onClick={() => setOpen(!open)}
-          className="w-full flex   items-center justify-between pr-5"
+          className="w-full flex   items-start  justify-between pr-1"
         >
           <div>
-            <h4 className="tracking-wider text-[15px] ">
+            <h4 className="tracking-wider text-[14px] sm:text-[15px] ">
               {notification.title}
             </h4>
             <p className=" text-[10px] text-[var(--dark-secondary-text)] ">
-             <span className="text-xs ">Order Id:</span>   {notification.id}
+              {notification.id}
             </p>
           </div>
 
-          <div className="">
-          <p className="text-[11px] text-gray-500">
-            {dayjs.unix(notification?.createdAt?._seconds).format("YYYY-MM-DD")}
-            </p>
-            <p className="text-xs text-gray-500">
-            {dayjs.unix(notification?.createdAt?._seconds).format("h:mm A")}
-          </p>
-         </div>
         </div>
         <p
           className={`text-xs text-gray-400 p-1 duration-150 ${
@@ -204,10 +197,16 @@ const NoticationContainer: React.FC<NotificationProp> = ({
           {notification.message}
         </p>
       </div>
+      <div className="flex flex-col items-start justify-center gap-1">
       <button onClick={() => setOpen(!open)}>
         {" "}
         <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
       </button>
+
+      <div className=" flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs  text-[var(--dark-secondary-text)] ">
+            {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} { " "} ago
+          </div>
+     </div>
     </div>
   );
 };

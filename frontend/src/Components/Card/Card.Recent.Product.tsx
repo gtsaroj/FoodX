@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "../../Store";
 import { useDispatch, useSelector } from "react-redux";
 import { Product } from "../../models/product.model";
+import { addProductToCart } from "../../Services/cart.services";
 
 interface MenuProp {
   prop: Product;
@@ -13,30 +14,32 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
   const [activeCart, setActiveCart] = useState<boolean>();
   const [cartQuantity, setCartQuantity] = useState<number>(1);
 
-  const selectedProductsQuantity = useSelector(
-    (state: RootState) => state.root.cart.products
-  );
+  const store = useSelector((state: RootState) => state.root);
 
   const dispatch = useDispatch<AppDispatch>();
 
   const handleClick = () => {
-    setCartQuantity((prev) => (prev <= 1 ? 1 : prev - 1));
-
-    const findQuantity = selectedProductsQuantity?.find(
-      (singleProduct) => singleProduct.id == prop.id
-    );
-    if (findQuantity?.quantity) {
+    if (cartQuantity > 1) {
+      setCartQuantity((prev) => prev - 1);
       dispatch(
         addToCart({
           id: prop.id,
-          quantity: findQuantity.quantity <= 1 ? 1 : -1,
+          quantity: -1,
+        })
+      );
+    } else {
+      setActiveCart(false); // Optionally handle removing the product
+      dispatch(
+        addToCart({
+          id: prop.id,
+          quantity: -1,
         })
       );
     }
   };
 
   useEffect(() => {
-    const findQuantity = selectedProductsQuantity?.find(
+    const findQuantity = store?.cart?.products?.find(
       (singleProduct) => singleProduct.id === prop.id
     );
     if (findQuantity) {
@@ -45,20 +48,49 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
     if (findQuantity?.quantity === undefined || null) {
       setActiveCart(false);
     }
-  }, [selectedProductsQuantity]);
+  }, [store?.cart?.products]);
+
+  async function addProductFn(product: Product) {
+    const isProductExistInCart = store?.cart?.products?.some(
+      (data) => data.id === product.id
+    );
+    console.log(isProductExistInCart);
+    try {
+      if (!isProductExistInCart)
+        await addProductToCart(
+          store?.auth?.userInfo?.uid as string,
+          product.id
+        );
+      setActiveCart((prevValue) => !prevValue);
+      dispatch(
+        addToCart({
+          id: product.id,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+          quantity: 1,
+          tag: product.tag,
+        })
+      );
+    } catch (error) {
+      throw new Error("Error while adding product to cart " + error);
+    }
+  }
 
   return (
-    <div className=" w-full shadow-sm sm:h-[130px] h-[110px] shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)]  ">
+    <div className=" w-full shadow-sm sm:h-[110px] h-[100px] shadow-[var(--light-background)]  rounded-lg pr-4 flex items-center justify-between bg-[var(--light-foreground)]  ">
       <div className="flex items-stretch justify-start w-full h-full gap-3">
         <div className=" w-[120px]  sm:h-[110px] h-[110px]">
           <img
             src={prop.image}
-            className=" w-[120px] h-full rounded-l-lg    "
+            className=" w-[100px] sm:w-[120px] sm:h-full h-[100px] rounded-l-lg    "
           ></img>
         </div>
         <div className="flex flex-col items-start justify-center h-full gap-3">
-          <p className="text-[var(--dark-text)] tracking-wide font-semibold  text-[15px] sm:text-[20px] w-full ">
-            {prop.name}
+          <p className="text-[var(--dark-text)] tracking-wide font-semibold  text-[15px] sm:text-[18px] w-full ">
+            {prop.name?.length > 15
+              ? prop.name.substring(0, 15) + "..."
+              : prop.name}
           </p>
           <span className="sm:text-[18px] text-sm text-[var(--dark-secondary-text)] tracking-wide  ">
             Rs {prop.price}
@@ -77,19 +109,17 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
           <div className="flex items-center gap-2 px-1 text-xs select-none ">
             <button
               onClick={() => handleClick()}
-              disabled={cartQuantity <= 1 ? true : false}
+              // disabled={cartQuantity <= 1 ? true : false}
             >
               <Minus
-                size={20}
-                className={` hover:text-[var(--secondary-color)]`}
+                className={`  sm:size-6 size-3 hover:text-[var(--secondary-color)]`}
                 aria-disabled={"true"}
               />
             </button>
 
             <p className="px-1">{cartQuantity ? cartQuantity : "Add"}</p>
             <Plus
-              size={20}
-              className=" cursor-pointer hover:text-[var(--secondary-color)]"
+              className="  sm:size-6 size-3 cursor-pointer hover:text-[var(--secondary-color)]"
               onClick={() => {
                 setCartQuantity((prevValue) => prevValue + 1);
                 dispatch(
@@ -104,19 +134,9 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
         ) : (
           <button>
             <ShoppingCart
-              className=" size-6"
+              className=" size-5 text-[var(--dark-text)] sm:size-6"
               onClick={() => {
-                setActiveCart((prevValue) => !prevValue);
-                dispatch(
-                  addToCart({
-                    id: prop.id,
-                    name: prop.name,
-                    image: prop.image,
-                    price: prop.price,
-                    quantity: 1,
-                    tag: prop.tag,
-                  })
-                );
+                addProductFn({ ...prop });
               }}
             />
           </button>

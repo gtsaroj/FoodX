@@ -86,7 +86,7 @@ const Favourite: React.FC = () => {
   return (
     <div className="flex flex-col  h-[580px]  rounded-lg  w-[350px]   pb-7 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
       <div className="flex flex-col items-start ">
-        <h3 className="w-full border-b-[1px] border-[var(--dark-border)]  text-2xl px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full border-b-[1px] border-[var(--dark-border)] text-[20px]  :smtext-[25px] px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
           My Favourite
         </h3>
       </div>
@@ -99,24 +99,22 @@ const Favourite: React.FC = () => {
             />
           ))
         ) : (
-          <div className="flex flex-col items-center py-16 justify-center gap-2">
+          <div className="flex flex-col items-center py-16 justify-center gap-10 sm:gap-2">
             <ShoppingBag className=" cursor-pointer size-16" />
 
-            <h1 className="text-[25px]">Your Favourite is empty</h1>
+            <h1 className="sm:text-[25px] text-[21px] ">Your Favourite is empty</h1>
           </div>
         )}
       </div>
 
-      <div
+      <button
         onClick={() => {
           addProductToCartFn();
         }}
-        className="sm:py-3 py-2 cursor-pointer rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  "
+        className="text-white bg-[var(--primary-light)] mx-2 sm:py-2 rounded-md py-1.5 hover:bg-[var(--primary-dark)] tracking-wider text-[15px] sm:text-[18px] font-semibold"
       >
-        <button className="text-white tracking-wider text-lg sm:text-xl font-semibold">
-          Add to cart
-        </button>
-      </div>
+        Add to cart
+      </button>
     </div>
   );
 };

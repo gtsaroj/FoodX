@@ -96,7 +96,7 @@ function Table<T extends { id: string }>({
             )}
             {columns.map((item, index) => (
               <th
-                className="flex items-center  justify-center font-bold  py-5 "
+                className="flex items-center sm:text-[14px] text-sm  justify-center font-bold  py-5 "
                 key={index}
               >
                 {typeof item.fieldName === "string" ? (
@@ -188,14 +188,14 @@ function Table<T extends { id: string }>({
                           actions?.orderFn && actions?.orderFn(item.id);
                         }}
                       >
-                        <div className=" flex group/data  text-[var(--light-text)]  duration-150 hover:bg-[var(--primary-dark)]  cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
+                        <div className=" flex group/data  text-[var(--dark-text)]  duration-150 hover:bg-[var(--primary-dark)]  cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
                           <LiaRedoAltSolid
-                            className=" group-hover/data:rotate-90 duration-200 "
+                            className=" text-[var(--dark-text)] size-4 sm:size-6  group-hover/data:rotate-90 duration-200 "
                             color="white"
                             strokeWidth={1}
                             size={19}
                           />
-                          <span className="text-[15px] ">Order</span>
+                          <span className="sm:text-[14px] text-xs ">Order</span>
                         </div>
                       </td>
                     )}
@@ -208,13 +208,12 @@ function Table<T extends { id: string }>({
                       >
                         <div className=" text-[var(--dark-secondary-text)] border-none">
                           <LuDownloadCloud
-                            className="text-[var(--dark-secondary-text)] "
+                            className="text-[var(--dark-secondary-text)] size-4 sm:size-6 "
                             style={{ border: "none" }}
-                            size={20}
                             strokeWidth={2}
                           />
                         </div>
-                        <span className=" text-[15px] tracking-wide ">
+                        <span className=" text-xs sm:text-[14px] tracking-wide ">
                           Export
                         </span>
                       </td>
