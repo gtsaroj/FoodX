@@ -278,7 +278,7 @@ export const Navbar: React.FC = () => {
                   searchValue?.length > 0
                     ? "visible opacity-100 translate-y-0 "
                     : "invisible opacity-0 -translate-y-10 "
-                } w-full h-full top-[8rem]   flex justify-end right-0 px-3 absolute`}
+                } w-full h-full top-[8rem] sm:top-[10rem]   flex justify-end right-0 px-3 absolute`}
               >
                 <div className="border-[1px] w-full rounded-lg md:w-auto  px-4 py-3 gap-3 flex flex-col bg-[var(--light-foreground)] border-[var(--dark-border)] overflow-auto h-[60vh]  ">
                   <span
