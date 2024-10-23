@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
@@ -44,7 +44,9 @@ export const LoginContainer: React.FC = () => {
       <div className="w-full  bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
         <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1 className="md:hidden text-[var(--dark-text)] ">Login</h1>
-          <h1 className="hidden md:block text-[var(--dark-text)] ">Login with Email</h1>
+          <h1 className="hidden md:block text-[var(--dark-text)] ">
+            Login with Email
+          </h1>
         </div>
         <div className="px-3 py-4">
           <form
@@ -132,6 +134,9 @@ export const LoginContainer: React.FC = () => {
 };
 
 const Login: React.FC = () => {
+  useEffect(() => {
+    document.body.classList.remove("dark");
+  }, []);
   return (
     <div className=" min-w-[100vw] w-full  h-full bg-[var(--body-bg)] overflow-x-hidden">
       {/* Mobile */}

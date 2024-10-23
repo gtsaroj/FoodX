@@ -3,10 +3,11 @@ import Skeleton from "react-loading-skeleton";
 import { Product } from "../../models/product.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { Frown } from "lucide-react";
+import { Frown, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { RecentProductCard } from "../../Components/Card/Card.Recent.Product";
 import { getOrderByUser } from "../../Services/order.services";
+import Empty from "../../assets/empty.png"
 
 export const RecentProduct = () => {
   const [initialData, setInitialData] = useState<Product[]>([]);
@@ -34,7 +35,8 @@ export const RecentProduct = () => {
       );
       setInitialData(uniqueProducts);
     } catch (error) {
-      throw new Error("Error while getting popular products" + error);
+      setInitialData([])
+      // throw new Error("Error while getting popular products" + error);
     }
     setLoading(false);
   };
@@ -42,6 +44,10 @@ export const RecentProduct = () => {
   useEffect(() => {
     authUser?.success ? getProducts() : "";
   }, []);
+
+  const handleRefresh = () => {
+    getProducts();
+  };
 
   const navigate = useNavigate();
 
@@ -60,7 +66,25 @@ export const RecentProduct = () => {
                   <RecentProductCard prop={data} key={data.id} />
                 ))
               ) : (
-                <div>Product not found</div>
+                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
+                <img
+                  src={Empty}
+                  alt="No products found"
+                  className="size-40 mb-4"
+                />
+                <h4 className="text-xl text-[var(--dark-secondary-text)] mb-2">
+                  No products found
+                </h4>
+                <p className="text-sm text-[var(--dark-secondary-text)] mb-4">
+                  Looks like you haven’t ordered anything recently.
+                </p>
+                <button
+                  onClick={() => navigate("/#categories")}
+                  className="mt-4 duration-150 bg-[var(--primary-light)] text-white py-2 px-4 rounded hover:bg-[var(--primary-dark)]"
+                >
+                  Browse Categories
+                </button>
+              </div>
               )
             ) : (
               <div className="w-full ">
