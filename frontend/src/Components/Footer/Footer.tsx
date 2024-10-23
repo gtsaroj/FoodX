@@ -73,12 +73,6 @@ const Footer: React.FC = () => {
                   Cart
                 </a>
                 <a
-                  href="/cart/checkout"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Checkout
-                </a>
-                <a
                   href="/orders"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
