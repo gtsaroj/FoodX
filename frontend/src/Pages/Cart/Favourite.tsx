@@ -5,10 +5,6 @@ import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { FavouriteCard } from "../../Components/Card/Card.Favourite";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import { addProductToCart } from "../../Services/cart.services";
 import { useAllProducts } from "../../Hooks/useAllProducts";

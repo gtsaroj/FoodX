@@ -181,7 +181,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         }}
         className={`flex flex-col  ${
           style
-            ? "  w-[400px] sm:w-[250px]"
+            ? "  w-full md:w-[250px]"
             : "sm:h-[280px]  w-[220px] h-[170px]  sm:w-[250px]"
         }  group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start
           `}
