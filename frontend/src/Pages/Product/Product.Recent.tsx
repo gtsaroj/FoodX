@@ -46,8 +46,8 @@ export const RecentProduct = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="lg:w-[550px] text-[var(--dark-text)] w-full flex h-full flex-col gap-4 pt-3 px-4 border border-[var(--dark-border)]  rounded-lg">
-      <h3 className="w-full text-[21px] sm:text-[25px]  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
+    <div className="lg:w-[550px] text-[var(--dark-text)] w-full flex h-full flex-col gap-4 pt-3  border border-[var(--dark-border)]  rounded-lg">
+      <h3 className="w-full text-[21px] px-4 sm:text-[25px]  py-2 font-semibold tracking-wide text-[var(--dark-text)]">
         Recent Products
       </h3>
       <div className="w-full h-full overflow-y-auto item-scrollbar px-1 sm:px-5 ">

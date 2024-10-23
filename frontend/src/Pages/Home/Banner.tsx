@@ -74,7 +74,11 @@ export const Sponsor: React.FC = () => {
           </div>
         ) : (
           <div className="w-full h-full">
-            <Carousel props={data as BannerModal[]} time={25000} />
+            <Carousel
+              actions={false}
+              props={data as BannerModal[]}
+              time={25000}
+            />
           </div>
         )}
       </div>

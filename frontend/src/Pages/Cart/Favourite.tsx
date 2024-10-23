@@ -84,7 +84,7 @@ const Favourite: React.FC = () => {
           My Favourite
         </h3>
       </div>
-      <div className="flex  h-[410px]  scrollbar-custom sm:h-[580px] px-2 sm:px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
+      <div className="flex  h-[410px]  scrollbar-custom sm:h-[480px] px-2 sm:px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
         {initialProducts.length > 0 ? (
           initialProducts?.map((singleSelectedProduct) => (
             <FavouriteCard
@@ -103,7 +103,7 @@ const Favourite: React.FC = () => {
         )}
       </div>
 
-      <button
+      <button disabled={!store?.favourite?.favourite.length}
         onClick={() => {
           addProductToCartFn();
         }}
