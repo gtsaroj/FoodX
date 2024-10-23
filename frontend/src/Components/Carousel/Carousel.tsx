@@ -1,8 +1,6 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Banner } from "../../models/banner.model";
-import { useNavigate } from "react-router-dom";
-import { Line } from "@react-pdf/renderer";
 
 interface CarouselProp {
   props: Banner[];
