@@ -26,6 +26,7 @@ const Banner: React.FC = () => {
             <Skeleton
               borderRadius={"13px"}
               width="980px"
+              height="530px"
               style={{
                 minHeight: "300px",
                 maxHeight: "545px",

@@ -154,6 +154,19 @@ export const Navbar: React.FC = () => {
     if (
       !closeProfile ||
       !openFavourite ||
+      openNotification ||
+      open ||
+      openCart ||
+      openSearch
+    ) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    if (
+      !closeProfile ||
+      !openFavourite ||
       !open ||
       openNotification ||
       !openCart ||
@@ -164,8 +177,16 @@ export const Navbar: React.FC = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflow = "auto";
     };
-  }, [closeProfile, openFavourite]);
+  }, [
+    closeProfile,
+    openFavourite,
+    open,
+    openNotification,
+    openCart,
+    openSearch,
+  ]);
   const navigate = useNavigate();
   const store = useSelector((state: RootState) => state.root);
 
@@ -192,11 +213,6 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!searchValue) {
-  //     setSearchData(allProducts);
-  //   }
-  // }, [allProducts]);
   const debounceSearch = useCallback(debounce(handleSearch, 200), [
     searchValue,
   ]);
@@ -343,7 +359,11 @@ export const Navbar: React.FC = () => {
                   openCart
                     ? "visible opacity-100 translate-y-0"
                     : "invisible translate-y-10 opacity-0"
-                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${store?.auth?.success ? "right-[-129px] sm:right-[-139px] ":"sm:right-[-85px]  right-[-70px] "} w-[342px] sm:w-[450px] h-[585px]`}
+                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${
+                  store?.auth?.success
+                    ? "right-[-129px] sm:right-[-139px] "
+                    : "sm:right-[-85px]  right-[-70px] "
+                } w-[342px] sm:w-[450px] h-[524px]`}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>
@@ -383,7 +403,7 @@ export const Navbar: React.FC = () => {
               </div>
               {/* Favourite container */}
               <div
-                className={` sm:left-[-23rem] right-[-143px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
+                className={` sm:left-[-23rem] right-[-132px] sm:w-[450px] w-[387px] top-12 duration-150  absolute ${
                   !openFavourite && authUser.fullName
                     ? "visible z-10 translate-y-0 opacity-100 "
                     : "-translate-y-2 invisible opacity-0 z-[-100]"

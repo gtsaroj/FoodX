@@ -146,7 +146,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
         </h3>
 
         <div
-          className={`flex flex-col relative h-[400px] items-center gap-2 w-full py-5 scrollbar-custom duration-200   overflow-auto`}
+          className={`flex flex-col relative sm:h-[400px] min-h-[200px] h-[350px]  pr-2 items-center gap-2 w-full py-5 scrollbar-custom duration-200   overflow-auto`}
         >
           {store?.cart?.products?.length > 0 ? (
             store?.cart?.products?.map((singleSelectedProduct) => (
