@@ -132,12 +132,12 @@
   .item-scrollbar::-webkit-scrollbar {
     width: 4px;
     height: 5px;
-
     cursor: pointer;
   }
   .item-scrollbar::-webkit-scrollbar-thumb {
     cursor: pointer;
     width: 3px;
+    height:  3px;
     @apply bg-gray-500 rounded-md; /* Customize the scrollbar thumb */
   }
 

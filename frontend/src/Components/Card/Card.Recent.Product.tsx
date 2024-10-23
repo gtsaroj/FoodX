@@ -1,10 +1,14 @@
 import { Minus, Plus, ShoppingCart } from "lucide-react";
-import { addToCart } from "../../Reducer/product.reducer";
+import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import { useEffect, useState } from "react";
 import { AppDispatch, RootState } from "../../Store";
 import { useDispatch, useSelector } from "react-redux";
 import { Product } from "../../models/product.model";
-import { addProductToCart } from "../../Services/cart.services";
+import {
+  addProductToCart,
+  removeProductFromCart,
+} from "../../Services/cart.services";
+import toast from "react-hot-toast";
 
 interface MenuProp {
   prop: Product;
@@ -18,7 +22,7 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (cartQuantity > 1) {
       setCartQuantity((prev) => prev - 1);
       dispatch(
@@ -28,13 +32,16 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
         })
       );
     } else {
+      if ((store?.auth.userInfo.uid as string, prop.id)) {
+        const toastLoading = toast.loading("Loading...");
+        await removeProductFromCart(
+          store?.auth?.userInfo.uid as string,
+          prop.id
+        );
+        toast.dismiss(toastLoading);
+      }
+      dispatch(removeCart(prop.id));
       setActiveCart(false); // Optionally handle removing the product
-      dispatch(
-        addToCart({
-          id: prop.id,
-          quantity: -1,
-        })
-      );
     }
   };
 
@@ -54,13 +61,15 @@ export const RecentProductCard: React.FC<MenuProp> = ({ prop }) => {
     const isProductExistInCart = store?.cart?.products?.some(
       (data) => data.id === product.id
     );
-    console.log(isProductExistInCart);
     try {
-      if (!isProductExistInCart)
+      if (!isProductExistInCart) {
+        const toastLoading = toast.loading("Loading...");
         await addProductToCart(
           store?.auth?.userInfo?.uid as string,
           product.id
         );
+        toast.dismiss(toastLoading);
+      }
       setActiveCart((prevValue) => !prevValue);
       dispatch(
         addToCart({

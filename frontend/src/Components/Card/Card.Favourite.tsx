@@ -44,7 +44,7 @@ export const FavouriteCard: React.FC<SingleCardProp> = ({
     >
       <div>
         <img
-          className="sm:w-[120px] w-[100px] h-[100px]  sm:h-[120px] object-cover shrink-0 object-center rounded-l-lg"
+          className="sm:w-[120px] w-[100px] h-[90px]  sm:h-[120px] object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />

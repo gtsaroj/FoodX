@@ -28,7 +28,7 @@ export const PopularProduct = () => {
       <h1 className="sm:text-[25px] text-[20px] font-semibold  tracking-wider ">
         Popular products
       </h1>
-      <div className="w-full flex flex-col gap-3  scrollbar-custom pb-5   overflow-auto  rounded items-start justify-center">
+      <div className="w-full flex flex-col gap-3  item-scrollbar pb-5     rounded items-start justify-center">
         <div className=" overflow-hidden ">
           <div className="w-full h-full  flex items-center gap-4  justify-start  ">
             {!loading ? (

@@ -5,6 +5,10 @@ import { ShoppingBag } from "lucide-react";
 import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { FavouriteCard } from "../../Components/Card/Card.Favourite";
+import {
+  getNormalProducts,
+  getSpecialProducts,
+} from "../../Services/product.services";
 import { Product } from "../../models/product.model";
 import { addProductToCart } from "../../Services/cart.services";
 import { useAllProducts } from "../../Hooks/useAllProducts";
@@ -78,13 +82,13 @@ const Favourite: React.FC = () => {
   }, [store.favourite.favourite, isFetched]);
 
   return (
-    <div className="flex flex-col  h-[580px]  rounded-lg  w-[350px]   pb-7 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
+    <div className="flex flex-col   rounded-lg  w-[350px]   pb-2 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
       <div className="flex flex-col items-start ">
         <h3 className="w-full border-b-[1px] border-[var(--dark-border)] text-[20px]  :smtext-[25px] px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
           My Favourite
         </h3>
       </div>
-      <div className="flex flex-col items-center w-full h-full gap-6 px-4 py-5 overflow-y-scroll duration-500">
+      <div className="flex  h-[410px]  scrollbar-custom sm:h-[580px] px-2 sm:px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
         {initialProducts.length > 0 ? (
           initialProducts?.map((singleSelectedProduct) => (
             <FavouriteCard
@@ -93,8 +97,8 @@ const Favourite: React.FC = () => {
             />
           ))
         ) : (
-          <div className="flex flex-col items-center justify-center gap-10 py-16 sm:gap-2">
-            <ShoppingBag className="cursor-pointer  size-16" />
+          <div className="flex flex-col items-center py-16 justify-center gap-10 sm:gap-2">
+            <ShoppingBag className=" cursor-pointer size-16" />
 
             <h1 className="sm:text-[25px] text-[21px] ">
               Your Favourite is empty
@@ -107,7 +111,7 @@ const Favourite: React.FC = () => {
         onClick={() => {
           addProductToCartFn();
         }}
-        className="text-white bg-[var(--primary-light)] mx-2 sm:py-2 rounded-md py-1.5 hover:bg-[var(--primary-dark)] tracking-wider text-[15px] sm:text-[18px] font-semibold"
+        className="text-white my-3 bg-[var(--primary-light)] mx-2 sm:py-2 rounded-md py-1.5 hover:bg-[var(--primary-dark)] tracking-wider text-[15px] sm:text-[18px] font-semibold"
       >
         Add to cart
       </button>

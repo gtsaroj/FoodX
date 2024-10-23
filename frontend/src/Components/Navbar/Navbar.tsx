@@ -154,6 +154,19 @@ export const Navbar: React.FC = () => {
     if (
       !closeProfile ||
       !openFavourite ||
+      openNotification ||
+      open ||
+      openCart ||
+      openSearch
+    ) {
+      document.body.style.overflowY = "hidden";
+    } else {
+      document.body.style.overflowY = "auto";
+    }
+
+    if (
+      !closeProfile ||
+      !openFavourite ||
       !open ||
       openNotification ||
       !openCart ||
@@ -164,8 +177,16 @@ export const Navbar: React.FC = () => {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.body.style.overflowY = "auto";
     };
-  }, [closeProfile, openFavourite]);
+  }, [
+    closeProfile,
+    openFavourite,
+    open,
+    openNotification,
+    openCart,
+    openSearch,
+  ]);
   const navigate = useNavigate();
   const store = useSelector((state: RootState) => state.root);
 
@@ -192,11 +213,6 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!searchValue) {
-  //     setSearchData(allProducts);
-  //   }
-  // }, [allProducts]);
   const debounceSearch = useCallback(debounce(handleSearch, 200), [
     searchValue,
   ]);
@@ -283,7 +299,7 @@ export const Navbar: React.FC = () => {
               {/* mobile search */}
               <div
                 className={` duration-150 ${
-                  searchValue?.length > 0
+                  searchValue?.length > 0 && openSearch
                     ? "visible opacity-100 translate-y-0 "
                     : "invisible opacity-0 -translate-y-10 "
                 } w-full h-full top-[8rem] sm:top-[10rem]   flex justify-end right-0 px-3 absolute`}
@@ -343,7 +359,11 @@ export const Navbar: React.FC = () => {
                   openCart
                     ? "visible opacity-100 translate-y-0"
                     : "invisible translate-y-10 opacity-0"
-                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${store?.auth?.success ? "right-[-129px] sm:right-[-139px] ":"sm:right-[-85px]  right-[-70px] "} w-[342px] sm:w-[450px] h-[585px]`}
+                } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${
+                  store?.auth?.success
+                    ? "right-[-129px] sm:right-[-139px] "
+                    : "sm:right-[-85px]  right-[-70px] "
+                } w-[342px] sm:w-[450px] h-[524px]`}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>
@@ -383,7 +403,7 @@ export const Navbar: React.FC = () => {
               </div>
               {/* Favourite container */}
               <div
-                className={` sm:left-[-23rem] right-[-143px] sm:w-[450px] w-[400px] top-12 duration-150  absolute ${
+                className={` sm:left-[-23rem] right-[-132px] sm:w-[450px] w-[387px] top-12 duration-150  absolute ${
                   !openFavourite && authUser.fullName
                     ? "visible z-10 translate-y-0 opacity-100 "
                     : "-translate-y-2 invisible opacity-0 z-[-100]"
@@ -469,13 +489,13 @@ export const Navbar: React.FC = () => {
       <div
         className={` sm:hidden w-[280px]  bg-[var(--light-background)] text-[var(--dark-text)]  mx-2 px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
       >
-        <button
+        <button 
           className="  py-1.5 px-1 text-[var(--dark-secondary-text)] rounded-r-lg bg-[var(--light-background)] "
           onClick={() => setOpenSearch(false)}
         >
           <Search className="hover:text-[var(--danger-bg)] size-[17px] sm:size-6 " />
         </button>
-        <input
+        <input onFocus={()=> setOpenSearch(!openSearch)}
           value={searchValue}
           onChange={(event) => {
             debounceSearch(event.target.value);
@@ -653,7 +673,7 @@ export const Header: React.FC = () => {
 
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
-      <div className={"bg-[var(--primary-color)] "}>
+      <div className={"bg-[var(--primary-color)] sm:flex hidden "}>
         <div className="flex items-center gap-2 px-5 py-2">
           <Phone className="text-[var(--secondary-color)] sm:size-6 size-5 " />
           <p className="text-xs text-[var(--light-secondary-text)] ">
@@ -664,7 +684,7 @@ export const Header: React.FC = () => {
       </div>
       <div
         className={
-          "fixed left-0 bg-[var(--body-bg)] pb-1 top-[41px] transition-transform ease-in-out duration-700 " +
+          "fixed left-0 bg-[var(--body-bg)] pb-1 top-0 sm:top-[41px] transition-transform ease-in-out duration-700 " +
           (nav ? " translate-y-[-41px]" : " translate-y-0")
         }
       >

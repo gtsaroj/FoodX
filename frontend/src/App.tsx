@@ -53,6 +53,7 @@ import Bell from "./assets/order.mp3";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CustomToast from "./Components/Toast/Toast.tsx";
 import OrderSuccess from "./Pages/Order.Success.page.tsx";
+import useScrollToTop from "./Hooks/scrollToTop.ts";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -108,9 +109,11 @@ const HomePage: React.FC = () => {
     };
   }, [socket, authUser]); // Ensure socket and authUser are included in dependencies
 
+  useScrollToTop();
+
   return (
-    <div className="flex items-center overflow-x-hidden justify-center w-full h-full min-w-[100vw]  ">
-      <div className="w-full h-full max-w-[1500px] flex flex-col justify-center items-center ">
+    <div className="flex items-center !overflow-x-hidden justify-center w-full h-full min-w-[100vw]  ">
+      <div className="w-full  h-full max-w-[1500px] flex flex-col justify-center items-center ">
         <div className="mb-[100px] z-50">
           <Header />
         </div>
