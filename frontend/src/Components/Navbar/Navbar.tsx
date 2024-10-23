@@ -36,6 +36,7 @@ import Cart from "../../Pages/Cart/Cart";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { useAllProducts } from "../../Hooks/useAllProducts";
+import { DarkMode } from "../Button/DarkMode.button";
 
 const navbarItems = [
   {
@@ -227,9 +228,9 @@ export const Navbar: React.FC = () => {
           <div ref={menuReference as any} className="flex w-full md:hidden ">
             <button className="" onClick={() => setOpen(!open)}>
               {open ? (
-                <X className="cursor-pointer md:size-10 size-6 sm:size-8" />
+                <X className="cursor-pointer md:size-10 size-[30px] sm:size-8" />
               ) : (
-                <Menu className="cursor-pointer md:size-10 size-6 sm:size-8 " />
+                <Menu className="cursor-pointer md:size-10 size-[30px] sm:size-8 " />
               )}
             </button>
             <div
@@ -267,9 +268,9 @@ export const Navbar: React.FC = () => {
                 onClick={() => setOpenSearch(!openSearch)}
               >
                 {openSearch ? (
-                  <X className=" size-6 sm:size-7 " />
+                  <X className=" size-[30px] sm:size-7 " />
                 ) : (
-                  <Search className="size-6 sm:size-7" />
+                  <Search className="size-[30px] sm:size-7" />
                 )}
               </button>
 
@@ -342,17 +343,17 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/*cart */}
-            <div ref={cartReference} className="relative">
+            <div ref={cartReference} className="relative md:hidden visible ">
               <MdOutlineShoppingBag
                 onClick={() => setOpenCart(!openCart)}
-                className="cursor-pointer sm:size-7 size-6 "
+                className="cursor-pointer sm:size-7 size-[30px] "
               />
               <div
                 className={`sm:w-[10px] size-1.5 duration-150 ${
                   store?.cart?.products.length > 0 && authUser.role
                     ? "visible"
                     : "hidden"
-                } top-0.5 sm:top-[-3px] right-0.5 sm:right-[3px] absolute sm:h-[10px] rounded-full bg-[#a50c0c]`}
+                } top-[6px] sm:top-[2px] right-[4px] sm:right-[2px] absolute sm:h-[10px] rounded-full bg-[#a50c0c]`}
               ></div>
               <div
                 className={`absolute ${
@@ -361,9 +362,9 @@ export const Navbar: React.FC = () => {
                     : "invisible translate-y-10 opacity-0"
                 } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${
                   store?.auth?.success
-                    ? "right-[-129px] sm:right-[-139px] "
-                    : "sm:right-[-85px]  right-[-70px] "
-                } w-[342px] sm:w-[450px] h-[524px]`}
+                    ? "right-[-154px] sm:right-[-139px] "
+                    : "sm:right-[-85px]  right-[-95px] "
+                } w-[342px] sm:w-[450px] h-[524px] sm:h-[585px] `}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>
@@ -391,19 +392,19 @@ export const Navbar: React.FC = () => {
               <div className="relative">
                 <Heart
                   onClick={() => setOpenFavourite(!openFavourite)}
-                  className="cursor-pointer size-6 sm:size-7 "
+                  className="cursor-pointer size-[30px] sm:size-7 "
                 />
                 <div
                   className={`sm:w-[10px] size-1.5 duration-150 ${
                     store?.favourite?.favourite.length > 0 && authUser.role
                       ? "visible"
                       : "hidden"
-                  } top-[2px] right-0 absolute sm:h-[10px] rounded-full bg-[#a50c0c]`}
+                  } sm:top-[2px] top-[4px] right-0 absolute sm:h-[10px] rounded-full bg-[#a50c0c]`}
                 ></div>
               </div>
               {/* Favourite container */}
               <div
-                className={` sm:left-[-23rem] right-[-132px] sm:w-[450px] w-[387px] top-12 duration-150  absolute ${
+                className={` sm:left-[-23rem] right-[-148px] sm:w-[450px] w-[387px] top-12 duration-150  absolute ${
                   !openFavourite && authUser.fullName
                     ? "visible z-10 translate-y-0 opacity-100 "
                     : "-translate-y-2 invisible opacity-0 z-[-100]"
@@ -426,14 +427,15 @@ export const Navbar: React.FC = () => {
               <div ref={notificationReference as any} className="relative">
                 <Bell
                   onClick={() => setOpenNotification(!openNotification)}
-                  className="cursor-pointer siz-6 sm:size-7 "
+                  className="cursor-pointer size-[30px] sm:size-7 "
                 />
+
                 <div
                   className={`absolute  w-[350px] z-30 duration-150 ${
                     openNotification
                       ? "visible opacity-100 -translate-y-0 "
                       : "invisible opacity-0 translate-y-10"
-                  }   sm:right-[4.7rem] right-[-58px]  top-8`}
+                  }   sm:right-[2.7rem] right-[-70px]  top-9`}
                 >
                   <NotificationPage isOpen={openNotification} />
                 </div>
@@ -447,7 +449,7 @@ export const Navbar: React.FC = () => {
                     className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
                   >
                     <img
-                      className="size-7 rounded-full  sm:w-11 sm:h-10"
+                      className="size-9 rounded-full  sm:w-11 sm:h-10"
                       src={authUser.avatar}
                       alt=""
                     />
@@ -457,7 +459,7 @@ export const Navbar: React.FC = () => {
                       !closeProfile && authUser.fullName
                         ? "visible opacity-100 "
                         : "invisible opacity-0 "
-                    } w-full absolute right-[266px] sm:right-[19.3rem] top-[40px] sm:top-[53px]  `}
+                    } w-full absolute right-[256px] sm:right-[19.3rem] top-[46px] sm:top-[53px]  `}
                   >
                     <Profile
                       closeModal={() => setCloseProfile(!closeProfile)}
@@ -471,7 +473,7 @@ export const Navbar: React.FC = () => {
                   onClick={() => setCloseProfile(!closeProfile)}
                   className=""
                 >
-                  <UserCircleIcon className=" sm:size-7 size-6 transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0" />
+                  <UserCircleIcon className=" sm:size-7 size-[30px] transition-colors duration-500 ease-in-out md:flex hover:text-[var(--secondary-color)] cursor-pointer shrink-0" />
                 </div>
               )}
               {!closeProfile && !authUser?.fullName && (
@@ -487,15 +489,16 @@ export const Navbar: React.FC = () => {
         </div>
       </nav>
       <div
-        className={` sm:hidden w-[280px]  bg-[var(--light-background)] text-[var(--dark-text)]  mx-2 px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
+        className={` sm:hidden w-[280px]  bg-[var(--light-background)] text-[var(--dark-text)]  ml-[22px] px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
       >
-        <button 
+        <button
           className="  py-1.5 px-1 text-[var(--dark-secondary-text)] rounded-r-lg bg-[var(--light-background)] "
           onClick={() => setOpenSearch(false)}
         >
           <Search className="hover:text-[var(--danger-bg)] size-[17px] sm:size-6 " />
         </button>
-        <input onFocus={()=> setOpenSearch(!openSearch)}
+        <input
+          onFocus={() => setOpenSearch(true)}
           value={searchValue}
           onChange={(event) => {
             debounceSearch(event.target.value);
@@ -519,6 +522,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
   const user = useSelector((state: RootState) => state.root.auth.userInfo);
 
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
 
   const reference = useRef<HTMLDivElement | null>(null);
 
@@ -564,18 +568,20 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
     };
   });
 
-  const navigate = useNavigate();
   return (
     <div
       ref={reference}
-      className="w-[250px]  gap-10 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
+      className="w-[250px] relative  gap-5 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
     >
       <div className="flex justify-between py-3  items-start w-full">
-        <div className=" w-[150px] h-[50px] ">
+        <div
+          onClick={() => navigate("/")}
+          className=" w-[150px] cursor-pointer h-[50px] "
+        >
           <img className="w-full h-full" src={CollegeLogo} alt="" />
         </div>
         <button onClick={() => action()} className="">
-          <X className="duration-150 size-6 sm:size-7 hover:text-red-600" />
+          <X className="duration-150 size-[30px] sm:size-7 hover:text-red-600" />
         </button>
       </div>
       <div className="flex items-center justify-start w-full gap-5 pl-3">
@@ -600,8 +606,8 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           </div>
         }
       </div>
-      <div className="flex pt-5 items-start justify-start flex-grow w-full h-full overflow-auto">
-        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-6 sm:gap-10">
+      <div className="flex  pt-5 scrollbar-custom items-start justify-start flex-grow w-full h-full overflow-auto">
+        <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-4 sm:gap-10">
           <li
             onClick={() => {
               navigate("/");
@@ -642,6 +648,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
             <Settings className="size-5" />
             <span>Setting</span>
           </li>
+          <DarkMode />
         </ul>
       </div>
       <button
@@ -649,7 +656,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           handleLogout();
           action();
         }}
-        className="flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]  mb-7  w-full p-3 rounded duration-150"
+        className="flex top-[85vh] left-2 right-2 absolute items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]     p-3 rounded duration-150"
       >
         <LogOut className="size-5" />
         Logout

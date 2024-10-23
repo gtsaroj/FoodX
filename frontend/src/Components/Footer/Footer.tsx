@@ -14,7 +14,7 @@ const Footer: React.FC = () => {
             <div></div>
           </div>
         </div>
-        <div className="grid w-full grid-cols-1 gap-6 py-4 md:grid-cols-2 place-items-center md:place-items-start">
+        <div className="grid w-full grid-cols-1 gap-6 py-4 md:grid-cols-2  md:place-items-start">
           <div className="flex flex-col gap-6 p-5">
             <p className="font-bold tracking-wider">Quick Contact</p>
             <div className="flex flex-col gap-5">
@@ -73,12 +73,6 @@ const Footer: React.FC = () => {
                   Cart
                 </a>
                 <a
-                  href="/cart/checkout"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Checkout
-                </a>
-                <a
                   href="/orders"
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
@@ -113,7 +107,7 @@ const Footer: React.FC = () => {
         <p className="cursor-pointer">
           Developed By:{" "}
           <a
-            href=""
+            href="https://saroj-gt.web.app/"
             target="_blank"
             className="hover:text-[var(--primary-color)]  hover:underline "
           >

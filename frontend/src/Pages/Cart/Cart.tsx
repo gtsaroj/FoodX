@@ -138,7 +138,7 @@ const Cart: React.FC<CardProp> = ({ action }) => {
         const product = JSON.parse(productData);
         addProductToCartFn(product);
       }}
-      className="flex flex-col w-full justify-between h-full gap-3    sm:px-[0px]"
+      className="flex flex-col w-full justify-between h-full gap-3"
     >
       <div className="flex flex-col items-start ">
         <h3 className="w-full py-2 sm:text-[25px] text-[21px] font-semibold tracking-wide text-[var(--dark-text)]">
@@ -175,13 +175,13 @@ const Cart: React.FC<CardProp> = ({ action }) => {
             Rs. <span>{Total()}</span>
           </p>
         </div>
-        <button
+        <button disabled={!store?.cart?.products.length}
           onClick={() => {
             action && action();
             setLoading(true);
             navigate("/cart/checkout");
           }}
-          className=" py-1.5 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center hover:bg-[var(--primary-dark)]  text-white cursor-pointer tracking-wider sm:text-xl text-[16px] font-semibold"
+          className=" py-1.5 rounded-md px-4 w-full flex justify-center items-center bg-[var(--primary-color)] text-center focus:bg-[var(--primary-dark)]    sm:hover:bg-[var(--primary-dark)]  text-white  tracking-wider sm:text-xl text-[16px] font-semibold"
         >
           Checkout
         </button>

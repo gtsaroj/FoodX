@@ -8,18 +8,20 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { User } from "../../models/user.model";
 import { resetCart } from "../../Reducer/product.reducer";
+import { DarkMode } from "../Button/DarkMode.button";
+import { BringToFront, LogOut } from "lucide-react";
 
 interface Prop {
   user: User;
-  closeModal : ()=>void;
+  closeModal: () => void;
 }
 
-const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
+const Profile: React.FC<Prop> = ({ user, closeModal }: Prop) => {
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-    const handleLogout = async () => {
+  const handleLogout = async () => {
     const toastLoader = toast.loading("Logging out, please wait...");
     setLoading(true);
     try {
@@ -28,13 +30,13 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
       if (response.status === 200) {
         await signOutUser();
         dispatch(authLogout());
-        dispatch(resetCart())
+        dispatch(resetCart());
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
         toast.dismiss(toastLoader);
         toast.success("Logged out successfully!");
       } else {
-      console.log(` Error : authProfile`)
+        console.log(` Error : authProfile`);
       }
     } catch (error) {
       toast.dismiss(toastLoader);
@@ -42,7 +44,7 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
       // throw new Error("Error logging out." + error);
     }
     setLoading(false);
-    closeModal()
+    closeModal();
   };
 
   return (
@@ -53,8 +55,8 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
         </p>
         <div
           onClick={() => {
-            navigate("/profile")
-            closeModal()
+            navigate("/profile");
+            closeModal();
           }}
           className="flex items-center justify-start gap-3 cursor-pointer w-full hover:bg-[var(--light-background)] p-1 rounded-md"
         >
@@ -72,7 +74,9 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
               </p>
             </div>
 
-            <p className="sm:text-sm text-xs text-[var(--dark-secondary-text)] ">{user.email}</p>
+            <p className="sm:text-sm text-xs text-[var(--dark-secondary-text)] ">
+              {user.email}
+            </p>
           </div>
         </div>
       </div>
@@ -81,18 +85,21 @@ const Profile: React.FC<Prop> = ({ user,closeModal }: Prop) => {
         <div className="flex flex-col items-baseline justify-start gap-1 w-full">
           <button
             onClick={() => {
-              navigate("/orders")
-              closeModal()
+              navigate("/orders");
+              closeModal();
             }}
-            className=" flex justify-start items-center  rounded text-[var(--dark-text)] hover:bg-[var(--light-background)] w-full text-[14px] sm:text-[17px] py-1.5 px-4 "
+            className=" flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]   w-full p-3 rounded duration-150 "
           >
+            <BringToFront className="size-5" />
             View Orders
           </button>
+          <DarkMode />
           <button
             disabled={loading}
             onClick={() => handleLogout()}
-            className=" flex justify-start items-center  rounded text-[var(--dark-text)]  w-full text-[14px] sm:text-[17px]  py-1.5 px-4 hover:bg-[var(--light-background)]"
+            className=" flex items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28] w-full p-3 rounded duration-150"
           >
+            <LogOut className="size-5 " />
             Logout
           </button>
         </div>
