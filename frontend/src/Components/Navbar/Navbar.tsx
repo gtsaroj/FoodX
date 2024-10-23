@@ -685,7 +685,7 @@ export const Header: React.FC = () => {
       <div
         className={
           "fixed left-0 bg-[var(--body-bg)] pb-1 top-0 sm:top-[41px] transition-transform ease-in-out duration-700 " +
-          (nav ? " translate-y-[-41px]" : " translate-y-0")
+          (nav ? " sm:translate-y-[-41px]" : " sm:translate-y-0")
         }
       >
         <Navbar />
