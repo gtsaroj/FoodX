@@ -19,7 +19,7 @@ const OrderNotification = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const store = useSelector((state: RootState) => state.root);
-  const { data, loading, error } = getRecentOrder(
+  const { data, loading } = getRecentOrder(
     {
       pageSize: 5,
       direction: "next",

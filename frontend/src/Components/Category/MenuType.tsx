@@ -61,6 +61,7 @@ export const MenuType: React.FC = () => {
 
   const { data, isLoading } = useQuery("categories", CategoriesData, {
     refetchOnWindowFocus: false,
+    cacheTime: 1 * 60 * 1000,
   });
 
   useEffect(() => {
@@ -135,7 +136,7 @@ export const MenuType: React.FC = () => {
               ))
             )
           ) : (
-            <div className="flex flex-col items-center w-full gap-4 sm:flex-row ">
+            <div className="flex  overflow-auto items-center w-full gap-4  ">
               <Skeleton
                 height={230}
                 width={330}
