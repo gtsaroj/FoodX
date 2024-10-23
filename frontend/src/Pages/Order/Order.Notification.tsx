@@ -4,7 +4,12 @@ import { Order, OrderStatus } from "../../models/order.model";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
-import { removeOrder, updateOrder } from "../../Reducer/order.reducer";
+import {
+  addOrder,
+  removeOrder,
+  updateOrder,
+} from "../../Reducer/order.reducer";
+import { getRecentOrder } from "./order";
 
 const OrderNotification = () => {
   const [initialData, setInitialData] = useState<Order[]>();
@@ -14,21 +19,40 @@ const OrderNotification = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const store = useSelector((state: RootState) => state.root);
+  const { data, loading, error } = getRecentOrder(
+    {
+      pageSize: 5,
+      direction: "next",
+      filter: "orderRequest",
+      userId: store?.auth?.userInfo?.uid,
+    },
+    { enable: !store?.order?.order.length && store?.auth?.success }
+  );
 
   useEffect(() => {
-    setInitialData(store.order.order);
+    if (data.length && !loading) {
+      data?.forEach((order) => {
+        if (order.status !== "completed") {
+          dispatch(
+            addOrder({
+              orderId: order.id,
+              products: order.products,
+              status: order.status,
+              orderRequest: order.time, // orderRequest
+            })
+          );
+        }
+      });
+    }
+  }, [loading, dispatch, store?.order.order]);
+
+  useEffect(() => {
+    setInitialData(store?.order?.order);
   }, [store.order.order]);
 
   useEffect(() => {
     const handleNotification = (order: Order) => {
       dispatch(updateOrder({ ...order }));
-      // const updateOrder = initialData?.map((data): Order => {
-      //   if (data.orderId === order.orderId) {
-      //     return { ...data, status: order.status as OrderStatus["status"] };
-      //   }
-      //   return data;
-      // });
-      // setInitialData(updateOrder);
     };
 
     socket.on("order_status", handleNotification);
@@ -36,7 +60,7 @@ const OrderNotification = () => {
     return () => {
       socket.off("order_status", handleNotification);
     };
-  }, []);
+  }, [dispatch, initialData]);
 
   const orderStatus: OrderStatus["status"][] = [
     "pending",
@@ -60,7 +84,7 @@ const OrderNotification = () => {
     completedOrders?.forEach((order) => {
       setTimeout(() => {
         dispatch(removeOrder(order.orderId));
-      }, 15000); // Removes the order after 15 seconds
+      }, 3000); // Removes the order after 15 seconds
     });
   }, [initialData, dispatch]);
 
@@ -108,7 +132,7 @@ const OrderNotification = () => {
                 <p
                   className={`flex flex-col items-start  duration-150 justify-center gap-1 ${
                     order.orderId == orderId && open
-                      ? "visible opacity-100 h-9 "
+                      ? "visible opacity-100 "
                       : " h-[0px] invisible opacity-0 "
                   } `}
                 >

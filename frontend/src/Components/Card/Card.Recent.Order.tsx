@@ -36,7 +36,7 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
         <div
           className={`flex pb-5  overflow-auto text-sm sm:text-[14px] font-semibold w-full text-gray-500 border-b-[2px] border-[var(--dark-border)]  justify-start`}
         >
-          {item?.products.length > 3
+          {item?.products?.length <= 3
             ? item.products.map(
                 (product) => `${product.name} × ${product.quantity} ,`
               )

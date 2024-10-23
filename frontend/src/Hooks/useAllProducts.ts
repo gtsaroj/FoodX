@@ -35,8 +35,8 @@ export const useAllProducts = () => {
     () => getAllProducts(specialProducts as Product[]),
     {
       staleTime: 2 * 60 * 1000,
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
     }
   );
 };
