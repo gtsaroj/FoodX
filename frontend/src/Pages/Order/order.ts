@@ -76,7 +76,6 @@ export const getRecentOrder = (
       setData(aggregateOrder);
     } catch (err) {
       setError(JSON.stringify(err));
-      throw new Error("Error while fetching recent order" + err);
     }
     setLoading(false);
   };

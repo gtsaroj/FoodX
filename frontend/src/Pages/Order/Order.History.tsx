@@ -198,7 +198,7 @@ export const OrderHistory = () => {
         return updatedOrders;
       });
     } catch (error) {
-      throw new Error("Error while fetching user-order");
+      // throw new Error("Error while fetching user-order");
     }
     setLoading(false);
   };

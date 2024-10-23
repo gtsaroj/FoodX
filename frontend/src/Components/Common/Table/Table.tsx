@@ -5,6 +5,8 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { LiaRedoAltSolid } from "react-icons/lia";
 import { LuDownloadCloud } from "react-icons/lu";
+import Empty from "../../../assets/empty.png";
+import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace Table {
@@ -60,6 +62,8 @@ function Table<T extends { id: string }>({
     pagination.currentPage as number
   );
   const [currentData, setCurrentData] = useState<any[]>();
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const startIndex = ((currentPage || 1) - 1) * (pagination?.perPage || 2);
@@ -142,7 +146,7 @@ function Table<T extends { id: string }>({
             </tr>
           ) : (
             <>
-              {currentData &&
+              {currentData && currentData?.length > 0 ? (
                 currentData.map((item, index) => (
                   <tr
                     className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-6 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-[2.5rem] flex-nowrap"
@@ -175,9 +179,9 @@ function Table<T extends { id: string }>({
                       >
                         <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
                           <FaEdit />
-                          <span className="text-[16px]  tracking-wide">
+                          <p className="text-[16px]  tracking-wide">
                             Edit
-                          </span>
+                          </p>
                         </div>
                       </td>
                     )}
@@ -195,7 +199,7 @@ function Table<T extends { id: string }>({
                             strokeWidth={1}
                             size={19}
                           />
-                          <span className="sm:text-[14px] text-xs ">Order</span>
+                          <p className="sm:text-[14px] text-xs ">Order</p>
                         </div>
                       </td>
                     )}
@@ -213,9 +217,9 @@ function Table<T extends { id: string }>({
                             strokeWidth={2}
                           />
                         </div>
-                        <span className=" text-xs sm:text-[14px] tracking-wide ">
+                        <p className=" text-xs sm:text-[14px] tracking-wide ">
                           Export
-                        </span>
+                        </p>
                       </td>
                     )}
                     {!!actions?.viewFn && !disableActions && (
@@ -232,14 +236,36 @@ function Table<T extends { id: string }>({
                           }}
                         >
                           <FaEye />
-                          <span className="text-sm text-[var(--dark-text)] ">
+                          <p className="text-sm text-[var(--dark-text)] ">
                             View
-                          </span>
+                          </p>
                         </div>
                       </td>
                     )}
                   </tr>
-                ))}
+                ))
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
+                  <img
+                    src={Empty}
+                    alt="No orders found"
+                    className="size-44 mb-4"
+                  />
+                  <h4 className="text-xl text-[var(--dark-secondary-text)] mb-2">
+                    No orders found
+                  </h4>
+                  <p className="text-sm text-[var(--dark-secondary-text)] mb-4">
+                    It looks like you haven't placed any orders.
+                  </p>
+
+                  <button
+                    onClick={() => navigate("/#categories")}
+                    className="mt-4 bg-[var(--primary-light)] text-white py-2 px-4 rounded hover:bg-[var(--primary-dark)]"
+                  >
+                    Browse Categories
+                  </button>
+                </div>
+              )}
             </>
           )}
         </tbody>

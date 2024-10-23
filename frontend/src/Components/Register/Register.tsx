@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { ValidationType } from "../../models/register.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
 // import { useDispatch } from "react-redux";
@@ -109,6 +109,10 @@ export const RegisterContainer: React.FC = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    document.body.classList.remove("dark");
+  }, []);
+  
   return (
     <div className="flex flex-col items-start w-full px-3 lg:py-10 lg:flex-row lg:gap-3 gap-6  justify-between lg:items-center lg:justify-evenly ">
       <div className="bg-[var(--light-foreground)] lg:bg-transparent w-full lg:w-auto py-2  mb-4 ">

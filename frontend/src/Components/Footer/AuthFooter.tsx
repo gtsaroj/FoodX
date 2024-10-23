@@ -3,13 +3,13 @@ export const AuthFooter: React.FC = () => {
       <div className="w-full max-h-[60px] h-full py-5">
         <p className="text-[var(--dark-secondary-text)] w-full text-center">
           Designed and Developed by{" "}
-          <span className="hover:underline hover:text-[var(--primary-color)] cursor-pointer">
+          <a target="_blank" href="https://saroj-gt.web.app/" className="hover:underline hover:text-[var(--primary-color)] cursor-pointer">
             Saroj
-          </span>{" "}
+          </a>{" "}
           and{" "}
-          <span className="hover:underline hover:text-[var(--primary-color)] cursor-pointer">
+          <a target="_blank" href="https://aayush-al.web.app/" className="hover:underline hover:text-[var(--primary-color)] cursor-pointer">
             Aayush
-          </span>
+          </a>
         </p>
       </div>
     );

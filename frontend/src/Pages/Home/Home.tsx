@@ -16,7 +16,10 @@ const Home = () => {
         <div>
           <Specials />
         </div>
-        <div className="w-full flex items-center justify-center">
+        <div
+          id="categories"
+          className="w-full flex items-center justify-center"
+        >
           <MenuType />
         </div>
       </div>

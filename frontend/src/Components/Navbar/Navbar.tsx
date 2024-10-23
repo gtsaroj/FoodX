@@ -538,6 +538,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         dispatch(resetCart());
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
+        document.body.classList.remove("dark");
         toast.dismiss(toastLoader);
         toast.success("Logged out successfully!");
       } else {
@@ -676,7 +677,13 @@ export const Header: React.FC = () => {
     }
   };
 
-  window.addEventListener("scroll", changeColor);
+  useEffect(() => {
+    window.addEventListener("scroll", changeColor);
+
+    return () => {
+      window.removeEventListener("scroll", changeColor);
+    };
+  }, []);
 
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
