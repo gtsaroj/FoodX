@@ -3,7 +3,7 @@ import Skeleton from "react-loading-skeleton";
 import { Product } from "../../models/product.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { Frown, RefreshCw } from "lucide-react";
+import { Frown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { RecentProductCard } from "../../Components/Card/Card.Recent.Product";
 import { getOrderByUser } from "../../Services/order.services";
@@ -45,9 +45,6 @@ export const RecentProduct = () => {
     authUser?.success ? getProducts() : "";
   }, []);
 
-  const handleRefresh = () => {
-    getProducts();
-  };
 
   const navigate = useNavigate();
 

@@ -5,7 +5,6 @@ import { getRecentOrder } from "./order";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import Empty from "../../assets/empty.png";
-import { RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const RecentOrder = () => {
