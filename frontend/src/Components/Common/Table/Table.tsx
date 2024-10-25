@@ -179,9 +179,7 @@ function Table<T extends { id: string }>({
                       >
                         <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
                           <FaEdit />
-                          <p className="text-[16px]  tracking-wide">
-                            Edit
-                          </p>
+                          <p className="text-[16px]  tracking-wide">Edit</p>
                         </div>
                       </td>
                     )}
@@ -192,12 +190,11 @@ function Table<T extends { id: string }>({
                           actions?.orderFn && actions?.orderFn(item.id);
                         }}
                       >
-                        <div className=" flex group/data  text-[var(--dark-text)]  duration-150 hover:bg-[var(--primary-dark)]  cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
+                        <div className=" flex group/data   text-white duration-150 hover:bg-[var(--primary-dark)]  cursor-pointer items-center  px-2 justify-center gap-2 rounded-lg py-1.5 bg-[var(--primary-color)]  ">
                           <LiaRedoAltSolid
-                            className=" text-[var(--dark-text)] size-4 sm:size-6  group-hover/data:rotate-90 duration-200 "
+                            className=" text-[var(--dark-text)] size-3 sm:size-6  group-hover/data:rotate-90 duration-200 "
                             color="white"
                             strokeWidth={1}
-                            size={19}
                           />
                           <p className="sm:text-[14px] text-xs ">Order</p>
                         </div>

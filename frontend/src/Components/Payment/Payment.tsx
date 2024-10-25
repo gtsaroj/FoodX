@@ -98,26 +98,6 @@ export const Payment: React.FC = () => {
     setLoading(false);
   };
 
-  // useEffect(() => {
-  //   const updateStateFromSessionStorage = () => {
-  //     const products = sessionStorage.getItem("products");
-  //     setOrder(products ? JSON.parse(products) : []);
-
-  //     const getDiscount = sessionStorage.getItem("discount");
-  //     setDiscount(getDiscount ? parseInt(getDiscount, 10) : 0);
-  //   };
-
-  //   // Initial state setup
-  //   updateStateFromSessionStorage();
-
-  //   // Listen for storage changes
-  //   window.addEventListener('storage', updateStateFromSessionStorage);
-
-  //   return () => {
-  //     window.removeEventListener('storage', updateStateFromSessionStorage);
-  //   };
-  // }, []);
-
   return (
     <div className="w-full md:max-w-md p-5 mt-12 rounded-lg bg-[var(--light-foreground)] shadow-md">
       <h1 className="text-xl font-semibold tracking-wider text-[var(--dark-text)] mb-5">
@@ -132,7 +112,7 @@ export const Payment: React.FC = () => {
           <div className="flex gap-3 mt-2">
             <button
               onClick={() => handlePaymentSelection("esewa")}
-              className={`w-full py-3 bg-[var(--esewa)] font-semibold tracking-wide rounded-lg text-[var(--dark-text)] ${
+              className={`w-full py-3 bg-[var(--esewa)] font-semibold tracking-wide rounded-lg text-white ${
                 selectedPayment === "esewa"
                   ? "ring-[4px] ring-[var(--dark-border)]  "
                   : ""
@@ -142,7 +122,7 @@ export const Payment: React.FC = () => {
             </button>
             <button
               onClick={() => handlePaymentSelection("khalti")}
-              className={`w-full py-3 bg-[var(--khalti)] font-semibold tracking-wide rounded-lg text-[var(--dark-text)] ${
+              className={`w-full py-3 bg-[var(--khalti)] font-semibold tracking-wide rounded-lg text-white ${
                 selectedPayment === "khalti"
                   ? "ring-[4px] ring-[var(--dark-border)]  "
                   : ""
@@ -169,22 +149,6 @@ export const Payment: React.FC = () => {
 
         {/* Order Summary */}
         <div className="mt-5 p-4 bg-[var(--light-foreground)] rounded-lg border-[1px] border-[var(--dark-border)]">
-          {/* <div className="flex items-center justify-between">
-            <span className="text-[var(--dark-secondary-text)]">
-              Cart Subtotal
-            </span>
-            <span className="text-[var(--dark-secondary-text)]">
-              {store.cart.products?.reduce(
-                (productAcc, product) =>
-                  productAcc + product.price * product.quantity,
-                0
-              )}
-            </span>
-          </div> */}
-          {/* <div className="flex items-center justify-between mt-2">
-            <span className="text-[var(--dark-secondary-text)]">Discount</span>
-            <span className="text-[var(--dark-secondary-text)]"> { discount || 0}</span>
-          </div> */}
           <div className="flex justify-between items-center  font-semibold text-[var(--green-text)]">
             <span>Order Total</span>
             <span>
@@ -208,14 +172,11 @@ export const Payment: React.FC = () => {
           <button
             type="button"
             onClick={handlePayment}
-            className="bg-[var(--primary-color)] flex gap-2 items-center justify-start text-[var(--dark-text)] py-2 px-4 rounded-lg hover:bg-[var(--primary-light)] transition-all"
+            className="bg-[var(--primary-color)] text-sm sm:text-[15px]  tracking-wide flex gap-2 items-center justify-start text-[var(--dark-text)] py-2 px-4 rounded-lg hover:bg-[var(--primary-light)] transition-all"
           >
             Pay Now
             {loading && (
-              <MoonLoader
-                size={20}
-                className=" size-3 text-[var(--primary-color)] "
-              />
+              <MoonLoader size={18} className=" text-[var(--primary-color)] " />
             )}
           </button>
         </div>
