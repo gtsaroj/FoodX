@@ -32,12 +32,13 @@ const Specials: React.FC = () => {
               <SpecialCardsContainer1 products={data ? data?.slice(4) : []} />
             </div>
           </div>
-          <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 top-[17.87rem] flex justify-between">
+          {
+           data && data?.length > 0 &&     <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 top-[17.87rem] flex justify-between">
             <button
               onClick={() => {
                 specialsRef.current?.scrollBy({
                   behavior: "smooth",
-                  left: -200,
+                  left: -300,
                 });
               }}
               className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150 text-[var(--dark-text)] rounded-full "
@@ -48,7 +49,7 @@ const Specials: React.FC = () => {
               onClick={() => {
                 specialsRef.current?.scrollBy({
                   behavior: "smooth",
-                  left: 200,
+                  left: 300,
                 });
               }}
               className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150  text-[var(--dark-text)] rounded-full "
@@ -56,6 +57,7 @@ const Specials: React.FC = () => {
               <ChevronRight className="sm:size-6 size-5 " />
             </button>
           </div>
+      }
         </div>
         <div className="bg-[var(--light-background)] h-full  min-w-[400px] hidden lg:flex lg:col-span-2 w-full px-5 py-5 rounded-md">
           <Cart />

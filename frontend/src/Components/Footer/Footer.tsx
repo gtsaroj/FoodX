@@ -1,4 +1,12 @@
-import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Clock,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 import CollegeLogo from "../../assets/logo/texas.png";
 
 const Footer: React.FC = () => {
@@ -9,9 +17,28 @@ const Footer: React.FC = () => {
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />
           </div>
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-3">
             <p className="font-bold tracking-wide ext-lg ">Follow us: </p>
-            <div></div>
+            <div className=" gap-2 flex items-center">
+              <a
+                target="_blank"
+                href="https://www.facebook.com/texasintlcollege"
+              >
+                <Facebook className="sm:size-6 size-5 duration-150 hover:text-[var(--secondary-color)] " />
+              </a>
+              <a
+                href="https://www.instagram.com/texasinternationalcollege/"
+                target="_blank"
+              >
+                <Instagram className="sm:size-6 size-5 duration-150 hover:text-[var(--secondary-color)] " />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/texas-college-of-management-it/"
+                target="_blank"
+              >
+                <Linkedin className="sm:size-6 size-5 duration-150 hover:text-[var(--secondary-color)] " />
+              </a>
+            </div>
           </div>
         </div>
         <div className="grid w-full grid-cols-1 gap-6 py-4 md:grid-cols-2  md:place-items-start">
@@ -56,7 +83,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between w-full gap-6 px-5 py-6 ">
+          <div className="flex justify-between w-full gap-8 px-5 py-6 ">
             <div className="flex flex-col gap-5">
               <p className="font-bold tracking-wider">Links</p>
               <div className="flex flex-col gap-3 text-sm text-white ">
@@ -77,6 +104,31 @@ const Footer: React.FC = () => {
                   className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
                 >
                   Orders
+                </a>
+              </div>
+            </div>
+            <div className="flex flex-col gap-5">
+              <p className="font-bold tracking-wider">Quick Links</p>
+              <div className="flex flex-col gap-3 text-sm text-white ">
+                <a
+                  target="_blank"
+                  href="mail:enquiry@texasintl.edu.np"
+                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+                >
+                  enquiry@texasintl.edu.np
+                </a>
+                <a
+                  target="_blank"
+                  href="https://texasintl.edu.np/"
+                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+                >
+                  Texas International College
+                </a>
+                <a target="_blank"
+                  href="https://texascollege.edu.np/"
+                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+                >
+                  Texas College of IT and Management
                 </a>
               </div>
             </div>

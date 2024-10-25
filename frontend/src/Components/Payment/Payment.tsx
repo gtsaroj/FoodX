@@ -54,7 +54,7 @@ export const Payment: React.FC = () => {
         addNewOrder({
           orderId: newOrder,
           products: store?.cart?.products,
-          orderRequest: dayjs().format("YYYY-MM-DD"),
+          orderRequest: dayjs().toISOString(),
           uid: store.auth.userInfo.uid as string,
           revenue: store.cart.products.reduce(
             (acc, product) => acc + product.price * product.quantity,
@@ -64,7 +64,7 @@ export const Payment: React.FC = () => {
         })
       );
       await addRevenue({
-        id: dayjs().format("YYYY-MM-DD"),
+        id: dayjs().toISOString(),
         orders: store.cart.products,
       });
       await addNotification({
