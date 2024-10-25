@@ -1,9 +1,17 @@
 import { ArrowRight } from "lucide-react";
 import { UserOrder } from "../../models/order.model";
-import { AppDispatch } from "../../Store";
+import { AppDispatch, RootState } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { addToCart, resetCart } from "../../Reducer/product.reducer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  removeCart,
+  resetCart,
+} from "../../Reducer/product.reducer";
+import {
+  addProductToCart,
+  removeProductFromCart,
+} from "../../Services/cart.services";
 
 interface RecentCardProp {
   item: UserOrder;
@@ -12,6 +20,8 @@ interface RecentCardProp {
 export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
+  const store = useSelector((state: RootState) => state.root);
 
   return (
     <div className="sm:w-[550px] w-[400px] bg-[var(--light-foreground)] rounded-l-lg pr-5 h-[140px] sm:h-full border-[1px] border-[var(--dark-border)] rounded-lg gap-5  flex items-center justify-center">
@@ -48,10 +58,21 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
           </span>
           <button
             onClick={() => {
-              dispatch(resetCart());
-              item.products?.forEach((product) => {
+              store?.cart?.products?.forEach(async (product) => {
+                await removeProductFromCart(
+                  store?.auth?.userInfo?.uid as string,
+                  product.id
+                );
+                dispatch(removeCart(product.id));
+              });
+              item.products?.forEach(async (product) => {
+                await addProductToCart(
+                  store?.auth?.userInfo?.uid as string,
+                  product.id
+                );
                 dispatch(addToCart({ ...product }));
               });
+
               navigate("/cart/checkout");
             }}
             className=" font-semibold duration-150 gap-2 flex items-center justify-start text-[var(--primary-color)] text-[14px] sm:text-[17px] hover:text-[var(--primary-light)] "

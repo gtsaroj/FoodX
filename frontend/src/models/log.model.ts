@@ -15,7 +15,7 @@ export interface LogCardProps {
       | "checkout" |undefined
   
     detail?: string;
-    date: Date;
+    date: string;
     open?: boolean;
     userId?: string;
     userRole?: string | UserRole["role"];

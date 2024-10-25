@@ -37,6 +37,7 @@ import { MdOutlineShoppingBag } from "react-icons/md";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { useAllProducts } from "../../Hooks/useAllProducts";
 import { DarkMode } from "../Button/DarkMode.button";
+import { useLogout } from "../AuthProfile/useLogout";
 
 const navbarItems = [
   {
@@ -526,30 +527,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
 
   const reference = useRef<HTMLDivElement | null>(null);
 
-  const handleLogout = async () => {
-    const toastLoader = toast.loading("Logging out, please wait...");
-
-    try {
-      const response = await makeRequest.post("/users/logout");
-
-      if (response.status === 200) {
-        await signOutUser();
-        dispatch(authLogout());
-        dispatch(resetCart());
-        Cookies.remove("accessToken");
-        Cookies.remove("refreshToken");
-        document.body.classList.remove("dark");
-        toast.dismiss(toastLoader);
-        toast.success("Logged out successfully!");
-      } else {
-        console.log(` Error : authProfile`);
-      }
-    } catch (error) {
-      toast.dismiss(toastLoader);
-      toast.error("Error logging out. Please try again.");
-      // throw new Error("Error logging out." + error);
-    }
-  };
+  const { loading, logout } = useLogout();
 
   useEffect(() => {
     const handleScroll = (event: MouseEvent) => {
@@ -653,8 +631,9 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         </ul>
       </div>
       <button
+        disabled={loading}
         onClick={() => {
-          handleLogout();
+          logout();
           action();
         }}
         className="flex top-[85vh] left-2 right-2 absolute items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]     p-3 rounded duration-150"

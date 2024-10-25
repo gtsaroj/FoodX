@@ -13,11 +13,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
 import { useNavigate } from "react-router-dom";
-import { addToCart, resetCart } from "../../Reducer/product.reducer";
+import {
+  addToCart,
+  removeCart,
+  
+} from "../../Reducer/product.reducer";
 import Modal from "../../Components/Common/Popup/Popup";
 import { Invoice } from "../../Components/Invoice/Invoice";
 import dayjs from "dayjs";
 import React from "react";
+import {
+  addProductToCart,
+  removeProductFromCart,
+} from "../../Services/cart.services";
 
 export const OrderHistory = () => {
   const navigate = useNavigate();
@@ -37,116 +45,116 @@ export const OrderHistory = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isExport, setIsExport] = useState<boolean>(true);
   const [selectedOrder, setSelectedOrder] = useState<UserOrder>();
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const store = useSelector((state: RootState) => state.root);
   const Columns: ColumnProps[] = React.useMemo(
-    () =>   [
-        {
-          fieldName: "Id",
-          colStyle: { width: "100px", textAlign: "start" },
-          render: (item: UserOrder) => (
-            <div className=" !p-0 w-[100px]  text-xs sm:text-[14px]  relative cursor-pointer group/id text-center ">
-              #{item.id?.substring(0, 8)}
-              <div
-                className=" top-[-27px] mx-2  text-[15px] text-xs sm:text-sm -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
-             rounded shadow "
-              >
-                #{item.id}
-              </div>
-            </div>
-          ),
-        },
-        {
-          fieldName: "Items",
-          colStyle: {
-            width: "200px ",
-            justifyContent: "start",
-            textAlign: "start",
-          },
-          render: (item: UserOrder) => (
-            <div className=" w-[200px] sm:text-[14px] text-xs  flex items-center justify-start gap-1 text-[var(--dark-text)]">
-              <p>
-                {item.id == selectedId && isCollapsed
-                  ? item.products.map(
-                      (product) => `${product.name}* ${product.quantity}`
-                    )
-                  : item.products[0].name + " * " + item.products[0].quantity}
-              </p>
-              <span
-                onClick={() => {
-                  setSelectedId(item.id);
-                  setIsCollapsed(!isCollapsed);
-                }}
-              >
-                <ChevronRight
-                  className={`size-5 ${
-                    selectedId === item.id && isCollapsed ? "rotate-90" : ""
-                  }  duration-200 cursor-pointer `}
-                />
-                {}{" "}
-              </span>
-            </div>
-          ),
-        },
-        {
-          fieldName: "Date",
-          colStyle: {
-            width: "200px",
-            justifyContent: "start",
-            textAlign: "start",
-          },
-          render: (item: UserOrder) => (
-            <div className=" w-[200px] sm:text-[14px] text-xs flex flex-col items-start justify-center text-[var(--dark-text)] ">
-              <span>{item.time}</span>
-            </div>
-          ),
-        },
-        {
-          fieldName: "Status",
-          colStyle: {
-            width: "180px",
-            justifyContent: "start",
-            textAlign: "start",
-          },
-          render: (item: UserOrder) => (
+    () => [
+      {
+        fieldName: "Id",
+        colStyle: { width: "100px", textAlign: "start" },
+        render: (item: UserOrder) => (
+          <div className=" !p-0 w-[100px]  text-xs sm:text-[14px]  relative cursor-pointer group/id text-center ">
+            #{item.id?.substring(0, 8)}
             <div
-              className=" w-[180px] sm:text-[14px] text-xs  mb-2.5
-            text-[var(--dark-text)]  "
+              className=" top-[-27px] mx-2  text-[15px] text-xs sm:text-sm -left-2 group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible   absolute bg-[var(--light-foreground)] p-0.5
+             rounded shadow "
             >
-              <div
-                className={`w-2 h-2 rounded-full ${
-                  item.status === "Received"
-                    ? "bg-[var(--primary-color)] "
-                    : item.status === "Delivered"
-                    ? "bg-[var(--green-bg)] "
-                    : item.status === "Pending"
-                    ? "bg-[var(--primary-light)] "
-                    : item.status === "Canceled"
-                    ? "bg-[var(--danger-bg)]"
-                    : item.status === "Preparing"
-                    ? "bg-[var(--orange-bg)] "
-                    : ""
-                } `}
-              ></div>
-              <span>
-                {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-              </span>
+              #{item.id}
             </div>
-          ),
+          </div>
+        ),
+      },
+      {
+        fieldName: "Items",
+        colStyle: {
+          width: "200px ",
+          justifyContent: "start",
+          textAlign: "start",
         },
-        {
-          fieldName: "Amount",
-          colStyle: {
-            width: "140px",
-            justifyContent: "start",
-            textAlign: "start",
-          },
-          render: (item: UserOrder) => (
-            <div className=" w-[140px] sm:text-[14px] text-xs  flex flex-col items-start justify-center text-[var(--dark-text)] ">
-              <span>Rs. {item.amount}</span>
-            </div>
-          ),
+        render: (item: UserOrder) => (
+          <div className=" w-[200px] sm:text-[14px] text-xs  flex items-center justify-start gap-1 text-[var(--dark-text)]">
+            <p>
+              {item.id == selectedId && isCollapsed
+                ? item.products.map(
+                    (product) => `${product.name}* ${product.quantity} ,`
+                  )
+                : item.products[0].name + " * " + item.products[0].quantity}
+            </p>
+            <span
+              onClick={() => {
+                setSelectedId(item.id);
+                setIsCollapsed(!isCollapsed);
+              }}
+            >
+              <ChevronRight
+                className={`size-5 ${
+                  selectedId === item.id && isCollapsed ? "rotate-90" : ""
+                }  duration-200 cursor-pointer `}
+              />
+              {}{" "}
+            </span>
+          </div>
+        ),
+      },
+      {
+        fieldName: "Date",
+        colStyle: {
+          width: "200px",
+          justifyContent: "start",
+          textAlign: "start",
         },
-      ],
+        render: (item: UserOrder) => (
+          <div className=" w-[200px] sm:text-[14px] text-xs flex flex-col items-start justify-center text-[var(--dark-text)] ">
+            <span>{item.time}</span>
+          </div>
+        ),
+      },
+      {
+        fieldName: "Status",
+        colStyle: {
+          width: "180px",
+          justifyContent: "start",
+          textAlign: "start",
+        },
+        render: (item: UserOrder) => (
+          <div
+            className=" w-[180px] sm:text-[14px] text-xs  mb-2.5
+            text-[var(--dark-text)]  "
+          >
+            <div
+              className={`w-2 h-2 rounded-full ${
+                item.status === "Received"
+                  ? "bg-[var(--primary-color)] "
+                  : item.status === "Delivered"
+                  ? "bg-[var(--green-bg)] "
+                  : item.status === "Pending"
+                  ? "bg-[var(--primary-light)] "
+                  : item.status === "Canceled"
+                  ? "bg-[var(--danger-bg)]"
+                  : item.status === "Preparing"
+                  ? "bg-[var(--orange-bg)] "
+                  : ""
+              } `}
+            ></div>
+            <span>
+              {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+            </span>
+          </div>
+        ),
+      },
+      {
+        fieldName: "Amount",
+        colStyle: {
+          width: "140px",
+          justifyContent: "start",
+          textAlign: "start",
+        },
+        render: (item: UserOrder) => (
+          <div className=" w-[140px] sm:text-[14px] text-xs  flex flex-col items-start justify-center text-[var(--dark-text)] ">
+            <span>Rs. {item.amount}</span>
+          </div>
+        ),
+      },
+    ],
     [isCollapsed, selectedId]
   );
 
@@ -239,8 +247,19 @@ export const OrderHistory = () => {
         actions={{
           orderFn: async (id: string) => {
             const findProduct = initialOrder.find((order) => order.id === id);
-            dispatch(resetCart());
-            findProduct?.products.forEach((product) => {
+            store?.cart?.products?.forEach(async (product) => {
+              await removeProductFromCart(
+                store?.auth?.userInfo?.uid as string,
+                product.id
+              );
+              dispatch(removeCart(product.id));
+            });
+
+            findProduct?.products.forEach(async (product) => {
+              await addProductToCart(
+                store?.auth?.userInfo?.uid as string,
+                product.id
+              );
               dispatch(addToCart({ ...product }));
             });
             navigate("/cart/checkout");
@@ -283,9 +302,11 @@ export const OrderHistory = () => {
                   invoiceNumber: selectedOrder!.id,
                 },
                 customerDetails: {
-                  name: authUser!.fullName as string,
-                  phoneNumber: parseInt(authUser!.phoneNumber as string),
-                  userId: authUser.uid as string,
+                  name: store?.auth?.userInfo?.fullName as string,
+                  phoneNumber: parseInt(
+                    store?.auth?.userInfo?.phoneNumber as string
+                  ),
+                  userId: store?.auth?.userInfo?.uid as string,
                 },
               },
             ]}
