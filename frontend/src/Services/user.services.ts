@@ -5,6 +5,7 @@ import { Register, User } from "../models/user.model";
 import Cookies from "js-cookie";
 import { makeRequest } from "../makeRequest";
 import { addLogs } from "./log.services";
+import dayjs from "dayjs";
 
 export const signIn = async (
   email: string,
@@ -27,7 +28,7 @@ export const signIn = async (
     toast.dismiss(toastLoader);
     await addLogs({
       action: "login",
-      date: new Date(),
+      date: dayjs().toISOString(),
       detail: `${
         responseData.user.fullName
       } logged in at ${new Date().toLocaleString()}`,
@@ -59,7 +60,7 @@ export const verifyNewUser = async (otp: number, uid: string) => {
     localStorage.removeItem("uid");
     await addLogs({
       action: "register",
-      date: new Date(),
+      date: new Date().toISOString(),
       detail: `${
         user.userInfo.fullName
       } signed up at ${new Date().toLocaleString()}`,
@@ -110,7 +111,7 @@ export const updateAccount = async (data: {
     });
     await addLogs({
       action: "update",
-      date: new Date(),
+      date: new Date().toISOString(),
       detail: `${
         response.data.data.updatedUser.fullName
       } updated  at ${new Date().toLocaleString()}`,

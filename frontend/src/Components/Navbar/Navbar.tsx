@@ -22,15 +22,11 @@ import { LoginContainer } from "../Login/Login";
 import Profile from "../AuthProfile/AuthProfile";
 import { Product } from "../../models/product.model";
 import { debounce } from "../../Utility/Debounce";
-import { addToCart, resetCart } from "../../Reducer/product.reducer";
+import { addToCart } from "../../Reducer/product.reducer";
 import toast from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
 import { NotificationPage } from "../Notification/Notification";
 import { FaHouseUser } from "react-icons/fa";
-import { makeRequest } from "../../makeRequest";
-import { signOutUser } from "../../firebase/Authentication";
-import { authLogout } from "../../Reducer/user.reducer";
-import Cookies from "js-cookie";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
 import { MdOutlineShoppingBag } from "react-icons/md";
@@ -522,7 +518,6 @@ interface MobileSliderProp {
 export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
   const user = useSelector((state: RootState) => state.root.auth.userInfo);
 
-  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
   const reference = useRef<HTMLDivElement | null>(null);
