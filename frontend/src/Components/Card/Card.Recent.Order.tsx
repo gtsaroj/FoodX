@@ -3,11 +3,7 @@ import { UserOrder } from "../../models/order.model";
 import { AppDispatch, RootState } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToCart,
-  removeCart,
-  resetCart,
-} from "../../Reducer/product.reducer";
+import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import {
   addProductToCart,
   removeProductFromCart,
@@ -54,7 +50,7 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
         </div>
         <div className="flex  items-center justify-between w-full">
           <span className=" font-semibold text-[var(--dark-text)] text-sm sm:text-[17px] tracking-wider ">
-            Rs.{ " " }{item.amount}
+            Rs. {item.amount}
           </span>
           <button
             onClick={() => {

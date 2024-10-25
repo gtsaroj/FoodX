@@ -1,14 +1,9 @@
-import { useSocket } from "../../Utility/socket.utility";
 import { ChevronDown } from "lucide-react";
 import { Order, OrderStatus } from "../../models/order.model";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
-import {
-  addOrder,
-  removeOrder,
-  updateOrder,
-} from "../../Reducer/order.reducer";
+import { addOrder, removeOrder } from "../../Reducer/order.reducer";
 import { getRecentOrder } from "./order";
 
 const OrderNotification = () => {

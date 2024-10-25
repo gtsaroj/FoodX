@@ -5,7 +5,7 @@ import { Product } from "../../models/product.model";
 import Skeleton from "react-loading-skeleton";
 
 import { specialProducts } from "../../Hooks/useAllProducts";
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const Specials: React.FC = () => {
   const { data } = specialProducts();
