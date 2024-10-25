@@ -115,7 +115,7 @@ const ProfileCard: React.FC<ProfileCardType> = (props: ProfileCardType) => {
           {edit ? (
             <img src={updateAvatar} alt="" />
           ) : (
-                <div className=" sm:w-[80px] w-[50px] h-[50px] sm:h-[80px] ">
+                <div className=" sm:w-[80px] w-[50px] h-[65px] sm:h-[80px] ">
                    <img
               src={props?.avatar}
               alt="user profile"

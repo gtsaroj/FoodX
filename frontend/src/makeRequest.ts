@@ -63,7 +63,7 @@ makeRequest.interceptors.response.use(
             `${import.meta.env.VITE_API_URL}/users/refresh-token`,
             { refreshToken }
           );
-
+       console.log(response)
           const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
             response.data.data;
 
@@ -80,6 +80,7 @@ makeRequest.interceptors.response.use(
           error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return makeRequest(error.config);
         } catch (refreshError) {
+           console.log(refreshError)
           // Refresh token request failed, force logout
           Store.dispatch(authLogout());
           toast.error("Session expired. Please log in again.");

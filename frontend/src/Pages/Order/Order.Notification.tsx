@@ -91,7 +91,7 @@ const OrderNotification = () => {
   return store?.auth.success ? (
     <div className="sm:max-w-[400px]  w-full flex flex-col items-start justify-center gap-2.5">
       {initialData?.map((order) => (
-        <div className="w-full  text-[var(--dark-text)] flex items-start gap-3 justify-start">
+        <div key={order?.orderId} className="w-full  text-[var(--dark-text)] flex items-start gap-3 justify-start">
           <div
             onClick={() => {
               setOpen(!open);

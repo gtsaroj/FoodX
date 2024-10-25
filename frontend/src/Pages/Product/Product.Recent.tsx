@@ -45,6 +45,7 @@ export const RecentProduct = () => {
     authUser?.success ? getProducts() : "";
   }, []);
 
+  
 
   const navigate = useNavigate();
 
