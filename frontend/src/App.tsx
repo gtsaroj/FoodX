@@ -11,7 +11,7 @@ import { AppDispatch, RootState } from "./Store.ts";
 const PrivateRoute = React.lazy(() => import("./PrivateRoute.tsx"));
 import { getFavourites } from "./Services/favourite.services.ts";
 import { addToFavourite } from "./Reducer/favourite.reducer.ts";
-import { socket } from "./Utility/socket.utility.ts";
+import { useSocket } from "./Utility/socket.utility.ts";
 import VerificationPage from "./Components/VericationPage/VerificationPage.tsx";
 import { Order as OrderType } from "./models/order.model.ts";
 const Footer = React.lazy(() => import("./Components/Footer/Footer"));
@@ -51,13 +51,14 @@ const AdminProfile = React.lazy(() =>
 const Order = React.lazy(() => import("./Pages/Order/Order.tsx"));
 import Bell from "./assets/order.mp3";
 import { QueryClient, QueryClientProvider } from "react-query";
-import CustomToast from "./Components/Toast/Toast.tsx";
+import { showToast } from "./Components/Toast/Toast.tsx";
 import OrderSuccess from "./Pages/Order.Success.page.tsx";
 import useScrollToTop from "./Hooks/scrollToTop.ts";
+import {  updateOrder } from "./Reducer/order.reducer.ts";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
+  const store = useSelector((state: RootState) => state.root);
 
   const [isDark] = useState<boolean>(() => {
     const prefersDarkScheme = window.matchMedia(
@@ -65,6 +66,7 @@ const HomePage: React.FC = () => {
     ).matches;
     return prefersDarkScheme;
   });
+
   useEffect(() => {
     if (isDark) {
       document.body.classList.add("dark");
@@ -75,7 +77,7 @@ const HomePage: React.FC = () => {
 
   const getFavouireProducts = async () => {
     try {
-      const response = await getFavourites(authUser.uid as string);
+      const response = await getFavourites(store?.auth?.userInfo.uid as string);
       response.data.products?.forEach((data: string) => {
         dispatch(addToFavourite(data));
       });
@@ -85,16 +87,19 @@ const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!authUser.uid) return;
+    if (!store?.auth?.userInfo?.uid) return;
     getFavouireProducts();
-  }, [authUser.uid]);
+  }, [store?.auth?.userInfo?.uid]);
 
+  const { socket } = useSocket(store?.auth?.success);
+  
   useEffect(() => {
     const handleNotification = async (order: OrderType) => {
       try {
+        dispatch(updateOrder({ ...order }));
         const audio = new Audio(Bell);
         await audio.play().catch((err) => console.log(err));
-        CustomToast(order.orderId, order);
+        showToast(order);
       } catch (error) {
         console.error("Error while getting info of update order", error);
       }
@@ -103,11 +108,11 @@ const HomePage: React.FC = () => {
     // Set up the socket event listener
     socket?.on("order_status", handleNotification);
 
-    // Cleanup the listener on component unmount
+    // Cleanup: Disconnect on logout or unmount
     return () => {
       socket?.off("order_status", handleNotification);
     };
-  }, [socket, authUser]); // Ensure socket and authUser are included in dependencies
+  }, [socket]);
 
   useScrollToTop();
 

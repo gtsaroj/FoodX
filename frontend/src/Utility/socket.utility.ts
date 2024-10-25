@@ -1,14 +1,34 @@
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import Cookie from "js-cookie";
+import React from "react";
 
-const token = Cookie.get("accessToken");
+export const useSocket = (isLoggedIn: boolean) => {
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [socket, setSocket] = React.useState<Socket | null>(null);
 
-const socket = io(import.meta.env.VITE_SOCKET_URL, {
-  auth: {
-    token: token,
-  },
-  transports: ["websocket", "polling"],
-  path: "/socket.io",
-});
+  console.log(isLoggedIn)
 
-export { socket };
+  React.useEffect(() => {
+ console.log(isLoggedIn)
+    if (isLoggedIn) {
+      setLoading(true);
+      const token = Cookie.get("accessToken");
+
+      const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
+        auth: {
+          token: token,
+        },
+        transports: ["websocket", "polling"],
+        path: "/socket.io",
+      });
+      setSocket(newSocket);
+      setLoading(false);
+
+      return () => {
+        newSocket.disconnect();
+      };
+    }
+  }, [isLoggedIn]);
+
+  return { socket, loading };
+};

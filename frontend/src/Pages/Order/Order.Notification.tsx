@@ -1,4 +1,4 @@
-import { socket } from "../../Utility/socket.utility";
+import { useSocket } from "../../Utility/socket.utility";
 import { ChevronDown } from "lucide-react";
 import { Order, OrderStatus } from "../../models/order.model";
 import { useEffect, useState } from "react";
@@ -44,23 +44,11 @@ const OrderNotification = () => {
         }
       });
     }
-  }, [loading, dispatch, store?.order.order]);
+  }, [loading]);
 
   useEffect(() => {
     setInitialData(store?.order?.order);
   }, [store.order.order]);
-
-  useEffect(() => {
-    const handleNotification = (order: Order) => {
-      dispatch(updateOrder({ ...order }));
-    };
-
-    socket.on("order_status", handleNotification);
-
-    return () => {
-      socket.off("order_status", handleNotification);
-    };
-  }, [dispatch, initialData]);
 
   const orderStatus: OrderStatus["status"][] = [
     "pending",
@@ -77,21 +65,22 @@ const OrderNotification = () => {
   };
 
   useEffect(() => {
-    const completedOrders = initialData?.filter(
-      (order) => order.status === "completed"
-    );
-
-    completedOrders?.forEach((order) => {
-      setTimeout(() => {
-        dispatch(removeOrder(order.orderId));
-      }, 3000); // Removes the order after 15 seconds
+    store?.order?.order?.forEach((order) => {
+      if (order.status === "completed" || order.status === "cancelled") {
+        setTimeout(() => {
+          dispatch(removeOrder(order.orderId));
+        }, 10000); // Removes the order after 15 seconds
+      }
     });
-  }, [initialData, dispatch]);
+  }, [store?.order.order, dispatch]);
 
   return store?.auth.success ? (
     <div className="sm:max-w-[400px]  w-full flex flex-col items-start justify-center gap-2.5">
       {initialData?.map((order) => (
-        <div key={order?.orderId} className="w-full  text-[var(--dark-text)] flex items-start gap-3 justify-start">
+        <div
+          key={order?.orderId}
+          className="w-full  text-[var(--dark-text)] flex items-start gap-3 justify-start"
+        >
           <div
             onClick={() => {
               setOpen(!open);

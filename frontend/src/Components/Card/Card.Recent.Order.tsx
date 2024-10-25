@@ -54,7 +54,7 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
         </div>
         <div className="flex  items-center justify-between w-full">
           <span className=" font-semibold text-[var(--dark-text)] text-sm sm:text-[17px] tracking-wider ">
-            {item.amount}
+            Rs.{ " " }{item.amount}
           </span>
           <button
             onClick={() => {
