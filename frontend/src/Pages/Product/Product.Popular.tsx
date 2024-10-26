@@ -37,21 +37,21 @@ export const PopularProduct = () => {
       </h1>
       <div
         ref={cardReference}
-        className="w-full  flex flex-col  gap-3  item-scrollbar pb-5 bg    rounded items-start justify-center"
+        className="flex flex-col items-start justify-center w-full gap-3 pb-5 rounded item-scrollbar bg"
       >
-        <div className="  bg overflow-hidden  ">
-          <div className="w-full h-full    flex items-center gap-4  justify-center  ">
+        <div className="overflow-hidden bg">
+          <div className="flex items-center justify-center w-full h-full gap-4 ">
             {!loading ? (
               initialData?.length > 0 ? (
                 initialData?.map((singleObject) => (
                   <SpecialCards prop={singleObject} key={singleObject.id} />
                 ))
               ) : (
-                <div className="w-full h-full md:pl-48 xl:pl-80 pl-0 flex flex-col items-center justify-center text-center p-4">
+                <div className="flex flex-col items-center justify-center w-full h-full p-4 pl-0 text-center md:pl-48 xl:pl-80">
                   <img
                     src={Empty}
                     alt="No orders found"
-                    className="size-40 mb-4"
+                    className="mb-4 size-40"
                   />
                   <h4 className="text-xl text-[var(--dark-secondary-text)] mb-2">
                     No popular products found
@@ -69,7 +69,7 @@ export const PopularProduct = () => {
                 </div>
               )
             ) : (
-              <div className="w-full gap-4 flex ">
+              <div className="flex w-full gap-4 ">
                 <Skeleton
                   height={230}
                   width={330}
@@ -101,32 +101,32 @@ export const PopularProduct = () => {
               </div>
             )}
           </div>
-          {
-            initialData?.length > 0  &&          <div className="w-full -translate-x-8 invisible group-hover/popular:visible opacity-0 group-hover/popular:opacity-100 duration-200 absolute z-50 top-48 px-1 flex justify-between">
-            <button
-              onClick={() => {
-                cardReference.current?.scrollBy({
-                  behavior: "smooth",
-                  left: -300,
-                });
-              }}
-              className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150 text-[var(--dark-text)] rounded-full "
-            >
-              <ChevronLeft className="sm:size-6 size-5 " />
-            </button>
-            <button
-              onClick={() => {
-                cardReference.current?.scrollBy({
-                  behavior: "smooth",
-                  left: 300,
-                });
-              }}
-              className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150  text-[var(--dark-text)] rounded-full "
-            >
-              <ChevronRight className="sm:size-6 size-5 " />
-            </button>
-          </div>
-  }
+          {initialData?.length > 0 && (
+            <div className="absolute z-50 flex justify-between invisible w-full px-1 duration-200 -translate-x-8 opacity-0 group-hover/popular:visible group-hover/popular:opacity-100 top-48">
+              <button
+                onClick={() => {
+                  cardReference.current?.scrollBy({
+                    behavior: "smooth",
+                    left: -300,
+                  });
+                }}
+                className=" p-2 hover:bg-[#68656541] duration-150 text-[var(--dark-text)] rounded-full "
+              >
+                <ChevronLeft className="sm:size-6 size-5 " />
+              </button>
+              <button
+                onClick={() => {
+                  cardReference.current?.scrollBy({
+                    behavior: "smooth",
+                    left: 300,
+                  });
+                }}
+                className=" p-2 hover:bg-[#68656541] duration-150  text-[var(--dark-text)] rounded-full "
+              >
+                <ChevronRight className="sm:size-6 size-5 " />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

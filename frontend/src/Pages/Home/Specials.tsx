@@ -19,11 +19,11 @@ const Specials: React.FC = () => {
           Today's Specials 🎉
         </h2>
       </div>
-      <div className="flex group/data justify-between gap-8" id="specials">
+      <div className="flex justify-between gap-8 group/data" id="specials">
         <div className=" min-w-[300px] w-[2000px] relative ">
           <div
             ref={specialsRef}
-            className="flex flex-col w-full relative  items-center justify-between col-span-5 overflow-x-auto overflow-y-hidden rounded-md  item-scrollbar gap-9 lg:col-span-3"
+            className="relative flex flex-col items-center justify-between w-full col-span-5 overflow-x-auto overflow-y-hidden rounded-md item-scrollbar gap-9 lg:col-span-3"
           >
             <div className="w-full h-full ">
               <SpecialCardsContainer products={data ? data?.slice(0, 4) : []} />
@@ -32,32 +32,32 @@ const Specials: React.FC = () => {
               <SpecialCardsContainer1 products={data ? data?.slice(4) : []} />
             </div>
           </div>
-          {
-           data && data?.length > 0 &&     <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 top-[17.87rem] flex justify-between">
-            <button
-              onClick={() => {
-                specialsRef.current?.scrollBy({
-                  behavior: "smooth",
-                  left: -300,
-                });
-              }}
-              className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150 text-[var(--dark-text)] rounded-full "
-            >
-              <ChevronLeft className="sm:size-6 size-5 " />
-            </button>
-            <button
-              onClick={() => {
-                specialsRef.current?.scrollBy({
-                  behavior: "smooth",
-                  left: 300,
-                });
-              }}
-              className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150  text-[var(--dark-text)] rounded-full "
-            >
-              <ChevronRight className="sm:size-6 size-5 " />
-            </button>
-          </div>
-      }
+          {data && data?.length > 0 && (
+            <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 top-[17.87rem] flex justify-between">
+              <button
+                onClick={() => {
+                  specialsRef.current?.scrollBy({
+                    behavior: "smooth",
+                    left: -300,
+                  });
+                }}
+                className=" p-2 hover:bg-[#68656541] duration-150 text-[var(--dark-text)] rounded-full "
+              >
+                <ChevronLeft className="sm:size-6 size-5 " />
+              </button>
+              <button
+                onClick={() => {
+                  specialsRef.current?.scrollBy({
+                    behavior: "smooth",
+                    left: 300,
+                  });
+                }}
+                className=" p-2 hover:bg-[#68656541] duration-150  text-[var(--dark-text)] rounded-full "
+              >
+                <ChevronRight className="sm:size-6 size-5 " />
+              </button>
+            </div>
+          )}
         </div>
         <div className="bg-[var(--light-background)] h-full  min-w-[400px] hidden lg:flex lg:col-span-2 w-full px-5 py-5 rounded-md">
           <Cart />

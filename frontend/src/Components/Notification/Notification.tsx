@@ -98,7 +98,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
 
   return (
     <div className="p-2 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
-      <h2 className="mb-4 text-lg font-semibold">Notifications</h2>
+      <h2 className="px-6 py-4 mb-4 text-lg font-semibold">Notifications</h2>
       <div
         id="notification"
         className="w-full h-[350px] flex  scrollbar-custom   justify-center pr-4 "
@@ -119,7 +119,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
           }
           loader={
             loader && (
-              <div className="flex relative flex-col h-full   items-center justify-center w-full pt-3 ">
+              <div className="relative flex flex-col items-center justify-center w-full h-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
                 <div className="flex items-center   w-full gap-2  min-[200px] h-full min-h-[200px] ">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
@@ -173,23 +173,24 @@ const NoticationContainer: React.FC<NotificationProp> = ({
     >
       <div
         className={`sm:w-[280px] w-[230px] 
-         duration-150 `}
+         duration-150 flex flex-col gap-2.5
+         `}
       >
         <div
           onClick={() => setOpen(!open)}
-          className="w-full flex   items-start  justify-between pr-1"
+          className="flex items-start justify-between w-full pr-1"
         >
-          <div>
+          <div className="flex flex-col gap-1 ">
             <h4 className="tracking-wider text-[14px] sm:text-[15px] ">
               {notification.title}
             </h4>
-            <p className=" text-[10px] text-[var(--dark-secondary-text)] ">
+            <p className=" text-xs text-[var(--dark-secondary-text)] ">
               {notification.id}
             </p>
           </div>
         </div>
         <p
-          className={`text-xs text-gray-400 p-1 duration-150 ${
+          className={`text-sm text-gray-400 duration-150 ${
             open ? "flex opacity-[100] " : " hidden opacity-0"
           } `}
         >

@@ -31,14 +31,14 @@ export const RecentOrder = () => {
       </h1>
       <div
         ref={recentCardReference}
-        className="flex items-center w-full h-full item-scrollbar   pb-4 gap-5 overflow-x-auto  "
+        className="flex items-center w-full h-full gap-5 pb-4 overflow-x-auto item-scrollbar "
       >
         {!loading ? (
           data.length > 0 ? (
             data?.map((order) => <RecentCard key={order.id} item={order} />)
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-center p-4">
-              <img src={Empty} alt="No orders found" className="size-40 mb-4" />
+            <div className="flex flex-col items-center justify-center w-full h-full p-4 text-center">
+              <img src={Empty} alt="No orders found" className="mb-4 size-40" />
               <h4 className="text-xl text-[var(--dark-secondary-text)] mb-2">
                 No recent orders found
               </h4>
@@ -54,7 +54,7 @@ export const RecentOrder = () => {
             </div>
           )
         ) : (
-          <div className="w-full gap-4 flex ">
+          <div className="flex w-full gap-4 ">
             <Skeleton
               height={230}
               width={330}
@@ -87,7 +87,7 @@ export const RecentOrder = () => {
         )}
       </div>
       {data?.length > 0 && (
-        <div className="w-full -translate-x-5 invisible group-hover/recent:visible opacity-0 group-hover/recent:opacity-100 duration-200 absolute z-50 top-36   flex justify-between">
+        <div className="absolute z-50 flex justify-between invisible w-full duration-200 -translate-x-5 opacity-0 group-hover/recent:visible group-hover/recent:opacity-100 top-36">
           <button
             onClick={() => {
               recentCardReference.current?.scrollBy({
@@ -95,7 +95,7 @@ export const RecentOrder = () => {
                 left: -300,
               });
             }}
-            className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150 text-[var(--dark-text)] rounded-full "
+            className=" p-2 hover:bg-[#68656541] duration-150 text-[var(--dark-text)] rounded-full "
           >
             <ChevronLeft className="sm:size-6 size-5 " />
           </button>
@@ -106,7 +106,7 @@ export const RecentOrder = () => {
                 left: 300,
               });
             }}
-            className=" bg-[#99969680] p-2.5 hover:bg-[#94909080] duration-150  text-[var(--dark-text)] rounded-full "
+            className="  p-2 hover:bg-[#68656541] duration-150  text-[var(--dark-text)] rounded-full "
           >
             <ChevronRight className="sm:size-6 size-5 " />
           </button>
