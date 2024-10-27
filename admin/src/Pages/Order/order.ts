@@ -34,6 +34,7 @@ export const usePaginateOrders = (
     // dateFilter?: any;
     sortFilter?: { id?: string; sort?: string };
   }>();
+  const [haveUserId, setHaveUserId] = useState<string>();
 
   const fetchOrders = async ({
     pageSize,
@@ -110,10 +111,10 @@ export const usePaginateOrders = (
         (isFilter?.sortFilter?.sort as keyof Order) || filter || "orderRequest",
       sort: sortOrder || sort || "desc",
       status: status,
-      userId: userId,
+      userId: haveUserId,
       queryClient,
     });
-  }, [isFilter?.sortFilter?.sort, sortOrder]);
+  }, [isFilter?.sortFilter?.sort, sortOrder, haveUserId]);
 
   useEffect(() => {
     if (pagination.pageDirecton && pagination.currentPage > 1) {
@@ -189,6 +190,7 @@ export const usePaginateOrders = (
     isFilter,
     initialOrders,
     setInitialOrders,
+    setHaveUserId
   };
 };
 

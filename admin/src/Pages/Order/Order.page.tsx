@@ -1,5 +1,5 @@
 import { Download, Filter, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // import { debounce } from "../../Utility/debounce";
 
@@ -18,6 +18,7 @@ import { usePaginateOrders } from "./order";
 import { Order } from "../../models/order.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
+import { debounce } from "../../Utility/debounce";
 
 const OrderList = () => {
   const {
@@ -30,13 +31,14 @@ const OrderList = () => {
     totalData,
     initialOrders,
     setInitialOrders,
+    setHaveUserId
   } = usePaginateOrders({
     direction: "next",
   });
 
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
-  // const [haveUserId, setHaveUserId] = useState<string>();
+
   const [resolvedOrders, setResolvedOrders] = useState<
     InvoiceDocumentProp["orders"]
   >([]);
@@ -44,13 +46,13 @@ const OrderList = () => {
 
   const { socket } = useSocket(store?.user?.success);
 
-  // const handleChange = (value: string) => {
-  //   setHaveUserId(value);
-  // };
+  const handleChange = (value: string) => {
+    setHaveUserId(value);
+  };
 
-  // const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
-  //   initialOrders,
-  // ]);
+  const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
+    initialOrders,
+  ]);
 
   const exportAllOrder = (isCheckedAll: boolean) => {
     if (!isCheckedAll) {
@@ -224,7 +226,7 @@ const OrderList = () => {
           </div>
         </div>
       </div>
-      <div className="flex sm:flex-row flex-col items-start sm:items-start   justify-start gap-8 sm:gap-5 w-full px-1">
+      <div className="flex sm:flex-row flex-col items-start sm:items-start   justify-start gap-2.5 sm:gap-5 w-full px-1">
         <form
           action=""
           className="relative sm:w-auto w-full text-[var(--dark-text)]  "
@@ -232,7 +234,7 @@ const OrderList = () => {
           <input
             id="search"
             type="search"
-            // onChange={(event) => debouncedHandleChange(event?.target.value)}
+            onChange={(event) => debouncedHandleChange(event?.target.value)}
             className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
             placeholder="Search for orders"
           />
