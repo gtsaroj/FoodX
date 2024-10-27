@@ -1,5 +1,5 @@
 import { Download, Filter, X } from "lucide-react";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // import { debounce } from "../../Utility/debounce";
 
@@ -30,11 +30,9 @@ const OrderList = () => {
     totalData,
     initialOrders,
     setInitialOrders,
-  } = usePaginateOrders(
-    {
-      direction: "next",
-    }
-  );
+  } = usePaginateOrders({
+    direction: "next",
+  });
 
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
@@ -140,7 +138,10 @@ const OrderList = () => {
               userId: matchedOrder?.uid || "N/A",
             },
             invoiceData: {
-              invoiceDate: matchedOrder?.orderRequest || "N/A",
+              invoiceDate:
+                dayjs(matchedOrder?.orderRequest).format(
+                  "	MMM D, YYYY h:mm A"
+                ) || "N/A",
               invoiceNumber: order,
             },
           };
