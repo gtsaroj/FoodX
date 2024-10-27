@@ -93,8 +93,6 @@ const AllCustomers = () => {
     setLoading(false);
   };
 
-  const isFirstFetch = useRef(true);
-
   const handleBulkSelected = (id: string, isChecked: boolean) => {
     const refreshIds = bulkSelectedCustomer?.filter((user) => user.id !== id);
 
@@ -248,19 +246,17 @@ const AllCustomers = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    if (!isFirstFetch.current) {
-      handleCustomerData({
-        path:
-          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
-          "customer",
-        direction: "next",
-        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
-        pageSize: pagination.perPage,
-        sort: sortOrder || "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-      });
-    } else isFirstFetch.current = false;
+    handleCustomerData({
+      path:
+        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+        "customer",
+      direction: "next",
+      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
     pagination.perPage,
     filter?.sortFilter?.sort,

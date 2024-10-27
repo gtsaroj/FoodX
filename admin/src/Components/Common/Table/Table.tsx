@@ -138,7 +138,23 @@ function Table<T extends { id: string }>({
             </div>
           ) : (
             <>
-              {currentData &&
+              {currentData && currentData?.length <= 0 ? (
+                <div className="flex flex-col items-center justify-center p-10">
+                  <div className="text-[24px] text-[var(--dark-text)] mb-4">
+                    No Data Found
+                  </div>
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] mb-6">
+                    We couldn't find any data to display here.
+                  </p>
+                  <button
+                    className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-light)]"
+                    onClick={() => window.location.reload()} // Replace with a function to fetch data if needed
+                  >
+                    Refresh
+                  </button>
+                </div>
+              ) : (
+                currentData &&
                 currentData.map((item, index) => (
                   <tr
                     className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-8 hover:bg-[var(--light-background)] overflow-auto  w-full flex items-center justify-start gap-5  flex-nowrap"
@@ -212,14 +228,13 @@ function Table<T extends { id: string }>({
                           }}
                         >
                           <FaEye className=" size-5 " />
-                          <span className="text-[15px] text-white ">
-                            View
-                          </span>
+                          <span className="text-[15px] text-white ">View</span>
                         </div>
                       </td>
                     )}
                   </tr>
-                ))}
+                ))
+              )}
             </>
           )}
         </tbody>

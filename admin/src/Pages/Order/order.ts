@@ -12,9 +12,14 @@ import dayjs from "dayjs";
 import { useQueryClient } from "react-query";
 import { User } from "../../models/user.model";
 
-export const usePaginateOrders = (
-  { pageSize, direction, filter, sort, status, userId }: GetOrderModal,
-) => {
+export const usePaginateOrders = ({
+  pageSize,
+  direction,
+  filter,
+  sort,
+  status,
+  userId,
+}: GetOrderModal) => {
   const queryClient = useQueryClient();
 
   const [initialOrders, setInitialOrders] = useState<OrderModal[]>([]);
@@ -25,7 +30,7 @@ export const usePaginateOrders = (
     currentPage: number;
     perPage: number;
     pageDirecton?: "prev" | "next";
-  }>({ currentPage: 1, perPage: 5 });
+  }>({ currentPage: 1, perPage: 20 });
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
@@ -49,7 +54,7 @@ export const usePaginateOrders = (
     setLoading(true);
     try {
       const response = (await getOrders({
-        pageSize: pageSize,
+        pageSize: pageSize || pagination.perPage,
         currentFirstDoc: currentFirstDoc,
         currentLastDoc: currentLastDoc,
         direction: direction,
@@ -83,18 +88,9 @@ export const usePaginateOrders = (
       );
 
       const aggregatePromiseOrder = await Promise.all(aggregateOrder);
-
-      if (initialOrders?.length <= 0) {
-        setInitialOrders(aggregatePromiseOrder);
-      } else if (initialOrders.length > 0) {
-        setInitialOrders((prev) => [
-          ...prev,
-          ...aggregatePromiseOrder.filter(
-            (order) => !prev.some((data) => data.id === order.id)
-          ),
-        ]);
-      }
+      setInitialOrders(aggregatePromiseOrder);
     } catch (error) {
+      setInitialOrders([]);
       throw new Error("Error while fetching orders " + error);
     } finally {
       setLoading(false);
@@ -103,9 +99,9 @@ export const usePaginateOrders = (
 
   useEffect(() => {
     fetchOrders({
-      pageSize: pageSize || 5,
-      currentFirstDoc: currentDoc?.currentFirstDoc || null,
-      currentLastDoc: currentDoc?.currentLastDoc || null,
+      pageSize: pageSize || pagination.perPage,
+      currentFirstDoc: null,
+      currentLastDoc: null,
       direction: pagination.pageDirecton || direction,
       filter:
         (isFilter?.sortFilter?.sort as keyof Order) || filter || "orderRequest",
@@ -190,7 +186,7 @@ export const usePaginateOrders = (
     isFilter,
     initialOrders,
     setInitialOrders,
-    setHaveUserId
+    setHaveUserId,
   };
 };
 

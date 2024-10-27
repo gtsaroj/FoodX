@@ -18,7 +18,6 @@ import { useQuery } from "react-query";
 import { useAllRevenue } from "../../Hooks/useAllRevenue";
 
 export const WeekReveneuChart: React.FC = () => {
-
   const getLineChartData = async (): Promise<
     { time: string; revenue: number }[]
   > => {
@@ -122,38 +121,48 @@ export const WeekReveneuChart: React.FC = () => {
           </div>
         ) : initialData && initialData?.length > 0 ? (
           <LineChart
-            sx={{
-              "& .MuiLineElement-root": {
-                strokeDasharray: "2 2",
-                strokeWidth: 3,
-              },
-              "& .MuiAreaElement-series-Germany": {
-                fill: "url('#myGradient')",
-              },
-              "& .MuiChartsHoverLine": {
-                stroke: "var(--dark-text)", // Set the hover line color to white
-                strokeWidth: 1, // Adjust the thickness as needed
-              },
-              "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-                stroke: "var(--dark-text)", // Blue color for the X-axis line
-                strokeWidth: 0.8,
-              },
-              "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                stroke: "var(--dark-text)", // Blue color for the Y-axis line
-                strokeWidth: 0.8,
-              },
-              "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-                letterSpacing: "2px",
-                fill: "var(--dark-text)", // Blue color for the X-axis labels
-                strokeWidth: "0.5",
-              },
-
-              "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                fill: "var(--dark-text)", // Red color for the Y-axis labels
-                strokeWidth: "0.4",
-                letterSpacing: "2px",
-              },
-            }}
+          sx={{
+            "& .MuiLineElement-root": {
+              strokeDasharray: "2 2",
+              strokeWidth: 3,
+            },
+            "& .MuiAreaElement-series-Germany": {
+              fill: "url('#myGradient')",
+            },
+            "& .MuiChartsHoverLine": {
+              stroke: "#fff", // Hover line color
+              strokeWidth: 3,
+            },
+            "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+              stroke: "var(--dark-text)",
+              strokeWidth: 0.8,
+            },
+            "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+              stroke: "var(--dark-text)",
+              strokeWidth: 0.8,
+            },
+            "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+              letterSpacing: "2px",
+              fill: "var(--dark-text)",
+              strokeWidth: "0.5",
+            },
+            "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+              fill: "var(--dark-text)",
+              strokeWidth: "0.4",
+              letterSpacing: "2px",
+            },
+            // New styles for hover effect
+            "&:hover .MuiLineElement-root": {
+              stroke: "#fff", // Change line color to white on hover
+            },
+            "&:hover .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+              fill: "#fff", // Change X-axis tick label color to white on hover
+            },
+            "&:hover .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+              fill: "#fff", // Change Y-axis tick label color to white on hover
+            },
+          }}
+            grid={{ vertical: true, horizontal: true }}
             slotProps={{
               legend: {
                 direction: "row",
@@ -175,7 +184,6 @@ export const WeekReveneuChart: React.FC = () => {
                 color: "#45c241",
               },
             ]}
-            grid={{ vertical: true, horizontal: true }}
           ></LineChart>
         ) : (
           ""
@@ -457,6 +465,7 @@ export const MonthlyRevenueChart: React.FC = () => {
                 letterSpacing: "2px",
               },
             }}
+            grid={{ vertical: true, horizontal: true }}
             slotProps={{
               legend: {
                 direction: "row",
@@ -482,7 +491,6 @@ export const MonthlyRevenueChart: React.FC = () => {
                 color: previousData?.length > 0 ? "red" : "transparent",
               },
             ]}
-            grid={{ vertical: true, horizontal: true }}
           ></LineChart>
         )}
       </div>

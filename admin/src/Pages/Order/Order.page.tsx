@@ -34,8 +34,8 @@ const OrderList = () => {
     setHaveUserId
   } = usePaginateOrders({
     direction: "next",
+    pageSize : 20
   });
-
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
 
