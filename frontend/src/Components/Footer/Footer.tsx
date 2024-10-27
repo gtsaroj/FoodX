@@ -11,15 +11,15 @@ import CollegeLogo from "../../assets/logo/texas.png";
 
 const Footer: React.FC = () => {
   return (
-    <div className="w-full flex text-white flex-col ">
+    <div className="flex flex-col w-full text-white ">
       <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-white place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
             <img src={CollegeLogo} className="max-h-[60px] " />
           </div>
           <div className="flex flex-col items-center justify-center gap-3">
-            <p className="font-bold tracking-wide ext-lg ">Follow us: </p>
-            <div className=" gap-2 flex items-center">
+            <p className="text-lg font-bold tracking-wide ">Follow us: </p>
+            <div className="flex items-center gap-9">
               <a
                 target="_blank"
                 href="https://www.facebook.com/texasintlcollege"
@@ -41,8 +41,8 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="grid w-full grid-cols-1 gap-6 py-4 md:grid-cols-2  md:place-items-start">
-          <div className="flex flex-col gap-6 p-5">
+        <div className="grid w-full grid-cols-2 gap-8 py-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-6 p-8 ">
             <p className="font-bold tracking-wider">Quick Contact</p>
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-2 text-sm">
@@ -67,7 +67,10 @@ const Footer: React.FC = () => {
                   <Mail />
                 </div>
                 <div>
-                  <a href="mailto:inquiry@texascollege.edu.np">
+                  <a
+                    href="mailto:inquiry@texascollege.edu.np"
+                    className="break-all text-wrap"
+                  >
                     inquiry@texascollege.edu.np
                   </a>
                 </div>
@@ -83,78 +86,77 @@ const Footer: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between w-full gap-8 px-5 py-6 ">
-            <div className="flex flex-col gap-5">
-              <p className="font-bold tracking-wider">Links</p>
-              <div className="flex flex-col gap-3 text-sm text-white ">
-                <a
-                  href="/"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Home
-                </a>
-                <a
-                  href="/cart"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Cart
-                </a>
-                <a
-                  href="/orders"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Orders
-                </a>
-              </div>
+          <div className="flex flex-col items-center gap-5 px-5 py-8">
+            <p className="font-bold tracking-wider">Links</p>
+            <div className="flex flex-col gap-3 text-sm text-white ">
+              <a
+                href="/"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Home
+              </a>
+              <a
+                href="/cart"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Cart
+              </a>
+              <a
+                href="/orders"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Orders
+              </a>
             </div>
-            <div className="flex flex-col gap-5">
-              <p className="font-bold tracking-wider">Quick Links</p>
-              <div className="flex flex-col gap-3 text-sm text-white ">
-                <a
-                  target="_blank"
-                  href="mail:enquiry@texasintl.edu.np"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  enquiry@texasintl.edu.np
-                </a>
-                <a
-                  target="_blank"
-                  href="https://texasintl.edu.np/"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Texas International College
-                </a>
-                <a target="_blank"
-                  href="https://texascollege.edu.np/"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Texas College of IT and Management
-                </a>
-              </div>
+          </div>
+          <div className="flex flex-col gap-5 px-5 py-8">
+            <p className="font-bold tracking-wider">Quick Links</p>
+            <div className="flex flex-col gap-3 text-sm text-white ">
+              <a
+                target="_blank"
+                href="mail:enquiry@texasintl.edu.np"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                enquiry@texasintl.edu.np
+              </a>
+              <a
+                target="_blank"
+                href="https://texasintl.edu.np/"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Texas International College
+              </a>
+              <a
+                target="_blank"
+                href="https://texascollege.edu.np/"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Texas College of IT and Management
+              </a>
             </div>
-            <div className="flex flex-col gap-5">
-              <p className="font-bold tracking-wider">Resources</p>
-              <div className="flex flex-col gap-3 text-sm text-white">
-                <a
-                  href="/"
-                  target="_blank"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Terms & Condition
-                </a>
-                <a
-                  target="_blank"
-                  href="/"
-                  className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
-                >
-                  Privacy Policy
-                </a>
-              </div>
+          </div>
+          <div className="flex flex-col items-center gap-5 px-5 py-8">
+            <p className="font-bold tracking-wider">Resources</p>
+            <div className="flex flex-col gap-5 text-sm text-white pl-9">
+              <a
+                href="/"
+                target="_blank"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Terms & Condition
+              </a>
+              <a
+                target="_blank"
+                href="/"
+                className="cursor-pointer hover:underline hover:text-[var(--secondary-color)]"
+              >
+                Privacy Policy
+              </a>
             </div>
           </div>
         </div>
       </footer>
-      <div className="w-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3">
+      <div className="w-full flex justify-between flex-col md:flex-row py-4 px-5 text-sm text-[var(--dark-secondary-text)] gap-3 items-center">
         <p>Copyright © 2024 All Rights Reserved.</p>
         <p className="cursor-pointer">
           Developed By:{" "}
