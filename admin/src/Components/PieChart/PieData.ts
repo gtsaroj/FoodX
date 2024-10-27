@@ -1,4 +1,3 @@
-import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
 import { Product } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
@@ -31,11 +30,10 @@ export const aggregateDailyCategoryOrder = async (
       const matchingCategory = allCategory?.find(
         (category) => category.id === reveneu.label
       );
-      if (matchingCategory) {
+   
+      if (matchingCategory && matchingCategory !== undefined) {
         label = matchingCategory.name;
-      } else {
-        label = "N/A"; // If no match is found, set default
-      }
+      } 
     }
 
     return {

@@ -15,6 +15,7 @@ import Modal from "../../Components/Common/Popup/Popup";
 import TicketView from "../../Components/Tickets/Ticket.view";
 import { addNotification } from "../../Services/notification.services";
 import toast from "react-hot-toast";
+import { useQueryClient } from "react-query";
 
 const TicketAdminPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -117,7 +118,7 @@ const TicketAdminPage = () => {
     },
   ];
 
-  console.log(filter);
+  const queryClient = useQueryClient();
 
   const updateTicketFn = async (newStatus: TicketStatus["status"]) => {
     const messages = {
@@ -192,7 +193,7 @@ const TicketAdminPage = () => {
         currentLastDoc: response.currentLastDoc,
       });
       setTotalData(response.length);
-      const allTicket = await aggregateTickets(response.tickets);
+      const allTicket = await aggregateTickets(response.tickets, queryClient);
       setTickets(allTicket);
     } catch (error) {
       setTickets([]);
@@ -235,7 +236,10 @@ const TicketAdminPage = () => {
             currentLastDoc: response.currentLastDoc,
           });
           setTotalData(response.length);
-          const allTicket = await aggregateTickets(response.tickets);
+          const allTicket = await aggregateTickets(
+            response.tickets,
+            queryClient
+          );
           setTickets(allTicket);
         } catch (error) {
           setTickets([]);

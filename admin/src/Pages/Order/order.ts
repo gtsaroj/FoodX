@@ -9,13 +9,11 @@ import { getOrders } from "../../Services/order.services";
 import { getUserByUid } from "../../Utility/user.utils";
 import Avatar from "../../assets/logo/avatar.png";
 import dayjs from "dayjs";
-import { useUserByUid } from "../../Hooks/useUserByUid";
-import { QueryClient, useQueryClient } from "react-query";
+import { useQueryClient } from "react-query";
 import { User } from "../../models/user.model";
 
 export const usePaginateOrders = (
   { pageSize, direction, filter, sort, status, userId }: GetOrderModal,
-  { refresh = false }: { refresh?: boolean }
 ) => {
   const queryClient = useQueryClient();
 
@@ -107,22 +105,77 @@ export const usePaginateOrders = (
       pageSize: pageSize || 5,
       currentFirstDoc: currentDoc?.currentFirstDoc || null,
       currentLastDoc: currentDoc?.currentLastDoc || null,
-      direction: direction,
-      filter: filter || "orderRequest",
-      sort: sort || "desc",
+      direction: pagination.pageDirecton || direction,
+      filter:
+        (isFilter?.sortFilter?.sort as keyof Order) || filter || "orderRequest",
+      sort: sortOrder || sort || "desc",
       status: status,
       userId: userId,
       queryClient,
     });
+  }, [isFilter?.sortFilter?.sort, sortOrder]);
+
+  useEffect(() => {
+    if (pagination.pageDirecton && pagination.currentPage > 1) {
+      const fetchNextPage = async () => {
+        setLoading(true);
+        try {
+          const response = (await getOrders({
+            pageSize: pagination.perPage,
+            currentFirstDoc: currentDoc?.currentFirstDoc,
+            currentLastDoc: currentDoc?.currentLastDoc,
+            direction: pagination.pageDirecton,
+            filter:
+              (isFilter?.sortFilter?.sort as keyof Order) || "orderRequest",
+            sort: sortOrder || sort,
+            status: status,
+            userId: userId,
+          })) as FetchOrder;
+          setTotalData(response.length);
+          setCurrentDoc({
+            currentFirstDoc: response.currentFirstDoc,
+            currentLastDoc: response.currentLastDoc,
+          });
+
+          const userPromises = response.orders.map(
+            async (order): Promise<User> => {
+              const cachedUser = queryClient.getQueryData(["user", order.uid]);
+              if (cachedUser) {
+                return cachedUser;
+              } else {
+                return await queryClient.fetchQuery(["user", order.uid], () =>
+                  getUserByUid(order.uid as string)
+                );
+              }
+            }
+          );
+
+          const allUser = await Promise.all(userPromises);
+          const aggregateOrder = aggregateOrders(
+            response.orders,
+            pagination,
+            allUser
+          );
+          const aggregatePromiseOrder = await Promise.all(aggregateOrder);
+          setInitialOrders((prev) => [
+            ...prev,
+            ...aggregatePromiseOrder.filter(
+              (order) => !prev.some((data) => data.id === order.id)
+            ),
+          ]);
+        } catch (error) {
+          throw new Error("Error while fetching orders " + error);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchNextPage();
+    }
   }, [
-    direction,
     pagination.pageDirecton,
     pagination.currentPage,
-    filter,
-    sort,
-    status,
-    userId,
-    refresh,
+    sortOrder,
+    isFilter?.sortFilter?.sort,
   ]);
 
   return {

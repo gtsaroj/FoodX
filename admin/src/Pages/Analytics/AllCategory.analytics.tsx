@@ -4,7 +4,7 @@ import { Category } from "../../models/category.model";
 import {
   bulkDeleteOfCategory,
   deleteCategory,
-  getCategories,
+
 } from "../../Services/category.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";

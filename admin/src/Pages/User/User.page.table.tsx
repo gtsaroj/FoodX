@@ -59,9 +59,9 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
       colStyle: { width: "150px", textAlign: "start" },
       render: (item: User) => (
         <div className="w-[150px] text-[var(--dark-secondary-text)]  relative cursor-pointer group/id text-start ">
-          #{item.id?.substring(0, 8)}
+          #{item.uid?.substring(0, 8)}
           <div className=" top-[-27px] group-hover/id:visible opacity-0 group-hover/id:opacity-[100] duration-150 invisible left-[-30px]  absolute bg-[var(--light-foreground)] p-1 rounded shadow ">
-            {item.id}
+            {item.uid}
           </div>
         </div>
       ),

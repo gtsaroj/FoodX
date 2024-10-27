@@ -27,7 +27,7 @@ export const getOrder = (orders: OrderProduct[]) => {
 
 export const SearchOrder = (Order: OrderModal[], value: string) => {
     const searchingProduct = Order?.filter((order) => {
-      return order.name.toLowerCase().includes(value);
+      return order.name &&  order?.name.toLowerCase().includes(value);
     });
     return searchingProduct;
   };

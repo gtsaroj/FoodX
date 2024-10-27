@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { Button } from "../Common/Button/Button";
 import { Filter, X } from "lucide-react";
 import dayjs from "dayjs";
-import { getRevenue } from "../../Services/revenue.services";
-import { AddRevenue, Revenue } from "../../models/revenue.model";
+import { Revenue } from "../../models/revenue.model";
 import { aggregateDailyCategoryOrder } from "./PieData";
 import { RotatingLines } from "react-loader-spinner";
 import { useAllRevenue } from "../../Hooks/useAllRevenue";
 import { useQuery } from "react-query";
 import { getCategories } from "../../Services/category.services";
+import { Category } from "../../models/category.model";
 
 export const PieChartAnalytics = () => {
   const [initialData, setInitialData] = useState<any[]>([]);
@@ -44,7 +44,8 @@ export const PieChartAnalytics = () => {
   const getPiechartData = async () => {
     try {
       const aggregateData = await aggregateDailyCategoryOrder(
-        currentRevenue as Revenue[], data
+        currentRevenue as Revenue[],
+        data as Category[]
       );
       setInitialData(aggregateData);
     } catch (error) {
@@ -186,7 +187,7 @@ export const PieChartAnalytics = () => {
               {
                 data: initialData?.map((data, index) => ({
                   value: typeof data?.value === "number" ? data.value : null,
-                  label: data.label.slice(0, 6),
+                  label: data.label.slice(0, 10),
                   id: index,
                 })),
                 highlightScope: { fade: "series", highlight: "item" },

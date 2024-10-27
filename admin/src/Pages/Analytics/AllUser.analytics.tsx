@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
-import { User } from "../../models/user.model";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { FetchModal, User } from "../../models/user.model";
 import { CustomerTable } from "../User/User.page.table";
 import {
   bulkDeleteOfCustomer,
@@ -68,12 +68,7 @@ const AllCustomers = () => {
         currentLastDoc: currentLastDoc || null,
       });
 
-      const users = user.data as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        users: User[];
-        length: number;
-      };
+      const users = user.data as FetchModal;
 
       setCurrentDoc({
         currentFirstDoc: users.currentFirstDoc,
@@ -97,6 +92,8 @@ const AllCustomers = () => {
     }
     setLoading(false);
   };
+
+  const isFirstFetch = useRef(true);
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
     const refreshIds = bulkSelectedCustomer?.filter((user) => user.id !== id);
@@ -251,17 +248,19 @@ const AllCustomers = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    handleCustomerData({
-      path:
-        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
-        "customer",
-      direction: "next",
-      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
-      pageSize: pagination.perPage,
-      sort: sortOrder || "asc",
-      currentFirstDoc: null,
-      currentLastDoc: null,
-    });
+    if (!isFirstFetch.current) {
+      handleCustomerData({
+        path:
+          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+          "customer",
+        direction: "next",
+        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+        pageSize: pagination.perPage,
+        sort: sortOrder || "asc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+      });
+    } else isFirstFetch.current = false;
   }, [
     pagination.perPage,
     filter?.sortFilter?.sort,

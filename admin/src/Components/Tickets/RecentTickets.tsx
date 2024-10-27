@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import TicketCard from "./TicketCard";
-import { useEffect, useRef, useState } from "react";
+import {  useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import TicketLogo from "../../assets/tickets.png";
 import toast from "react-hot-toast";
@@ -15,7 +15,6 @@ import { useQuery } from "react-query";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
 
   const fetchTickets = async (): Promise<TicketType[]> => {

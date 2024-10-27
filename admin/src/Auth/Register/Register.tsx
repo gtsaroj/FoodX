@@ -1,8 +1,6 @@
 import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { Register as RegisterModal, UserRole } from "../../models/user.model";
 import { Eye, EyeOff, Pencil } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
 import { checkValidNumber, validatePasswordOnChange } from "./RegisterHandler";
 import { allFieldsRequired } from "./RegisterHandler";
@@ -17,7 +15,6 @@ import { signUp } from "../../Services/user.services";
 
 export const RegisterContainer: React.FC<LoginProp> = ({ role }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch<AppDispatch>();
   const [RegisterValue, setRegisterValue] = useState<RegisterModal>({
     avatar: "",
     firstName: "",

@@ -1,7 +1,7 @@
 import { Download, Filter, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 
-import { debounce } from "../../Utility/debounce";
+// import { debounce } from "../../Utility/debounce";
 
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
@@ -27,20 +27,18 @@ const OrderList = () => {
     setIsFilter,
     setPagination,
     setSortOrder,
-    sortOrder,
     totalData,
     initialOrders,
     setInitialOrders,
   } = usePaginateOrders(
     {
       direction: "next",
-    },
-    { refresh: false }
+    }
   );
 
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
-  const [haveUserId, setHaveUserId] = useState<string>();
+  // const [haveUserId, setHaveUserId] = useState<string>();
   const [resolvedOrders, setResolvedOrders] = useState<
     InvoiceDocumentProp["orders"]
   >([]);
@@ -48,13 +46,13 @@ const OrderList = () => {
 
   const { socket } = useSocket(store?.user?.success);
 
-  const handleChange = (value: string) => {
-    setHaveUserId(value);
-  };
+  // const handleChange = (value: string) => {
+  //   setHaveUserId(value);
+  // };
 
-  const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
-    initialOrders,
-  ]);
+  // const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
+  //   initialOrders,
+  // ]);
 
   const exportAllOrder = (isCheckedAll: boolean) => {
     if (!isCheckedAll) {
@@ -233,7 +231,7 @@ const OrderList = () => {
           <input
             id="search"
             type="search"
-            onChange={(event) => debouncedHandleChange(event?.target.value)}
+            // onChange={(event) => debouncedHandleChange(event?.target.value)}
             className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
             placeholder="Search for products"
           />

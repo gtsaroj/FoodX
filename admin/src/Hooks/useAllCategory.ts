@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { getCategories } from "../Services/category.services";
 
 export const useAllCategory = () => {

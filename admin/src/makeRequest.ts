@@ -7,6 +7,7 @@ import { authLogout } from "./Reducer/user.reducer";
 // Flag to track if the token is being refreshed
 let isRefreshing = false;
 // Queue to store requests waiting for the token to refresh
+let hasLoggedOut = false;
 let failedRequestsQueue: Array<(token: string) => void> = [];
 
 export const makeRequest: AxiosInstance = axios.create({
@@ -39,9 +40,13 @@ makeRequest.interceptors.response.use(
 
       if (!refreshToken) {
         // No refresh token, force logout
-        Store.dispatch(authLogout());
-        toast.error("Your session has expired. Please log in again.");
-        return Promise.reject("Unauthorized: No refresh token available.");
+        if (!hasLoggedOut) {
+          hasLoggedOut = true;
+          Store.dispatch(authLogout());
+  
+          toast.error("Your session has expired. Please log in again.");
+          return Promise.reject("Unauthorized: No refresh token available.");
+        }
       }
 
       if (!isRefreshing) {

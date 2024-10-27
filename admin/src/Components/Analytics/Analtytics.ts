@@ -55,28 +55,34 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
   }
 };
 
-export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
+export const aggregateMonthlyData = (orders: Revenue[], month: number): CardAnalytic[] => {
   try {
+    // Calculate total orders by summing up all quantities in each order
     const totalOrders = orders.reduce(
-      (order, orderAcc) =>
-        order +
-        orderAcc.orders.reduce(
-          (product, productAcc) => product + Number(productAcc.quantity),
-          0
-        ),
+      (orderSum, order) =>
+        orderSum + order.orders.reduce((prodSum, product) => prodSum + Number(product.quantity), 0),
       0
     );
 
-    const averageOrder = totalOrders / dayjs().endOf("month").date();
+    // Calculate average orders per day of the current month
+    const daysInCurrentMonth = dayjs().endOf("month").date();
+    const averageOrder = totalOrders / daysInCurrentMonth;
 
+    // Calculate total revenue for the current month
     const totalRevenue = getRevenue(orders);
 
-    const previousMonth = orders.filter(
-      (order) =>
-        dayjs(order.id).month() <= dayjs().subtract(month, "month").month()
+    // Filter previous month orders and calculate previous month revenue
+    const previousMonthOrders = orders.filter(
+      (order) => dayjs(order.id).month() === dayjs().subtract(month, "month").month()
     );
-    const previousMonthRevenue = getRevenue(previousMonth);
+    const previousMonthRevenue = getRevenue(previousMonthOrders);
 
+    // Calculate the revenue percentage change
+    const revenuePercentage = previousMonthRevenue 
+      ? Math.round(((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100) 
+      : "N/A"; // Avoid division by zero, set as "N/A" if previous month revenue is 0
+
+    // Prepare daily analytics data
     const dailyAnalyticsData: CardAnalytic[] = [
       {
         title: "Items Delivered",
@@ -86,22 +92,26 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number) => {
       {
         title: "Average Items",
         total: Math.round(averageOrder),
-        percentage: Math.round((averageOrder / totalOrders) * 100),
+        percentage: totalOrders ? Math.round((averageOrder / totalOrders) * 100) : 0,
       },
       {
         title: "Revenue",
         total: totalRevenue || 0,
-        percentage:
-          Math.round(
-            ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
-          ) || 0,
+        percentage: revenuePercentage,
       },
     ];
+
     return dailyAnalyticsData;
   } catch (error) {
-    throw new Error("Error while aggregate monthly analytics data " + error);
+    console.error("Error while aggregating monthly analytics data:", error);
+    return [
+      { title: "Items Delivered", total: 0, percentage: 0 },
+      { title: "Average Items", total: 0, percentage: 0 },
+      { title: "Revenue", total: 0, percentage: "N/A" },
+    ]; // Return default values in case of error
   }
 };
+
 
 const getRevenue = (revenue: Revenue[]) => {
   const total = revenue.reduce(

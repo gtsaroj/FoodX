@@ -76,16 +76,6 @@ export const FoodTable: React.FC<FoodTableProp> = ({
         </div>
       ),
     },
-    {
-      fieldName: "Rating",
-      colStyle: { width: "100px", justifyContent: "start", textAlign: "start" },
-      render: (value: Product) => (
-        <div className=" text-[var(--dark-text)] tracking-wide w-[100px] flex  gap-2 items-center justify-start ">
-          <div className="">{value.rating}</div>
-          <div className="scale-[1.1]">⭐</div>
-        </div>
-      ),
-    },
   ];
   return (
     <Table

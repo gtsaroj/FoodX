@@ -8,7 +8,7 @@ import { totalCost, totalQuantity } from "./product.utils";
 
 export const SearchCustomer = (customers: User[], value: string) => {
   const searchingCustomer = customers?.filter((customer) => {
-    return customer.fullName.toLowerCase().includes(value);
+    return customer.fullName &&  customer?.fullName.toLowerCase().includes(value);
   });
   return searchingCustomer;
 };

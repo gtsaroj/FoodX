@@ -64,7 +64,7 @@ const Navbar = () => {
       <h1 className="px-3 text-[var(--dark-text)] text-2xl">
         Welcome back,{" "}
         <span className="font-semibold tracking-wide">
-          {user?.fullName.charAt(0).toUpperCase() + user?.fullName?.slice(1)}
+          { user.fullName && user?.fullName.charAt(0).toUpperCase() + user?.fullName?.slice(1)}
         </span>
       </h1>
       <div className="flex gap-5 items-center justify-start">

@@ -9,6 +9,13 @@ export interface Register {
   role?: UserRole["role"];
 }
 
+export interface FetchModal {
+  currentFirstDoc: string;
+  currentLastDoc: string;
+  users: User[];
+  length: number;
+}
+
 export interface GetUserModal {
   path: "customer" | "admin" | "chef";
   pageSize: number;
@@ -30,7 +37,7 @@ export interface DbUser {
 }
 
 export interface User {
-  id?: string
+  id?: string;
   uid?: string;
   avatar?: string;
   fullName?: string;

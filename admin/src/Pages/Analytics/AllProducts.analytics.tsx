@@ -23,8 +23,7 @@ const AllProductAnalytics = () => {
     useSpecialProducts();
   const { data: normalProducts, isLoading: normalLoading } =
     useNormalProuducts();
-  console.log(specialLoading, specialProducts);
-  console.log(normalLoading, normalProducts);
+  
 
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");

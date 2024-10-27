@@ -23,8 +23,7 @@ export const RecentOrders = () => {
       pageSize: 5,
       sort: "desc",
       status: "pending",
-    },
-    { refresh: isClicked }
+    }
   );
 
   const store = useSelector((state: RootState) => state.root);

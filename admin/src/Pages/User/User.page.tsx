@@ -1,5 +1,5 @@
 import { Filter, X } from "lucide-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
@@ -28,6 +28,8 @@ const CustomerList: React.FC = () => {
     sortFilter?: { sort?: string; id?: string };
   }>();
   const [totalData, setTotalData] = useState<number>();
+
+  const isFirstFetch = useRef(true);
 
   const handleCustomerData = async ({
     direction,
@@ -99,17 +101,21 @@ const CustomerList: React.FC = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    handleCustomerData({
-      path:
-        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
-        "customer",
-      direction: "next",
-      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
-      pageSize: pagination.perPage,
-      sort: sortOrder || "asc",
-      currentFirstDoc: null,
-      currentLastDoc: null,
-    });
+    if (!isFirstFetch?.current) {
+      handleCustomerData({
+        path:
+          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+          "customer",
+        direction: "next",
+        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+        pageSize: pagination.perPage,
+        sort: sortOrder || "asc",
+        currentFirstDoc: null,
+        currentLastDoc: null,
+      });
+    } else {
+      isFirstFetch.current = false;
+    }
   }, [
     pagination.perPage,
     filter?.sortFilter?.sort,
@@ -273,7 +279,7 @@ const CustomerList: React.FC = () => {
               onClick={() =>
                 setFilter((prev) => ({
                   ...prev,
-                  sortFilter:{id:"",sort:""}
+                  sortFilter: { id: "", sort: "" },
                 }))
               }
               className=" "
@@ -291,7 +297,10 @@ const CustomerList: React.FC = () => {
             </div>
             <button
               onClick={() =>
-                setFilter((prev) => ({ ...prev, typeFilter: {id:"",type:undefined} }))
+                setFilter((prev) => ({
+                  ...prev,
+                  typeFilter: { id: "", type: undefined },
+                }))
               }
             >
               <X className="text-[var(--danger-text)] " size={20} />

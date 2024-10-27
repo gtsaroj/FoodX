@@ -12,13 +12,16 @@ import {
   totalMonthOrder,
 } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
-import { AddRevenue, LineChartType, Revenue } from "../../models/revenue.model";
+import { Revenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
 import { useQuery } from "react-query";
-import { useAllRevenue, useMonthlyRevenue } from "../../Hooks/useAllRevenue";
+import { useAllRevenue } from "../../Hooks/useAllRevenue";
 
 export const WeekReveneuChart: React.FC = () => {
-  const getLineChartData = async (): Promise<LineChartType[]> => {
+
+  const getLineChartData = async (): Promise<
+    { time: string; revenue: number }[]
+  > => {
     try {
       const response = await getRevenue({
         startDate: dayjs().startOf("week").format("YYYY-MM-DD"),
@@ -32,7 +35,7 @@ export const WeekReveneuChart: React.FC = () => {
   };
 
   const { data: initialData, isLoading } = useQuery(
-    "revenue:today",
+    "revenue:week",
     getLineChartData,
     {
       cacheTime: 5 * 60 * 1000,
@@ -48,12 +51,10 @@ export const WeekReveneuChart: React.FC = () => {
         startDate: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
         endDate: dayjs().format("YYYY-MM-DD"),
       });
-      console.log(`previous revenue : ` + response);
       const previousMonthData = revenueData(response?.data);
       const totalCurrent = calculateTotalRevenue(
-        initialData as LineChartType[]
+        initialData as { time: string; revenue: number }[]
       );
-      console.log(`totalCurrent : ` + totalCurrent);
       const totalPrevious = calculateTotalRevenue(previousMonthData);
       if (totalPrevious === 0) {
         percentage = "N/A";
@@ -263,7 +264,6 @@ export const MonthlyRevenueChart: React.FC = () => {
       const previousMonthData = monthlyRevenue(previousRevenue as Revenue[]);
       const totalCurrent = calculateTotalRevenue(initialData);
       const totalPrevious = calculateTotalRevenue(previousMonthData);
-      console.log(((totalCurrent - totalPrevious) / totalPrevious) * 100);
       if (totalPrevious === 0) {
         setPercentageChange("N/A"); // Handle zero previous orders
       } else {
