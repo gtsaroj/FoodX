@@ -59,6 +59,20 @@ export const FoodTable: React.FC<FoodTableProp> = ({
       ),
     },
     {
+      fieldName: "Quantity",
+      colStyle: {
+        width: "120px",
+        justifyContent: "start",
+        textAlign: "start",
+        padding: "0px 15px 0px 0px",
+      },
+      render: (value: Product) => (
+        <div className=" text-[var(--dark-text)] tracking-wide w-[120px] ">
+          <p>{value.quantity}</p>
+        </div>
+      ),
+    },
+    {
       fieldName: "Orders",
       colStyle: { width: "120px", justifyContent: "start", textAlign: "start" },
       render: (value: Product) => (

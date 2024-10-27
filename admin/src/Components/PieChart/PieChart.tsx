@@ -58,6 +58,8 @@ export const PieChartAnalytics = () => {
       getPiechartData();
     }
   }, [isLoading, currentRevenue, loader]);
+  
+  console.log(initialData)
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">

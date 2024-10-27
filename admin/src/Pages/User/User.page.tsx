@@ -63,8 +63,19 @@ const CustomerList: React.FC = () => {
         currentFirstDoc: users.currentFirstDoc,
         currentLastDoc: users.currentLastDoc,
       });
+
+      const aggregateUser = users.users?.map((user) => ({
+        id: user.uid,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        totalSpent: user.totalSpent,
+        totalOrder: user.totalOrder,
+      }));
       setTotalData(users.length);
-      setInitialCustomer(users.users);
+      setInitialCustomer(aggregateUser);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error while getting customers : ${error}`);
@@ -145,6 +156,17 @@ const CustomerList: React.FC = () => {
           users: User[];
           length: number;
         };
+
+        const aggregateUser = users.users?.map((user) => ({
+          id: user.uid,
+          avatar: user.avatar,
+          fullName: user.fullName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          totalSpent: user.totalSpent,
+          totalOrder: user.totalOrder,
+        }));
         setCurrentDoc({
           currentFirstDoc: users.currentFirstDoc,
           currentLastDoc: users.currentLastDoc,
@@ -154,8 +176,8 @@ const CustomerList: React.FC = () => {
         setInitialCustomer((customer) => {
           return [
             ...customer,
-            ...users.users.filter(
-              (user) => !customer.some((cust) => user.uid === cust.uid)
+            ...aggregateUser.filter(
+              (user) => !customer.some((cust) => user.id === cust.id)
             ),
           ];
         });
