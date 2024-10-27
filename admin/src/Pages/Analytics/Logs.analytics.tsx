@@ -305,7 +305,7 @@ const Logs = () => {
           id="scrollableDiv"
           className="flex items-start  p-1   scroll-smooth  scrollbar-custom px-2 overflow-y-auto  w-full"
         >
-          <div className="flex h-[400px] min-w-[400px]  p-2 flex-col justify-start w-full gap-3 md:max-w-[800px]">
+          <div className="flex h-[500px] min-w-[400px]  p-2 flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
               scrollableTarget={"scrollableDiv"}
               dataLength={totalData ? totalData : 0}
@@ -363,7 +363,7 @@ const Logs = () => {
                   ))}
                 </div>
               ) : (
-              ""
+                ""
               )}
             </InfiniteScroll>
           </div>
