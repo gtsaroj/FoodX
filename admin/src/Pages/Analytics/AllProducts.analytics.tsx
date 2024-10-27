@@ -23,10 +23,8 @@ const AllProductAnalytics = () => {
     useSpecialProducts();
   const { data: normalProducts, isLoading: normalLoading } =
     useNormalProuducts();
-  console.log(specialLoading, specialProducts)
-  console.log(normalLoading, normalProducts)
-
-
+  console.log(specialLoading, specialProducts);
+  console.log(normalLoading, normalProducts);
 
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -50,13 +48,16 @@ const AllProductAnalytics = () => {
       category?: "specials" | "products";
       id?: string;
     }[]
-    >([]);
-  
+  >([]);
+
   useEffect(() => {
     if (!specialLoading && !normalLoading) {
-      setFetchedProducts([...normalProducts as Product[], ...specialProducts as Product[]])
+      setFetchedProducts([
+        ...(normalProducts as Product[]),
+        ...(specialProducts as Product[]),
+      ]);
     }
-  },[normalLoading, normalProducts, specialLoading,specialProducts])
+  }, [normalLoading, normalProducts, specialLoading, specialProducts]);
 
   //Sorting
   const handleTypeCheck = async (
@@ -129,15 +130,22 @@ const AllProductAnalytics = () => {
   }, [filter, sortOrder, normalProducts, specialProducts]);
 
   const handleChange = async (value: string) => {
-    if (value.length <= 0) return setFetchedProducts(data as Product[]);
+    if (value.length <= 0)
+      return setFetchedProducts([
+        ...(normalProducts as Product[]),
+        ...(specialProducts as Product[]),
+      ] as Product[]);
 
     const filterProducts = (await searchProducts(value)) as Product[];
     setFetchedProducts(filterProducts);
   };
 
   const searchProducts = async (value: string) => {
-    if (data && !isLoading) {
-      const filterProducts = data?.filter((product) =>
+    if (!specialLoading && !normalLoading) {
+      const filterProducts = [
+        ...(normalProducts as Product[]),
+        ...(specialProducts as Product[]),
+      ]?.filter((product) =>
         product.name.toLowerCase().includes(value.toLowerCase())
       );
       return filterProducts;
@@ -312,8 +320,9 @@ const AllProductAnalytics = () => {
             }}
           />
         </div>
-        <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
+        <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start sm:w-auto gap-2 w-full ">
           {" "}
+          <div className="w-full flex items-center justify-start gap-2">
           <form action="" className="relative text-[var(--dark-text)] w-full ">
             <input
               id="search"
@@ -328,6 +337,7 @@ const AllProductAnalytics = () => {
             dataLength={bulkSelectedProduct.length}
             deleteFn={() => setIsBulkDelete(true)}
           />
+   </div>
           {filter?.sortFilter?.sort && (
             <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
               <div className="flex gap-1 items-center justify-center">
