@@ -263,7 +263,7 @@ const AllCategories = () => {
                 type="search"
                 onChange={(event) => debouncingSearch(event?.target.value)}
                 className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                placeholder="Search for products"
+                placeholder="Search for categories"
               />
             </form>
             <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>
