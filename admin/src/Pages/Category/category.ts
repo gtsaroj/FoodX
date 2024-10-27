@@ -1,34 +1,26 @@
 import dayjs from "dayjs";
-import { getRevenue } from "../../Services/revenue.services";
 import { Category } from "../../models/category.model";
 import { Revenue } from "../../models/revenue.model";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../../Services/product.services";
 import { Product } from "../../models/product.model";
+import { QueryClient } from "react-query";
 
-export const aggregateCategories = async (categories: Category[]) => {
+export const aggregateCategories = async (
+  queryClient: QueryClient,
+  categories: Category[],
+  normalProducts: Product[],
+  specialProducts: Product[]
+) => {
   try {
-    const [normalProducts, specialProducts, revenueData] = await Promise.all([
-      getNormalProducts(),
-      getSpecialProducts(),
-      getRevenue({
-        startDate: dayjs().subtract(1, "month").format("YYYY-MM-DD"),
-        endDate: dayjs().format("YYYY-MM-DD"),
-      }),
+    const revenues = queryClient.getQueryData<Revenue[]>([
+      `custom-date`,
+      dayjs().startOf("month").format("YYYY-MM-DD"),
+      dayjs().format("YYYY-MM-DD"),
     ]);
-    const products = [
-      ...normalProducts.data,
-      ...specialProducts.data,
-    ] as Product[];
-
-    const revenues = revenueData.data as Revenue[];
 
     const tagId = categories.map((category) => category.id);
 
     // Filter revenues to match the categories
-    const matchedCategoryProducts = revenues.filter((revenue) =>
+    const matchedCategoryProducts = revenues?.filter((revenue) =>
       revenue.orders.some((order) => tagId.includes(order.tagId))
     );
 
@@ -50,9 +42,12 @@ export const aggregateCategories = async (categories: Category[]) => {
             0
           );
         }
-        products?.forEach((product) => {
+        [
+          ...(normalProducts as Product[]),
+          ...(specialProducts as Product[]),
+        ]?.forEach((product) => {
           if (product.tagId === revenueCategory.id) {
-            item += Number([{...product}].length);
+            item += Number([{ ...product }].length);
           }
         });
       });
@@ -65,7 +60,6 @@ export const aggregateCategories = async (categories: Category[]) => {
     });
 
     const maxSold = Math.max(...allCategory.map((category) => category.order));
-
     const aggregateCategory = allCategory.map((data: Category) => ({
       id: data.id,
       name: data.name,
@@ -75,7 +69,7 @@ export const aggregateCategories = async (categories: Category[]) => {
       revenue: data.revenue,
       rank: Math.round((data.order / maxSold) * 5),
     }));
-  
+
     return aggregateCategory as Category[];
   } catch (error) {
     return null;

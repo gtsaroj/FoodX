@@ -3,8 +3,8 @@ import { CardAnalytic } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
 
 export const aggregateCurrentDayData = (orders: Revenue[]) => {
+  console.log(orders)
   const today = dayjs().format("YYYY-MM-DD");
-
   try {
     const currentDayOrder = orders?.find((order) => {
       const orderDate = dayjs(order.id).format("YYYY-MM-DD");
@@ -29,6 +29,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
 
     const dailyAnalyticsData: CardAnalytic[] = [
       {
+        
         title: "Items Delivered",
         total: currentDayOrder?.orders.length || 0,
         percentage: 100,
@@ -47,6 +48,7 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       },
     ];
 
+    console.log(dailyAnalyticsData)
     return dailyAnalyticsData;
   } catch (error) {
     return null;
@@ -112,7 +114,6 @@ const getRevenue = (revenue: Revenue[]) => {
       ),
     0
   );
-   console.log(total)
   if (!total) return 0;
   return total;
 };

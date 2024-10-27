@@ -48,4 +48,5 @@ export interface CardAnalytic {
   title: string;
   total: number;
   percentage: number | string;
+  subtitle?:string
 }

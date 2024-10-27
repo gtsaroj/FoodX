@@ -1,10 +1,10 @@
 import { getRevenue } from "../../Utility/order.utils";
 import { Product } from "../../models/product.model";
-import { Revenue, RevenueInfo } from "../../models/revenue.model";
+import { Revenue } from "../../models/revenue.model";
 import dayjs from "dayjs";
 
 // revenue data
-export const revenueData = (data: RevenueInfo[]) => {
+export const revenueData = (data: Revenue[]) => {
   if (!data) throw new Error("data not found");
   try {
     const orders = data.map((order): { revenue: number; time: string } => {
@@ -21,7 +21,7 @@ export const revenueData = (data: RevenueInfo[]) => {
 };
 
 // monthly revenue
-export const monthlyRevenue = (data: RevenueInfo[]) => {
+export const monthlyRevenue = (data: Revenue[]) => {
   if (!data)
     throw new Error(
       "data not found in weekly revenue : file=> linchartdata.ts"

@@ -1,19 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "react-circular-progressbar/dist/styles.css";
 import { CardAnalytics } from "../Common/Cards/AnalyticsCard";
-import { CardAnalyticsProp } from "../../models/order.model";
 
 import Skeleton from "react-loading-skeleton";
 import { getRevenue } from "../../Services/revenue.services";
 import dayjs from "dayjs";
 import { aggregateCurrentDayData } from "./Analtytics";
+import { useQuery } from "react-query";
+import { CardAnalytic } from "../../models/product.model";
 
 const Revenue: React.FC = () => {
-  const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const getDailyData = async () => {
-    setLoading(true);
+  const getDailyData = async (): Promise<CardAnalytic[] | null> => {
     try {
       const response = await getRevenue({
         startDate: dayjs().subtract(1, "week").format("YYYY-MM-DD"),
@@ -21,17 +18,18 @@ const Revenue: React.FC = () => {
       });
       const responseData = response.data;
       const analyticsData = aggregateCurrentDayData(responseData);
-
-      setTotalOrder(analyticsData as CardAnalyticsProp[]);
+      return analyticsData || null;
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
     }
-    setLoading(false);
   };
 
-  useEffect(() => {
-    getDailyData();
-  }, []);
+  const { data, isLoading } = useQuery("analytics:daily", getDailyData, {
+    cacheTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  
 
   return (
     <React.Fragment>
@@ -41,12 +39,12 @@ const Revenue: React.FC = () => {
 
         {/* })} */}
         <div className="flex md:flex-row md:flex-wrap flex-nowrap flex-col  items-center justify-start w-full gap-7 ">
-          {!loading ? (
-            totalOrder?.map((order, index) => (
+          {!isLoading ? (
+            data?.map((order, index) => (
               <CardAnalytics
                 title={order.title}
                 total={order.total}
-                percentage={order.percentage}
+                percentage={order.percentage as number}
                 subtitle={order.subtitle}
                 key={index}
               />

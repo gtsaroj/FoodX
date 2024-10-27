@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import { monthlyBarData } from "./BarChart";
 import { Button } from "../Common/Button/Button";
 import { Filter, X } from "lucide-react";
-import { AddRevenue } from "../../models/revenue.model";
-import { getRevenue } from "../../Services/revenue.services";
+import { Revenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
+import { useAllRevenue } from "../../Hooks/useAllRevenue";
 
 export const MonthlyOrderChart: React.FC = () => {
   const [initialData, setInitialData] = useState<
@@ -18,67 +18,32 @@ export const MonthlyOrderChart: React.FC = () => {
     dateFilter?: { startDate: string; endDate: string };
     normalFilter?: { previous: string; id: string };
   }>();
-  const [loading, setLoading] = useState<boolean>(false);
 
-  const getBarData = async ({ startDate, endDate }: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-      const aggregateData = monthlyBarData(response.data);
-      setInitialData(aggregateData);
-      const listOfKeys = extractUniqueKeys(aggregateData);
-      setDataKey(listOfKeys as string[]);
-    } catch (error) {
-      throw new Error("Error while fetching revenue" + error);
-    }
-    setLoading(false);
-  };
-
-  const getPreviousBarData = async ({ startDate, endDate }: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-      const aggregateData = monthlyBarData(response.data);
-      setInitialData(aggregateData);
-      const listOfKeys = extractUniqueKeys(aggregateData);
-      setDataKey(listOfKeys as string[]);
-    } catch (error) {
-      throw new Error("Error while fetching revenue" + error);
-    }
-    setLoading(false);
-  };
+  const { data: currentRevenue, isLoading } = useAllRevenue(
+    {
+      startDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").startOf("month").format("YYYY-MM-DD")
+          : "" ||
+            (filter?.dateFilter?.startDate as string) ||
+            dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD")
+          : "" || filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
 
   useEffect(() => {
-    if (filter?.normalFilter?.previous) {
-      getPreviousBarData({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-    } else {
-      getBarData({
-        startDate:
-          (filter?.dateFilter?.startDate as string) ||
-          dayjs().startOf("month").format("YYYY-MM-DD"),
-        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-      });
+    if (!isLoading) {
+      const aggregateRevenue = monthlyBarData(currentRevenue as Revenue[]);
+      setInitialData(aggregateRevenue);
+      const listOfKeys = extractUniqueKeys(aggregateRevenue);
+      setDataKey(listOfKeys as string[]);
     }
-  }, [
-    filter?.normalFilter?.previous,
-    filter?.dateFilter?.startDate,
-    filter?.dateFilter?.endDate,
-  ]);
+  }, [currentRevenue, isLoading]);
+
   // const [percentageChange, setPercentageChange] = useState<string>();
   const extractUniqueKeys = (data: { [key: string]: number | string }[]) => {
     const allKeys = new Set();
@@ -88,35 +53,6 @@ export const MonthlyOrderChart: React.FC = () => {
     });
     return [...allKeys];
   };
-
-  // const calculatePercentageChange = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await getRevenue({
-  //       startDate: dayjs()
-  //         .subtract(1, "month")
-  //         .startOf("month")
-  //         .format("YYYY-MM-DD"),
-  //       endDate: dayjs()
-  //         .subtract(1, "month")
-  //         .endOf("month")
-  //         .format("YYYY-MM-DD"),
-  //     });
-  //     const previousMonthData =  monthlyBarData(response.data);
-  //     // const totalCurrent = calculateTotalOrders(initialData);
-  //     // const totalPrevious = calculateTotalOrders(previousMonthData);
-  //     // if (totalPrevious === 0) {
-  //     //   setPercentageChange("N/A"); // Handle zero previous orders
-  //     // } else {
-  //     //   const percentage =
-  //     //     ((totalCurrent - totalPrevious) / totalPrevious) * 100;
-  //     //   setPercentageChange(percentage.toFixed(2));
-  //     // }
-  //   } catch (error) {
-  //     setPercentageChange("N/A");
-  //   }
-  //   setLoading(false);
-  // };
 
   const colorPallette = ["#003f5c", "#7a5195", "#ef5675", "#ffa600"];
   return (
@@ -130,7 +66,6 @@ export const MonthlyOrderChart: React.FC = () => {
               <MoveUp strokeWidth={3} size={12} />
             </span>
           </p> */}
-
         </div>
         <div>
           <Button
@@ -229,7 +164,7 @@ export const MonthlyOrderChart: React.FC = () => {
         )}
       </div>
       <div className="w-full h-[400px]">
-        {loading ? (
+        {isLoading ? (
           <div className="flex w-full h-full items-center justify-center gap-3">
             <RotatingLines strokeColor="var(--dark-text)" width="27" />
             <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">

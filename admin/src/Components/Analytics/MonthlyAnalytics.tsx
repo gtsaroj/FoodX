@@ -5,14 +5,13 @@ import { CardAnalyticsProp } from "../../models/order.model";
 import { Filter, X } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { Button } from "../Common/Button/Button";
-import { getRevenue } from "../../Services/revenue.services";
 import dayjs from "dayjs";
 import { aggregateMonthlyData } from "./Analtytics";
-import { AddRevenue } from "../../models/revenue.model";
+import { Revenue } from "../../models/revenue.model";
+import { useAllRevenue } from "../../Hooks/useAllRevenue";
 
 export const MonthlyAnalytics: React.FC = () => {
   const [totalOrder, setTotalOrder] = useState<CardAnalyticsProp[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const [filter, setFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string; id?: string };
@@ -20,45 +19,44 @@ export const MonthlyAnalytics: React.FC = () => {
     normalFilter?: { previous: string; id?: string };
   }>();
 
-  const getDailyData = async (data: AddRevenue) => {
-    setLoading(true);
+  const { data: currentRevenue, isLoading } = useAllRevenue(
+    {
+      startDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").startOf("month").format("YYYY-MM-DD")
+          : "" ||
+            (filter?.dateFilter?.startDate as string) ||
+            dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD")
+          : "" || filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
+
+  const getDailyData = async () => {
     try {
-      const response = await getRevenue({
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
-      const responseData = response.data;
       const filterValue = filter?.normalFilter
         ? 2
         : filter?.dateFilter?.startDate
         ? (dayjs().date() as number)
         : 1;
-      const analyticsData = aggregateMonthlyData(responseData, filterValue);
+      const analyticsData = aggregateMonthlyData(
+        currentRevenue as Revenue[],
+        filterValue
+      );
       setTotalOrder(analyticsData as CardAnalyticsProp[]);
     } catch (error) {
       throw new Error("Error while fetching revenue " + error);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    getDailyData({
-      startDate:
-        (filter?.normalFilter &&
-          dayjs().subtract(2, "month").startOf("month").format("YYYY-MM-DD")) ||
-        filter?.dateFilter?.startDate ||
-        dayjs().subtract(2, "month").format("YYYY-MM-DD"),
-      endDate:
-        (filter?.normalFilter?.previous &&
-          dayjs().subtract(2, "month").endOf("month").format("YYYY-MM-DD")) ||
-        filter?.dateFilter?.endDate ||
-        dayjs().format("YYYY-MM-DD"),
-    });
-  }, [
-    filter?.dateFilter?.startDate,
-    filter?.dateFilter?.endDate,
-    filter?.normalFilter?.previous,
-  ]);
+    if (!isLoading) {
+      getDailyData();
+    }
+  }, [currentRevenue, isLoading]);
 
   return (
     <React.Fragment>
@@ -168,7 +166,7 @@ export const MonthlyAnalytics: React.FC = () => {
           />
         </div>
         <div className="flex items-center flex-wrap justify-between w-full gap-7 ">
-          {!loading ? (
+          {!isLoading ? (
             totalOrder?.map((order, index) => (
               <CardAnalytics
                 title={order?.title}

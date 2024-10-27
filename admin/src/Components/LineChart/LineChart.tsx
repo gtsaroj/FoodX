@@ -12,9 +12,10 @@ import {
   totalMonthOrder,
 } from "./LineChartData";
 import { getRevenue } from "../../Services/revenue.services";
-import { AddRevenue, LineChartType } from "../../models/revenue.model";
+import { AddRevenue, LineChartType, Revenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
 import { useQuery } from "react-query";
+import { useAllRevenue, useMonthlyRevenue } from "../../Hooks/useAllRevenue";
 
 export const WeekReveneuChart: React.FC = () => {
   const getLineChartData = async (): Promise<LineChartType[]> => {
@@ -191,12 +192,56 @@ export const MonthlyRevenueChart: React.FC = () => {
   const [previousData, setPreviousData] = useState<
     { time: string; revenue: number }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [percentageChange, setPercentageChange] = useState<string>();
   const [filter, setFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
     normalFilter?: { previous: string; id?: string };
   }>();
+
+  const { data: currentRevenue, isLoading } = useAllRevenue(
+    {
+      startDate:
+        filter?.dateFilter?.startDate ||
+        dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
+
+  const { data: previousRevenue, isLoading: loading } = useAllRevenue(
+    {
+      startDate: dayjs()
+        .subtract(1, "month")
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      endDate: dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
+
+  useEffect(() => {
+    if (!loading && currentRevenue && currentRevenue?.length > 0) {
+      const aggregateMonthlyRevenue = monthlyRevenue(
+        currentRevenue as Revenue[]
+      );
+      setInitialData(aggregateMonthlyRevenue);
+    }
+  }, [loading, currentRevenue]);
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      filter?.normalFilter &&
+      filter?.normalFilter?.previous.length > 0
+    ) {
+      const aggregatePreviousRevenue = monthlyRevenue(
+        previousRevenue as Revenue[]
+      );
+      setPreviousData(aggregatePreviousRevenue);
+    } else if (!filter?.normalFilter?.previous) {
+      setPreviousData([]);
+    }
+  }, [isLoading, filter?.normalFilter?.previous]);
 
   const syncData = () => {
     const times = new Set();
@@ -213,79 +258,12 @@ export const MonthlyRevenueChart: React.FC = () => {
     return { allKeys };
   };
 
-  const getLineChartData = async (data: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
-      const totalData = monthlyRevenue(response.data);
-      setInitialData(totalData);
-    } catch (error) {
-      throw new Error("Error while fetching revenue " + error);
-    }
-    setLoading(false);
-  };
-
-  const getPreviousChartData = async (data: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
-      const totalData = monthlyRevenue(response.data);
-      setPreviousData(totalData);
-    } catch (error) {
-      throw new Error("Error while fetching revenue " + error);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (filter?.normalFilter?.previous) {
-      getPreviousChartData({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-    } else {
-      setPreviousData([]);
-      getLineChartData({
-        startDate:
-          (filter?.dateFilter?.startDate as string) ||
-          dayjs().startOf("month").format("YYYY-MM-DD"),
-        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-      });
-    }
-  }, [
-    filter?.normalFilter?.previous,
-    filter?.dateFilter?.startDate,
-    filter?.dateFilter?.endDate,
-  ]);
-
   const calculatePercentageChange = async () => {
-    setLoading(true);
     try {
-      const response = await getRevenue({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-      const previousMonthData = monthlyRevenue(response.data);
+      const previousMonthData = monthlyRevenue(previousRevenue as Revenue[]);
       const totalCurrent = calculateTotalRevenue(initialData);
       const totalPrevious = calculateTotalRevenue(previousMonthData);
+      console.log(((totalCurrent - totalPrevious) / totalPrevious) * 100);
       if (totalPrevious === 0) {
         setPercentageChange("N/A"); // Handle zero previous orders
       } else {
@@ -296,14 +274,17 @@ export const MonthlyRevenueChart: React.FC = () => {
     } catch (error) {
       setPercentageChange("N/A");
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    if (initialData?.length) {
+    if (
+      initialData?.length > 0 &&
+      previousRevenue &&
+      previousRevenue?.length > 0
+    ) {
       calculatePercentageChange();
     }
-  }, [initialData?.length]);
+  }, [initialData?.length, previousRevenue?.length]);
   const { allKeys } = syncData();
 
   return (
@@ -434,7 +415,7 @@ export const MonthlyRevenueChart: React.FC = () => {
         )}
       </div>
       <div className="h-[400px] lg:h-[335px] w-full">
-        {loading ? (
+        {loading || isLoading ? (
           <div className="flex w-full h-full items-center justify-center gap-3">
             <RotatingLines strokeColor="var(--dark-text)" width="27" />
             <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
@@ -524,40 +505,30 @@ export const MonthlyOrderLinechart: React.FC = () => {
       orders: number;
     }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [percentageChange, setPercentageChange] = useState<string>();
 
-  const getOrders = async ({ startDate, endDate }: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-
-      const aggregateOrders = totalMonthOrder(response.data);
-      setInitialData(aggregateOrders);
-    } catch (error) {
-      throw new Error("Error while fetching orders" + error);
+  const { data: currentRevenue, isLoading } = useAllRevenue(
+    {
+      startDate:
+        filter?.dateFilter?.startDate ||
+        dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    },
+    {
+      enable: true,
     }
-    setLoading(false);
-  };
+  );
 
-  const getPreviousOrders = async ({ startDate, endDate }: AddRevenue) => {
-    setLoading(true);
-
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-      const aggregateOrders = totalMonthOrder(response.data);
-      setPreviousData(aggregateOrders);
-    } catch (error) {
-      throw new Error("Error while fetching orders" + error);
-    }
-    setLoading(false);
-  };
+  const { data: previousRevenue, isLoading: loading } = useAllRevenue(
+    {
+      startDate: dayjs()
+        .subtract(1, "month")
+        .startOf("month")
+        .format("YYYY-MM-DD"),
+      endDate: dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
 
   const syncData = () => {
     const times = new Set();
@@ -571,47 +542,32 @@ export const MonthlyOrderLinechart: React.FC = () => {
     });
     return { allKeys };
   };
+  const { allKeys } = syncData();
 
   useEffect(() => {
-    if (filter?.normalFilter?.previous) {
-      getPreviousOrders({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-    } else {
+    if (!loading && filter?.normalFilter?.previous) {
+      const aggregatePreviousRevenue = totalMonthOrder(
+        previousRevenue as Revenue[]
+      );
+      setPreviousData(aggregatePreviousRevenue);
+    } else if (!isLoading) {
       setPreviousData([]);
-      getOrders({
-        startDate:
-          filter?.dateFilter?.startDate ||
-          dayjs().startOf("month").format("YYYY-MM-DD"),
-        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-      });
+      const aggregateCurrentMonth = totalMonthOrder(
+        currentRevenue as Revenue[]
+      );
+      setInitialData(aggregateCurrentMonth);
     }
   }, [
-    filter?.dateFilter?.startDate,
-    filter?.dateFilter?.endDate,
+    currentRevenue,
     filter?.normalFilter?.previous,
+    previousRevenue,
+    isLoading,
+    loading,
   ]);
 
   const calculatePercentageChange = async () => {
     try {
-      const response = await getRevenue({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-      const previousMonthData = totalMonthOrder(response.data);
+      const previousMonthData = totalMonthOrder(previousRevenue as Revenue[]);
       const totalCurrent = calculateTotalOrders(initialData);
       const totalPrevious = calculateTotalOrders(previousMonthData);
       if (totalPrevious === 0) {
@@ -631,8 +587,6 @@ export const MonthlyOrderLinechart: React.FC = () => {
       calculatePercentageChange();
     }
   }, [initialData.length]);
-
-  const { allKeys } = syncData();
 
   return (
     <div className="flex flex-col p-2 items-center justify-center w-full rounded">
@@ -757,7 +711,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
         )}
       </div>
       <div className="h-[398px]  lg:h-[398px] w-full">
-        {loading ? (
+        {isLoading || loading ? (
           <div className="flex w-full h-full items-center justify-center gap-3">
             <RotatingLines strokeColor="var(--dark-text)" width="27" />
             <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">

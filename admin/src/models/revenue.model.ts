@@ -7,7 +7,8 @@ export interface AddRevenue {
 
 export interface LineChartType {
   time: string;
-  revenue: number;
+  revenue?: number;
+  order?: number;
 }
 
 export interface Revenue {

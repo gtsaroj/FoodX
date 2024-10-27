@@ -3,8 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import {
   bulkDeleteOfProduct,
   deleteProduct,
-  getNormalProducts,
-  getSpecialProducts,
 } from "../../Services/product.services";
 import { addLogs } from "../../Services/log.services";
 import { Product } from "../../models/product.model";
@@ -16,11 +14,22 @@ import { Filter, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
-import { aggregateProducts } from "../Product/product";
+import {
+  useNormalProuducts,
+  useSpecialProducts,
+} from "../../Hooks/useAllProducts";
 const AllProductAnalytics = () => {
+  const { data: specialProducts, isLoading: specialLoading } =
+    useSpecialProducts();
+  const { data: normalProducts, isLoading: normalLoading } =
+    useNormalProuducts();
+  console.log(specialLoading, specialProducts)
+  console.log(normalLoading, normalProducts)
+
+
+
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [id, setId] = useState<string>();
   const [type, setType] = useState<"specials" | "products">();
   const [filter, setFilter] = useState<{
@@ -41,27 +50,13 @@ const AllProductAnalytics = () => {
       category?: "specials" | "products";
       id?: string;
     }[]
-  >([]);
-
-  const getProducts = async () => {
-    setLoading(true);
-    try {
-      const [normalProducts, specialProducts] = await Promise.all([
-        getNormalProducts(),
-        getSpecialProducts(),
-      ]);
-      const allProducts = [...normalProducts.data, ...specialProducts.data];
-      const products = await aggregateProducts(allProducts);
-      setFetchedProducts(products);
-    } catch (error) {
-      throw new Error("Error while getting products " + error);
-    }
-    setLoading(false);
-  };
-
+    >([]);
+  
   useEffect(() => {
-    getProducts();
-  }, []);
+    if (!specialLoading && !normalLoading) {
+      setFetchedProducts([...normalProducts as Product[], ...specialProducts as Product[]])
+    }
+  },[normalLoading, normalProducts, specialLoading,specialProducts])
 
   //Sorting
   const handleTypeCheck = async (
@@ -91,87 +86,62 @@ const AllProductAnalytics = () => {
   };
 
   useEffect(() => {
-    const filterAndSortProducts = async () => {
-      let filteredProducts = fetchedProducts;
-
-      // Filter products based on type
-      if (filter?.typeFilter?.type) {
-        const specialProducts = await getSpecialProducts(
-          `${
-            filter!.typeFilter!.type === "products"
-              ? "all"
-              : filter!.typeFilter!.type
-          }`
-        );
-        filteredProducts = await aggregateProducts(specialProducts.data);
-      } else {
-        // Fetch all products if no filter is applied
-        getProducts();
-        return;
-      }
-
-      setFetchedProducts(filteredProducts);
-    };
-
-    filterAndSortProducts();
-  }, [filter?.typeFilter?.type]);
-
-  useEffect(() => {
     let filteredProducts = fetchedProducts;
 
-    // Sort products based on sortFilter and sortOrder
+    // Apply filtering
+    if (filter?.typeFilter?.type === "products") {
+      filteredProducts = normalProducts as Product[];
+    } else if (filter?.typeFilter?.type === "specials") {
+      filteredProducts = specialProducts as Product[];
+    } else if (normalProducts && specialProducts) {
+      filteredProducts = [
+        ...(normalProducts as Product[]),
+        ...(specialProducts as Product[]),
+      ];
+    }
+
+    // Apply sorting
     if (
       filter?.sortFilter?.sort &&
       (sortOrder === "asc" || sortOrder === "desc")
     ) {
-      filteredProducts = [...fetchedProducts].sort((a, b) => {
+      filteredProducts = [...filteredProducts].sort((a, b) => {
         const aValue = a[filter?.sortFilter?.sort as keyof Product];
         const bValue = b[filter?.sortFilter?.sort as keyof Product];
 
         if (sortOrder === "asc") {
-          if (typeof aValue === "number" && typeof bValue === "number") {
-            return aValue - bValue; // Numeric comparison
-          } else if (typeof aValue === "string" && typeof bValue === "string") {
-            return aValue.localeCompare(bValue); // Lexical comparison
-          }
+          return typeof aValue === "number" && typeof bValue === "number"
+            ? aValue - bValue
+            : typeof aValue === "string" && typeof bValue === "string"
+            ? aValue.localeCompare(bValue)
+            : 0;
+        } else {
+          return typeof aValue === "number" && typeof bValue === "number"
+            ? bValue - aValue
+            : typeof aValue === "string" && typeof bValue === "string"
+            ? bValue.localeCompare(aValue)
+            : 0;
         }
-
-        if (sortOrder === "desc") {
-          if (typeof aValue === "number" && typeof bValue === "number") {
-            return bValue - aValue; // Numeric comparison
-          } else if (typeof aValue === "string" && typeof bValue === "string") {
-            return bValue.localeCompare(aValue); // Lexical comparison
-          }
-        }
-
-        return 0; // Fallback if the values are neither string nor number
       });
     }
 
     setFetchedProducts(filteredProducts);
-  }, [filter?.sortFilter?.sort, sortOrder]);
+  }, [filter, sortOrder, normalProducts, specialProducts]);
 
   const handleChange = async (value: string) => {
-    if (value.length <= 0) return await getProducts();
-    const filterProducts = (await searchProducts(value)) as Product[];
+    if (value.length <= 0) return setFetchedProducts(data as Product[]);
 
-    const products = await aggregateProducts(filterProducts);
-    setFetchedProducts(products);
+    const filterProducts = (await searchProducts(value)) as Product[];
+    setFetchedProducts(filterProducts);
   };
 
   const searchProducts = async (value: string) => {
-    const [specialProducts, normalProducts] = [
-      await getSpecialProducts(),
-      await getNormalProducts(),
-    ];
-    const allProducts = [
-      ...specialProducts?.data,
-      ...normalProducts?.data,
-    ] as Product[];
-    const filterProducts = allProducts?.filter((product) =>
-      product.name.toLowerCase().includes(value.toLowerCase())
-    );
-    return filterProducts;
+    if (data && !isLoading) {
+      const filterProducts = data?.filter((product) =>
+        product.name.toLowerCase().includes(value.toLowerCase())
+      );
+      return filterProducts;
+    }
   };
 
   const debounceSearch = useCallback(debounce(handleChange, 200), []);
@@ -291,7 +261,7 @@ const AllProductAnalytics = () => {
     <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-5">
       <div className="flex flex-col justify-center gap-3 items-start w-full">
         <div className="flex w-full  sm:flex-row flex-col items-end sm:items-center justify-between ">
-        <div className="flex w-full text-start py-2 flex-col -space-y-1.5 items-start justify-center gap-1">
+          <div className="flex w-full text-start py-2 flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Products
             </h4>
@@ -300,111 +270,107 @@ const AllProductAnalytics = () => {
             </p>
           </div>
           <Button
-          selectedCheck={[filter?.sortFilter?.id as string]}
-          selectedTypes={[filter?.typeFilter?.id as string]}
-          sortFn={(value) => setSortOrder(value)}
-          bodyStyle={{
-            width: "400px",
-            top: "3rem",
-            left: "-18rem",
-          }}
-          parent={
-            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-              <Filter
-                strokeWidth={2.5}
-                className="size-5 text-[var(--dark-secondary-text)]"
-              />
-              <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                Filter
-              </p>
-            </div>
-          }
-          types={[
-            { label: "Specials", value: "specials", id: "fklsdjf" },
-            { label: "products", value: "products", id: "fkjdls" },
-          ]}
-          sort={[
-            { label: "Price", value: "price", id: "jfhkdj" },
-            { label: "Order", value: "order", id: "fkdsj" },
-            { label: "Revenue", value: "revenue", id: "flkjdsf" },
-          ]}
-          checkFn={{
-            checkTypeFn: (
-              isChecked: boolean,
-              value: "specials" | "products",
-              id
-            ) => handleTypeCheck(isChecked, value, id),
-            checkSortFn: (
-              isChecked: boolean,
-              value: "orders" | "revenue",
-              id
-            ) => handleSortCheck(isChecked, value, id),
-          }}
-        />
+            selectedCheck={[filter?.sortFilter?.id as string]}
+            selectedTypes={[filter?.typeFilter?.id as string]}
+            sortFn={(value) => setSortOrder(value)}
+            bodyStyle={{
+              width: "400px",
+              top: "3rem",
+              left: "-18rem",
+            }}
+            parent={
+              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                <Filter
+                  strokeWidth={2.5}
+                  className="size-5 text-[var(--dark-secondary-text)]"
+                />
+                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                  Filter
+                </p>
+              </div>
+            }
+            types={[
+              { label: "Specials", value: "specials", id: "fklsdjf" },
+              { label: "products", value: "products", id: "fkjdls" },
+            ]}
+            sort={[
+              { label: "Price", value: "price", id: "jfhkdj" },
+              { label: "Order", value: "order", id: "fkdsj" },
+              { label: "Revenue", value: "revenue", id: "flkjdsf" },
+            ]}
+            checkFn={{
+              checkTypeFn: (
+                isChecked: boolean,
+                value: "specials" | "products",
+                id
+              ) => handleTypeCheck(isChecked, value, id),
+              checkSortFn: (
+                isChecked: boolean,
+                value: "orders" | "revenue",
+                id
+              ) => handleSortCheck(isChecked, value, id),
+            }}
+          />
         </div>
         <div className="flex items-center justify-start sm:w-auto gap-2 w-full ">
-            {" "}
-            <form
-              action=""
-              className="relative text-[var(--dark-text)] w-full "
-            >
-              <input
-                id="search"
-                type="search"
-                onChange={(event) => debounceSearch(event?.target.value)}
-                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-                placeholder="Search for products"
-              />
-            </form>
-            <div className="h-9  w-[1px] bg-gray-300  "></div>
-            <DeleteButton
-              dataLength={bulkSelectedProduct.length}
-              deleteFn={() => setIsBulkDelete(true)}
+          {" "}
+          <form action="" className="relative text-[var(--dark-text)] w-full ">
+            <input
+              id="search"
+              type="search"
+              onChange={(event) => debounceSearch(event?.target.value)}
+              className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+              placeholder="Search for products"
             />
-            {filter?.sortFilter?.sort && (
-              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className=" text-[15px] text-[var(--dark-secondary-text)]">
-                    {filter.sortFilter.sort &&
-                      filter.sortFilter.sort.toLowerCase()}
-                  </span>
-                </div>
-                <button
-                  onClick={() =>
-                    setFilter((prev) => ({
-                      ...prev,
-                      sortFilter: { id: undefined, sort: undefined },
-                    }))
-                  }
-                  className=" "
-                >
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
+          </form>
+          <div className="h-9  w-[1px] bg-gray-300  "></div>
+          <DeleteButton
+            dataLength={bulkSelectedProduct.length}
+            deleteFn={() => setIsBulkDelete(true)}
+          />
+          {filter?.sortFilter?.sort && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+              <div className="flex gap-1 items-center justify-center">
+                <span className=" text-[15px] text-[var(--dark-secondary-text)]">
+                  {filter.sortFilter.sort &&
+                    filter.sortFilter.sort.toLowerCase()}
+                </span>
               </div>
-            )}
-            {filter?.typeFilter?.type && (
-              <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
-                <div className="flex gap-1 items-center justify-center">
-                  <span className="    text-[15px] text-[var(--dark-secondary-text)]">
-                    {filter.typeFilter.type &&
-                      filter.typeFilter.type.toLowerCase()}
-                  </span>
-                </div>
-                <button
-                  onClick={() =>
-                    setFilter((prev) => ({
-                      ...prev,
-                      typeFilter: { id: undefined, type: undefined },
-                    }))
-                  }
-                  className=" "
-                >
-                  <X className="text-[var(--danger-text)] " size={20} />
-                </button>
+              <button
+                onClick={() =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    sortFilter: { id: undefined, sort: undefined },
+                  }))
+                }
+                className=" "
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+          {filter?.typeFilter?.type && (
+            <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
+              <div className="flex gap-1 items-center justify-center">
+                <span className="    text-[15px] text-[var(--dark-secondary-text)]">
+                  {filter.typeFilter.type &&
+                    filter.typeFilter.type.toLowerCase()}
+                </span>
               </div>
-            )}
-          </div>
-
+              <button
+                onClick={() =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    typeFilter: { id: undefined, type: undefined },
+                  }))
+                }
+                className=" "
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <FoodTable
         totalData={fetchedProducts?.length as number}
@@ -436,7 +402,7 @@ const AllProductAnalytics = () => {
           checkAllFn: (isChecked: boolean) => handleAllSelected(isChecked),
         }}
         products={fetchedProducts}
-        loading={loading}
+        loading={specialLoading && normalLoading}
       />
       <Modal close={isEdit} closeModal={() => setIsEdit(true)}>
         <UpdateFood

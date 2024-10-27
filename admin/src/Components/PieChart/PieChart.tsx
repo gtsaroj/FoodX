@@ -4,60 +4,59 @@ import { Button } from "../Common/Button/Button";
 import { Filter, X } from "lucide-react";
 import dayjs from "dayjs";
 import { getRevenue } from "../../Services/revenue.services";
-import { AddRevenue } from "../../models/revenue.model";
+import { AddRevenue, Revenue } from "../../models/revenue.model";
 import { aggregateDailyCategoryOrder } from "./PieData";
 import { RotatingLines } from "react-loader-spinner";
+import { useAllRevenue } from "../../Hooks/useAllRevenue";
+import { useQuery } from "react-query";
+import { getCategories } from "../../Services/category.services";
 
 export const PieChartAnalytics = () => {
   const [initialData, setInitialData] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   const [filter, setIsFilter] = useState<{
     dateFilter?: { startDate: string; endDate: string };
     normalFilter?: { previous: string; id: string };
   }>();
 
-  const getPiechartData = async ({ startDate, endDate }: AddRevenue) => {
-    setLoading(true);
-    try {
-      const response = await getRevenue({
-        startDate: startDate,
-        endDate: endDate,
-      });
-      const aggregateData = await aggregateDailyCategoryOrder(response.data);
+  const { data: currentRevenue, isLoading } = useAllRevenue(
+    {
+      startDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").startOf("month").format("YYYY-MM-DD")
+          : "" ||
+            (filter?.dateFilter?.startDate as string) ||
+            dayjs().startOf("month").format("YYYY-MM-DD"),
+      endDate:
+        filter?.normalFilter && filter?.normalFilter?.previous.length > 0
+          ? dayjs().subtract(1, "month").endOf("month").format("YYYY-MM-DD")
+          : "" || filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
+    },
+    { enable: true }
+  );
 
+  const { data, isLoading: loader } = useQuery("categories", getCategories, {
+    cacheTime: 5 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
+  const getPiechartData = async () => {
+    try {
+      const aggregateData = await aggregateDailyCategoryOrder(
+        currentRevenue as Revenue[], data
+      );
       setInitialData(aggregateData);
     } catch (error) {
       throw new Error("Error while fetching revenue" + error);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    if (filter?.normalFilter?.previous) {
-      getPiechartData({
-        startDate: dayjs()
-          .subtract(1, "month")
-          .startOf("month")
-          .format("YYYY-MM-DD"),
-        endDate: dayjs()
-          .subtract(1, "month")
-          .endOf("month")
-          .format("YYYY-MM-DD"),
-      });
-    } else {
-      getPiechartData({
-        startDate:
-          (filter?.dateFilter?.startDate as string) ||
-          dayjs().startOf("month").format("YYYY-MM-DD"),
-        endDate: filter?.dateFilter?.endDate || dayjs().format("YYYY-MM-DD"),
-      });
+    if (!isLoading && !loader) {
+      getPiechartData();
     }
-  }, [
-    filter?.normalFilter?.previous,
-    filter?.dateFilter?.endDate,
-    filter?.dateFilter?.startDate,
-  ]);
+  }, [isLoading, currentRevenue, loader]);
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
@@ -82,7 +81,7 @@ export const PieChartAnalytics = () => {
           }}
           types={[{ label: "Previous", value: "previous", id: "fkldsj;fs" }]}
           parent={
-            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">k
+            <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
               <Filter
                 strokeWidth={2.5}
                 className="size-5 text-[var(--dark-secondary-text)]"
@@ -166,7 +165,7 @@ export const PieChartAnalytics = () => {
         )}
       </div>
       <div className="w-full h-full ">
-        {loading ? (
+        {isLoading ? (
           <div className="flex w-full h-full items-center justify-center gap-3">
             <RotatingLines strokeColor="var(--dark-text)" width="27" />
             <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">

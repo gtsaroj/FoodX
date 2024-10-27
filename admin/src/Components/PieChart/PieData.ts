@@ -1,8 +1,12 @@
 import { getCategories } from "../../Services/category.services";
+import { Category } from "../../models/category.model";
 import { Product } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
 
-export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
+export const aggregateDailyCategoryOrder = async (
+  orders: Revenue[],
+  allCategory: Category[]
+) => {
   const categoryMap: { [key: string]: number } = {};
 
   orders.forEach((order) => {
@@ -14,7 +18,6 @@ export const aggregateDailyCategoryOrder = async (orders: Revenue[]) => {
       }
     });
   });
-  const allCategory = await getCategories();
 
   // Combine small categories
   const combinedCategories = combineSmallCategories(categoryMap as any, 5);
@@ -59,11 +62,10 @@ export const combineSmallCategories = (
   Object.keys(data).forEach((key) => {
     const value = data[key]; // Access the value using the key
 
-  
     if (value === undefined || value < minCount) {
-      othersTotal += value || 0; 
+      othersTotal += value || 0;
     } else {
-      result.push({ label: key, value: value }); 
+      result.push({ label: key, value: value });
     }
   });
 
@@ -72,5 +74,5 @@ export const combineSmallCategories = (
     result.push({ label: "Others", value: othersTotal });
   }
 
-  return result; 
+  return result;
 };

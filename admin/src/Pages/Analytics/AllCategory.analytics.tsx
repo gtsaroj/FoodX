@@ -19,6 +19,13 @@ import { SearchCategory } from "../../Utility/category.utils";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
 import { aggregateCategories } from "../Category/category";
+import { useAllCategory } from "../../Hooks/useAllCategory";
+import { useQueryClient } from "react-query";
+import {
+  useNormalProuducts,
+  useSpecialProducts,
+} from "../../Hooks/useAllProducts";
+import { Product } from "../../models/product.model";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<Category[]>([]);
@@ -31,21 +38,32 @@ const AllCategories = () => {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const dispatch = useDispatch<AppDispatch>();
 
+  const { data, isLoading } = useAllCategory();
+  const queryClient = useQueryClient();
+  const { data: specialProducts, isLoading: specialLoading } =
+    useSpecialProducts();
+  const { data: normalProducts, isLoading: normalLoading } =
+    useNormalProuducts();
+
   const getAllCategories = async () => {
-    setLoading(true);
+    setLoading(isLoading || specialLoading || normalLoading);
     try {
-      const categories = await getCategories();
-      const allCategory = await aggregateCategories(categories);
+      const allCategory = await aggregateCategories(
+        queryClient,
+        data as Category[],
+        normalProducts as Product[],
+        specialProducts as Product[]
+      );
       allCategory?.forEach((data) => dispatch(categoryAdd(data.name)));
       setInitialCategory(allCategory as Category[]);
     } catch (error) {
-      setLoading(false);
+      setLoading(isLoading);
       throw new Error(`Error found while fetching category` + error);
     }
-    setLoading(false);
+    setLoading(isLoading);
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
@@ -102,13 +120,14 @@ const AllCategories = () => {
 
   const SearchingCategories = async (value: string) => {
     if (value.length <= 0) return getAllCategories();
-    const filterCategories = SearchCategory(initialCategory, value);
-    setInitialCategory(filterCategories);
+    const filterCategories = SearchCategory(data as Category[], value);
+    console.log(filterCategories);
     setInitialCategory(filterCategories);
   };
 
   const debouncingSearch = useCallback(debounce(SearchingCategories, 250), [
     initialCategory,
+    SearchingCategories,
   ]);
 
   const handleDelete = async (id: string) => {
@@ -135,8 +154,10 @@ const AllCategories = () => {
   };
 
   useEffect(() => {
-    getAllCategories();
-  }, []);
+    if (!isLoading && !specialLoading && !normalLoading) {
+      getAllCategories();
+    }
+  }, [isLoading, specialLoading, normalLoading]);
 
   useEffect(() => {
     const handleSelect = async (value: string) => {
@@ -164,6 +185,12 @@ const AllCategories = () => {
           sortOrder == "desc" ? (b.rank = a.rank) : a.rank - b.rank
         );
       }
+      if (value === undefined && sortOrder) {
+        sortedCustomers = [...initialCategory].sort((b, a) =>
+          sortOrder === "desc" ? a.order - b.order : b.order - a.order
+        );
+      }
+
       if (value?.length <= 0 || undefined) {
         getAllCategories();
       }
@@ -224,7 +251,7 @@ const AllCategories = () => {
             }}
           />
         </div>
-        <div className="flex   items-start sm:items-center justify-between w-full  sm:gap-2 ">
+        <div className="flex sm:flex-row flex-col gap-2.5  items-start sm:items-center justify-between sm:w-auto w-full  sm:gap-2 ">
           <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
             {" "}
             <form
@@ -268,7 +295,7 @@ const AllCategories = () => {
       <CategoryTable
         totalData={initialCategory?.length}
         selectedData={bulkSelectedCategory?.map((category) => category.id)}
-        loading={loading}
+        loading={loading || specialLoading || normalLoading}
         category={initialCategory}
         actions={{
           checkFn: (id, isChecked) => handleBulkSelected(id, isChecked),
