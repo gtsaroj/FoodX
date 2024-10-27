@@ -10,6 +10,12 @@
     stroke: blue; /* Change the color of the line */
   }
 
+  .xAxisText.MuiChartsAxis-tickLabel {
+    fill: white;
+    color: white;
+    font-weight: 500;
+    font-size: larger; /* Or "34px" */
+  }
 
 
 

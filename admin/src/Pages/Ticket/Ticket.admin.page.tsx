@@ -25,7 +25,7 @@ const TicketAdminPage = () => {
     currentPage: number;
     perPage: number;
     pageDirection?: "prev" | "next";
-  }>({ currentPage: 1, perPage: 5 });
+  }>({ currentPage: 1, perPage: 10 });
   const [filter, setFilter] = useState<{
     id: string;
     sort?: TicketStatus["status"] | undefined;

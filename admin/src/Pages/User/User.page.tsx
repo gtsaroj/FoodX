@@ -29,8 +29,6 @@ const CustomerList: React.FC = () => {
   }>();
   const [totalData, setTotalData] = useState<number>();
 
-  const isFirstFetch = useRef(true);
-
   const handleCustomerData = async ({
     direction,
     filter,
@@ -63,8 +61,19 @@ const CustomerList: React.FC = () => {
         currentFirstDoc: users.currentFirstDoc,
         currentLastDoc: users.currentLastDoc,
       });
+
+      const aggregateUser = users.users?.map((user) => ({
+        id: user.uid,
+        avatar: user.avatar,
+        fullName: user.fullName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        totalSpent: user.totalSpent,
+        totalOrder: user.totalOrder,
+      }));
       setTotalData(users.length);
-      setInitialCustomer(users.users);
+      setInitialCustomer(aggregateUser);
     } catch (error) {
       setLoading(false);
       throw new Error(`Error while getting customers : ${error}`);
@@ -101,21 +110,17 @@ const CustomerList: React.FC = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    if (!isFirstFetch?.current) {
-      handleCustomerData({
-        path:
-          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
-          "customer",
-        direction: "next",
-        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
-        pageSize: pagination.perPage,
-        sort: sortOrder || "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-      });
-    } else {
-      isFirstFetch.current = false;
-    }
+    handleCustomerData({
+      path:
+        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+        "customer",
+      direction: "next",
+      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
     pagination.perPage,
     filter?.sortFilter?.sort,
@@ -145,6 +150,17 @@ const CustomerList: React.FC = () => {
           users: User[];
           length: number;
         };
+
+        const aggregateUser = users.users?.map((user) => ({
+          id: user.uid,
+          avatar: user.avatar,
+          fullName: user.fullName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          role: user.role,
+          totalSpent: user.totalSpent,
+          totalOrder: user.totalOrder,
+        }));
         setCurrentDoc({
           currentFirstDoc: users.currentFirstDoc,
           currentLastDoc: users.currentLastDoc,
@@ -154,8 +170,8 @@ const CustomerList: React.FC = () => {
         setInitialCustomer((customer) => {
           return [
             ...customer,
-            ...users.users.filter(
-              (user) => !customer.some((cust) => user.uid === cust.uid)
+            ...aggregateUser.filter(
+              (user) => !customer.some((cust) => user.id === cust.id)
             ),
           ];
         });
@@ -265,7 +281,7 @@ const CustomerList: React.FC = () => {
             type="search"
             onChange={(event) => debouncedHandleChange(event?.target.value)}
             className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-            placeholder="Search for products"
+            placeholder="Search for users"
           />
         </form>
         {filter?.sortFilter?.sort && (

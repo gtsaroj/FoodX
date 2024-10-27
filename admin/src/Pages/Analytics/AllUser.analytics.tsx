@@ -93,8 +93,6 @@ const AllCustomers = () => {
     setLoading(false);
   };
 
-  const isFirstFetch = useRef(true);
-
   const handleBulkSelected = (id: string, isChecked: boolean) => {
     const refreshIds = bulkSelectedCustomer?.filter((user) => user.id !== id);
 
@@ -248,19 +246,17 @@ const AllCustomers = () => {
 
   // call getUser fn based on changing the current page number
   useEffect(() => {
-    if (!isFirstFetch.current) {
-      handleCustomerData({
-        path:
-          (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
-          "customer",
-        direction: "next",
-        filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
-        pageSize: pagination.perPage,
-        sort: sortOrder || "asc",
-        currentFirstDoc: null,
-        currentLastDoc: null,
-      });
-    } else isFirstFetch.current = false;
+    handleCustomerData({
+      path:
+        (filter?.typeFilter?.type as "admin" | "customer" | "chef") ||
+        "customer",
+      direction: "next",
+      filter: (filter?.sortFilter?.sort as keyof User) || "fullName",
+      pageSize: pagination.perPage,
+      sort: sortOrder || "asc",
+      currentFirstDoc: null,
+      currentLastDoc: null,
+    });
   }, [
     pagination.perPage,
     filter?.sortFilter?.sort,
@@ -413,7 +409,7 @@ const AllCustomers = () => {
               type="search"
               onChange={(event) => debouncedHandleChange(event?.target.value)}
               className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-              placeholder="Search for products"
+              placeholder="Search for users"
             />
           </form>
           <div className="h-10  w-[1px] bg-[var(--dark-border)] "></div>

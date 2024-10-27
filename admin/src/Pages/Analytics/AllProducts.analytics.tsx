@@ -40,7 +40,7 @@ const AllProductAnalytics = () => {
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
-  }>({ currentPage: 1, perPage: 5 });
+  }>({ currentPage: 1, perPage: 10 });
 
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {

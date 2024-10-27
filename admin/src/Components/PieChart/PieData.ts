@@ -1,3 +1,4 @@
+import { dark } from "@mui/material/styles/createPalette";
 import { Category } from "../../models/category.model";
 import { Product } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
@@ -30,10 +31,10 @@ export const aggregateDailyCategoryOrder = async (
       const matchingCategory = allCategory?.find(
         (category) => category.id === reveneu.label
       );
-   
+
       if (matchingCategory && matchingCategory !== undefined) {
         label = matchingCategory.name;
-      } 
+      }
     }
 
     return {
@@ -42,6 +43,13 @@ export const aggregateDailyCategoryOrder = async (
     };
   });
 
+  const filterCategories = categories?.filter(
+    (data) => data.label !== "undefined"
+  );
+  const existCategories = filterCategories?.filter((category) =>
+    allCategory?.some((data) => category.label === data.name)
+  );
+  return existCategories;
   return categories;
 };
 

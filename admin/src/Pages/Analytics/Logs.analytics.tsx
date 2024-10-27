@@ -1,5 +1,5 @@
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   GetLogProp,
   LogActionModal,
@@ -19,6 +19,8 @@ const Logs = () => {
     currentFirst: string;
     currentLastDoc: string;
   }>();
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [filter, setFilter] = useState<{
     typeFilter?: {
       type?: "adminLogs" | "chefLogs" | "customerLogs" | string;
@@ -38,55 +40,63 @@ const Logs = () => {
     setItems(logItems);
   };
 
-  const getAllRoleLogs = async ({
-    path,
-    pageSize,
-    filter,
-    sort,
-    action,
-    currentFirstDoc,
-    currentLastDoc,
-    direction,
-  }: GetLogProp) => {
-    try {
-      const adminLogs = (await getLogs({
-        path,
-        filter,
-        sort,
-        pageSize,
-        direction,
-        currentFirstDoc: currentFirstDoc || null,
-        currentLastDoc: currentLastDoc || null,
-        action: action || undefined,
-      })) as {
-        currentFirstDoc: string;
-        currentLastDoc: string;
-        logs: LogCardProps[];
-        length: number;
-      };
+  const getAllRoleLogs = React.useCallback(
+    async ({
+      path,
+      pageSize,
+      filter,
+      sort,
+      action,
+      currentFirstDoc,
+      currentLastDoc,
+      direction,
+    }: GetLogProp) => {
+      try {
+        const adminLogs = (await getLogs({
+          path,
+          filter,
+          sort,
+          pageSize,
+          direction,
+          currentFirstDoc: currentFirstDoc || null,
+          currentLastDoc: currentLastDoc || null,
+          action: action || undefined,
+        })) as {
+          currentFirstDoc: string;
+          currentLastDoc: string;
+          logs: LogCardProps[];
+          length: number;
+        };
 
-      setTotalData((prevTotal) => prevTotal + adminLogs.logs.length);
+        setTotalData((prevTotal) => prevTotal + adminLogs.logs.length);
 
-      if (adminLogs.logs.length < pageSize) {
-        setHasMore(false); // If fewer logs are returned than requested, stop infinite scrolling.
+        if (adminLogs.logs.length < pageSize) {
+          setHasMore(false); // If fewer logs are returned than requested, stop infinite scrolling.
+        }
+
+        setItems((prev) => {
+          return [
+            ...prev,
+            ...adminLogs.logs.filter(
+              (log) => !prev.some((data) => data.id === log.id)
+            ),
+          ];
+        });
+        setCurrentDoc({
+          currentFirst: adminLogs.currentFirstDoc,
+          currentLastDoc: adminLogs.currentLastDoc,
+        });
+      } catch (error) {
+        console.error("Unable to get role logs:", error);
       }
-
-      setItems((prev) => {
-        return [
-          ...prev,
-          ...adminLogs.logs.filter(
-            (log) => !prev.some((data) => data.id === log.id)
-          ),
-        ];
-      });
-      setCurrentDoc({
-        currentFirst: adminLogs.currentFirstDoc,
-        currentLastDoc: adminLogs.currentLastDoc,
-      });
-    } catch (error) {
-      console.error("Unable to get role logs:", error);
-    }
-  };
+    },
+    [
+      filter?.typeFilter?.type,
+      filter?.actionFilter?.action,
+      filter?.sortFilter?.sort,
+      sort,
+    ]
+  );
 
   useEffect(() => {
     // Reset data when filters are changed
@@ -96,6 +106,7 @@ const Logs = () => {
     setHasMore(true);
 
     // Fetch logs with the new filters applied
+    setLoading(true);
     getAllRoleLogs({
       path:
         (filter?.typeFilter?.type as
@@ -103,13 +114,14 @@ const Logs = () => {
           | "adminLogs"
           | "chefLogs") || "adminLogs",
       filter: (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
-      pageSize: 5,
+      pageSize: 10,
       sort,
       currentFirstDoc: null,
       currentLastDoc: null,
       direction: "next",
       action: filter?.actionFilter?.action as LogActionModal["action"],
     });
+    setLoading(false);
   }, [
     filter?.typeFilter?.type,
     filter?.actionFilter?.action,
@@ -291,11 +303,10 @@ const Logs = () => {
 
         <div
           id="scrollableDiv"
-          className="flex items-start scrollbar-custom px-2 scroll-smooth   overflow-auto justify-start flex-grow w-full"
+          className="flex items-start  p-1   scroll-smooth  scrollbar-custom px-2 overflow-y-auto  w-full"
         >
-          <div className="flex h-[350px] flex-col justify-start w-full gap-3 md:max-w-[800px]">
+          <div className="flex h-[500px] min-w-[400px]  p-2 flex-col justify-start w-full gap-3 md:max-w-[800px]">
             <InfiniteScroll
-              endMessage={""}
               scrollableTarget={"scrollableDiv"}
               dataLength={totalData ? totalData : 0}
               hasMore={hasMore}
@@ -308,10 +319,10 @@ const Logs = () => {
                       | "chefLogs") || "adminLogs",
                   filter:
                     (filter?.sortFilter?.sort as keyof LogCardProps) || "name",
-                  pageSize: 5,
+                  pageSize: 10,
                   sort,
-                  currentFirstDoc: currentDoc?.currentFirst,
-                  currentLastDoc: currentDoc?.currentLastDoc,
+                  currentFirstDoc: currentDoc?.currentFirst || null,
+                  currentLastDoc: currentDoc?.currentLastDoc || null,
                   direction: "next",
                   action: filter?.actionFilter as keyof LogCardProps["action"],
                 })
@@ -329,7 +340,18 @@ const Logs = () => {
                 </div>
               }
             >
-              {items ? (
+              {loading ? (
+                <div className="w-full flex flex-col items-center pt-3 justify-center ">
+                  {/* <Skeleton height={70} count={5} /> */}
+                  <div className="flex items-center justify-center gap-3">
+                    <RotatingLines strokeColor="var(--dark-text)" width="27" />
+                    <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
+                      {" "}
+                      loading...
+                    </span>
+                  </div>
+                </div>
+              ) : items.length > 0 ? (
                 <div className="flex flex-col justify-center gap-5 w-full">
                   {items.map((item) => (
                     <LogCard
@@ -341,7 +363,7 @@ const Logs = () => {
                   ))}
                 </div>
               ) : (
-                <div>No data to show.</div>
+                ""
               )}
             </InfiniteScroll>
           </div>

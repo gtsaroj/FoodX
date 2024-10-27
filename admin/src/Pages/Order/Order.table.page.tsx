@@ -220,6 +220,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
         handlePageDirection={(pageDirection) =>
           handlePageDirection(pageDirection)
         }
+      
         selectedData={selectedData}
         totalData={totalData}
         data={initialOrder as any}
