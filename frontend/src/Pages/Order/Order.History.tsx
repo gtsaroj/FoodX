@@ -13,11 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
 import { useNavigate } from "react-router-dom";
-import {
-  addToCart,
-  removeCart,
-  
-} from "../../Reducer/product.reducer";
+import { addToCart, removeCart } from "../../Reducer/product.reducer";
 import Modal from "../../Components/Common/Popup/Popup";
 import { Invoice } from "../../Components/Invoice/Invoice";
 import dayjs from "dayjs";
@@ -298,7 +294,9 @@ export const OrderHistory = () => {
                   status: selectedOrder.status as OrderStatus["status"],
                 },
                 invoiceData: {
-                  invoiceDate: dayjs().format("YYYY-MM-DD"),
+                  invoiceDate: dayjs(selectedOrder?.time).format(
+                    "	MMM D, YYYY h:mm A"
+                  ),
                   invoiceNumber: selectedOrder!.id,
                 },
                 customerDetails: {
