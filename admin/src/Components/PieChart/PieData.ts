@@ -1,4 +1,3 @@
-import { dark } from "@mui/material/styles/createPalette";
 import { Category } from "../../models/category.model";
 import { Product } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";

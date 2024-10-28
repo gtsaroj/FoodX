@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { makeRequest } from "../makeRequest";
 import {
   GetTicketModal,
@@ -55,7 +56,10 @@ export const updateTicket = async (data: {
       data: { ...data },
     });
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response.status === 500) {
+      toast.error("Internal server error. Please try again later.");
+    }
     throw new Error(`Error while creating ticket` + error);
   }
 };

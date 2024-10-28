@@ -1,5 +1,5 @@
 import { Download, Filter, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 
 // import { debounce } from "../../Utility/debounce";
 
@@ -18,7 +18,7 @@ import { usePaginateOrders } from "./order";
 import { Order } from "../../models/order.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { debounce } from "../../Utility/debounce";
+import { OrderSearch } from "./Order.search";
 
 const OrderList = () => {
   const {
@@ -31,28 +31,19 @@ const OrderList = () => {
     totalData,
     initialOrders,
     setInitialOrders,
-    setHaveUserId
+    setHaveUser,
+    haveUser,
   } = usePaginateOrders({
     direction: "next",
-    pageSize : 20
+    pageSize: 20,
   });
   const [isExport, setIsExport] = useState<boolean>(true);
   const [exportSelectedOrder, setExportSelectedOrder] = useState<string[]>([]);
-
   const [resolvedOrders, setResolvedOrders] = useState<
     InvoiceDocumentProp["orders"]
   >([]);
   const store = useSelector((state: RootState) => state.root);
-
   const { socket } = useSocket(store?.user?.success);
-
-  const handleChange = (value: string) => {
-    setHaveUserId(value);
-  };
-
-  const debouncedHandleChange = useCallback(debounce(handleChange, 400), [
-    initialOrders,
-  ]);
 
   const exportAllOrder = (isCheckedAll: boolean) => {
     if (!isCheckedAll) {
@@ -226,41 +217,44 @@ const OrderList = () => {
           </div>
         </div>
       </div>
-      <div className="flex sm:flex-row flex-col items-start sm:items-start   justify-start gap-2.5 sm:gap-5 w-full px-1">
-        <form
-          action=""
-          className="relative sm:w-auto w-full text-[var(--dark-text)]  "
-        >
-          <input
-            id="search"
-            type="search"
-            onChange={(event) => debouncedHandleChange(event?.target.value)}
-            className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-            placeholder="Search for orders"
-          />
-        </form>
-        {isFilter?.sortFilter?.sort && (
-          <div className="flex items-center rounded-md border-[1px] border-[var(--dark-border)]  justify-between px-1 gap-2 py-1  ">
-            <div className="flex  items-center justify-center">
-              <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
-                {isFilter.sortFilter.sort &&
-                  isFilter.sortFilter.sort.charAt(0).toUpperCase() +
-                    isFilter?.sortFilter?.sort.slice(1).toLocaleLowerCase()}
-              </span>
+      <div className="flex sm:w-auto sm:flex-row flex-col items-start sm:items-start   justify-start gap-2.5 sm:gap-5 w-full px-1">
+        <OrderSearch payload={(value) => setHaveUser(value)} />
+        <div className=" w-full flex  gap-3 items-center justify-start">
+          {haveUser?.fullName && (
+            <div className="flex  items-center rounded-md border-[1px] border-[var(--dark-border)]  justify-between px-1 gap-2 py-1  ">
+              <div className="flex  items-center justify-center">
+                <span className=" min-w-11  text-[15px] text-[var(--dark-secondary-text)] ">
+                  {haveUser?.fullName}
+                </span>
+              </div>
+              <button onClick={() => setHaveUser({})} className=" ">
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
             </div>
-            <button
-              onClick={() =>
-                setIsFilter((prev) => ({
-                  ...prev,
-                  sortFilter: { id: "", sort: "" },
-                }))
-              }
-              className=" "
-            >
-              <X className="text-[var(--danger-text)] " size={20} />
-            </button>
-          </div>
-        )}
+          )}
+          {isFilter?.sortFilter?.sort && (
+            <div className="flex items-center rounded-md border-[1px] border-[var(--dark-border)]  justify-between px-1 gap-2 py-1  ">
+              <div className="flex  items-center justify-center">
+                <span className="  text-[15px] text-[var(--dark-secondary-text)] ">
+                  {isFilter.sortFilter.sort &&
+                    isFilter.sortFilter.sort.charAt(0).toUpperCase() +
+                      isFilter?.sortFilter?.sort.slice(1).toLocaleLowerCase()}
+                </span>
+              </div>
+              <button
+                onClick={() =>
+                  setIsFilter((prev) => ({
+                    ...prev,
+                    sortFilter: { id: "", sort: "" },
+                  }))
+                }
+                className=" "
+              >
+                <X className="text-[var(--danger-text)] " size={20} />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
       <OrderTable
         handlePageDirection={(pageDirection) =>

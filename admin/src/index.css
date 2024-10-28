@@ -115,14 +115,14 @@
 @layer components {
   .scrollbar-invisible {
     @apply overscroll-y-auto;
-    width: 9px;
+    width: 5px;
   }
   .scrollbar-custom {
     @apply overflow-y-scroll; /* Enables scrolling */
   }
 
   .scrollbar-custom::-webkit-scrollbar {
-    width: 8px; /* Adjust scrollbar width */
+    width: 5px; /* Adjust scrollbar width */
   }
 
   .scrollbar-custom::-webkit-scrollbar-thumb {
