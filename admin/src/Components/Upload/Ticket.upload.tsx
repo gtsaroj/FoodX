@@ -10,7 +10,10 @@ import { User } from "../../models/user.model";
 import { Selector } from "../Selector/Selector";
 import dayjs from "dayjs";
 
-const CreateTicket: React.FC = () => {
+interface CreateTicketProp {
+  close?: () => void;
+}
+const CreateTicket: React.FC<CreateTicketProp> = ({ close }) => {
   const reference = useRef<HTMLDivElement>();
   const user = useSelector(
     (state: RootState) => state.root.user.userInfo
@@ -40,19 +43,23 @@ const CreateTicket: React.FC = () => {
     try {
       await createTicket({ ...initialTicket });
       setLoading(false);
-       toast.success("Ticket success");
+      toast.success("Ticket success");
     } catch (error) {
       toast.error("Unable to create ticket");
+      throw new Error("Unable to create ticket" + error);
+    } finally {
       setLoading(false);
-      console.log("Unable to create ticket" + error);
+      setInitialTicket({
+        category: "",
+
+        description: "",
+        id: "",
+        title: "",
+        date: "",
+        uid: "",
+      });
+      close && close();
     }
-    setInitialTicket({
-      category: "",
-      date: "",
-      description: "",
-      id: "",
-      title: "",
-    });
   };
   const categoryOption: { value: string; label: string }[] = [
     { value: "ingredient_shortage", label: "Ingredient Shortage" },

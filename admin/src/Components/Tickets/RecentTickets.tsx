@@ -29,7 +29,6 @@ export const RecentTickets = () => {
       })) as { tickets: TicketType[] };
       return tickets.tickets;
     } catch (error) {
-      toast.error("Unable to fetch ticket");
       throw new Error("Unable to fetch tickets" + error);
     }
   };

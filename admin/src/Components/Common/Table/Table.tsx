@@ -116,7 +116,7 @@ function Table<T extends { id: string }>({
           </tr>
         </thead>
         <div className="w-full flex flex-col ">
-          <tbody className="w-full h-[600px] overflow-auto flex items-center justify-evenly flex-col flex-nowrap">
+          <tbody className="w-full min-h-[300px]  max-h-[600px] overflow-auto flex items-start justify-start flex-col flex-nowrap">
             {loading ? (
               <div className="w-full">
                 <Skeleton
@@ -165,7 +165,7 @@ function Table<T extends { id: string }>({
                   currentData &&
                   currentData.map((item, index) => (
                     <tr
-                      className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-8 hover:bg-[var(--light-background)]   w-full flex items-center justify-start gap-5  flex-nowrap"
+                      className={`border-b-[1px] overflow-x-auto overflow-y-clip border-[var(--dark-border)]  px-2 ${currentData?.length >8 ? "py-14" : "py-8"}  hover:bg-[var(--light-background)]   w-full flex items-center justify-start gap-5  flex-nowrap`}
                       key={(item?.id ? item.id : item?.uid) || index}
                     >
                       {!!actions?.checkFn && !disableActions && (

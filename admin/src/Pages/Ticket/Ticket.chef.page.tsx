@@ -17,6 +17,9 @@ import {
 import InfiniteScroll from "react-infinite-scroll-component";
 import { RotatingLines } from "react-loader-spinner";
 import { Empty } from "../../Components/Common/Empty/Empty";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import Skeleton from "react-loading-skeleton";
 
 const TicketPage: React.FC = () => {
   const [ticketState, setTicketState] =
@@ -31,6 +34,7 @@ const TicketPage: React.FC = () => {
   }>();
   const [loading, setLoading] = useState<boolean>(false);
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
+  const store = useSelector((state: RootState) => state.root);
 
   const fetchTickets = async (data: GetTicketModal) => {
     setLoading(true);
@@ -42,6 +46,7 @@ const TicketPage: React.FC = () => {
         currentFirstDoc: data.currentFirstDoc || null,
         currentLastDoc: data.currentLastDoc || null,
         status: data.status,
+        uid: store?.user?.userInfo?.uid as string,
       })) as {
         tickets: TicketType[];
         currentFirstDoc: string;
@@ -61,10 +66,11 @@ const TicketPage: React.FC = () => {
 
       setTickets(tickets.tickets);
     } catch (error) {
-      toast.error(error as any);
+      setTickets([]);
       throw new Error("Unable to fetch tickets" + error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -147,7 +153,7 @@ const TicketPage: React.FC = () => {
         </button>
         <Modal
           close={closeModal}
-          children={<CreateTicket />}
+          children={<CreateTicket close={() => setCloseModal(!closeModal)} />}
           closeModal={() => setCloseModal(!closeModal)}
         />
       </div>
@@ -199,8 +205,36 @@ const TicketPage: React.FC = () => {
         className="w-full py-6 h-full overflow-auto   scrollbar-custom px-5 "
       >
         <div className="w-full h-[400px] ">
-          {tickets.length <= 0 ? (
+          {loading ? (
+            <div className="w-full">
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={80}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={3}
+              />
+            </div>
+          ) : tickets.length <= 0 ? (
             <Empty
+              loading={loading}
               actionText="Refresh ticket"
               parent={TicketLogo}
               style={{ width: "15rem", height: "12rem" }}

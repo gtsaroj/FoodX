@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React, { useState } from "react";
-import { TicketStatus } from "../../models/ticket.model";
+import { TicketStatus, TicketType } from "../../models/ticket.model";
 import Avatar from "../../assets/logo/avatar.png";
 import { getRemainingTime } from "../../Utility/date.utility";
 import { useQueryClient } from "react-query";
@@ -26,11 +26,12 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   uid,
   status,
   id: t_id,
+  title,
 }) => {
   const queryClient = useQueryClient();
   const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
   const [id, setId] = useState<string>("");
-
+  const [updatedTicket, setUpdatedTicket] = React.useState<TicketType>();
   const [cachedUser, setCachedUser] = useState<User | null>(null);
 
   React.useEffect(() => {
@@ -49,20 +50,52 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   }, [uid, queryClient]);
 
   const ticketUpdate = async (
-    uid: string,
+    id: string,
     newStatus: TicketStatus["status"]
   ) => {
     if (!uid) toast.error("Some thing went wrong");
     const toastLoader = toast.loading("Loading...");
 
     try {
-      await updateTicket({ id: uid, newStatus: newStatus });
+      await updateTicket({ id: id, newStatus: newStatus });
+      if (t_id === id) {
+        setUpdatedTicket({
+          category,
+          date,
+          description,
+          id,
+          title,
+          status: newStatus,
+          uid,
+        });
+      }
       toast.dismiss(toastLoader);
     } catch (error) {
       throw new Error("Error while updating recent ticket " + error);
     } finally {
       toast.dismiss(toastLoader);
     }
+  };
+
+  const statusStyles: {
+    [key in TicketStatus["status"]]: { bg: string; text: string };
+  } = {
+    pending: {
+      bg: "bg-[#0000ff0c]",
+      text: "text-[var(--primary-color)]",
+    },
+    progress: {
+      bg: " bg-[#bb81150e] ",
+      text: "text-[#bb8115]",
+    },
+    resolved: {
+      bg: "bg-gradient-to-r from-green-400/5 to-green-500/5",
+      text: "text-green-600",
+    },
+    rejected: {
+      bg: "bg-gradient-to-r from-red-400/5 to-red-500/5",
+      text: "text-red-600",
+    },
   };
 
   return (
@@ -79,7 +112,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
             {cachedUser?.fullName || "user"}
           </h1>
         </div>
-        <span className=" text-gray-400 text-xs ">
+        <span className=" text-gray-400  text-xs ">
           {getRemainingTime(dayjs(date))}
         </span>
       </div>
@@ -90,7 +123,6 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
       </p>
       <div className="w-full flex-wrap flex items-center sm:gap-0 justify-start gap-5 sm:justify-evenly">
         <p className=" text-[var(--green-text)] bg-[#41d6410c] text-sm p-1 rounded-full px-2 ">
-     
           New
         </p>
         <p
@@ -101,11 +133,19 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
           className={`relative `}
         >
           <button
-            className=" tracking-wider  px-2 text-sm text-[var(--primary-color)] bg-[#0000ff0c]
-             p-1 rounded-full"
+            className={`  ${
+              statusStyles[updatedTicket?.status || status || "pending"].text
+            }  tracking-wider  ${
+              statusStyles[updatedTicket?.status || status || "pending"].bg
+            } px-2 text-sm 
+            p-1 rounded-full`}
           >
             {" "}
-            {status && status?.charAt(0).toUpperCase() + status?.slice(1)}
+            {updatedTicket?.id === t_id
+              ? updatedTicket &&
+                updatedTicket!.status!.charAt(0).toUpperCase() +
+                  updatedTicket?.status?.slice(1)
+              : status && status?.charAt(0).toUpperCase() + status?.slice(1)}
           </button>
           <div
             className={` z-[100] top-4 bg-[var(--light-foreground)] absolute ${
@@ -117,7 +157,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
             <UpdateTiket
               isChangeStatus={() => setIsUpdate(false)}
               status={status as TicketStatus["status"]}
-              action={(newStatus) => ticketUpdate(uid as string, newStatus)}
+              action={(newStatus) => ticketUpdate(id as string, newStatus)}
             />
           </div>
         </p>

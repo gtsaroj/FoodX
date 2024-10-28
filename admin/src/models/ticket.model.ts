@@ -1,7 +1,7 @@
 export interface TicketType {
   id: string;
   category: string;
-  title: string;
+  title?: string;
   description: string;
   date: string;
   status?: TicketStatus["status"];
@@ -21,6 +21,7 @@ export interface GetTicketModal {
   currentFirstDoc?: any | null;
   currentLastDoc?: any | null;
   status?: TicketStatus["status"];
+  uid?:string
 }
 
 export interface TicketStatus {
