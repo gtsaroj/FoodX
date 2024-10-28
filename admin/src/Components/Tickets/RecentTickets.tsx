@@ -1,10 +1,9 @@
 import { ChevronRight } from "lucide-react";
-import TicketCard from "./TicketCard";
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import TicketLogo from "../../assets/tickets.png";
 import toast from "react-hot-toast";
-import { TicketType } from "../../models/ticket.model";
+import { TicketStatus, TicketType } from "../../models/ticket.model";
 
 import Skeleton from "react-loading-skeleton";
 import { Empty } from "../Common/Empty/Empty";
@@ -12,6 +11,7 @@ import { getTickets } from "../../Services/ticket.services";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { useQuery } from "react-query";
+import { RecentTicketCard } from "./Recent.TicketCard";
 
 export const RecentTickets = () => {
   const [url, seturl] = useState<string>();
@@ -20,11 +20,12 @@ export const RecentTickets = () => {
   const fetchTickets = async (): Promise<TicketType[]> => {
     try {
       const tickets = (await getTickets({
-        pageSize: 5,
+        pageSize: 10,
         direction: "next",
         sort: "desc",
         currentFirstDoc: null,
         currentLastDoc: null,
+        status: "pending",
       })) as { tickets: TicketType[] };
       return tickets.tickets;
     } catch (error) {
@@ -42,12 +43,6 @@ export const RecentTickets = () => {
   const user = useSelector((state: RootState) => state.root.user.userInfo);
 
   const orderReference = useRef<HTMLDivElement>();
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetchTickets();
-  //   setLoading(false);
-  // }, [isRefresh]);
 
   return (
     <div className="flex  flex-col text-[var(--dark-text)] w-full h-full p-4 border-[var(--dark-border)] border-[1px] rounded-lg lg:max-w-[420px]">
@@ -69,13 +64,15 @@ export const RecentTickets = () => {
       </div>
       <div
         ref={orderReference as any}
-        className={`max-h-[550px]  scrollbar-custom scroll-smooth px-6 overflow-y-scroll`}
+        className={`max-h-[550px]  scrollbar-custom scroll-smooth px-3 overflow-y-scroll`}
       >
         <div className="flex flex-col w-full h-full items-center  gap-2 py-2  ">
           {!isLoading ? (
             tickets && tickets?.length > 0 ? (
               tickets?.map((ticket) => (
-                <TicketCard
+                <RecentTicketCard
+                  uid={ticket?.uid as string}
+                  status={ticket.status as TicketStatus["status"]}
                   category={ticket.category}
                   date={ticket.date as any}
                   description={ticket.description}

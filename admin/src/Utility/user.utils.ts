@@ -8,7 +8,9 @@ import { totalCost, totalQuantity } from "./product.utils";
 
 export const SearchCustomer = (customers: User[], value: string) => {
   const searchingCustomer = customers?.filter((customer) => {
-    return customer.fullName &&  customer?.fullName.toLowerCase().includes(value);
+    return (
+      customer.fullName && customer?.fullName.toLowerCase().includes(value)
+    );
   });
   return searchingCustomer;
 };
@@ -31,6 +33,19 @@ export const getUserByUid = async (uid: string): Promise<User | null> => {
     const adminData = await getUser({ role: "admin" }, uid);
     if (adminData?.data?.data && adminData?.data.data?.fullName) {
       return adminData!.data.data;
+    }
+    return null;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getChefByUid = async (uid: string): Promise<User | null> => {
+  try {
+    // If chef name is not found, try to get the admin's full name
+    const chefData = await getUser({ role: "chef" }, uid);
+    if (chefData?.data?.data && chefData?.data?.data?.fullName) {
+      return chefData!.data.data;
     }
     return null;
   } catch (error) {
