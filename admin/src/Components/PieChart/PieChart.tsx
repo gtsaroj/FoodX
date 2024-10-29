@@ -58,8 +58,7 @@ export const PieChartAnalytics = () => {
       getPiechartData();
     }
   }, [isLoading, currentRevenue, loader]);
-  
-  console.log(initialData)
+
 
   return (
     <div className="w-full h-[350px] px-5  p-3 gap-3 sm:h-[430px]">
@@ -68,12 +67,6 @@ export const PieChartAnalytics = () => {
           <span className="text-xl tracking-wider text-[var(--dark-text)]  ">
             Top Categories
           </span>
-          {/* <p className="text-[16px] tracking-wider h-full   text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
-            <span>10%</span>
-            <span className="mb-[1px] ">
-              <MoveUp strokeWidth={3} size={12} />
-            </span>
-          </p> */}
         </div>
         <Button
           selectedTypes={[filter?.normalFilter?.id as string]}
@@ -202,6 +195,13 @@ export const PieChartAnalytics = () => {
               },
             ]}
             slotProps={{
+              noDataOverlay: {
+                message: "No Data to display.",
+                sx: {
+                  fill :"var(--dark-text)",
+                  fontSize: "16px",
+                },
+              },
               legend: {
                 position: { horizontal: "right", vertical: "middle" },
                 itemMarkWidth: 15,

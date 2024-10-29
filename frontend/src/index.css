@@ -2,7 +2,6 @@
 @import "tailwindcss/utilities";
 @import "tailwindcss/components";
 
-
 @layer base {
   :root {
     --color: #1ba13dd2;
@@ -90,11 +89,16 @@
     width: 4px;
   }
 
+  html {
+    overscroll-behavior: none;
+  }
+
   body {
     font-family: "Poppins", sans-serif;
     overflow-x: hidden;
     background: var(--body-bg);
     scroll-behavior: smooth;
+    overscroll-behavior: none;
     margin: 0;
     padding: 0;
   }
@@ -137,7 +141,7 @@
   .item-scrollbar::-webkit-scrollbar-thumb {
     cursor: pointer;
     width: 3px;
-    height:  3px;
+    height: 3px;
     @apply bg-gray-500 rounded-md; /* Customize the scrollbar thumb */
   }
 

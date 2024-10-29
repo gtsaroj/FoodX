@@ -47,15 +47,8 @@ const LoginContainer: React.FC<LoginProp> = ({ role }) => {
   };
 
   useEffect(() => {
-    if (role === "admin") {
-      setEmail("testuser326@gmail.com");
-      setPassword("sarcasm.conc");
-    }
-    if (role === "chef") {
-      setEmail("sarojgt36@gmail.com");
-      setPassword("sarcasm.conc");
-    }
-  }, [role]);
+    document.body.classList.remove("dark");
+  }, []);
 
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-8">

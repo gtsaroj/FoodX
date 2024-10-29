@@ -115,144 +115,138 @@ function Table<T extends { id: string }>({
             )}
           </tr>
         </thead>
-        <div className="w-full flex flex-col ">
-          <tbody className="w-full h-[600px] overflow-auto flex items-center justify-evenly flex-col flex-nowrap">
-            {loading ? (
-              <div className="w-full">
-                <Skeleton
-                  height={100}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={100}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={100}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={80}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={3}
-                />
-              </div>
-            ) : (
-              <>
-                {currentData && currentData?.length <= 0 ? (
-                  <div className="flex flex-col items-center justify-center p-10">
-                    <div className="text-[24px] text-[var(--dark-text)] mb-4">
-                      No Data Found
-                    </div>
-                    <p className="text-[16px] text-[var(--dark-secondary-text)] mb-6">
-                      We couldn't find any data to display here.
-                    </p>
-                    <button
-                      className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-light)]"
-                      onClick={() => window.location.reload()} // Replace with a function to fetch data if needed
-                    >
-                      Refresh
-                    </button>
-                  </div>
-                ) : (
-                  currentData &&
-                  currentData.map((item, index) => (
-                    <tr
-                      className=" border-b-[1px] border-[var(--dark-border)]  px-2 py-8 hover:bg-[var(--light-background)]   w-full flex items-center justify-start gap-5  flex-nowrap"
-                      key={(item?.id ? item.id : item?.uid) || index}
-                    >
-                      {!!actions?.checkFn && !disableActions && (
-                        <th className="w-[30px]">
-                          <input
-                            checked={selectedData?.includes(item?.id)}
-                            onChange={(
-                              event: ChangeEvent<HTMLInputElement>
-                            ) => {
-                              actions.checkFn &&
-                                actions.checkFn(
-                                  item.id || item.uid,
-                                  event.target.checked
-                                );
-                            }}
-                            className="w-4 h-4 accent-slate-900 cursor-pointer"
-                            type="checkbox"
-                          />
-                        </th>
-                      )}
-                      {columns?.map(({ render }, index) => (
-                        <td className="table-body-content" key={index}>
-                          {render ? render(item) : "Default"}
-                        </td>
-                      ))}
-                      {!!actions?.editFn && !disableActions && (
-                        <td
-                          className="w-[100px]"
-                          onClick={() => {
-                            actions?.editFn &&
-                              actions?.editFn(item.id ? item.id : item.uid);
+
+        <tbody className="w-full overflow-auto flex items-start justify-start flex-col flex-nowrap">
+          {loading ? (
+            <tr className="w-full">
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={100}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={1}
+              />
+              <Skeleton
+                height={80}
+                baseColor="var(--light-background)"
+                highlightColor="var(--light-foreground)"
+                count={3}
+              />
+            </tr>
+          ) : (
+            <>
+              {currentData && currentData?.length <= 0 ? (
+                <tr className="flex w-full flex-col items-center justify-center p-10">
+                  <td className="text-[24px] text-[var(--dark-text)] mb-4">
+                    No Data Found
+                  </td>
+                  <td className="text-[16px] text-[var(--dark-secondary-text)] mb-6">
+                    We couldn't find any data to display here.
+                  </td>
+                  <td
+                    className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-light)]"
+                    onClick={() => window.location.reload()} // Replace with a function to fetch data if needed
+                  >
+                    Refresh
+                  </td>
+                </tr>
+              ) : (
+                currentData &&
+                currentData.map((item, index) => (
+                  <tr
+                    className={`border-b-[1px] overflow-x-auto overflow-y-clip border-[var(--dark-border)]  px-2 py-5  hover:bg-[var(--light-background)]   w-full flex items-center justify-start gap-5  flex-nowrap`}
+                    key={(item?.id ? item.id : item?.uid) || index}
+                  >
+                    {!!actions?.checkFn && !disableActions && (
+                      <th className="w-[30px]">
+                        <input
+                          checked={selectedData?.includes(item?.id)}
+                          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                            actions.checkFn &&
+                              actions.checkFn(
+                                item.id || item.uid,
+                                event.target.checked
+                              );
+                          }}
+                          className="w-4 h-4 accent-slate-900 cursor-pointer"
+                          type="checkbox"
+                        />
+                      </th>
+                    )}
+                    {columns?.map(({ render }, index) => (
+                      <td className="table-body-content" key={index}>
+                        {render ? render(item) : "Default"}
+                      </td>
+                    ))}
+                    {!!actions?.editFn && !disableActions && (
+                      <td
+                        className="w-[100px]"
+                        onClick={() => {
+                          actions?.editFn &&
+                            actions?.editFn(item.id ? item.id : item.uid);
+                        }}
+                      >
+                        <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
+                          <FaEdit />
+                          <td className="text-[16px]  tracking-wide">
+                            Edit
+                          </td>
+                        </div>
+                      </td>
+                    )}
+                    {!!actions?.deleteFn && !disableActions && (
+                      <td
+                        className="w-[100px]"
+                        onClick={() => {
+                          actions?.deleteFn &&
+                            actions?.deleteFn(item.id ? item.id : item.uid);
+                        }}
+                      >
+                        <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
+                          <FaTrash />
+                          <td className="text-[16px]  tracking-wide ">
+                            Delete
+                          </td>
+                        </div>
+                      </td>
+                    )}
+                    {!!actions?.viewFn && !disableActions && (
+                      <td
+                        className="w-[120px]"
+                        onClick={() => {
+                          actions?.viewFn &&
+                            actions?.viewFn(item.id ? item.id : item.uid);
+                        }}
+                      >
+                        <div
+                          className="w-full rounded-lg cursor-pointer hover:bg-[var(--danger-text)] duration-150 font-semibold bg-[var(--danger-bg)] p-2 flex items-center justify-center gap-3"
+                          style={{
+                            color: actionIconColor ? actionIconColor : "white",
                           }}
                         >
-                          <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
-                            <FaEdit />
-                            <span className="text-[16px]  tracking-wide">
-                              Edit
-                            </span>
-                          </div>
-                        </td>
-                      )}
-                      {!!actions?.deleteFn && !disableActions && (
-                        <td
-                          className="w-[100px]"
-                          onClick={() => {
-                            actions?.deleteFn &&
-                              actions?.deleteFn(item.id ? item.id : item.uid);
-                          }}
-                        >
-                          <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
-                            <FaTrash />
-                            <span className="text-[16px]  tracking-wide ">
-                              Delete
-                            </span>
-                          </div>
-                        </td>
-                      )}
-                      {!!actions?.viewFn && !disableActions && (
-                        <td
-                          className="w-[120px]"
-                          onClick={() => {
-                            actions?.viewFn &&
-                              actions?.viewFn(item.id ? item.id : item.uid);
-                          }}
-                        >
-                          <div
-                            className="w-full rounded-lg cursor-pointer hover:bg-[var(--danger-text)] duration-150 font-semibold bg-[var(--danger-bg)] p-2 flex items-center justify-center gap-3"
-                            style={{
-                              color: actionIconColor
-                                ? actionIconColor
-                                : "white",
-                            }}
-                          >
-                            <FaEye className=" size-5 " />
-                            <span className="text-[15px] text-white ">
-                              View
-                            </span>
-                          </div>
-                        </td>
-                      )}
-                    </tr>
-                  ))
-                )}
-              </>
-            )}
-          </tbody>
-        </div>
+                          <FaEye className=" size-5 " />
+                          <td className="text-[15px] text-white ">View</td>
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))
+              )}
+            </>
+          )}
+        </tbody>
+
         <tfoot className="w-full flex justify-end py-3">
           <tr>
             <td>

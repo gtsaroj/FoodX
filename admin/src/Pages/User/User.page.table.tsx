@@ -121,7 +121,7 @@ export const CustomerTable: React.FC<CustomerTableProp> = ({
         }}
         selectedData={selectedData}
         loading={loading}
-        bodyHeight={400}
+ 
         pagination={{
           currentPage: pagination?.currentPage,
           perPage: pagination?.perPage,

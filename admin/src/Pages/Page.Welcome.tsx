@@ -1,74 +1,73 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import Welcome from "../assets/Home.png";
 import { UserRole } from "../models/user.model";
 
-interface WelcomePageProp {
-  user: (user: UserRole["role"]) => void;
+interface WelcomePageProps {
+  user: (role: UserRole["role"]) => void;
 }
 
-export const WelcomePage: React.FC<WelcomePageProp> = ({ user }) => {
+export const WelcomePage: React.FC<WelcomePageProps> = ({ user }) => {
+  const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-[var(--light-foreground)] flex flex-col items-center justify-center p-8">
-      <motion.h1
-        className="text-4xl font-bold text-[var(--dark-text)] mb-6"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-      >
-        Welcome to FoodX Management
-      </motion.h1>
-      <p className="text-lg text-[var(--dark-secondary-text)] dark:text-light-secondary-text mb-8 text-center">
-        Streamline your canteen operations efficiently. Access the Admin or Chef
-        dashboard to manage tasks effectively.
-      </p>
-
-      <div className="flex flex-wrap gap-6 justify-center">
-        <motion.div
-          className="bg-primary-color text-light-text rounded-lg shadow-lg p-6 w-80 hover:shadow-xl transition-shadow duration-300 ease-in-out"
-          initial={{ scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Admin Dashboard"
+    <div className="w-screen h-[100vh]">
+      <div className="flex bg-gradient-to-r from-[rgba(0,191,255,0.45)] to-[rgba(0,191,255,1)]  w-full h-[100vh] items-center justify-center">
+        <div
+          style={{
+            backgroundImage: `url(${Welcome})`,
+          }}
+          className="w-full px-3 sm:pl-14 h-full justify-center bg-no-repeat bg-right bg-contain  flex flex-col items-start"
         >
-          <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
-            Admin Dashboard
-          </h2>
-          <p className="mb-4  text-[var(--dark-secondary-text)] text-[14px]  ">
-            Manage orders, products, categories, and customer information.
-          </p>
-          <Link
-            onClick={() => user("admin")}
-            to="/admin"
-            className="bg-[var(--primary-light)] text-[var(--dark-text)] py-1.5 px-4 rounded-lg inline-block transition-colors duration-300 hover:bg-primary-dark"
-            aria-label="Go to Admin Panel"
-          >
-            Go to Admin Panel
-          </Link>
-        </motion.div>
+          <div className="w-full flex flex-col items-start justify-center">
+            <span className="w-full trackiwn\ text-[var(--dark-secondary-text)] text-[17px]">
+              Welcome to FoodX Management
+            </span>
+            <h1 className="lg:text-[4rem] md:text-[3rem] text-[2rem] tracking-wider font-bold text-[var(--primary-color)]">
+              Manage Your Dashboard
+            </h1>
+            <p className="pt-4 lg:w-[650px] sm:w-[500px] min-w-[200px] text-sm tracking-wide text-[var(--dark-text)]">
+              Streamline your canteen processes with ease and improve efficiency
+              in managing daily operations.{" "}
+              <span className="sm:visible hidden ">
+                Access the Admin or Chef dashboard to manage orders, update
+                inventory, and track sales trends.
+              </span>
+            </p>
+          </div>
 
-        <motion.div
-          className="bg-secondary-color text-light-text rounded-lg shadow-lg p-6 w-80 hover:shadow-xl transition-shadow duration-300 ease-in-out"
-          initial={{ scale: 1 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Chef Dashboard"
-        >
-          <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
-            Chef Dashboard
-          </h2>
-          <p className="mb-4 text-[var(--dark-secondary-text)] text-[14px] ">
-            Track tickets, manage kitchen tasks, and update food status.
-          </p>
-          <Link
-            onClick={() => user("chef")}
-            to="/chef"
-            className="bg-[var(--primary-light)] text-[var(--dark-text)] py-1.5 px-4 rounded-lg inline-block transition-colors duration-300 hover:bg-primary-dark"
-            aria-label="Go to Chef Panel"
-          >
-            Go to Chef Panel
-          </Link>
-        </motion.div>
+          {/* Interaction and Info Section */}
+          <div className="flex justify-start items-center gap-5 pt-8">
+            <button
+              className="sm:px-8 px-2 py-2 rounded-lg border-[1px] border-[var(--primary-color)] text-[var(--primary-color)] text-[14px] sm:text-[16px] tracking-wide hover:bg-[var(--primary-color)] hover:text-white transition ease-in-out duration-300"
+              onClick={() => {
+                user("admin");
+                navigate("/admin");
+              }}
+            >
+              Admin Dashboard
+            </button>
+            <button
+              className="sm:px-8 px-2 py-2 rounded-lg border-[1px] border-[var(--secondary-color)] text-[var(--secondary-color)] text-[14px] sm:text-[16px] tracking-wide hover:bg-[var(--secondary-color)] hover:text-white transition ease-in-out duration-300"
+              onClick={() => {
+                user("chef");
+                navigate("/chef");
+              }}
+            >
+              Chef Dashboard
+            </button>
+          </div>
+
+          {/* Additional Resources or Quick Stats */}
+          <div className="mt-8 text-xs sm:text-sm tracking-wider flex flex-col items-start gap-1.5 text-[var(--dark-secondary-text)]">
+            <p>Quick Tips:</p>
+            <ul className="list-disc   list-inside ml-5">
+              <li>Admin: Oversee orders, update menus, track revenue.</li>
+              <li>
+                Chef: Manage inventory, process tickets, update menu items.
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

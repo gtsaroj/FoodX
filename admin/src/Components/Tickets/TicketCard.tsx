@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import React from "react";
+import { getRemainingTime } from "../../Utility/date.utility";
 
 interface TicketProp {
   date: string;
@@ -19,14 +20,14 @@ const TicketCard: React.FC<TicketProp> = ({
 
   id,
 }) => {
-  const leftTime = dayjs(date);
+ 
 
 
   return (
     <div className="w-full flex  text-[var(--dark-text)] border-b-[1px] pb-5  gap-2.5 flex-col items-start justify-center bg-[var(--light-foreground)]  px-1 py-4 border-[var(--dark-border)] ">
       <div className=" w-full flex items-start gap-5 justify-between">
         <div className="flex flex-col items-start justify-center gap-2.5">
-          <h1 className="text-[15px]   border-[1px] border-[var(--danger-bg)] py-0.5 px-2 rounded ">
+          <h1 className="p-1 bg-[#ffa60007] text-[#ff971f] px-2 tracking-wide rounded-full text-[14px]  ">
             {category}
           </h1>
           <h2 className="text-[14px] w-full font-[600] ">{title}</h2>
@@ -38,7 +39,7 @@ const TicketCard: React.FC<TicketProp> = ({
       </div>
       <h3 className="text-[14px] ">{description}</h3>
       <span className="text-[12px] text-[var(--dark-text)] ">
-        {`Created at : ${dayjs(leftTime).format("YYYY-MM-DD")} `}{" "}
+       {getRemainingTime(dayjs(date))} min ago
       </span>
     </div>
   );

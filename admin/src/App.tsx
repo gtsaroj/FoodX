@@ -88,7 +88,6 @@ const App: React.FC = () => {
     auth.success ? setShowContent(true) : setShowContent(false);
   }, [auth.success]);
 
-
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

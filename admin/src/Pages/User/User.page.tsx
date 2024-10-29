@@ -1,11 +1,13 @@
-import { Filter, X } from "lucide-react";
-import React, { useCallback, useEffect , useState } from "react";
+import { Download, Filter, X } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { debounce } from "../../Utility/debounce";
 import { CustomerTable } from "./User.page.table";
 import "../../index.css";
 import { getUsers, searchUser } from "../../Services/user.services";
 import { GetUserModal, User } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
+import toast from "react-hot-toast";
+import { handleDownloadCustomerCSV } from "../../Invoice/Admin.invoice";
 
 const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);
@@ -16,6 +18,7 @@ const CustomerList: React.FC = () => {
     perPage: number;
     pageDirection?: "prev" | "next";
   }>({ currentPage: 1, perPage: 5 });
+  const [exportedData, setExportedData] = useState<User[]>([]);
   const [currentDoc, setCurrentDoc] = useState<{
     currentFirstDoc: string;
     currentLastDoc: string;
@@ -199,6 +202,19 @@ const CustomerList: React.FC = () => {
         </div>
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex  items-center justify-center gap-2">
+            <button
+              onClick={() =>
+                exportedData.length > 0
+                  ? handleDownloadCustomerCSV(exportedData)
+                  : toast.error("Please select order", {
+                      position: "top-right",
+                    })
+              }
+              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+            >
+              <Download strokeWidth={2.5} className="size-5" />
+              <p className="text-[16px]   tracking-widest ">Export</p>
+            </button>
             {/* Filter button */}
             <Button
               selectedTypes={[filter?.typeFilter?.id as string]}
@@ -325,6 +341,26 @@ const CustomerList: React.FC = () => {
         )}
       </div>
       <CustomerTable
+        actions={{
+          checkAllFn: (isChecked: boolean) => {
+            if (!isChecked) return setExportedData([]);
+            if (isChecked) setExportedData(initialCustomer);
+          },
+          checkFn: (id: string, isChecked: boolean) => {
+            const findUser = initialCustomer?.find((user) => user.id === id);
+            if (!isChecked && id) {
+              setExportedData((prev) => {
+                const filteredData = prev
+                  ? prev.filter((user) => user.id !== id)
+                  : [];
+                return [...filteredData];
+              });
+            }
+            if (isChecked && id) {
+              setExportedData((prev) => [...prev, findUser as User]);
+            }
+          },
+        }}
         handlePageDirection={(pageDirection) =>
           setPagination((prev) => ({ ...prev, pageDirection: pageDirection }))
         }

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React, { useState } from "react";
-import { TicketStatus } from "../../models/ticket.model";
+import { TicketStatus, TicketType } from "../../models/ticket.model";
 import Avatar from "../../assets/logo/avatar.png";
 import { getRemainingTime } from "../../Utility/date.utility";
 import { useQueryClient } from "react-query";
@@ -8,6 +8,7 @@ import { User } from "../../models/user.model";
 import { getChefByUid } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
 import { updateTicket } from "../../Services/ticket.services";
+import { addNotification } from "../../Services/notification.services";
 
 interface TicketProp {
   date: string;
@@ -26,12 +27,33 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   uid,
   status,
   id: t_id,
+  title,
 }) => {
   const queryClient = useQueryClient();
   const [isUpdate, setIsUpdate] = React.useState<boolean>(false);
   const [id, setId] = useState<string>("");
-
+  const [updatedTicket, setUpdatedTicket] = React.useState<TicketType>();
   const [cachedUser, setCachedUser] = useState<User | null>(null);
+ console.log(cachedUser?.avatar?.length)
+  const messages = {
+    pending: {
+      message: "Your ticket is pending. We'll get back to you shortly.",
+      title: "Ticket Pending",
+    },
+    progress: {
+      message: "We're working on your issue. Stay tuned for updates!",
+      title: "Ticket In Progress",
+    },
+    resolved: {
+      message: "Your issue has been resolved. Thanks for your patience!",
+      title: "Ticket Resolved",
+    },
+    rejected: {
+      message:
+        "Unfortunately, your ticket was rejected. Please contact support for details.",
+      title: "Ticket Rejected",
+    },
+  };
 
   React.useEffect(() => {
     const fetchUser = async () => {
@@ -49,14 +71,32 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   }, [uid, queryClient]);
 
   const ticketUpdate = async (
-    uid: string,
+    id: string,
     newStatus: TicketStatus["status"]
   ) => {
     if (!uid) toast.error("Some thing went wrong");
     const toastLoader = toast.loading("Loading...");
 
     try {
-      await updateTicket({ id: uid, newStatus: newStatus });
+      await updateTicket({ id: id, newStatus: newStatus });
+      if (uid) {
+        await addNotification({
+          message: messages[newStatus].message,
+          title: messages[newStatus].title,
+          userId: uid as string,
+        });
+      }
+      if (t_id === id) {
+        setUpdatedTicket({
+          category,
+          date,
+          description,
+          id,
+          title,
+          status: newStatus,
+          uid,
+        });
+      }
       toast.dismiss(toastLoader);
     } catch (error) {
       throw new Error("Error while updating recent ticket " + error);
@@ -65,35 +105,55 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
     }
   };
 
+  const statusStyles: {
+    [key in TicketStatus["status"]]: { bg: string; text: string };
+  } = {
+    pending: {
+      bg: "bg-[#0000ff0c]",
+      text: "text-[var(--primary-color)]",
+    },
+    progress: {
+      bg: " bg-[#bb81150e] ",
+      text: "text-[#bb8115]",
+    },
+    resolved: {
+      bg: "bg-gradient-to-r from-green-400/5 to-green-500/5",
+      text: "text-green-600",
+    },
+    rejected: {
+      bg: "bg-gradient-to-r from-red-400/5 to-red-500/5",
+      text: "text-red-600",
+    },
+  };
+
   return (
-    <div className="w-full bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
+    <div className="min-w-[300px] w-full h-[173px] bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center justify-center gap-2">
           <img
             className="w-12 h-12 rounded-full"
             loading="lazy"
-            src={cachedUser?.avatar || Avatar}
+            src={ cachedUser?.avatar && cachedUser?.avatar?.length > 200 ? cachedUser?.avatar : Avatar}
             alt="user"
           />
           <h1 className=" text-[17px] text-[var(--dark-text)] tracking-wide ">
             {cachedUser?.fullName || "user"}
           </h1>
         </div>
-        <span className=" text-gray-400 text-xs ">
+        <span className=" text-gray-400  text-xs ">
           {getRemainingTime(dayjs(date))}
         </span>
       </div>
-      <p className="w-full text-[var(--dark-secondary-text)] tracking-wide text-sm ">
+      <div className="w-full text-[var(--dark-secondary-text)] tracking-wide text-sm ">
         {description?.length > 130
           ? description.substring(0, 80) + "..."
           : description}
-      </p>
+      </div>
       <div className="w-full flex-wrap flex items-center sm:gap-0 justify-start gap-5 sm:justify-evenly">
         <p className=" text-[var(--green-text)] bg-[#41d6410c] text-sm p-1 rounded-full px-2 ">
-     
           New
         </p>
-        <p
+        <div
           onClick={() => {
             setIsUpdate(!isUpdate);
             setId(t_id as string);
@@ -101,14 +161,22 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
           className={`relative `}
         >
           <button
-            className=" tracking-wider  px-2 text-sm text-[var(--primary-color)] bg-[#0000ff0c]
-             p-1 rounded-full"
+            className={`  ${
+              statusStyles[updatedTicket?.status || status || "pending"].text
+            }  tracking-wider  ${
+              statusStyles[updatedTicket?.status || status || "pending"].bg
+            } px-2 text-sm 
+            p-1 rounded-full`}
           >
             {" "}
-            {status && status?.charAt(0).toUpperCase() + status?.slice(1)}
+            {updatedTicket?.id === t_id
+              ? updatedTicket &&
+                updatedTicket!.status!.charAt(0).toUpperCase() +
+                  updatedTicket?.status?.slice(1)
+              : status && status?.charAt(0).toUpperCase() + status?.slice(1)}
           </button>
           <div
-            className={` z-[100] top-4 bg-[var(--light-foreground)] absolute ${
+            className={` z-[100] top-[-7rem] bg-[var(--light-foreground)] absolute ${
               isUpdate && id.includes(t_id as string)
                 ? "visible opacity-100 translate-x-0 "
                 : "invisible opacity-0 translate-x-9 "
@@ -117,10 +185,10 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
             <UpdateTiket
               isChangeStatus={() => setIsUpdate(false)}
               status={status as TicketStatus["status"]}
-              action={(newStatus) => ticketUpdate(uid as string, newStatus)}
+              action={(newStatus) => ticketUpdate(id as string, newStatus)}
             />
           </div>
-        </p>
+        </div>
         <p
           className={` p-1 bg-[#ffa60007] text-[#ff971f] px-2 tracking-wide rounded-full text-sm  `}
         >

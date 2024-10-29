@@ -164,48 +164,56 @@ const NoticationContainer: React.FC<NotificationProp> = ({
   closeNotification: (id: string) => void;
   isLoading: boolean;
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openId, setOpenId] = useState<string>(""); // Track the currently open notification ID
+
+  const handleToggle = (id: string) => {
+    setOpenId((prev) =>
+      prev === id ? "" : !prev ? id : prev !== id ? "" : ""
+    );
+  };
+
+  console.log(openId);
 
   return (
     <div
       key={notification.uid}
-      className="relative  border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4"
     >
       <div
-        className={`sm:w-[280px] w-[230px] 
-         duration-150 flex flex-col gap-2.5
-         `}
+        className={`sm:w-[280px] w-[230px] duration-150 flex flex-col gap-2.5`}
       >
         <div
-          onClick={() => setOpen(!open)}
+          onClick={() => handleToggle(notification.id)}
           className="flex items-start justify-between w-full pr-1"
         >
-          <div className="flex flex-col gap-1 ">
-            <h4 className="tracking-wider text-[14px] sm:text-[15px] ">
+          <div className="flex flex-col gap-1">
+            <h4 className="tracking-wider text-[14px] sm:text-[15px]">
               {notification.title}
             </h4>
-            <p className=" text-xs text-[var(--dark-secondary-text)] ">
+            <p className="text-xs text-[var(--dark-secondary-text)]">
               {notification.id}
             </p>
           </div>
         </div>
         <p
           className={`text-sm text-gray-400 duration-150 ${
-            open ? "flex opacity-[100] " : " hidden opacity-0"
-          } `}
+            openId === notification.id
+              ? "flex  opacity-[100]"
+              : "hidden  opacity-0"
+          }`}
         >
           {notification.message}
         </p>
       </div>
       <div className="flex flex-col items-start justify-center gap-1">
-        <button onClick={() => setOpen(!open)}>
-          {" "}
+        <button onClick={() => handleToggle(notification.id)}>
           <ChevronDown
-            className={`${open ? "rotate-180" : ""} duration-200 `}
+            className={`duration-200 ${
+              notification.id === openId ? "rotate-180" : ""
+            }`}
           />
         </button>
-
-        <div className=" flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs  text-[var(--dark-secondary-text)] ">
+        <div className="flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs text-[var(--dark-secondary-text)]">
           {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} ago
         </div>
       </div>

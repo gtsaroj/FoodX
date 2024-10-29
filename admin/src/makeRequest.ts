@@ -43,7 +43,6 @@ makeRequest.interceptors.response.use(
         if (!hasLoggedOut) {
           hasLoggedOut = true;
           Store.dispatch(authLogout());
-  
           toast.error("Your session has expired. Please log in again.");
           return Promise.reject("Unauthorized: No refresh token available.");
         }
@@ -77,7 +76,6 @@ makeRequest.interceptors.response.use(
         } catch (refreshError) {
           // Refresh token request failed, force logout
           Store.dispatch(authLogout());
-          toast.error("Session expired. Please log in again.");
           failedRequestsQueue = [];
           isRefreshing = false;
           return Promise.reject(refreshError);

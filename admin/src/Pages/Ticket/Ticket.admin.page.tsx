@@ -85,7 +85,7 @@ const TicketAdminPage = () => {
             setId(item.id);
             setIsChangeStatus(true);
           }}
-          className={`text-[var(--dark-text)] cursor-pointer flex items-center justify-center gap-2 tracking-wide w-[150px]   text-start `}
+          className={`text-[var(--dark-text)]  cursor-pointer flex items-center justify-start gap-2 tracking-wide w-[150px]   text-start `}
         >
           <div
             className={`w-2 h-2 rounded-full ${
@@ -263,7 +263,7 @@ const TicketAdminPage = () => {
   return (
     <div className="w-full px-3 py-10">
       <div className="w-full flex items-start justify-between">
-        <div className="flex items-end justify-center gap-10">
+        <div className="flex sm:flex-row flex-col items-end justify-center gap-2   sm:gap-10">
           <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Tickets

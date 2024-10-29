@@ -131,9 +131,9 @@ const Logs = () => {
 
   return (
     <div className="items-start justify-start w-full h-full p-2">
-      <div className="flex flex-col items-center justify-center w-full h-full gap-5 px-3 py-2 md:max-w-[800px]">
+      <div className="flex flex-col items-center justify-start sm:justify-center w-full h-full gap-5 px-1 sm:px-3 py-2 md:max-w-[800px]">
         <div className="flex items-center justify-between w-full gap-5 px-3 pb-5 ">
-          <div className="flex items-center justify-start gap-2">
+          <div className="flex sm:flex-row flex-col  items-start sm:items-center justify-start gap-2">
             <p className="text-lg text-[var(--dark-text)] font-semibold tracking-wide text-nowrap">
               Audit Logs
             </p>

@@ -10,6 +10,7 @@ import { RootState } from "../../Store";
 import { addLogs } from "../../Services/log.services";
 import dayjs from "dayjs";
 import { resetOrder } from "../../Reducer/order.reducer";
+import { resetFavourite } from "../../Reducer/favourite.reducer";
 
 interface UseLogoutReturn {
   loading: boolean;
@@ -41,6 +42,7 @@ export const useLogout = (): UseLogoutReturn => {
          dispatch(resetOrder())
         dispatch(authLogout());
         dispatch(resetCart());
+      dispatch(resetFavourite())
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
         toast.dismiss(toastLoader);

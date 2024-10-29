@@ -20,6 +20,7 @@ export interface Order extends Order_Timestamps {
 }
 
 export interface OrderModal extends Omit<Order, "orderId"> {
+  phoneNumber?: number
   image: string;
   id?: string;
   rank?: number;
@@ -27,7 +28,7 @@ export interface OrderModal extends Omit<Order, "orderId"> {
 export interface RecentOrder extends Omit<Order, "products"> {
   image: string;
   price: number;
-  products: string[];
+  products: Product[];
 }
 
 export interface DailyAggregateData {

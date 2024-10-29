@@ -7,13 +7,19 @@ import dayjs from "dayjs";
 export const revenueData = (data: Revenue[]) => {
   if (!data) throw new Error("data not found");
   try {
-    const orders = data.map((order): { revenue: number; time: string } => {
-      const revenue = getRevenue(order.orders);
-      return {
-        revenue: revenue,
-        time: order.id,
-      };
+    const aggregateDaysOrders = data?.map((order) => {
+      return { ...order, id: dayjs(order.id).format("YYYY-MM-DD") };
     });
+
+    const orders = aggregateDaysOrders.map(
+      (order): { revenue: number; time: string } => {
+        const revenue = getRevenue(order.orders);
+        return {
+          revenue: revenue,
+          time: order.id,
+        };
+      }
+    );
     return orders;
   } catch (error) {
     throw new Error("Unable to aggregate daily revenue data" + error);
@@ -167,14 +173,15 @@ const getOrderWeeklyTotal = (
   return weeklyOrders;
 };
 
-export const calculateTotalOrders = (data: { time: string; orders: number }[]) => {
-  
+export const calculateTotalOrders = (
+  data: { time: string; orders: number }[]
+) => {
   return data.reduce((total, current) => total + current.orders, 0);
 };
 
-export const calculateTotalRevenue = (data: { time: string; revenue: number }[]) => {
-  console.log(data)
-  
+export const calculateTotalRevenue = (
+  data: { time: string; revenue: number }[]
+) => {
+
   return data?.reduce((total, current) => total + current?.revenue, 0);
 };
-

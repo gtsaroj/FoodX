@@ -23,7 +23,6 @@ const AllProductAnalytics = () => {
     useSpecialProducts();
   const { data: normalProducts, isLoading: normalLoading } =
     useNormalProuducts();
-  
 
   const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
@@ -151,7 +150,10 @@ const AllProductAnalytics = () => {
     }
   };
 
-  const debounceSearch = useCallback(debounce(handleChange, 200), []);
+  const debounceSearch = useCallback(debounce(handleChange, 200), [
+    normalProducts,
+    specialProducts,
+  ]);
 
   const handleSelectedDelete = async () => {
     const toastLoader = toast.loading("Deleting products...");
@@ -322,21 +324,24 @@ const AllProductAnalytics = () => {
         <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start sm:w-auto gap-2 w-full ">
           {" "}
           <div className="w-full flex items-center justify-start gap-2">
-          <form action="" className="relative text-[var(--dark-text)] w-full ">
-            <input
-              id="search"
-              type="search"
-              onChange={(event) => debounceSearch(event?.target.value)}
-              className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
-              placeholder="Search for products"
+            <form
+              action=""
+              className="relative text-[var(--dark-text)] w-full "
+            >
+              <input
+                id="search"
+                type="search"
+                onChange={(event) => debounceSearch(event?.target.value)}
+                className=" border placeholder:tracking-wider placeholder:text-[16px] placeholder:text-[var(--dark-secondary-text)] outline-none sm:w-[300px] w-full py-2 px-2  border-[var(--dark-border)] bg-[var(--light-background)] rounded-lg  ring-[var(--primary-color)] focus:ring-[3px] duration-150 "
+                placeholder="Search for products"
+              />
+            </form>
+            <div className="h-9  w-[1px] bg-gray-300  "></div>
+            <DeleteButton
+              dataLength={bulkSelectedProduct.length}
+              deleteFn={() => setIsBulkDelete(true)}
             />
-          </form>
-          <div className="h-9  w-[1px] bg-gray-300  "></div>
-          <DeleteButton
-            dataLength={bulkSelectedProduct.length}
-            deleteFn={() => setIsBulkDelete(true)}
-          />
-   </div>
+          </div>
           {filter?.sortFilter?.sort && (
             <div className="flex px-2 py-0.5  gap-3 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
               <div className="flex gap-1 items-center justify-center">
