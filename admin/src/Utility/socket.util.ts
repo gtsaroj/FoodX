@@ -6,10 +6,7 @@ export const useSocket = (isLoggedIn: boolean) => {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [socket, setSocket] = React.useState<Socket | null>(null);
 
-  console.log(isLoggedIn)
-
   React.useEffect(() => {
- console.log(isLoggedIn)
     if (isLoggedIn) {
       setLoading(true);
       const token = Cookie.get("accessToken");

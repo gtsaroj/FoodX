@@ -42,7 +42,7 @@ export interface User {
   avatar?: string;
   fullName?: string;
   email?: string;
-  phoneNumber?: string;
+  phoneNumber?: number;
   role?: UserRole["role"];
   totalSpent?: number;
   totalOrder?: number;

@@ -37,8 +37,6 @@ export const OrderTable: React.FC<orderTableProp> = ({
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [initialOrder, setInitialOrder] = useState<OrderModal[]>([]);
 
-
-
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
@@ -120,7 +118,7 @@ export const OrderTable: React.FC<orderTableProp> = ({
                   (product) => `${product.name} * ${product.quantity} `
                 )
               : item.products &&
-                `${item.products[0].name} * ${item.products[0].quantity}  `}
+                `${item.products[0].name} × ${item.products[0].quantity}  `}
           </p>
           <button
             onClick={() => {
@@ -220,7 +218,6 @@ export const OrderTable: React.FC<orderTableProp> = ({
         handlePageDirection={(pageDirection) =>
           handlePageDirection(pageDirection)
         }
-      
         selectedData={selectedData}
         totalData={totalData}
         data={initialOrder as any}

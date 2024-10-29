@@ -1,14 +1,14 @@
 import { Download, Filter, X } from "lucide-react";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // import { debounce } from "../../Utility/debounce";
 
 import { OrderTable } from "./Order.table.page";
 import { Button } from "../../Components/Common/Button/Button";
 import dayjs from "dayjs";
-import { getUserByUid, getUserInfo } from "../../Utility/user.utils";
+import { getUserByUid } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
-import { Invoice, InvoiceDocumentProp } from "../../Invoice/Invoice";
+import { Invoice, InvoiceDocumentProp } from "../../Invoice/Chef.Invoice";
 import { Product } from "../../models/product.model";
 import Modal from "../../Components/Common/Popup/Popup";
 import { useSocket } from "../../Utility/socket.util";
@@ -19,6 +19,7 @@ import { Order } from "../../models/order.model";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { OrderSearch } from "./Order.search";
+import { handleDownloadCSV } from "../../Invoice/Admin.invoice";
 
 const OrderList = () => {
   const {
@@ -110,36 +111,31 @@ const OrderList = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const resolvedOrders = await Promise.all(
-        exportSelectedOrder.map(async (order) => {
-          const matchedOrder = initialOrders?.find((od) => od.id === order);
+      const resolvedOrders = exportSelectedOrder.map((order) => {
+        const matchedOrder = initialOrders?.find((od) => od.id === order);
 
-          if (!matchedOrder) {
-            return null;
-          }
+        if (!matchedOrder) {
+          return null;
+        }
 
-          const user = await getUserInfo(matchedOrder.uid as string);
-
-          return {
-            orderDetails: {
-              products: matchedOrder?.products,
-              status: matchedOrder?.status,
-            },
-            customerDetails: {
-              name: matchedOrder?.name as string,
-              phoneNumber: user?.phoneNumber || "N/A", // Ensure correct type for phoneNumber
-              userId: matchedOrder?.uid || "N/A",
-            },
-            invoiceData: {
-              invoiceDate:
-                dayjs(matchedOrder?.orderRequest).format(
-                  "	MMM D, YYYY h:mm A"
-                ) || "N/A",
-              invoiceNumber: order,
-            },
-          };
-        })
-      );
+        return {
+          orderDetails: {
+            products: matchedOrder?.products,
+            status: matchedOrder?.status,
+          },
+          customerDetails: {
+            name: matchedOrder?.name as string,
+            phoneNumber: matchedOrder.phoneNumber || "N/A", // Ensure correct type for phoneNumber
+            userId: matchedOrder?.uid || "N/A",
+          },
+          invoiceData: {
+            invoiceDate:
+              dayjs(matchedOrder?.orderRequest).format("	MMM D, YYYY h:mm A") ||
+              "N/A",
+            invoiceNumber: order,
+          },
+        };
+      });
 
       // Filter out null values and update the state
       setResolvedOrders(resolvedOrders as InvoiceDocumentProp["orders"]);
@@ -162,8 +158,17 @@ const OrderList = () => {
         <div className="flex items-center justify-center gap-5 ">
           <div className="flex items-center justify-center gap-2">
             <button
-              disabled={!exportSelectedOrder.length}
-              onClick={() => setIsExport(!isExport)}
+              onClick={() =>
+                exportSelectedOrder.length > 0 &&
+                store?.user?.userInfo?.role === "chef"
+                  ? setIsExport(!isExport)
+                  : exportSelectedOrder.length > 0 &&
+                    store?.user.userInfo.role === "admin"
+                  ? handleDownloadCSV({ orders: resolvedOrders })
+                  : toast.error("Please select order", {
+                      position: "top-right",
+                    })
+              }
               className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
             >
               <Download strokeWidth={2.5} className="size-5" />
@@ -190,10 +195,14 @@ const OrderList = () => {
               }
               sort={[
                 { label: "Requested", value: "orderRequest", id: "jfhkdj" },
-                { label: "Name", value: "uid", id: "fkdsj" },
                 {
-                  label: "Rank",
+                  label: "Status",
                   value: "status",
+                  id: "kfljdsfsdf",
+                },
+                {
+                  label: "Delivered",
+                  value: "orderFullfilled",
                   id: "kfljdsfsdf",
                 },
               ]}

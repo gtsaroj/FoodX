@@ -25,6 +25,7 @@ export const RecentOrders = () => {
       status: "pending",
     }
   );
+  console.log(initialOrders)
 
   const store = useSelector((state: RootState) => state.root);
 
@@ -79,7 +80,7 @@ export const RecentOrders = () => {
               initialOrders?.map((order, index) => (
                 <OrderCard
                   uid={order?.uid}
-                  image={order?.image}
+                  image={order?.name as string}
                   orderId={order?.id as string}
                   price={order.products?.reduce(
                     (productAcc, product) =>
@@ -88,9 +89,7 @@ export const RecentOrders = () => {
                     0
                   )}
                   orderRequest={order?.orderRequest}
-                  products={order?.products?.map(
-                    (product) => ` ${product.name} × ${product.quantity}, `
-                  )}
+                  products={order?.products}
                   status={order?.status}
                   key={index}
                 />

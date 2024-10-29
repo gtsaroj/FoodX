@@ -263,7 +263,7 @@ const TicketAdminPage = () => {
   return (
     <div className="w-full px-3 py-10">
       <div className="w-full flex items-start justify-between">
-        <div className="flex items-end justify-center gap-10">
+        <div className="flex sm:flex-row flex-col items-end justify-center gap-2   sm:gap-10">
           <div className="flex flex-col -space-y-1.5 items-start justify-center gap-1">
             <h4 className="text-[1.25rem] font-[600] tracking-wider text-[var(--dark-text)]">
               All Tickets

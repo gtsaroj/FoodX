@@ -209,15 +209,14 @@ export const MonthlyOrderChart: React.FC = () => {
             grid={{ horizontal: true }}
             colors={colorPallette}
             slotProps={{
-              // loadingOverlay: { message: "Loading Data....." },
-              // noDataOverlay: { message: "No Data to display." },
-              // legend: {
-              //   hidden: true,
-              //   itemMarkHeight: 10,
-              //   labelStyle: { fontSize: "30px", alignItems: "center" },
-              //   direction: "row",
-              //   position: { vertical: "bottom", horizontal: "middle" },
-              // },
+              noDataOverlay: {
+                message: "No Data to display.",
+                sx: {
+                  fill: "var(--dark-text)",
+                  fontSize: "16px",
+                },
+              },
+
               legend: {
                 hidden: true,
                 // labelStyle: {

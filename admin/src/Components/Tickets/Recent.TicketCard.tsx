@@ -99,7 +99,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   };
 
   return (
-    <div className="w-full bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
+    <div className="min-w-[300px] h-[173px] bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center justify-center gap-2">
           <img
@@ -148,7 +148,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
               : status && status?.charAt(0).toUpperCase() + status?.slice(1)}
           </button>
           <div
-            className={` z-[100] top-4 bg-[var(--light-foreground)] absolute ${
+            className={` z-[100] top-[-7rem] bg-[var(--light-foreground)] absolute ${
               isUpdate && id.includes(t_id as string)
                 ? "visible opacity-100 translate-x-0 "
                 : "invisible opacity-0 translate-x-9 "

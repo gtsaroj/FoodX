@@ -78,7 +78,6 @@ export const WeekReveneuChart: React.FC = () => {
       enabled: initialData && initialData?.length > 0 ? true : false,
     }
   );
-
   return (
     <div className="flex  flex-col items-center justify-center w-full gap-5 px-3 py-5 rounded">
       <div className="flex items-center justify-between w-full gap-3 px-2">
@@ -121,49 +120,48 @@ export const WeekReveneuChart: React.FC = () => {
           </div>
         ) : initialData && initialData?.length > 0 ? (
           <LineChart
-          sx={{
-            "& .MuiLineElement-root": {
-              strokeDasharray: "2 2",
-              strokeWidth: 3,
-            },
-            "& .MuiAreaElement-series-Germany": {
-              fill: "url('#myGradient')",
-            },
-            "& .MuiChartsHoverLine": {
-              stroke: "#fff", // Hover line color
-              strokeWidth: 3,
-            },
-            "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-              stroke: "var(--dark-text)",
-              strokeWidth: 0.8,
-            },
-            "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-              stroke: "var(--dark-text)",
-              strokeWidth: 0.8,
-            },
-            "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-              letterSpacing: "2px",
-              fill: "var(--dark-text)",
-              strokeWidth: "0.5",
-            },
-            "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-              fill: "var(--dark-text)",
-              strokeWidth: "0.4",
-              letterSpacing: "2px",
-            },
-            // New styles for hover effect
-            "&:hover .MuiLineElement-root": {
-              stroke: "#fff", // Change line color to white on hover
-            },
-            "&:hover .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
-              fill: "#fff", // Change X-axis tick label color to white on hover
-            },
-            "&:hover .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-              fill: "#fff", // Change Y-axis tick label color to white on hover
-            },
-          }}
+            sx={{
+              "& .MuiLineElement-root": {
+                strokeDasharray: "2 2",
+                strokeWidth: 3,
+              },
+              "&.hover .MuiLineElement-root": {
+                fill: "white",
+              },
+              "& .MuiAreaElement-series-Germany": {
+                fill: "url('#myGradient')",
+              },
+              "& .MuiChartsHoverLine": {
+                stroke: "#fff", // Hover line color
+                strokeWidth: 1,
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)",
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-left .MuiChartsAxis-line": {
+                stroke: "var(--dark-text)",
+                strokeWidth: 0.8,
+              },
+              "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
+                letterSpacing: "2px",
+                fill: "var(--dark-text)",
+                strokeWidth: "0.5",
+              },
+              "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
+                fill: "var(--dark-text)",
+                strokeWidth: "0.4",
+              },
+            }}
             grid={{ vertical: true, horizontal: true }}
             slotProps={{
+              noDataOverlay: {
+                message: "No Data to display.",
+                sx: {
+                  color: "var(--dark-text)", // Set the text color to white
+                  fontSize: "15px",
+                },
+              },
               legend: {
                 direction: "row",
                 labelStyle: { fontSize: "14px" },
@@ -172,7 +170,9 @@ export const WeekReveneuChart: React.FC = () => {
             }}
             xAxis={[
               {
-                data: initialData?.map((order) => order["time"]),
+                data: initialData?.map((order) =>
+                  dayjs(order["time"]).format("dddd")
+                ),
                 scaleType: "point",
               },
             ]}
@@ -442,31 +442,36 @@ export const MonthlyRevenueChart: React.FC = () => {
                 fill: "url('#myGradient')",
               },
               "& .MuiChartsHoverLine": {
-                stroke: "var(--dark-text)", // Set the hover line color to white
-                strokeWidth: 1, // Adjust the thickness as needed
+                stroke: "#fff", // Hover line color
+                strokeWidth: 1,
               },
               "& .MuiChartsAxis-bottom .MuiChartsAxis-line": {
-                stroke: "var(--dark-text)", // Blue color for the X-axis line
+                stroke: "var(--dark-text)",
                 strokeWidth: 0.8,
               },
               "& .MuiChartsAxis-left .MuiChartsAxis-line": {
-                stroke: "var(--dark-text)", // Blue color for the Y-axis line
+                stroke: "var(--dark-text)",
                 strokeWidth: 0.8,
               },
               "& .MuiChartsAxis-bottom .MuiChartsAxis-tickLabel": {
                 letterSpacing: "2px",
-                fill: "var(--dark-text)", // Blue color for the X-axis labels
+                fill: "#fff",
                 strokeWidth: "0.5",
               },
-
               "& .MuiChartsAxis-left .MuiChartsAxis-tickLabel": {
-                fill: "var(--dark-text)", // Red color for the Y-axis labels
+                fill: "#fff",
                 strokeWidth: "0.4",
-                letterSpacing: "2px",
               },
             }}
             grid={{ vertical: true, horizontal: true }}
             slotProps={{
+              noDataOverlay: {
+                message: "No Data to display.",
+                sx: {
+                  fill :"var(--dark-text)",
+                  fontSize: "16px",
+                },
+              },
               legend: {
                 direction: "row",
                 labelStyle: { fontSize: "14px" },
@@ -762,6 +767,13 @@ export const MonthlyOrderLinechart: React.FC = () => {
               },
             }}
             slotProps={{
+              noDataOverlay: {
+                message: "No Data to display.",
+                sx: {
+                  fill :"var(--dark-text)",
+                  fontSize: "16px",
+                },
+              },
               legend: {
                 hidden: true,
                 direction: "row",

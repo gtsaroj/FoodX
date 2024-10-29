@@ -5,6 +5,7 @@ import { StatusChanger } from "../../../Pages/Order/Order.table.page";
 import toast from "react-hot-toast";
 import { updateOrderStatus } from "../../../Services/order.services";
 import { addNotification } from "../../../Services/notification.services";
+import Avatar from "../../../assets/logo/avatar.png";
 
 // interface OrderCardProps {
 //   orderId: string;
@@ -23,7 +24,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
   orderRequest,
   uid,
 }) => {
-  console.log(orderId, uid)
+  console.log(products);
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [isNewStatus, setIsNewStatus] = useState<status["status"]>(status);
@@ -63,7 +64,12 @@ export const OrderCard: React.FC<RecentOrder> = ({
     <div className="flex items-center justify-between flex-shrink-0 w-full h-full gap-5 p-3 border border-[var(--dark-border)] rounded-md min-w-[500px]">
       <div className="flex w-full items-center justify-start gap-3">
         <div className="w-[40px] h-[40px] ">
-          <img src={image} className="w-full rounded-full  h-full" alt="" />
+          <img
+            src={image || Avatar}
+            loading="lazy"
+            className="w-full rounded-full  h-full"
+            alt="order"
+          />
         </div>
         <div className="flex flex-col items-start justify-center ">
           <p className="text-xs text-[var(--dark-secondary-text)] pb-1">
@@ -71,14 +77,16 @@ export const OrderCard: React.FC<RecentOrder> = ({
           </p>
 
           <p className="text-sm text-[var(--dark-secondary-text)] pb-3">
-            {products as string[]}
+            {products?.map(
+              (product) => `${product.name} × ${product?.quantity}, `
+            )}
           </p>
           <p className="text-lg text-[var(--dark-text)] font-semibold tracking-wide">
             Rs <span>{price}</span>
           </p>
         </div>
       </div>
-      <div className="flex relative flex-col w-[100px] items-start justify-between gap-3 text-xs">
+      <div className="flex relative flex-col w-[80px] items-start justify-between gap-3 text-xs">
         <p
           onClick={() => {
             setIsChangeStatus(!isChangeStatus);

@@ -97,7 +97,6 @@ export const usePaginateOrders = ({
     }
   };
 
-
   useEffect(() => {
     fetchOrders({
       pageSize: pageSize || pagination.perPage,
@@ -154,6 +153,7 @@ export const usePaginateOrders = ({
             pagination,
             allUser
           );
+
           const aggregatePromiseOrder = await Promise.all(aggregateOrder);
           setInitialOrders((prev) => [
             ...prev,
@@ -188,7 +188,7 @@ export const usePaginateOrders = ({
     initialOrders,
     setInitialOrders,
     setHaveUser,
-    haveUser
+    haveUser,
   };
 };
 
@@ -207,7 +207,8 @@ export const aggregateOrders = (
       id: order.orderId,
       uid: order.uid,
       name: user?.fullName || "User",
-      image: user?.avatar || Avatar,
+      phoneNumber: user?.phoneNumber,
+      image: user?.avatar as string,
       products: order?.products,
       orderRequest: dayjs(order?.orderRequest).format(" YYYY-MM-DD, h:mm A"),
       orderFullfilled: dayjs(order?.orderFullfilled).format(
