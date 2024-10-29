@@ -85,7 +85,7 @@ const TicketAdminPage = () => {
             setId(item.id);
             setIsChangeStatus(true);
           }}
-          className={`text-[var(--dark-text)] cursor-pointer flex items-center justify-center gap-2 tracking-wide w-[150px]   text-start `}
+          className={`text-[var(--dark-text)]  cursor-pointer flex items-center justify-start gap-2 tracking-wide w-[150px]   text-start `}
         >
           <div
             className={`w-2 h-2 rounded-full ${

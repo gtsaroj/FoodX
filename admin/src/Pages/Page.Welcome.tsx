@@ -23,9 +23,9 @@ export const WelcomePage: React.FC<WelcomePageProps> = ({ user }) => {
               Welcome to FoodX Management
             </span>
             <h1 className="lg:text-[4rem] md:text-[3rem] text-[2rem] tracking-wider font-bold text-[var(--primary-color)]">
-              Control Your Operations
+              Manage Your Dashboard
             </h1>
-            <p className="pt-4 lg:w-[650px] sm:w-[500px] min-w-[200px] text-sm tracking-wide text-[var(--dark-secondary-text)]">
+            <p className="pt-4 lg:w-[650px] sm:w-[500px] min-w-[200px] text-sm tracking-wide text-[var(--dark-text)]">
               Streamline your canteen processes with ease and improve efficiency
               in managing daily operations.{" "}
               <span className="sm:visible hidden ">

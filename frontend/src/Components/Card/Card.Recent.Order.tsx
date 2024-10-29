@@ -23,7 +23,7 @@ export const RecentCard: React.FC<RecentCardProp> = ({ item }) => {
     <div className="sm:w-[550px] w-[400px] bg-[var(--light-foreground)] rounded-l-lg pr-5 h-[140px] sm:h-full border-[1px] border-[var(--dark-border)] rounded-lg gap-5  flex items-center justify-center">
       <div className="sm:w-[350px] w-[200px] rounded-l-lg h-full sm:h-[180px] ">
         <img
-          src={item.products[0].image}
+          src={item.products[0].image} loading="lazy"
           className=" rounded-l-lg w-full h-full bg-slate-100  "
         ></img>
       </div>

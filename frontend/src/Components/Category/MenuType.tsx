@@ -65,10 +65,10 @@ export const MenuType: React.FC = () => {
   });
 
   useEffect(() => {
-    if (initialTag?.id) {
+    if (!isLoading && specials && specials?.length > 0) {
       getMenuProducts();
     }
-  }, [initialTag?.id]);
+  }, [initialTag?.id, specials]);
 
   const gradientColorPalette = [
     "linear-gradient(135deg, rgba(255, 223, 186, 0.8), rgba(255, 150, 100, 0.8))", // Gradient for Pizza

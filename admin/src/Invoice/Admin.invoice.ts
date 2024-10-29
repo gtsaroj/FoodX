@@ -1,6 +1,7 @@
 import Papa from "papaparse";
 import { Product } from "../models/product.model";
 import { status } from "../models/order.model";
+import { User } from "../models/user.model";
 
 export interface InvoiceDocumentProp {
   orders: {
@@ -52,6 +53,26 @@ export const handleDownloadCSV = ({ orders }: InvoiceDocumentProp) => {
   const link = document.createElement("a");
   link.href = url;
   link.download = "invoice_data.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+export const handleDownloadCustomerCSV = (users: User[]) => {
+  const csvData = users?.map((user) => ({
+    "User Id": user.id,
+    Name: user.fullName,
+    Email: user.email,
+    "Phone No.": user.phoneNumber,
+    Role: user.role,
+    "Total spent": user.totalSpent,
+    "Total order": user.totalOrder,
+  }));
+  const csv = Papa.unparse(csvData); // Convert array of objects to CSV string
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "customers.csv";
   link.click();
   URL.revokeObjectURL(url);
 };

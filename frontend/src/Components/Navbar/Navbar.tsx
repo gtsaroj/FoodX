@@ -29,11 +29,17 @@ import { NotificationPage } from "../Notification/Notification";
 import { FaHouseUser } from "react-icons/fa";
 import Avatar from "../../assets/logo/avatar.png";
 import Cart from "../../Pages/Cart/Cart";
-import { MdOutlineShoppingBag } from "react-icons/md";
+import {
+  MdOutlineRemoveShoppingCart,
+  MdOutlineShoppingBag,
+  MdShoppingCart,
+  MdShoppingCartCheckout,
+} from "react-icons/md";
 import { MdOutlineShoppingCartCheckout } from "react-icons/md";
 import { useAllProducts } from "../../Hooks/useAllProducts";
 import { DarkMode } from "../Button/DarkMode.button";
 import { useLogout } from "../AuthProfile/useLogout";
+import { addProductToCart } from "../../Services/cart.services";
 
 const navbarItems = [
   {
@@ -88,11 +94,7 @@ export const Navbar: React.FC = () => {
   const [openNotification, setOpenNotification] = useState<boolean>(false);
   const [openCart, setOpenCart] = useState<boolean>(false);
 
-  const {
-    data: allProducts,
-
-    isFetched,
-  } = useAllProducts();
+  const { data: allProducts, isFetched } = useAllProducts();
 
   const authUser = useSelector((state: RootState) => state.root.auth.userInfo);
 
@@ -213,6 +215,7 @@ export const Navbar: React.FC = () => {
 
   const debounceSearch = useCallback(debounce(handleSearch, 200), [
     searchValue,
+    allProducts,
   ]);
 
   return (
@@ -684,6 +687,46 @@ export const Header: React.FC = () => {
 
 export const SearchProductCard: React.FC<Product> = (data) => {
   const dispatch = useDispatch<AppDispatch>();
+  const store = useSelector((state: RootState) => state.root);
+
+  const addProductToCartFn = async (data: Product) => {
+    if (data.quantity <= 0)
+      return toast.error("Product is out of stock.", {
+        position: "top-right",
+        icon: <MdOutlineRemoveShoppingCart className="size-5" />,
+      });
+    const isProductExist = store?.cart?.products?.some(
+      (product) => product.id === data.id
+    );
+    if (isProductExist) {
+      return toast.success("Product already exists", {
+        icon: <MdShoppingCart className="size-5" />,
+        position: "top-right",
+      });
+    }
+    const toastLoader = toast.loading("Loading...");
+
+    try {
+      await addProductToCart(store?.auth?.userInfo?.uid as string, data.id);
+      dispatch(
+        addToCart({
+          id: data.id,
+          name: data.name,
+          price: data.price,
+          quantity: 1,
+          image: data.image,
+        })
+      );
+      toast.dismiss(toastLoader);
+      toast.success("Product added successfully.", {
+        icon: <MdShoppingCartCheckout className="size-5" />,
+        position: "top-right",
+      });
+    } catch (error) {
+    } finally {
+      toast.dismiss(toastLoader);
+    }
+  };
 
   return (
     <div
@@ -699,18 +742,25 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         <h1 className="sm:text-[15px] text-[12px] font-medium tracking-wide text-[var(--dark-text)]">
           {data.name}
         </h1>
-        <p
-          className={`sm:text-[14px] text-xs text-[var(--dark-secondary-text)] ${
-            data?.quantity < 20
-              ? "text-orange-400"
-              : data.quantity <= 0
-              ? "text-red-500"
-              : ""
-          } `}
-        >
-          Rs.{data.price}{" "}
-          {data.quantity <= 20 ? ` • ${data.quantity}  left` : ""}
-        </p>
+        <div className="flex items-center justify-start gap-2">
+          <p
+            className={`sm:text-[14px] text-xs text-[var(--dark-secondary-text)] `}
+          >
+            Rs.{data.price}
+          </p>
+          <p
+            className={`  text-[10px] h-[20.3px]   ${
+              data?.quantity < 20 && data.quantity !== 0
+                ? "border border-orange-400 rounded-xl p-[1px] px-1 text-orange-400"
+                : data.quantity <= 0
+                ? "border border-red-500 rounded-xl p-[1px] px-1 text-red-500"
+                : ""
+            }`}
+          >
+            {" "}
+            {data.quantity <= 20 ? ` low on stock` : ""}
+          </p>
+        </div>
         {data.tag && (
           <span className="text-[12px] text-[var(--primary-color)]">
             {data.tag}
@@ -719,18 +769,7 @@ export const SearchProductCard: React.FC<Product> = (data) => {
       </div>
       <button
         className="bg-[var(--primary-color)] text-white py-2 px-2 sm:px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 sm:text-[14px]"
-        onClick={() => {
-          dispatch(
-            addToCart({
-              id: data.id,
-              name: data.name,
-              price: data.price,
-              quantity: 1,
-              image: data.image,
-            })
-          );
-          toast.success("Product Added!");
-        }}
+        onClick={() => addProductToCartFn(data)}
       >
         <MdOutlineShoppingCartCheckout className="sm:size-6 size-5 text-[var(--dark-text)] " />
       </button>

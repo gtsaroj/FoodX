@@ -9,13 +9,14 @@ import {
 } from "../../Services/user.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
-import { Filter, X } from "lucide-react";
+import { Download, Filter, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateCustomer from "../../Components/Upload/User.upload";
 import { debounce } from "../../Utility/debounce";
 import { GetUserModal } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
+import { handleDownloadCustomerCSV } from "../../Invoice/Admin.invoice";
 
 const AllCustomers = () => {
   const [totalData, setTotalData] = useState<number>();
@@ -46,6 +47,7 @@ const AllCustomers = () => {
     currentFirstDoc: string;
     currentLastDoc: string;
   }>();
+  const [exportedData, setExportedData] = useState<User[]>([]);
 
   const handleCustomerData = async ({
     direction,
@@ -336,7 +338,20 @@ const AllCustomers = () => {
               {totalData || 0} entries found
             </p>
           </div>
-          <div>
+          <div className="flex  items-center justify-center gap-2">
+            <button
+              onClick={() =>
+                exportedData.length > 0
+                  ? handleDownloadCustomerCSV(exportedData)
+                  : toast.error("Please select order", {
+                      position: "top-right",
+                    })
+              }
+              className="flex items-center gap-2 justify-center bg-[var(--primary-color)] text-white py-[0.5rem] border-[1px] border-[var(--primary-color)] px-4 rounded"
+            >
+              <Download strokeWidth={2.5} className="size-5" />
+              <p className="text-[16px]   tracking-widest ">Export</p>
+            </button>
             <Button
               selectedTypes={[filter?.typeFilter?.id as string]}
               selectedCheck={[filter?.sortFilter?.id as string]}
@@ -473,6 +488,26 @@ const AllCustomers = () => {
         users={initialCustomer as User[]}
         loading={loading}
         actions={{
+          checkAllFn: (isChecked: boolean) => {
+            handleAllSelected(isChecked);
+            if (!isChecked) return setExportedData([]);
+            if (isChecked) setExportedData(initialCustomer);
+          },
+          checkFn: (id: string, isChecked: boolean) => {
+            handleBulkSelected(id, isChecked);
+            const findUser = initialCustomer?.find((user) => user.id === id);
+            if (!isChecked && id) {
+              setExportedData((prev) => {
+                const filteredData = prev
+                  ? prev.filter((user) => user.id !== id)
+                  : [];
+                return [...filteredData];
+              });
+            }
+            if (isChecked && id) {
+              setExportedData((prev) => [...prev, findUser as User]);
+            }
+          },
           delete: (id) => {
             setIsDelete(true);
             setId(id);
@@ -484,9 +519,6 @@ const AllCustomers = () => {
             setCustomerModal(findCustomer);
             setIsEdit(false);
           },
-          checkFn: (id: string, isChecked: boolean) =>
-            handleBulkSelected(id, isChecked),
-          checkAllFn: (isCheck: boolean) => handleAllSelected(isCheck),
         }}
       />
       {isDelete && (
