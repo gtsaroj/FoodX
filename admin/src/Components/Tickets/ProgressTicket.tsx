@@ -36,7 +36,7 @@ const ProgressTicket: React.FC<ProgressProp> = ({ prop, loading }) => {
             category={ticket.category}
             date={ticket.date as any}
             description={ticket.description}
-            title={ticket.title}
+            title={ticket?.title as string}
             id={ticket.id}
             key={ticket.id}
           />

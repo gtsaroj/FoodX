@@ -3,7 +3,6 @@ import { CardAnalytic } from "../../models/product.model";
 import { Revenue } from "../../models/revenue.model";
 
 export const aggregateCurrentDayData = (orders: Revenue[]) => {
-  console.log(orders)
   const today = dayjs().format("YYYY-MM-DD");
   try {
     const currentDayOrder = orders?.find((order) => {
@@ -24,12 +23,10 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       (acc, order) => acc + order.orders?.length,
       0
     );
-    console.log(currentDayOrder)
     const revenueToday = getRevenue([currentDayOrder] as Revenue[]);
 
     const dailyAnalyticsData: CardAnalytic[] = [
       {
-        
         title: "Items Delivered",
         total: currentDayOrder?.orders.length || 0,
         percentage: 100,
@@ -48,19 +45,25 @@ export const aggregateCurrentDayData = (orders: Revenue[]) => {
       },
     ];
 
-    console.log(dailyAnalyticsData)
     return dailyAnalyticsData;
   } catch (error) {
     return null;
   }
 };
 
-export const aggregateMonthlyData = (orders: Revenue[], month: number): CardAnalytic[] => {
+export const aggregateMonthlyData = (
+  orders: Revenue[],
+  month: number
+): CardAnalytic[] => {
   try {
     // Calculate total orders by summing up all quantities in each order
     const totalOrders = orders.reduce(
       (orderSum, order) =>
-        orderSum + order.orders.reduce((prodSum, product) => prodSum + Number(product.quantity), 0),
+        orderSum +
+        order.orders.reduce(
+          (prodSum, product) => prodSum + Number(product.quantity),
+          0
+        ),
       0
     );
 
@@ -73,13 +76,16 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number): CardAnal
 
     // Filter previous month orders and calculate previous month revenue
     const previousMonthOrders = orders.filter(
-      (order) => dayjs(order.id).month() === dayjs().subtract(month, "month").month()
+      (order) =>
+        dayjs(order.id).month() === dayjs().subtract(month, "month").month()
     );
     const previousMonthRevenue = getRevenue(previousMonthOrders);
 
     // Calculate the revenue percentage change
-    const revenuePercentage = previousMonthRevenue 
-      ? Math.round(((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100) 
+    const revenuePercentage = previousMonthRevenue
+      ? Math.round(
+          ((totalRevenue - previousMonthRevenue) / previousMonthRevenue) * 100
+        )
       : "N/A"; // Avoid division by zero, set as "N/A" if previous month revenue is 0
 
     // Prepare daily analytics data
@@ -92,7 +98,9 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number): CardAnal
       {
         title: "Average Items",
         total: Math.round(averageOrder),
-        percentage: totalOrders ? Math.round((averageOrder / totalOrders) * 100) : 0,
+        percentage: totalOrders
+          ? Math.round((averageOrder / totalOrders) * 100)
+          : 0,
       },
       {
         title: "Revenue",
@@ -111,7 +119,6 @@ export const aggregateMonthlyData = (orders: Revenue[], month: number): CardAnal
     ]; // Return default values in case of error
   }
 };
-
 
 const getRevenue = (revenue: Revenue[]) => {
   const total = revenue.reduce(

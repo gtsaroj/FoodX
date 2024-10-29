@@ -8,6 +8,7 @@ import { User } from "../../models/user.model";
 import { getChefByUid } from "../../Utility/user.utils";
 import toast from "react-hot-toast";
 import { updateTicket } from "../../Services/ticket.services";
+import { addNotification } from "../../Services/notification.services";
 
 interface TicketProp {
   date: string;
@@ -34,6 +35,26 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   const [updatedTicket, setUpdatedTicket] = React.useState<TicketType>();
   const [cachedUser, setCachedUser] = useState<User | null>(null);
 
+  const messages = {
+    pending: {
+      message: "Your ticket is pending. We'll get back to you shortly.",
+      title: "Ticket Pending",
+    },
+    progress: {
+      message: "We're working on your issue. Stay tuned for updates!",
+      title: "Ticket In Progress",
+    },
+    resolved: {
+      message: "Your issue has been resolved. Thanks for your patience!",
+      title: "Ticket Resolved",
+    },
+    rejected: {
+      message:
+        "Unfortunately, your ticket was rejected. Please contact support for details.",
+      title: "Ticket Rejected",
+    },
+  };
+
   React.useEffect(() => {
     const fetchUser = async () => {
       const user = queryClient.getQueryData<User>(["user", uid]);
@@ -58,6 +79,13 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
 
     try {
       await updateTicket({ id: id, newStatus: newStatus });
+      if (uid) {
+        await addNotification({
+          message: messages[newStatus].message,
+          title: messages[newStatus].title,
+          userId: uid as string,
+        });
+      }
       if (t_id === id) {
         setUpdatedTicket({
           category,
@@ -99,7 +127,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   };
 
   return (
-    <div className="min-w-[300px] h-[173px] bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
+    <div className="min-w-[300px] w-full h-[173px] bg-[var(--light-foreground)] p-3 gap rounded-lg border-[1px] border-[var(--dark-border)] flex flex-col items-start justify-center gap-3">
       <div className="w-full flex justify-between items-center">
         <div className="flex items-center justify-center gap-2">
           <img
@@ -116,16 +144,16 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
           {getRemainingTime(dayjs(date))}
         </span>
       </div>
-      <p className="w-full text-[var(--dark-secondary-text)] tracking-wide text-sm ">
+      <div className="w-full text-[var(--dark-secondary-text)] tracking-wide text-sm ">
         {description?.length > 130
           ? description.substring(0, 80) + "..."
           : description}
-      </p>
+      </div>
       <div className="w-full flex-wrap flex items-center sm:gap-0 justify-start gap-5 sm:justify-evenly">
         <p className=" text-[var(--green-text)] bg-[#41d6410c] text-sm p-1 rounded-full px-2 ">
           New
         </p>
-        <p
+        <div
           onClick={() => {
             setIsUpdate(!isUpdate);
             setId(t_id as string);
@@ -160,7 +188,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
               action={(newStatus) => ticketUpdate(id as string, newStatus)}
             />
           </div>
-        </p>
+        </div>
         <p
           className={` p-1 bg-[#ffa60007] text-[#ff971f] px-2 tracking-wide rounded-full text-sm  `}
         >

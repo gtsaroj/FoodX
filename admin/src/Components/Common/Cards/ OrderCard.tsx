@@ -24,7 +24,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
   orderRequest,
   uid,
 }) => {
-  console.log(products);
+
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [isNewStatus, setIsNewStatus] = useState<status["status"]>(status);

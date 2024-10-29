@@ -2,7 +2,6 @@ import { ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 import { Loader } from "../Common/Loader/Loader";
 import TicketLogo from "../../assets/tickets.png";
-import toast from "react-hot-toast";
 import { TicketStatus, TicketType } from "../../models/ticket.model";
 
 import Skeleton from "react-loading-skeleton";

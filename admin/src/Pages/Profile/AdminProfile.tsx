@@ -218,7 +218,7 @@ const PersonlInformation: React.FC<User> = ({
       await dispatch(
         updateUserAction({
           fullName: `${update.firstName} ${update.lastName}`,
-          phoneNumber: parseInt(update.phoneNumber as string),
+          phoneNumber: parseInt(JSON.stringify(update.phoneNumber)),
         })
       );
       toast.dismiss(toastLoader);
@@ -336,7 +336,7 @@ const PersonlInformation: React.FC<User> = ({
                   onChange={(event) =>
                     setUpdate((prev) => ({
                       ...prev,
-                      phoneNumber: event.target.value,
+                      phoneNumber: parseInt(event.target.value),
                     }))
                   }
                   className="px-2 py-1.5 rounded border-[1px] border-[var(--dark-border)] text-[var(--dark-text)] bg-[var(--light-foreground)]  outline-none"

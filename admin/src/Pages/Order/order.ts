@@ -7,7 +7,6 @@ import {
 } from "../../models/order.model";
 import { getOrders } from "../../Services/order.services";
 import { getUserByUid } from "../../Utility/user.utils";
-import Avatar from "../../assets/logo/avatar.png";
 import dayjs from "dayjs";
 import { useQueryClient } from "react-query";
 import { User } from "../../models/user.model";

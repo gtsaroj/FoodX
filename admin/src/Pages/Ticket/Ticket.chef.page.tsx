@@ -7,7 +7,6 @@ import { CirclePlus } from "lucide-react";
 import Modal from "../../Components/Common/Popup/Popup";
 import CreateTicket from "../../Components/Upload/Ticket.upload";
 import { getTickets } from "../../Services/ticket.services";
-import toast from "react-hot-toast";
 import TicketLogo from "../../assets/tickets.png";
 import {
   GetTicketModal,

@@ -118,7 +118,7 @@ function Table<T extends { id: string }>({
 
         <tbody className="w-full overflow-auto flex items-start justify-start flex-col flex-nowrap">
           {loading ? (
-            <div className="w-full">
+            <tr className="w-full">
               <Skeleton
                 height={100}
                 baseColor="var(--light-background)"
@@ -143,24 +143,24 @@ function Table<T extends { id: string }>({
                 highlightColor="var(--light-foreground)"
                 count={3}
               />
-            </div>
+            </tr>
           ) : (
             <>
               {currentData && currentData?.length <= 0 ? (
-                <div className="flex w-full flex-col items-center justify-center p-10">
-                  <div className="text-[24px] text-[var(--dark-text)] mb-4">
+                <tr className="flex w-full flex-col items-center justify-center p-10">
+                  <td className="text-[24px] text-[var(--dark-text)] mb-4">
                     No Data Found
-                  </div>
-                  <p className="text-[16px] text-[var(--dark-secondary-text)] mb-6">
+                  </td>
+                  <td className="text-[16px] text-[var(--dark-secondary-text)] mb-6">
                     We couldn't find any data to display here.
-                  </p>
-                  <button
+                  </td>
+                  <td
                     className="bg-[var(--primary-color)] text-white px-4 py-2 rounded-md hover:bg-[var(--primary-light)]"
                     onClick={() => window.location.reload()} // Replace with a function to fetch data if needed
                   >
                     Refresh
-                  </button>
-                </div>
+                  </td>
+                </tr>
               ) : (
                 currentData &&
                 currentData.map((item, index) => (
@@ -199,9 +199,9 @@ function Table<T extends { id: string }>({
                       >
                         <div className="flex  items-center bg-[var(--primary-color)] cursor-pointer hover:bg-[var(--primary-light)] justify-center p-2 px-3  rounded-lg tracking-wide text-[var(--light-text)] dark:text-[var(--dark-text)] gap-2">
                           <FaEdit />
-                          <span className="text-[16px]  tracking-wide">
+                          <td className="text-[16px]  tracking-wide">
                             Edit
-                          </span>
+                          </td>
                         </div>
                       </td>
                     )}
@@ -215,9 +215,9 @@ function Table<T extends { id: string }>({
                       >
                         <div className="flex  items-center bg-[var(--danger-bg)] cursor-pointer hover:bg-[var(--danger-text)] justify-start p-2  px-3 rounded-lg tracking-wide dark:text-[var(--dark-text)] text-[var(--light-text)] gap-2">
                           <FaTrash />
-                          <span className="text-[16px]  tracking-wide ">
+                          <td className="text-[16px]  tracking-wide ">
                             Delete
-                          </span>
+                          </td>
                         </div>
                       </td>
                     )}
@@ -236,7 +236,7 @@ function Table<T extends { id: string }>({
                           }}
                         >
                           <FaEye className=" size-5 " />
-                          <span className="text-[15px] text-white ">View</span>
+                          <td className="text-[15px] text-white ">View</td>
                         </div>
                       </td>
                     )}

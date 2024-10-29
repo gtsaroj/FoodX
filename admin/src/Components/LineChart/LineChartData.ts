@@ -182,7 +182,6 @@ export const calculateTotalOrders = (
 export const calculateTotalRevenue = (
   data: { time: string; revenue: number }[]
 ) => {
-  console.log(data);
 
   return data?.reduce((total, current) => total + current?.revenue, 0);
 };

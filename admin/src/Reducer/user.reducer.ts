@@ -42,7 +42,7 @@ const authSlice = createSlice({
         id: "",
         avatar: "",
         email: "",
-        phoneNumber: "",
+        phoneNumber: NaN,
         refreshToken: "",
         role: undefined,
         uid: "",
@@ -71,7 +71,7 @@ const authSlice = createSlice({
           id: "",
           avatar: "",
           email: "",
-          phoneNumber: "",
+          phoneNumber: NaN,
           refreshToken: "",
           role: undefined,
           uid: "",
@@ -89,7 +89,7 @@ const authSlice = createSlice({
       state.userInfo = action.payload as User;
     });
     builder.addCase(signInAction.rejected, (state) => {
-       toast.error("Invalid login credentials")
+      toast.error("Invalid login credentials");
       state.error = true;
       state.loading = false;
       state.userInfo = {
@@ -99,7 +99,7 @@ const authSlice = createSlice({
         id: "",
         avatar: "",
         email: "",
-        phoneNumber: "",
+        phoneNumber: NaN,
         refreshToken: "",
         role: undefined,
         uid: "",
@@ -120,8 +120,11 @@ const authSlice = createSlice({
           if (payload[key] !== undefined) {
             // Handle phoneNumber separately if needed
             if (key === "phoneNumber" && typeof payload[key] === "number") {
-              state.userInfo[key] = String(payload[key]); // Convert number to string
-            } else {
+              state.userInfo[key] = payload[key]; // Convert number to string
+            } else if (
+              key !== "phoneNumber" &&
+              typeof payload[key] !== "undefined"
+            ) {
               state.userInfo[key] = payload[key] as string;
             }
           }

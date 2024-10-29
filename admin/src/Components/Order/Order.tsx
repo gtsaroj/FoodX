@@ -25,7 +25,6 @@ export const RecentOrders = () => {
       status: "pending",
     }
   );
-  console.log(initialOrders)
 
   const store = useSelector((state: RootState) => state.root);
 
