@@ -16,6 +16,7 @@ import { Selector } from "../Selector/Selector";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 interface UploadFoodProp {
   closeModal: () => void;
@@ -71,20 +72,30 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
     } catch (error) {
       toast.error("Error while adding product ");
       throw new Error("Error while uploading products" + error);
+    } finally {
+      closeModal();
+      setAddFood(() => ({
+        collection: "",
+        product: {
+          id: "",
+          image: "",
+          name: "",
+          price: "",
+          quantity: "",
+          tagId: "",
+        },
+      }));
     }
-    closeModal();
-    setAddFood(() => ({
-      collection: "",
-      product: {
-        id: "",
-        image: "",
-        name: "",
-        price: "",
-        quantity: "",
-        tagId: "",
-      },
-    }));
   };
+
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: handleClick,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: addFood.collection });
+    },
+  });
   useEffect(() => {
     categories();
   }, []);
@@ -100,7 +111,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
         </h3>
 
         <form
-          onSubmit={(event) => handleClick(event)}
+          onSubmit={(event) => mutate(event)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >

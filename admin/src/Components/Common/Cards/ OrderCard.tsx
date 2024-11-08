@@ -24,7 +24,6 @@ export const OrderCard: React.FC<RecentOrder> = ({
   orderRequest,
   uid,
 }) => {
-
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [id, setId] = useState<string>();
   const [isNewStatus, setIsNewStatus] = useState<status["status"]>(status);
@@ -65,7 +64,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
       <div className="flex w-full items-center justify-start gap-3">
         <div className="w-[40px] h-[40px] ">
           <img
-            src={image || Avatar}
+            src={image.includes("assets") ? Avatar : image}
             loading="lazy"
             className="w-full rounded-full  h-full"
             alt="order"

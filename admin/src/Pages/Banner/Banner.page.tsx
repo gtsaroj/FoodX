@@ -15,6 +15,7 @@ import {
 import { debounce } from "../../Utility/debounce";
 import { SearchBanner } from "../../Utility/banner.utils";
 import dayjs from "dayjs";
+import { useQuery } from "react-query";
 
 const FoodPage: React.FC = () => {
   const [isModalOpen, setIsModelOpen] = useState<boolean>(true);
@@ -28,7 +29,7 @@ const FoodPage: React.FC = () => {
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
     { id: string; path: "sponsors" | "banners" }[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
+
 
   const closeModal = () => setIsModelOpen(true);
 
@@ -85,8 +86,7 @@ const FoodPage: React.FC = () => {
     },
   ];
 
-  const getAllBanners = async () => {
-    setLoading(true);
+  const getAllBanners = async (): Promise<BannerModel[]> => {
     const banners = [];
     try {
       const [normalBanner, sponsorBanner] = [
@@ -128,11 +128,10 @@ const FoodPage: React.FC = () => {
         });
         if (fetchSponsorBanner.length > 0) banners.push(...fetchSponsorBanner);
       }
-      setInitialBanner(banners as any);
+      return banners;
     } catch (error) {
       throw new Error("Unable to fetch banners" + error);
     }
-    setLoading(false);
   };
 
   const handleBulkSelected = (id: string, isChecked: boolean) => {
@@ -242,9 +241,16 @@ const FoodPage: React.FC = () => {
     initialBanner,
   ]);
 
+  const { data, isLoading } = useQuery("banners", getAllBanners, {
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+
   useEffect(() => {
-    getAllBanners();
-  }, []);
+    if (data && data?.length > 0 && !isLoading) {
+      setInitialBanner(data);
+    }
+  }, [data, isLoading]);
 
   return (
     <div className="relative flex flex-col items-start justify-center w-full px-5 py-7 gap-7">
@@ -292,7 +298,7 @@ const FoodPage: React.FC = () => {
         </div>
       </div>
       <Table
-        loading={loading}
+        loading={isLoading}
         totalData={initialBanner?.length}
         selectedData={bulkSelectedBanner?.map((banner) => banner.id)}
         columns={columns}

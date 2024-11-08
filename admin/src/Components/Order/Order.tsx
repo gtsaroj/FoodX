@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { aggregateOrders, usePaginateOrders } from "../../Pages/Order/order";
 
+
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
 
@@ -79,7 +80,7 @@ export const RecentOrders = () => {
               initialOrders?.map((order, index) => (
                 <OrderCard
                   uid={order?.uid}
-                  image={order?.name as string}
+                  image={order?.image as string}
                   orderId={order?.id as string}
                   price={order.products?.reduce(
                     (productAcc, product) =>

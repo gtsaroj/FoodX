@@ -4,7 +4,6 @@ import { Category } from "../../models/category.model";
 import {
   bulkDeleteOfCategory,
   deleteCategory,
-
 } from "../../Services/category.services";
 import { addLogs } from "../../Services/log.services";
 import toast from "react-hot-toast";
@@ -14,7 +13,7 @@ import UpdateCategory from "../../Components/Upload/Category.update.upload";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { categoryAdd } from "../../Reducer/category.reducer";
-import { Filter, X } from "lucide-react";
+import { Filter, Plus, Upload, X } from "lucide-react";
 import { SearchCategory } from "../../Utility/category.utils";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
@@ -26,6 +25,7 @@ import {
   useSpecialProducts,
 } from "../../Hooks/useAllProducts";
 import { Product } from "../../models/product.model";
+import { UploadCategory } from "../../Components/Upload/Category.upload";
 
 const AllCategories = () => {
   const [initialCategory, setInitialCategory] = useState<Category[]>([]);
@@ -39,6 +39,8 @@ const AllCategories = () => {
   const [isBulkDelete, setIsBulkDelete] = useState<boolean>(false);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [isUpload, setIsUpload] = useState<boolean>(true);
+
   const dispatch = useDispatch<AppDispatch>();
 
   const { data, isLoading } = useAllCategory();
@@ -211,45 +213,54 @@ const AllCategories = () => {
               {initialCategory?.length || 0} entries found
             </p>
           </div>
-          <Button
-            selectedCheck={[filter?.id as string]}
-            sortFn={(value) => setSortOrder(value)}
-            bodyStyle={{
-              width: "400px",
-              top: "3rem",
-              left: "-18rem",
-            }}
-            parent={
-              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                <Filter
-                  strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
-                />
-                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                  Filter
-                </p>
-              </div>
-            }
-            sort={[
-              { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
-              { label: "Revenue", value: "revenue", id: "flksdj" },
-              {
-                label: "Orders",
-                value: "orders",
-                id: "kfljsffldkl;'",
-              },
-            ]}
-            checkFn={{
-              checkSortFn: (isChecked, value, id) => {
-                if (!isChecked) {
-                  return setFilter({ id: "", sort: "" });
-                }
-                if (isChecked) {
-                  setFilter({ sort: value, id: id });
-                }
-              },
-            }}
-          />
+          <div className="flex items-center justify-start gap-3">
+            <Button
+              selectedCheck={[filter?.id as string]}
+              sortFn={(value) => setSortOrder(value)}
+              bodyStyle={{
+                width: "400px",
+                top: "3rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                  <Filter
+                    strokeWidth={2.5}
+                    className="size-5 text-[var(--dark-secondary-text)]"
+                  />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                    Filter
+                  </p>
+                </div>
+              }
+              sort={[
+                { label: "Rank", value: "rank", id: "fkdhkjhefksj" },
+                { label: "Revenue", value: "revenue", id: "flksdj" },
+                {
+                  label: "Orders",
+                  value: "orders",
+                  id: "kfljsffldkl;'",
+                },
+              ]}
+              checkFn={{
+                checkSortFn: (isChecked, value, id) => {
+                  if (!isChecked) {
+                    return setFilter({ id: "", sort: "" });
+                  }
+                  if (isChecked) {
+                    setFilter({ sort: value, id: id });
+                  }
+                },
+              }}
+            />
+            <div
+              onClick={() => setIsUpload(!isUpload)}
+              className="flex cursor-pointer bg-[var(--primary-color)] px-4 py-2 rounded items-center justify-start gap-2"
+            >
+              <Upload strokeWidth={2.5} className="size-5 text-white" />
+              <p className="text-[16px] text-white tracking-widest ">Upload</p>
+            </div>
+          </div>
         </div>
         <div className="flex sm:flex-row flex-col gap-2.5  items-start sm:items-center justify-between sm:w-auto w-full  sm:gap-2 ">
           <div className="flex w-full sm:w-auto items-center justify-start gap-2 ">
@@ -329,6 +340,13 @@ const AllCategories = () => {
           setDelete={() => handleSelectedDelete()}
         />
       )}
+      <Modal
+        close={isUpload}
+        closeModal={() => setIsUpload(!isUpload)}
+        disableScroll={true}
+      >
+        <UploadCategory closeModal={() => setIsUpload(!isUpload)} />
+      </Modal>
     </div>
   );
 };
