@@ -16,7 +16,7 @@ import { Selector } from "../Selector/Selector";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
 interface UploadFoodProp {
   closeModal: () => void;

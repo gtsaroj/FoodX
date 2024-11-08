@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import Modal from "../../Components/Common/Popup/Popup";
 import UploadBanner from "../../Components/Upload/Banner.Upload";
 import Table from "../../Components/Common/Table/Table";
-import { BannerModel } from "../../models/banner.model";
+import { Banner, BannerModel } from "../../models/banner.model";
 import { ColumnProps } from "../../models/table.model";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import toast from "react-hot-toast";
@@ -29,7 +29,6 @@ const FoodPage: React.FC = () => {
   const [bulkSelectedBanner, setBulkSelectedBanner] = useState<
     { id: string; path: "sponsors" | "banners" }[]
   >([]);
-
 
   const closeModal = () => setIsModelOpen(true);
 
@@ -92,10 +91,10 @@ const FoodPage: React.FC = () => {
       const [normalBanner, sponsorBanner] = [
         (await getBanners({
           path: "banners",
-        })) as { banners: BannerModel[] },
+        })) as { banners: Banner[] },
         (await getBanners({
           path: "sponsors",
-        })) as { banners: BannerModel[] },
+        })) as { banners: Banner[] },
       ];
 
       if (normalBanner) {

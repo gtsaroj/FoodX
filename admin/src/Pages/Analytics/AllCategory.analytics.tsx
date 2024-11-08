@@ -13,7 +13,7 @@ import UpdateCategory from "../../Components/Upload/Category.update.upload";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { categoryAdd } from "../../Reducer/category.reducer";
-import { Filter, Plus, Upload, X } from "lucide-react";
+import { Filter, Upload, X } from "lucide-react";
 import { SearchCategory } from "../../Utility/category.utils";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
