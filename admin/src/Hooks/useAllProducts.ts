@@ -38,7 +38,7 @@ export const useSpecialProducts = () => {
   };
 
   return useQuery<Product[]>(
-    "specialProducts",
+    "specials",
     async () => {
       const specialProducts = await getSpecialProducts().then((res) =>
         res.data.map((product: Product) => {
@@ -90,7 +90,7 @@ export const useNormalProuducts = () => {
   };
 
   return useQuery(
-    "normalProducts",
+    "products",
     async () => {
       const normalProducts = await getNormalProducts().then((res) =>
         res.data?.map((product: Product) => ({

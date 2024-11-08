@@ -34,7 +34,7 @@ export const RecentTicketCard: React.FC<TicketProp> = ({
   const [id, setId] = useState<string>("");
   const [updatedTicket, setUpdatedTicket] = React.useState<TicketType>();
   const [cachedUser, setCachedUser] = useState<User | null>(null);
- console.log(cachedUser?.avatar?.length)
+
   const messages = {
     pending: {
       message: "Your ticket is pending. We'll get back to you shortly.",

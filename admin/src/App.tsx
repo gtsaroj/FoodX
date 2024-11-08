@@ -82,7 +82,9 @@ const App: React.FC = () => {
     auth.userInfo.role as UserRole["role"]
   );
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: 5 } },
+  });
 
   useEffect(() => {
     auth.success ? setShowContent(true) : setShowContent(false);

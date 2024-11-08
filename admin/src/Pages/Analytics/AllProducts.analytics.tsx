@@ -10,7 +10,7 @@ import { FoodTable } from "../Product/Product.table.page";
 import Modal from "../../Components/Common/Popup/Popup";
 import UpdateFood from "../../Components/Upload/Product.update.upload";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
-import { Filter, X } from "lucide-react";
+import { Filter, Upload, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { debounce } from "../../Utility/debounce";
 import { Button } from "../../Components/Common/Button/Button";
@@ -18,6 +18,7 @@ import {
   useNormalProuducts,
   useSpecialProducts,
 } from "../../Hooks/useAllProducts";
+import UploadFood from "../../Components/Upload/Product.upload";
 const AllProductAnalytics = () => {
   const { data: specialProducts, isLoading: specialLoading } =
     useSpecialProducts();
@@ -40,7 +41,7 @@ const AllProductAnalytics = () => {
     currentPage: number;
     perPage: number;
   }>({ currentPage: 1, perPage: 10 });
-
+  const [isUpload, setIsUpload] = useState<boolean>(true);
   const [bulkSelectedProduct, setBulkSelectedProduct] = useState<
     {
       category?: "specials" | "products";
@@ -278,48 +279,57 @@ const AllProductAnalytics = () => {
               {fetchedProducts?.length || 0} entries found
             </p>
           </div>
-          <Button
-            selectedCheck={[filter?.sortFilter?.id as string]}
-            selectedTypes={[filter?.typeFilter?.id as string]}
-            sortFn={(value) => setSortOrder(value)}
-            bodyStyle={{
-              width: "400px",
-              top: "3rem",
-              left: "-18rem",
-            }}
-            parent={
-              <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
-                <Filter
-                  strokeWidth={2.5}
-                  className="size-5 text-[var(--dark-secondary-text)]"
-                />
-                <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
-                  Filter
-                </p>
-              </div>
-            }
-            types={[
-              { label: "Specials", value: "specials", id: "fklsdjf" },
-              { label: "products", value: "products", id: "fkjdls" },
-            ]}
-            sort={[
-              { label: "Price", value: "price", id: "jfhkdj" },
-              { label: "Order", value: "order", id: "fkdsj" },
-              { label: "Revenue", value: "revenue", id: "flkjdsf" },
-            ]}
-            checkFn={{
-              checkTypeFn: (
-                isChecked: boolean,
-                value: "specials" | "products",
-                id
-              ) => handleTypeCheck(isChecked, value, id),
-              checkSortFn: (
-                isChecked: boolean,
-                value: "orders" | "revenue",
-                id
-              ) => handleSortCheck(isChecked, value, id),
-            }}
-          />
+          <div className="flex items-center justify-start gap-3">
+            <Button
+              selectedCheck={[filter?.sortFilter?.id as string]}
+              selectedTypes={[filter?.typeFilter?.id as string]}
+              sortFn={(value) => setSortOrder(value)}
+              bodyStyle={{
+                width: "400px",
+                top: "3rem",
+                left: "-18rem",
+              }}
+              parent={
+                <div className="flex border-[1px] border-[var(--dark-border)] px-4 py-2 rounded items-center justify-start gap-2">
+                  <Filter
+                    strokeWidth={2.5}
+                    className="size-5 text-[var(--dark-secondary-text)]"
+                  />
+                  <p className="text-[16px] text-[var(--dark-secondary-text)] tracking-widest ">
+                    Filter
+                  </p>
+                </div>
+              }
+              types={[
+                { label: "Specials", value: "specials", id: "fklsdjf" },
+                { label: "products", value: "products", id: "fkjdls" },
+              ]}
+              sort={[
+                { label: "Price", value: "price", id: "jfhkdj" },
+                { label: "Order", value: "order", id: "fkdsj" },
+                { label: "Revenue", value: "revenue", id: "flkjdsf" },
+              ]}
+              checkFn={{
+                checkTypeFn: (
+                  isChecked: boolean,
+                  value: "specials" | "products",
+                  id
+                ) => handleTypeCheck(isChecked, value, id),
+                checkSortFn: (
+                  isChecked: boolean,
+                  value: "orders" | "revenue",
+                  id
+                ) => handleSortCheck(isChecked, value, id),
+              }}
+            />
+            <div
+              onClick={() => setIsUpload(!isUpload)}
+              className="flex cursor-pointer bg-[var(--primary-color)] px-4 py-2 rounded items-center justify-start gap-2"
+            >
+              <Upload strokeWidth={2.5} className="size-5 text-white" />
+              <p className="text-[16px] text-white tracking-widest ">Upload</p>
+            </div>
+          </div>
         </div>
         <div className="flex sm:flex-row flex-col items-start sm:items-center justify-start sm:w-auto gap-2 w-full ">
           {" "}
@@ -443,6 +453,9 @@ const AllProductAnalytics = () => {
           }
         />
       )}
+      <Modal close={isUpload} closeModal={() => setIsUpload(!isUpload)}>
+        <UploadFood closeModal={() => setIsUpload(!isUpload)} />
+      </Modal>
     </div>
   );
 };

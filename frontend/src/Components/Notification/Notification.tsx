@@ -13,8 +13,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
+import { GiRingingBell } from "react-icons/gi";
 import { ChevronDown } from "lucide-react";
 import { getRemainingTime } from "../../Utility/date.utility";
+import toast from "react-hot-toast";
 interface Notifications {
   isOpen: boolean;
 }
@@ -86,6 +88,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
   }, [isOpen]);
 
   const removeNotification = async (id: string) => {
+    const toastLoader = toast.loading("Loading...");
     try {
       await deleteNotification({ id: id });
       setNotifications((prev) => {
@@ -93,6 +96,8 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
       });
     } catch (error) {
       throw new Error("Error while remove notifcation " + error);
+    } finally {
+      toast.dismiss(toastLoader);
     }
   };
 
@@ -157,65 +162,70 @@ interface NotificationProp {
   closeNotification: (id: string) => void;
   isLoading: boolean;
 }
+
 const NoticationContainer: React.FC<NotificationProp> = ({
   notification,
-}: {
-  notification: Notification;
-  closeNotification: (id: string) => void;
-  isLoading: boolean;
+  closeNotification,
 }) => {
-  const [openId, setOpenId] = useState<string>(""); // Track the currently open notification ID
+  const [openId, setOpenId] = useState<string>("");
 
   const handleToggle = (id: string) => {
-    setOpenId((prev) =>
-      prev === id ? "" : !prev ? id : prev !== id ? "" : ""
-    );
+    setOpenId((prev) => (prev === id ? "" : id));
   };
-
-  console.log(openId);
 
   return (
     <div
       key={notification.uid}
-      className="relative border-b-[1px] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4"
+      className="relative flex flex-col p-2 mb-4 bg-[var(--light-foreground)] rounded-lg shadow-md border border-[var(--dark-border)] transition-transform duration-150"
     >
+      {/* Notification Header */}
       <div
-        className={`sm:w-[280px] w-[230px] duration-150 flex flex-col gap-2.5`}
+        // onClick={() => handleToggle(notification.id)}
+        className="flex items-center justify-between cursor-pointer w-full"
       >
-        <div
-          onClick={() => handleToggle(notification.id)}
-          className="flex items-start justify-between w-full pr-1"
-        >
-          <div className="flex flex-col gap-1">
-            <h4 className="tracking-wider text-[14px] sm:text-[15px]">
-              {notification.title}
-            </h4>
+        <div className="flex items-start gap-3">
+          <div className="bg-blue-500 p-2 rounded-full flex items-center justify-center text-white">
+            {/* Placeholder icon or notification type icon */}
+            <GiRingingBell className="text-white size-5 " />
+          </div>
+          <div>
+            <h4 className="text-[15px] font-semibold">{notification.title}</h4>
             <p className="text-xs text-[var(--dark-secondary-text)]">
               {notification.id}
             </p>
           </div>
         </div>
-        <p
-          className={`text-sm text-gray-400 duration-150 ${
-            openId === notification.id
-              ? "flex  opacity-[100]"
-              : "hidden  opacity-0"
-          }`}
-        >
-          {notification.message}
-        </p>
+        <button onClick={() => closeNotification(notification.id)}>
+          <span className="text-red-500 tracking-widest font-semibold  text-[12px]">
+            X
+          </span>
+        </button>
       </div>
-      <div className="flex flex-col items-start justify-center gap-1">
-        <button onClick={() => handleToggle(notification.id)}>
+
+      {/* Notification Message */}
+      <p
+        className={`text-sm text-gray-400 mt-2 transition-all duration-300 overflow-hidden ${
+          openId === notification.id
+            ? "max-h-[500px] opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+      >
+        {notification.message}
+      </p>
+
+      {/* Chevron Icon and Time */}
+      <div className="flex justify-between items-center pt-2 text-xs text-[var(--dark-secondary-text)]">
+        <button
+          onClick={() => handleToggle(notification.id)}
+          className="transition-transform"
+        >
           <ChevronDown
-            className={`duration-200 ${
-              notification.id === openId ? "rotate-180" : ""
-            }`}
+            className={`${openId === notification.id ? "rotate-180" : ""}`}
           />
         </button>
-        <div className="flex w-[100px] bottom-1 right-0 absolute items-center justify-center text-xs text-[var(--dark-secondary-text)]">
+        <span>
           {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} ago
-        </div>
+        </span>
       </div>
     </div>
   );
