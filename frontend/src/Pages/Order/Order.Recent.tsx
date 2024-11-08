@@ -87,7 +87,7 @@ export const RecentOrder = () => {
         )}
       </div>
       {data?.length > 0 && (
-        <div className="absolute z-50 flex justify-between invisible w-full duration-200 -translate-x-5 opacity-0 group-hover/recent:visible group-hover/recent:opacity-100 top-36">
+        <div className="absolute z-50 px-1 flex justify-between invisible w-full duration-200 -translate-x-5 opacity-0 group-hover/recent:visible group-hover/recent:opacity-100 top-[8rem] sm:top-36">
           <button
             onClick={() => {
               recentCardReference.current?.scrollBy({

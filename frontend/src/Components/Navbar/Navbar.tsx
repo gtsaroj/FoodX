@@ -346,7 +346,7 @@ export const Navbar: React.FC = () => {
             <div ref={cartReference} className="relative md:hidden visible ">
               <MdOutlineShoppingBag
                 onClick={() => setOpenCart(!openCart)}
-                className="cursor-pointer sm:size-7 size-[30px] "
+                className="cursor-pointer sm:size-7 size-[27px] "
               />
               <div
                 className={`sm:w-[10px] size-1.5 duration-150 ${
@@ -392,7 +392,7 @@ export const Navbar: React.FC = () => {
               <div className="relative">
                 <Heart
                   onClick={() => setOpenFavourite(!openFavourite)}
-                  className="cursor-pointer size-[30px] sm:size-7 "
+                  className="cursor-pointer size-[27px] sm:size-7 "
                 />
                 <div
                   className={`sm:w-[10px] size-1.5 duration-150 ${
@@ -427,7 +427,7 @@ export const Navbar: React.FC = () => {
               <div ref={notificationReference as any} className="relative">
                 <Bell
                   onClick={() => setOpenNotification(!openNotification)}
-                  className="cursor-pointer size-[30px] sm:size-7 "
+                  className="cursor-pointer size-[27px] sm:size-7 "
                 />
 
                 <div
@@ -449,7 +449,7 @@ export const Navbar: React.FC = () => {
                     className=" hover:bg-[#8080807c]  p-1 rounded-full cursor-pointer group/user"
                   >
                     <img
-                      className="size-9 rounded-full  sm:w-11 sm:h-10"
+                      className="size-8 rounded-full  sm:w-11 sm:h-10"
                       src={authUser.avatar}
                       alt=""
                     />
@@ -548,11 +548,14 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
   return (
     <div
       ref={reference}
-      className="w-[250px] relative  gap-5 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center justify-between rounded"
+      className="w-[250px] relative  gap-5 px-3 py-10 h-screen  bg-[var(--light-foreground)] flex flex-col items-center  rounded"
     >
       <div className="flex justify-between py-3  items-start w-full">
         <div
-          onClick={() => navigate("/")}
+          onClick={() => {
+            navigate("/");
+            action();
+          }}
           className=" w-[150px] cursor-pointer h-[50px] "
         >
           <img className="w-full h-full" src={CollegeLogo} alt="" />
@@ -583,7 +586,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           </div>
         }
       </div>
-      <div className="flex  pt-5 scrollbar-custom items-start justify-start flex-grow w-full h-full overflow-auto">
+      <div className="flex  pt-5  items-start scrollbar-custom justify-start flex-grow w-full h-full overflow-auto">
         <ul className="flex flex-col text-[var(--dark-text)] items-start justify-center w-full gap-4 sm:gap-10">
           <li
             onClick={() => {
@@ -634,7 +637,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
           logout();
           action();
         }}
-        className="flex top-[85vh] left-2 right-2 absolute items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]     p-3 rounded duration-150"
+        className="flex top-[85vh] bg-[var(--light-foreground)] z-[100] left-2 right-2 absolute items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]     p-3 rounded duration-150"
       >
         <LogOut className="size-5" />
         Logout
