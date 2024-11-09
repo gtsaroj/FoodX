@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { addBanner } from "../../Services/banner.services";
 import { addLogs } from "../../Services/log.services";
 import { Selector } from "../Selector/Selector";
+import { useMutation, useQueryClient } from "react-query";
 
 interface UploadBannerProp {
   closeModal: () => void;
@@ -19,6 +20,8 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
+  const [link, setLink] = useState<string>();
+
   const [banner, setBanner] = useState<"banners" | "sponsors">("banners");
 
   const scroller = () => {
@@ -27,6 +30,8 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
     }
   };
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const currentRef = reference.current;
@@ -43,6 +48,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
           name: name as string,
           img: image as string,
           path: "banners",
+          link: link as string,
         });
         await addLogs({
           action: "create",
@@ -57,6 +63,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
           name: name as string,
           img: image as string,
           path: "sponsors",
+          link: link as string,
         });
         await addLogs({
           action: "create",
@@ -65,14 +72,45 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
         });
       }
       toast.dismiss(toastLoader);
-      toast.success("Banner successfully added.");
+      return;
     } catch (error) {
-      toast.error(error as string);
-      console.log(` Error > banner.upload.tsx ` + error);
+      throw new Error("Error while uploading banners");
+    } finally {
+      setImage("");
+      setName("");
+      closeModal();
     }
-    setImage("");
-    setName("");
-    closeModal();
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: handleSubmit,
+    onSuccess: () => {
+      toast.success("Banner added successfully!");
+      queryClient.invalidateQueries({ queryKey: "banners" });
+    },
+    onError: (error) => {
+      toast.error("Error while adding " + banner);
+      throw new Error("Error while adding " + banner + " " + error);
+    },
+  });
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const imageURL = URL.createObjectURL(file);
+      setImage(imageURL);
+
+      storeImageInFirebase(file, {
+        folder: (banner as "banners") || "sponsors",
+      }).then((url) => setImage(url));
+    } else {
+      toast.error("Only image files are allowed");
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   return (
@@ -86,7 +124,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
         </h3>
 
         <form
-          onSubmit={(event) => handleSubmit(event)}
+          onSubmit={(event) => mutate(event)}
           action=""
           className="sm:w-[600px]   w-full px-5 min-w-full py-7 gap-5 flex flex-col items-start justify-center"
         >
@@ -114,14 +152,34 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
               className="w-full border-[1px] border-[var(--dark-border)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
             />
           </div>
+          <div className=" w-full flex flex-col items-baseline justify-center gap-0.5">
+            <label
+              className="font-semibold pl-0.5 text-[15px] text-[var(--dark-text)]"
+              htmlFor=""
+            >
+              Link
+            </label>
+            <input
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setLink(event.target.value)
+              }
+              type="text"
+              value={link}
+              placeholder="https://..."
+              className="w-full border-[1px] border-[var(--dark-border)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
+            />
+          </div>
           {/* Third Row */}
           <div
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
             onClick={() => (image ? "" : fileRef.current?.click())}
             className="w-full h-[400px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
           >
             <input
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 const image = event.target.files && event.target.files[0];
+                setImage(URL.createObjectURL(image as File));
                 storeImageInFirebase(image as File, {
                   folder: "banners",
                 }).then((response) => setImage(response));

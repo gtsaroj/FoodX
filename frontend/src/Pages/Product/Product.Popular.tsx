@@ -102,7 +102,7 @@ export const PopularProduct = () => {
             )}
           </div>
           {initialData?.length > 0 && (
-            <div className="absolute z-50 flex justify-between invisible w-full px-1 duration-200 -translate-x-8 opacity-0 group-hover/popular:visible group-hover/popular:opacity-100 top-48">
+            <div className="absolute z-50 flex justify-between invisible w-full px-1 duration-200 -translate-x-8 opacity-0 group-hover/popular:visible group-hover/popular:opacity-100 top-[10rem] sm:top-48">
               <button
                 onClick={() => {
                   cardReference.current?.scrollBy({

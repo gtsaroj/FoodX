@@ -33,7 +33,7 @@ const Specials: React.FC = () => {
             </div>
           </div>
           {data && data?.length > 0 && (
-            <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 top-[17.87rem] flex justify-between">
+            <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 sm:top-[17.87rem] top-[11rem] flex justify-between">
               <button
                 onClick={() => {
                   specialsRef.current?.scrollBy({

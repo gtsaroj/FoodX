@@ -5,11 +5,17 @@ export const addBanner = async (data: {
   name: string;
   img: string;
   path: "sponsors" | "banners";
+  link: string;
 }) => {
   try {
     const response = await makeRequest({
       method: "post",
-      data: { title: data.name, image: data.img, path: data.path },
+      data: {
+        title: data.name,
+        image: data.img,
+        path: data.path,
+        link: data.link,
+      },
       url: "banners/add-banner",
     });
     return response.data.data;
@@ -24,7 +30,7 @@ export const getBanners = async (data: { path: "sponsors" | "banners" }) => {
       url: `banners/${data.path}`,
     });
 
-  return response.data.data
+    return response.data.data;
   } catch (error) {
     return null;
   }
