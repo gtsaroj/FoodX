@@ -157,9 +157,9 @@ const Cart: React.FC<CardProp> = ({ action }) => {
             ))
           ) : (
             <div className="flex flex-col h-full   py-16 items-center justify-center gap-9">
-              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-16" />
+              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer sm:size-20 size-16" />
 
-              <h1 className="text-[14px] tracking-wider text-[var(--dark-text)] ">
+              <h1 className=" sm:text-[18px] text-[14px] tracking-wider text-[var(--dark-text)] ">
                 Your cart is empty
               </h1>
             </div>

@@ -14,7 +14,6 @@ import { AppDispatch, RootState } from "../../Store";
 import { aggregateUserOrder } from "./order";
 import { useNavigate } from "react-router-dom";
 import { addToCart, removeCart } from "../../Reducer/product.reducer";
-import Modal from "../../Components/Common/Popup/Popup";
 import { Invoice } from "../../Components/Invoice/Invoice";
 import dayjs from "dayjs";
 import React from "react";
@@ -22,6 +21,8 @@ import {
   addProductToCart,
   removeProductFromCart,
 } from "../../Services/cart.services";
+import { Product } from "../../models/product.model";
+import { pdf } from "@react-pdf/renderer";
 
 export const OrderHistory = () => {
   const navigate = useNavigate();
@@ -39,8 +40,6 @@ export const OrderHistory = () => {
   }>({ currentPage: 1, perPage: 5, direction: "next" });
   const [totalData, setTotalData] = useState<number>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [isExport, setIsExport] = useState<boolean>(true);
-  const [selectedOrder, setSelectedOrder] = useState<UserOrder>();
   const store = useSelector((state: RootState) => state.root);
   const Columns: ColumnProps[] = React.useMemo(
     () => [
@@ -230,6 +229,43 @@ export const OrderHistory = () => {
     }
   }, [pagination.currentPage, pagination.direction]);
 
+  const downloadPdf = async (selectedOrder: UserOrder) => {
+    const doc = (
+      <Invoice
+        orders={[
+          {
+            orderDetails: {
+              products: selectedOrder?.products as Product[],
+              status: selectedOrder?.status as OrderStatus["status"],
+            },
+            invoiceData: {
+              invoiceDate: dayjs(selectedOrder?.time).format(
+                "	MMM D, YYYY h:mm A"
+              ),
+              invoiceNumber: selectedOrder!.id,
+            },
+            customerDetails: {
+              name: store?.auth?.userInfo?.fullName as string,
+              phoneNumber: parseInt(
+                store?.auth?.userInfo?.phoneNumber as string
+              ),
+              userId: store?.auth?.userInfo?.uid as string,
+            },
+          },
+        ]}
+      ></Invoice>
+    );
+    const asBlob = await pdf(doc).toBlob();
+    const url = URL.createObjectURL(asBlob);
+
+    // Create a temporary anchor element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "invoice.pdf";
+    document.body.appendChild(link);
+    link.click();
+  };
+
   return (
     <div className="w-full h-full text-[var(--dark-text)] flex flex-col gap-6 bg-[var(--light-foreground)] px-5 py-4   rounded items-start justify-center">
       <h1 className="sm:text-[25px] text-[21px] font-semibold tracking-wider ">
@@ -262,8 +298,7 @@ export const OrderHistory = () => {
           },
           downloadFn: (id: string) => {
             const findOrder = initialOrder?.find((order) => order.id === id);
-            setSelectedOrder(findOrder);
-            setIsExport(!isExport);
+            downloadPdf(findOrder as UserOrder);
           },
         }}
         pagination={{
@@ -280,37 +315,6 @@ export const OrderHistory = () => {
         totalData={(totalData as number) || 1}
         loading={loading}
       />
-      {!isExport && selectedOrder && (
-        <Modal
-          close={isExport}
-          isExport={true}
-          closeModal={() => setIsExport(!isExport)}
-        >
-          <Invoice
-            orders={[
-              {
-                orderDetails: {
-                  products: selectedOrder.products,
-                  status: selectedOrder.status as OrderStatus["status"],
-                },
-                invoiceData: {
-                  invoiceDate: dayjs(selectedOrder?.time).format(
-                    "	MMM D, YYYY h:mm A"
-                  ),
-                  invoiceNumber: selectedOrder!.id,
-                },
-                customerDetails: {
-                  name: store?.auth?.userInfo?.fullName as string,
-                  phoneNumber: parseInt(
-                    store?.auth?.userInfo?.phoneNumber as string
-                  ),
-                  userId: store?.auth?.userInfo?.uid as string,
-                },
-              },
-            ]}
-          ></Invoice>
-        </Modal>
-      )}
     </div>
   );
 };
