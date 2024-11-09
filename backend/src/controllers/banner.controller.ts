@@ -12,9 +12,15 @@ import { redisClient } from "../utils/Redis.js";
 
 const addNewBanner = asyncHandler(
   async (req: express.Request, res: express.Response) => {
-    const { title, image, path } = req.body;
+    const { title, image, path, link } = req.body;
     try {
-      const { collection } = await addBannerToFirestore(title, image, path);
+      const bannerLink = link ? link : "";
+      const { collection } = await addBannerToFirestore(
+        title,
+        image,
+        path,
+        bannerLink
+      );
       await redisClient.del(path);
       const getBanners = await getBannersFromDatabase(collection);
       await redisClient.set(collection, JSON.stringify(getBanners), {

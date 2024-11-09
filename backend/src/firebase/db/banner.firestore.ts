@@ -6,7 +6,8 @@ import { db } from "../index.js";
 const addBannerToFirestore = async (
   title: string,
   image: string,
-  collection: string
+  collection: string,
+  link: string
 ) => {
   const bannerRef = db.collection(collection);
   if (!bannerRef) throw new ApiError(404, "No banner collection found.");
@@ -17,6 +18,7 @@ const addBannerToFirestore = async (
         title,
         image,
         date: new Date(),
+        link: link ? link : "",
       })
       .then((docRef) =>
         docRef.update({

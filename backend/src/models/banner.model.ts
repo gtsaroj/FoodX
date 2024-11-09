@@ -3,6 +3,7 @@ export interface Banner {
   title: string;
   image: string;
   date: Date;
+  link?: string;
 }
 
 export interface BannerInfo extends Banner {
