@@ -36,24 +36,26 @@ export const SingleCard: React.FC<SingleCardProp> = ({
   return (
     <div
       key={prop.id}
-      className={`duration-1000 h-[100px]  border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
+      className={`duration-1000 h-[90px]  sm:h-[110px] border border-[var(--dark-border)]    group/cart relative flex gap-3 items-center  w-full bg-[var(--light-foreground)] rounded-md `}
     >
-      <div className="  w-[120px]  h-full  ">
+      <div className="  sm:w-[120px] w-[100px]  h-full  ">
         <img
           className="w-full h-full  object-cover shrink-0 object-center rounded-l-lg"
           src={prop.image}
           alt=""
         />
       </div>
-      <div className="flex flex-col py-1.5 gap-2 px-3 justfy-between">
-        <p className="sm:text-[18px] text-[15px]  text-[var(--dark-text)] font-bold tracking-wide">
-          {prop.name.length > 18 ? prop.name.substring(0,15) + "..." : prop.name  }
+      <div className="flex flex-col py-1.5  gap-2 px-3 justfy-between">
+        <p className="sm:text-[18px] text-[14px]  pt-1 text-[var(--dark-text)] font-bold tracking-wide">
+          {prop.name.length > 18
+            ? prop.name.substring(0, 15) + "..."
+            : prop.name}
         </p>
-        <p className="text-sm text-[var(--dark-secondary-text)] ">
+        <p className="text-[12px] text-[var(--dark-secondary-text)] ">
           Rs {prop.price}
         </p>
         <div className="flex gap-[40px]   items-center ">
-          <div className="flex gap-2 text-md text-[var(--primary-color)]">
+          <div className="flex sm:gap-3 gap-1 text-md text-[var(--primary-color)]">
             <button
               onClick={() => {
                 if (prop.quantity <= 1) {
@@ -67,11 +69,11 @@ export const SingleCard: React.FC<SingleCardProp> = ({
                   );
                 }
               }}
-              className=" h-[25px] flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+              className=" flex items-center justify-center  text-[10px] font-bold text-lg   w-[25px] py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
             >
               -
             </button>
-            <p className="w-[25px] h-[25px] text-sm rounded-full flex justify-center items-center   ">
+            <p className="text-sm rounded-full flex justify-center items-center   ">
               {" "}
               {prop.quantity}
             </p>
@@ -84,12 +86,12 @@ export const SingleCard: React.FC<SingleCardProp> = ({
                   })
                 )
               }
-              className=" h-[25px] justify-center flex items-center text-[10px] text-lg  w-[25px] font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
+              className="  justify-center flex items-center text-[10px] text-lg   font-bold  py-[4px] px-[6px] rounded-full  text-center hover:bg-[var(--primary-color)] hover:text-[var(--light-text)]"
             >
               +
             </button>
           </div>
-          <p className=" sm:text-sm text-xs  flex text-[var(--dark-secondary-text)] w-full items-center justify-center  px-[3px] py-[2px] rounded-sm">
+          <p className=" sm:text-sm text-[11px]  flex text-[var(--dark-secondary-text)] w-full items-center justify-center  px-[3px] py-[2px] rounded-sm">
             {" "}
             {prop.quantity} × {prop.price}
           </p>

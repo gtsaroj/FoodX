@@ -14,9 +14,8 @@ import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
 import { GiRingingBell } from "react-icons/gi";
-import { ChevronDown } from "lucide-react";
 import { getRemainingTime } from "../../Utility/date.utility";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 interface Notifications {
   isOpen: boolean;
 }
@@ -80,30 +79,32 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
         uid: user.uid as string,
         currentFirstDoc: null,
         currentLastDoc: null,
-        pageSize: 5,
+        pageSize: 10,
         sort: "desc",
         direction: "next",
       });
     }
   }, [isOpen]);
 
-  const removeNotification = async (id: string) => {
-    const toastLoader = toast.loading("Loading...");
-    try {
-      await deleteNotification({ id: id });
-      setNotifications((prev) => {
-        return prev.filter((notification) => notification.id !== id);
-      });
-    } catch (error) {
-      throw new Error("Error while remove notifcation " + error);
-    } finally {
-      toast.dismiss(toastLoader);
-    }
-  };
+  // const removeNotification = async (id: string) => {
+  //   const toastLoader = toast.loading("Loading...");
+  //   try {
+  //     await deleteNotification({ id: id });
+  //     setNotifications((prev) => {
+  //       return prev.filter((notification) => notification.id !== id);
+  //     });
+  //   } catch (error) {
+  //     throw new Error("Error while remove notifcation " + error);
+  //   } finally {
+  //     toast.dismiss(toastLoader);
+  //   }
+  // };
 
   return (
-    <div className="p-2 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
-      <h2 className="px-6 py-4 mb-4 text-lg font-semibold">Notifications</h2>
+    <div className="p-2 w-full min-h-40 flex flex-col items-start justify-center bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+      <h2 className=" py-2 mb-2 w-full  text-lg font-semibold">
+        Notifications
+      </h2>
       <div
         id="notification"
         className="w-full h-[350px] flex  scrollbar-custom   justify-center pr-4 "
@@ -116,7 +117,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
             getNotification({
               currentFirstDoc: currentDoc?.currentFirstDoc || null,
               currentLastDoc: currentDoc?.currentLastDoc || null,
-              pageSize: 5,
+              pageSize: 10,
               sort: "desc",
               uid: user.uid as string,
               direction: "next",
@@ -126,7 +127,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
             loader && (
               <div className="relative flex flex-col items-center justify-center w-full h-full pt-3 ">
                 {/* <Skeleton height={70} count={5} /> */}
-                <div className="flex items-center   w-full gap-2  min-[200px] h-full min-h-[200px] ">
+                <div className="flex items-center justify-center   w-full gap-2  h-full min-h-[200px] ">
                   <RotatingLines strokeColor="var(--dark-text)" width="27" />
                   <span className="text-[17px] text-[var(--dark-text)] tracking-wider ">
                     {" "}
@@ -147,7 +148,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
                 key={notification.id}
                 isLoading={loader}
                 notification={notification}
-                closeNotification={(id) => removeNotification(id)}
+                // closeNotification={(id) => removeNotification(id)}
               />
             ))
           )}
@@ -159,14 +160,11 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
 
 interface NotificationProp {
   notification: Notification;
-  closeNotification: (id: string) => void;
+  closeNotification?: (id: string) => void;
   isLoading: boolean;
 }
 
-const NoticationContainer: React.FC<NotificationProp> = ({
-  notification,
-  closeNotification,
-}) => {
+const NoticationContainer: React.FC<NotificationProp> = ({ notification }) => {
   const [openId, setOpenId] = useState<string>("");
 
   const handleToggle = (id: string) => {
@@ -195,34 +193,22 @@ const NoticationContainer: React.FC<NotificationProp> = ({
             </p>
           </div>
         </div>
-        <button onClick={() => closeNotification(notification.id)}>
-          <span className="text-red-500 tracking-widest font-semibold  text-[12px]">
-            X
-          </span>
-        </button>
       </div>
 
       {/* Notification Message */}
       <p
+        onClick={() => handleToggle(notification.id)}
         className={`text-sm text-gray-400 mt-2 transition-all duration-300 overflow-hidden ${
-          openId === notification.id
-            ? "max-h-[500px] opacity-100"
-            : "max-h-0 opacity-0"
+          openId === notification.id ? "max-h-[500px] " : " "
         }`}
       >
-        {notification.message}
+        {openId === notification.id
+          ? notification.message
+          : notification.message.substring(0, 40) + "..."}
       </p>
 
       {/* Chevron Icon and Time */}
-      <div className="flex justify-between items-center pt-2 text-xs text-[var(--dark-secondary-text)]">
-        <button
-          onClick={() => handleToggle(notification.id)}
-          className="transition-transform"
-        >
-          <ChevronDown
-            className={`${openId === notification.id ? "rotate-180" : ""}`}
-          />
-        </button>
+      <div className="flex justify-end items-center pt-2 text-xs text-[var(--dark-secondary-text)]">
         <span>
           {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} ago
         </span>

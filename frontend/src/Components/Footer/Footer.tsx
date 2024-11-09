@@ -41,8 +41,8 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="grid w-full grid-cols-2 gap-8 py-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-6 p-8 ">
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-4  ">
+          <div className="flex sm:col-span-1 col-span-3 flex-col gap-6 p-8 ">
             <p className="font-bold tracking-wider">Quick Contact</p>
             <div className="flex flex-col gap-5">
               <div className="flex items-center gap-2 text-sm">
@@ -86,7 +86,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-5 px-5 py-8">
+          <div className="flex flex-col items-start gap-5 px-5 py-8">
             <p className="font-bold tracking-wider">Links</p>
             <div className="flex flex-col gap-3 text-sm text-white ">
               <a
@@ -109,7 +109,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          <div className="flex flex-col gap-5 px-5 py-8">
+          <div className="flex flex-col sm:col-span-1 col-span-2 gap-5 px-5 py-8">
             <p className="font-bold tracking-wider">Quick Links</p>
             <div className="flex flex-col gap-3 text-sm text-white ">
               <a
@@ -135,7 +135,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
-          <div className="flex flex-col items-center gap-5 px-5 py-8">
+          <div className="flex flex-col items-start gap-5 px-5 py-8">
             <p className="font-bold tracking-wider">Resources</p>
             <div className="flex flex-col gap-5 text-sm text-white pl-9">
               <a
