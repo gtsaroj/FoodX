@@ -6,10 +6,10 @@ import { PopularProduct } from "../Product/Product.Popular";
 const Home = () => {
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-6 ">
-      <div className="w-full max-w-[1500px] h-full flex flex-col gap-5 flex-grow">
+      <div className="w-full max-w-[1500px] h-full flex flex-col gap-20 flex-grow">
         <div className="">
           <OrderNotification />
-          <div className=" flex items-center md:flex-row flex-col  gap-2 justify-center">
+          <div className="flex flex-col items-center justify-center gap-5 px-3 md:flex-row">
             <Banner />
             <Sponsor />
           </div>
@@ -20,7 +20,7 @@ const Home = () => {
         <PopularProduct/>
         <div
           id="categories"
-          className="w-full flex items-center justify-center"
+          className="flex items-center justify-center w-full"
         >
           <MenuType />
         </div>
