@@ -49,7 +49,7 @@ export const LoginContainer: React.FC = () => {
           </h1>
         </div>
         <div className="px-3 py-4">
-          <form
+          <form autoComplete="off"
             className="flex  text-[var(--dark-text)] flex-col gap-4 p-2"
             onSubmit={LoginFormSubmit}
           >

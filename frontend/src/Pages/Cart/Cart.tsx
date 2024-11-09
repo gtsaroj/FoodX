@@ -141,12 +141,12 @@ const Cart: React.FC<CardProp> = ({ action }) => {
       className="flex flex-col w-full justify-between h-full gap-3"
     >
       <div className="flex flex-col items-start ">
-        <h3 className="w-full py-2 sm:text-[25px] text-[21px] font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full py-2 sm:text-[25px] text-[18px] font-semibold tracking-wide text-[var(--dark-text)]">
           My Cart
         </h3>
 
         <div
-          className={`flex flex-col relative sm:h-[400px] min-h-[200px] h-[350px]  pr-2 items-center gap-2 w-full py-5 scrollbar-custom duration-200   overflow-auto`}
+          className={`flex flex-col relative sm:h-[400px] min-h-[200px] h-[300px]  pr-2 items-center gap-2 w-full py-5 scrollbar-custom duration-200   overflow-auto`}
         >
           {store?.cart?.products?.length > 0 ? (
             store?.cart?.products?.map((singleSelectedProduct) => (
@@ -157,9 +157,9 @@ const Cart: React.FC<CardProp> = ({ action }) => {
             ))
           ) : (
             <div className="flex flex-col h-full   py-16 items-center justify-center gap-9">
-              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-20" />
+              <ShoppingBag className=" text-[var(--dark-text)] cursor-pointer size-16" />
 
-              <h1 className="text-[25px] tracking-wider text-[var(--dark-text)] ">
+              <h1 className="text-[14px] tracking-wider text-[var(--dark-text)] ">
                 Your cart is empty
               </h1>
             </div>

@@ -188,3 +188,17 @@
     opacity: 1;
   }
 }
+
+@media (max-width: 356px) {
+  .below-xs {
+    width: 290px;
+  }
+  .below-xs-favourite {
+    width: 294px;
+    right: -103px;
+  }
+  .below-xs-cart {
+    width: 309px;
+    right: -146px;
+  }
+}

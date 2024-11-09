@@ -78,13 +78,13 @@ const Favourite: React.FC = () => {
   }, [store.favourite.favourite, isFetched]);
 
   return (
-    <div className="flex flex-col   rounded-lg  w-[350px]   pb-2 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
+    <div className="flex flex-col    rounded-lg  w-full   pb-2 justify-between    bg-[var(--light-foreground)] sm:w-[450px]    ">
       <div className="flex flex-col items-start ">
-        <h3 className="w-full border-b-[1px] border-[var(--dark-border)] text-[20px]  :smtext-[25px] px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
+        <h3 className="w-full border-b-[1px] border-[var(--dark-border)] text-[18px]  :smtext-[25px] px-3 py-5 font-semibold tracking-wide text-[var(--dark-text)]">
           My Favourite
         </h3>
       </div>
-      <div className="flex  h-[410px]  scrollbar-custom sm:h-[480px] px-2 sm:px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
+      <div className="flex  h-[300px]  scrollbar-custom sm:h-[480px] px-2 sm:px-4 flex-col duration-500 items-center gap-6 w-full py-5 overflow-y-scroll">
         {initialProducts.length > 0 ? (
           initialProducts?.map((singleSelectedProduct) => (
             <FavouriteCard

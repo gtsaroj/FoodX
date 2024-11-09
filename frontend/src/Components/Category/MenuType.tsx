@@ -9,6 +9,8 @@ import { Frown } from "lucide-react";
 import { Category } from "../../models/category.model";
 import { useQuery } from "react-query";
 import { specialProducts } from "../../Hooks/useAllProducts";
+import { ProgressiveImage } from "../../Utility/progressImage";
+import FoodX from "../../assets/logo/Fx.png";
 
 export interface categoriesTagOption {
   name: string;
@@ -206,11 +208,11 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         className="w-full bg-slate-300 hover:opacity-[0.9] duration-150 absolute z-[2] h-full"
       >
         <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-8   ">
-          <img
-            src={prop.image}
-            className="sm:w-[260px] w-[240px] scale-[0.9] sm:scale-[1.05] h-[130px] sm:h-[180px] rounded-3xl "
-            alt=""
-            loading="lazy"
+          <ProgressiveImage
+            className="sm:w-[260px] w-[240px] scale-[0.9] sm:scale-[1.05] h-[130px] sm:h-[180px] rounded-3xl"
+            highResSrc={prop.image}
+            alt={prop.name}
+            lowResSrc={FoodX}
           />
         </div>
         <h1

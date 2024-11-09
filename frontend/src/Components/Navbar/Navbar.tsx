@@ -358,13 +358,13 @@ export const Navbar: React.FC = () => {
               <div
                 className={`absolute ${
                   openCart
-                    ? "visible opacity-100 translate-y-0"
+                    ? "visible below-xs-cart opacity-100 translate-y-0"
                     : "invisible translate-y-10 opacity-0"
                 } duration-150 top-10  bg-[var(--light-foreground)] rounded-lg p-2 ${
                   store?.auth?.success
-                    ? "right-[-154px] sm:right-[-139px] "
-                    : "sm:right-[-85px]  right-[-95px] "
-                } w-[342px] sm:w-[450px] h-[524px] sm:h-[585px] `}
+                    ? "right-[-147px] sm:right-[-139px] "
+                    : "sm:right-[-85px]  right-[-94px] "
+                } w-[342px] sm:w-[450px]  sm:h-[585px] `}
               >
                 <Cart action={() => setOpenCart(!openCart)} />
               </div>
@@ -404,7 +404,7 @@ export const Navbar: React.FC = () => {
               </div>
               {/* Favourite container */}
               <div
-                className={` sm:left-[-23rem] right-[-148px] sm:w-[450px] w-[387px] top-12 duration-150  absolute ${
+                className={` sm:left-[-23rem] right-[-104px] sm:w-[450px] below-xs-favourite w-[340px] top-12 duration-150  absolute ${
                   !openFavourite && authUser.fullName
                     ? "visible z-10 translate-y-0 opacity-100 "
                     : "-translate-y-2 invisible opacity-0 z-[-100]"
@@ -431,11 +431,11 @@ export const Navbar: React.FC = () => {
                 />
 
                 <div
-                  className={`absolute  w-[350px] z-30 duration-150 ${
+                  className={`absolute below-xs w-[350px] z-30 duration-150 ${
                     openNotification
                       ? "visible opacity-100 -translate-y-0 "
                       : "invisible opacity-0 translate-y-10"
-                  }   sm:right-[2.7rem] right-[-70px]  top-9`}
+                  }   sm:right-[0rem] right-[-68px]  top-9`}
                 >
                   <NotificationPage isOpen={openNotification} />
                 </div>

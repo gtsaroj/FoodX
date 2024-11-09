@@ -2,6 +2,7 @@ import Banner, { Sponsor } from "./Banner";
 import Specials from "./Specials";
 import { MenuType } from "../../Components/Category/MenuType";
 import OrderNotification from "../Order/Order.Notification";
+import { PopularProduct } from "../Product/Product.Popular";
 const Home = () => {
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-6 ">
@@ -16,6 +17,7 @@ const Home = () => {
         <div>
           <Specials />
         </div>
+        <PopularProduct/>
         <div
           id="categories"
           className="w-full flex items-center justify-center"
