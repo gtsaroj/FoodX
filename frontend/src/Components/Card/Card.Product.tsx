@@ -95,10 +95,11 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
       (singleProduct) => singleProduct.id == productId
     );
     if (findQuantity?.quantity && findQuantity?.quantity <= 1) {
-      removeProductFromCart(
-        store?.auth.userInfo?.uid as string,
-        productId as string
-      );
+      if (store?.auth?.success)
+        removeProductFromCart(
+          store?.auth.userInfo?.uid as string,
+          productId as string
+        );
       dispatch(removeCart(productId));
     } else {
       dispatch(
