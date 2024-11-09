@@ -17,14 +17,13 @@ const Home = () => {
         <div>
           <Specials />
         </div>
-    
+        <PopularProduct/>
         <div
           id="categories"
           className="w-full flex items-center justify-center"
         >
           <MenuType />
         </div>
-        <PopularProduct/>
       </div>
     </div>
   );

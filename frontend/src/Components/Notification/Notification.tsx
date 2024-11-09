@@ -5,7 +5,6 @@ import {
   ResponseNotification,
 } from "../../models/notification.model";
 import {
-  deleteNotification,
   fetchNotifications,
 } from "../../Services/notification.services";
 import InfiniteScroll from "react-infinite-scroll-component";
