@@ -1,4 +1,3 @@
-import { io } from "../app.js";
 import {
   addLogToFirestore,
   getLogsFromDatabase,
@@ -6,7 +5,6 @@ import {
 import { getUserFromDatabase } from "../firebase/db/user.firestore.js";
 import { logProps } from "../models/logs.model.js";
 import { User } from "../models/user.model.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
@@ -53,15 +51,6 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
       },
       `${role}Logs`
     );
-    const logData = {
-      uid,
-      fullName,
-      role,
-      avatar,
-      action,
-      detail,
-      date,
-    };
     return res
       .status(200)
       .json(
@@ -76,11 +65,11 @@ const addLogs = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Error adding logs in database.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -139,11 +128,11 @@ const fetchLogs = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching logs from database",
-          null,
-          error as string[]
+          false
         )
       );
   }

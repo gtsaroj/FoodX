@@ -14,7 +14,6 @@ import {
   searchUserInDatabase,
   updateUserDataInFirestore,
 } from "../firebase/db/user.firestore.js";
-
 import { DecodeToken, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -23,7 +22,6 @@ import { OptGenerator } from "../utils/otpGenerator.js";
 import { redisClient } from "../utils/Redis.js";
 import { sendEmail } from "../utils/email.js";
 
-//Cookie options
 const options = {
   httpOnly: true,
   secure: true,
@@ -72,7 +70,9 @@ const loginUser = asyncHandler(async (req: any, res: any) => {
   } catch (error) {
     return res
       .status(500)
-      .json(new ApiError(500, `User login failed.`, null, error as string[]));
+      .json(
+        new ApiResponse(500, error as string[], `User login failed.`, false)
+      );
   }
 });
 
@@ -116,11 +116,11 @@ const signUpNewUser = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Error while adding new user in database.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -200,11 +200,11 @@ const refreshAccessToken = asyncHandler(async (req: any, res: any) => {
       .clearCookie("accessToken")
       .clearCookie("refreshToken")
       .json(
-        new ApiError(
+        new ApiResponse(
           403,
+          error as string[],
           "Error  on refreshing the Access Token",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -249,7 +249,7 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
       await updateUserDataInFirestore(user.uid, user.role, "avatar", avatar);
     }
     const updatedUser = await getUserFromDatabase(user.uid, user.role);
-    res
+    return res
       .status(200)
       .json(
         new ApiResponse(
@@ -262,7 +262,14 @@ const updateAccount = asyncHandler(async (req: any, res: any) => {
   } catch (error) {
     return res
       .status(500)
-      .json(new ApiError(500, "Error updating user in database."));
+      .json(
+        new ApiResponse(
+          500,
+          error as string[],
+          "Error updating user in database.",
+          false
+        )
+      );
   }
 });
 
@@ -290,7 +297,7 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
     }
 
     const updatedUser = await getUserFromDatabase(id, role);
-    res
+    return res
       .status(200)
       .json(
         new ApiResponse(
@@ -303,7 +310,14 @@ const updateUser = asyncHandler(async (req: any, res: any) => {
   } catch (error) {
     return res
       .status(500)
-      .json(new ApiError(500, "Error while updating user data."));
+      .json(
+        new ApiResponse(
+          500,
+          error as string[],
+          "Error while updating user data.",
+          false
+        )
+      );
   }
 });
 
@@ -333,11 +347,11 @@ const updateUserRole = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Error while updating user role.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -358,11 +372,11 @@ const getUser = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching user information.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -397,7 +411,7 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
       direction === "prev" ? currentFirstDoc : null,
       direction
     );
-    res
+    return res
       .status(200)
       .json(
         new ApiResponse(
@@ -411,11 +425,11 @@ const fetchUsers = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching users from database",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -458,7 +472,14 @@ const deleteUser = asyncHandler(async (req: any, res: any) => {
   } catch (error) {
     return res
       .status(500)
-      .json(new ApiError(500, "Error deleting user from firestore."));
+      .json(
+        new ApiResponse(
+          500,
+          error as string[],
+          "Error deleting user from firestore.",
+          false
+        )
+      );
   }
 });
 
@@ -486,7 +507,14 @@ const deleteUsersInBulk = asyncHandler(async (req: any, res: any) => {
   } catch (error) {
     return res
       .status(500)
-      .json(new ApiError(500, "Error while deleting users."));
+      .json(
+        new ApiResponse(
+          500,
+          error as string[],
+          "Error while deleting users.",
+          false
+        )
+      );
   }
 });
 
@@ -504,11 +532,11 @@ const getSearchUser = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Unable to fetch user information.",
-          null,
-          error as string[]
+          false
         )
       );
   }

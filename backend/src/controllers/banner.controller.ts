@@ -4,7 +4,6 @@ import {
   deleteBannerFromDatabase,
   getBannersFromDatabase,
 } from "../firebase/db/banner.firestore.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
@@ -40,11 +39,11 @@ const addNewBanner = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding banner.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -73,11 +72,11 @@ const getAllBanners = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while fetching banners.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -110,7 +109,16 @@ const deleteBannersInBulk = asyncHandler(async (req: any, res: any) => {
         )
       );
   } catch (error) {
-    throw new ApiError(500, "Error while deleting banners.");
+    return res
+      .status(500)
+      .json(
+        new ApiResponse(
+          500,
+          error as string[],
+          "Error while deleting banners.",
+          false
+        )
+      );
   }
 });
 const deleteBanner = asyncHandler(
@@ -134,12 +142,16 @@ const deleteBanner = asyncHandler(
           )
         );
     } catch (error) {
-      throw new ApiError(
-        501,
-        "Error while deleting a banner.",
-        null,
-        error as string[]
-      );
+      return res
+        .status(500)
+        .json(
+          new ApiResponse(
+            500,
+            error as string[],
+            "Error deleting a banner.",
+            false
+          )
+        );
     }
   }
 );

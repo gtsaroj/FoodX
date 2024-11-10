@@ -35,11 +35,11 @@ const getPopularProducts = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Unable to fetch popular products.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -71,11 +71,11 @@ const getNormalProducts = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Unable to fetch product information.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -102,11 +102,11 @@ const getSpecialProducts = asyncHandler(async (_: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Unable to fetch special product information.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -136,11 +136,11 @@ const getProductByTag = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Unable to fetch product information based on categories.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -176,11 +176,11 @@ const addProduct = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding new product in database.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -216,11 +216,11 @@ const updateProduct = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while updating product.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -257,11 +257,11 @@ const deleteProductsInBulk = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while deleting products.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -293,11 +293,11 @@ const deleteProduct = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while deleting product.",
-            null,
-            error as string[]
+            false
           )
         );
     }

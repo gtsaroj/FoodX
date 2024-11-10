@@ -1,6 +1,5 @@
 import {
   addNotificationToDatabase,
-  bulkDeleteNotificationsFromDatabase,
   deleteNotificationFromDatabase,
   getNotificationsFromDatabase,
 } from "../firebase/db/notification.firestore.js";
@@ -37,11 +36,11 @@ const addNotification = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Error adding notifications.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -90,11 +89,11 @@ const fetchNotifications = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching notifications from database",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -110,44 +109,17 @@ const deleteNotification = asyncHandler(async (req: any, res: any) => {
         new ApiResponse(200, id, "Notification deleted successfully", true)
       );
   } catch (error) {
-    throw new ApiError(
-      501,
-      "Error while deleting a notification.",
-      null,
-      error as string[],
-      undefined,
-      false
-    );
-  }
-});
-const deleteNotificationsInBulk = asyncHandler(async (req: any, res: any) => {
-  const {
-    ids,
-  }: {
-    ids: string[];
-  } = req.body;
-  try {
-    await bulkDeleteNotificationsFromDatabase(ids);
     return res
-      .status(200)
+      .status(500)
       .json(
-        new ApiResponse(200, ids, "Notifications deleted successfully.", true)
+        new ApiResponse(
+          500,
+          error as string[],
+          "Something went wrong while deleting notification from database",
+          false
+        )
       );
-  } catch (error) {
-    throw new ApiError(
-      500,
-      "Error while deleting notifications.",
-      null,
-      error as string[],
-      undefined,
-      false
-    );
   }
 });
 
-export {
-  addNotification,
-  deleteNotification,
-  bulkDeleteNotificationsFromDatabase,
-  fetchNotifications,
-};
+export { addNotification, deleteNotification, fetchNotifications };

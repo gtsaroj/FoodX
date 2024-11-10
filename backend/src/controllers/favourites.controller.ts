@@ -3,7 +3,6 @@ import {
   getFavouritesFromFirestore,
   removeItemFromFavourite,
 } from "../firebase/db/favourite.firestore.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
@@ -16,9 +15,13 @@ const addFavourite = asyncHandler(
       await addProductInFavourite(uid, productId);
       await redisClient.del(`favourites:${uid}`);
       const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
-        EX: 600,
-      });
+      await redisClient.set(
+        `favourites:${uid}`,
+        JSON.stringify(updatedFavourites),
+        {
+          EX: 600,
+        }
+      );
       return res
         .status(200)
         .json(
@@ -33,11 +36,11 @@ const addFavourite = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding item into favourites.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -51,9 +54,13 @@ const removeFavourites = asyncHandler(
       await removeItemFromFavourite(uid, productId);
       await redisClient.del(`favourites:${uid}`);
       const updatedFavourites = await getFavouritesFromFirestore(uid);
-      await redisClient.set(`favourites:${uid}`, JSON.stringify(updatedFavourites), {
-        EX: 600,
-      });
+      await redisClient.set(
+        `favourites:${uid}`,
+        JSON.stringify(updatedFavourites),
+        {
+          EX: 600,
+        }
+      );
       return res
         .status(200)
         .json(
@@ -68,11 +75,11 @@ const removeFavourites = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while removing item from favourites.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -103,11 +110,11 @@ const getFavourites = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while fetching item from favourites.",
-            null,
-            error as string[]
+            false
           )
         );
     }
