@@ -18,6 +18,7 @@ import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
 import { useMutation, useQueryClient } from "react-query";
 import { compressImage } from "../../Utility/imageCompressor";
+import { MoonLoader } from "react-spinners";
 
 interface UploadFoodProp {
   closeModal: () => void;
@@ -36,7 +37,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
     collection: "products",
   });
   const [initialCategory, setIntitialCategory] = useState<Category[]>([]);
-
+  const [loading, setLoading] = useState<boolean>(false);
   const categories = async () => {
     try {
       const response = await getCategories();
@@ -50,6 +51,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
+      setLoading(true);
       const compressedImage = await compressImage(file, {
         maxWidth: 150,
         maxHeight: 150,
@@ -69,6 +71,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
           product: { ...prev.product, image: url },
         }))
       );
+      setLoading(false);
     } else {
       toast.error("Only image files are allowed");
     }
@@ -95,6 +98,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
       },
     };
     try {
+      setLoading(true);
       await addProducts(convertOGProduct);
       await addLogs({
         action: "create",
@@ -107,6 +111,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
       throw new Error("Error while uploading products" + error);
     } finally {
       closeModal();
+      setLoading(false);
       setAddFood(() => ({
         collection: "",
         product: {
@@ -159,6 +164,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
                 Item Name
               </label>
               <input
+                required
                 type="text"
                 onChange={(event) =>
                   setAddFood((prev) => ({
@@ -178,6 +184,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
                 Price
               </label>
               <input
+                required
                 type="number"
                 onChange={(event) =>
                   setAddFood((prev) => ({
@@ -224,6 +231,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
               </label>
               <div className="w-full py-1 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)] ">
                 <input
+                  required
                   type="number"
                   onChange={(event) =>
                     setAddFood((prev) => ({
@@ -257,9 +265,11 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
               className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)] stroke-[1px] py-20"
             >
               <input
+                required
                 ref={fileRef as any}
                 onChange={async (event: ChangeEvent<HTMLInputElement>) => {
                   if (!event.target.files) return;
+                  setLoading(true);
                   const compresssedImage = await compressImage(
                     event.target.files[0],
                     { maxWidth: 150, maxHeight: 150, quality: 0.7 }
@@ -282,6 +292,7 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
                       image: imageUrl,
                     },
                   }));
+                  setLoading(false);
                 }}
                 type="file"
                 className="hidden"
@@ -319,10 +330,12 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
             </label>
           </div>
           <button
+            disabled={loading}
             type="submit"
-            className="w-full text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full flex items-center text-[16px] justify-center gap-3 text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
+            {loading && <MoonLoader size={18} color="white" />}
           </button>
         </form>
       </div>

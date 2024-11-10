@@ -19,6 +19,7 @@ export const Selector: React.FC<SelectorPop> = ({
         className="flex items-center  justify-between"
       >
         <input
+          required
           type="text"
           className="w-full py-1 bg-[var(--light-foreground)]  outline-none cursor-pointer "
           readOnly

@@ -6,6 +6,7 @@ import { addCategory } from "../../Services/category.services";
 import { addLogs } from "../../Services/log.services";
 import { compressImage } from "../../Utility/imageCompressor";
 import { useMutation, useQueryClient } from "react-query";
+import { MoonLoader } from "react-spinners";
 
 interface CategoryModal {
   closeModal: () => void;
@@ -13,7 +14,7 @@ interface CategoryModal {
 
 export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
   const queryClient = useQueryClient();
-
+  const [loading, setLoading] = useState<boolean>(false);
   const reference = useRef<HTMLDivElement>();
   // const [Scroll, setScroll] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>("");
@@ -33,6 +34,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
     const toastLoader = toast.loading("Adding new category...");
 
     try {
+      setLoading(true);
       await addCategory({
         name: categoryName,
         image: imageURL,
@@ -49,6 +51,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
       console.error("Error adding category:", error);
       toast.error("Failed to add category");
     } finally {
+      setLoading(false);
       closeModal();
       setCategoryName("");
       setImageURL("");
@@ -60,6 +63,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
     const file = event.dataTransfer.files[0];
 
     if (file && file.type.startsWith("image/")) {
+      setLoading(true);
       const compressedImage = await compressImage(file, {
         maxHeight: 150,
         maxWidth: 150,
@@ -71,6 +75,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
       storeImageInFirebase(compressedImage as File, {
         folder: "categories",
       }).then((url) => setImageURL(url));
+      setLoading(false);
     } else {
       toast.error("Only image files are allowed");
     }
@@ -119,6 +124,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
               Category Name
             </label>
             <input
+              required
               onChange={(e) => setCategoryName(e.target.value)}
               type="text"
               placeholder="Pizza"
@@ -139,9 +145,11 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
               className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px] py-20"
             >
               <input
+                required
                 ref={fileRef as any}
                 onChange={async (event) => {
                   if (event.target.files) {
+                    setLoading(true);
                     const compressedImage = await compressImage(
                       event.target.files[0],
                       { maxHeight: 150, maxWidth: 150, quality: 0.7 }
@@ -150,9 +158,11 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
                     setImageURL(URL.createObjectURL(compressedImage as Blob));
                     storeImageInFirebase(compressedImage as File, {
                       folder: "categories",
-                    }).then((res) => {
-                      setImageURL(res);
-                    });
+                    })
+                      .then((res) => {
+                        setImageURL(res);
+                      })
+                      .finally(() => setLoading(false));
                   }
                 }}
                 type="file"
@@ -171,10 +181,12 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
           )}
           {/* Third Row */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full text-white transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
+            {loading && <MoonLoader size={18} color="white" />}
           </button>
         </form>
       </div>

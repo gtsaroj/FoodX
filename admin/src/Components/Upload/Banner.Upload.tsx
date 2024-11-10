@@ -13,6 +13,7 @@ import { addLogs } from "../../Services/log.services";
 import { Selector } from "../Selector/Selector";
 import { useMutation, useQueryClient } from "react-query";
 import { compressImage } from "../../Utility/imageCompressor";
+import { MoonLoader } from "react-spinners";
 
 interface UploadBannerProp {
   closeModal: () => void;
@@ -22,6 +23,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
   const [name, setName] = useState<string>();
   const [image, setImage] = useState<string>();
   const [link, setLink] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [banner, setBanner] = useState<"banners" | "sponsors">("banners");
 
@@ -44,6 +46,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
     if (!image && !name) return toast.error("All files are required");
     const toastLoader = toast.loading("Loading...");
     try {
+      setLoading(true);
       if (banner === "banners") {
         await addBanner({
           name: name as string,
@@ -72,11 +75,14 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
           detail: `sponsor : ${name} `,
         });
       }
+      setImage("");
+      setName("");
       toast.dismiss(toastLoader);
       return;
     } catch (error) {
       throw new Error("Error while uploading banners");
     } finally {
+      setLoading(false);
       setImage("");
       setName("");
       closeModal();
@@ -99,6 +105,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
     if (file && file.type.startsWith("image/")) {
+      setLoading(true);
       const imageURL = URL.createObjectURL(file);
       setImage(imageURL);
 
@@ -108,6 +115,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
     } else {
       toast.error("Only image files are allowed");
     }
+    setLoading(false);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -145,6 +153,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
               Banner Name
             </label>
             <input
+              required
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setName(event.target.value)
               }
@@ -161,6 +170,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
               Link
             </label>
             <input
+              required
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setLink(event.target.value)
               }
@@ -178,8 +188,10 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
             className="w-full h-[400px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
           >
             <input
+              required
               onChange={async (event: ChangeEvent<HTMLInputElement>) => {
                 const image = event.target.files && event.target.files[0];
+                setLoading(true);
                 const compressedImg = await compressImage(image as File, {
                   maxHeight: 600,
                   maxWidth: 1440,
@@ -189,7 +201,11 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
                 setImage(URL.createObjectURL(compressedImg as File));
                 storeImageInFirebase(compressedImg as File, {
                   folder: "banners",
-                }).then((response) => setImage(response));
+                })
+                  .then((response) => {
+                    setImage(response);
+                  })
+                  .finally(() => setLoading(false));
               }}
               ref={fileRef as any}
               type="file"
@@ -213,10 +229,12 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
             )}
           </div>
           <button
+            disabled={loading}
             type="submit"
-            className="w-full text-white dark:text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
+            className="w-full tracking-wide text-[16px] flex justify-center items-center gap-3 text-white dark:text-[var(--dark-text)] transition-all rounded py-2.5 bg-[var(--primary-color)] hover:bg-[var(--primary-dark)] "
           >
             Save
+            {loading && <MoonLoader size={18} color="white" />}
           </button>
         </form>
       </div>
