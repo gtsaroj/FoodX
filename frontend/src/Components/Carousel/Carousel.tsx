@@ -8,14 +8,8 @@ interface CarouselProp {
   actions?: boolean;
   link?: string;
 }
-const Carousel: React.FC<CarouselProp> = ({
-  props,
-  time,
-  actions = true,
-  link,
-}) => {
+const Carousel: React.FC<CarouselProp> = ({ props, time, actions = true }) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
-  const [loadedImage, setLoadedImage] = useState<string>("");
 
   const imageRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<any>();
@@ -57,31 +51,22 @@ const Carousel: React.FC<CarouselProp> = ({
     };
   }, [currentSlide]);
 
-  useEffect(() => {
-    const img = new Image();
-    img.src = props[currentSlide].image;
-    img.onload = () => {
-      setLoadedImage(props[currentSlide].image);
-    };
-  }, [currentSlide]);
-
   return (
     <div className="relative w-full h-full py-8 group z-1">
       <a
+        aria-label={`go to ${props[currentSlide].title}`}
         onClick={(e) => {
-          if (!link) e.preventDefault();
+          if (!props[currentSlide].link) e.preventDefault();
         }}
-        aria-disabled={!link}
-        href={link ? link : ""}
+        aria-disabled={!props[currentSlide].link}
+        href={props[currentSlide].link ? props[currentSlide].link : ""}
+        target="_blank"
       >
         <div
           className="w-full h-full overflow-hidden duration-500 bg-center bg-no-repeat bg-cover rounded-xl"
           ref={imageRef}
           style={{
-            backgroundImage: `url(${
-              loadedImage ||
-              "https://hireamarketer.com/wp-content/themes/funnelgorgeous/images/default-thumbnail.png"
-            })`,
+            backgroundImage: `url(${props[currentSlide].image})`,
           }}
         >
           {actions && (

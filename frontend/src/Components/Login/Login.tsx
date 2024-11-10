@@ -42,44 +42,38 @@ export const LoginContainer: React.FC = () => {
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-8">
       <div className="w-full  bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
-        <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
-          <h1 className="md:hidden text-[var(--dark-text)] ">Login</h1>
-          <h1 className="hidden md:block text-[var(--dark-text)] ">
-            Login with Email
-          </h1>
+        <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[25px] sm:text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
+          <h1>Welcome Back to FoodX</h1>
         </div>
         <div className="px-3 py-4">
-          <form autoComplete="off"
+          <form
+            autoComplete="off"
             className="flex  text-[var(--dark-text)] flex-col gap-4 p-2"
             onSubmit={LoginFormSubmit}
           >
-            <div className="relative flex flex-col gap-2">
-              <label htmlFor="logEmail" className="text-[15px]">
-                Email
-              </label>
+            <label className="relative flex flex-col gap-1">
+              <h1 className="text-[15px]">Email</h1>
               <input
-                type="email"
                 name="email"
+                type="email"
                 autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-[var(--dark-border)] border-[1px] sm:text-[16px] text-[14px]  bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
+                className=" logPassword border-[var(--dark-border)] border-[1px] sm:text-[16px] text-[14px]  bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
-            </div>
-            <div className="relative flex flex-col gap-2">
-              <label htmlFor="logPassword" className="text-[15px]">
-                Password
-              </label>
+            </label>
+            <label className="relative flex flex-col gap-1">
+              <h1 className="text-[15px]">Password</h1>
               <input
-                type={passwordType}
                 name="password"
+                type={passwordType}
                 autoComplete="off"
                 maxLength={25}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--dark-border)] sm:text-[16px] text-[14px] border-[1px] bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[var(--dark-border)] sm:text-[16px] text-[14px] border-[1px] bg-transparent rounded-md h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (
@@ -97,7 +91,7 @@ export const LoginContainer: React.FC = () => {
                   <EyeOff className=" size-5 sm:size-6" />
                 </div>
               )}
-            </div>
+            </label>
 
             <p
               onClick={() => navigate("/forgot-password")}
@@ -106,6 +100,8 @@ export const LoginContainer: React.FC = () => {
               Forgot Password?
             </p>
             <button
+              type="submit"
+              aria-label="login-button"
               disabled={loading}
               className="sm:h-[40px] h-[37px] rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-light)] text-white  text-lg sm:text-xl  tracking-wider font-semibold transition-colors duration-500 ease-in-out mt-5 "
             >

@@ -31,8 +31,8 @@ export const PopularProduct = () => {
   const cardReference = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="w-full h-full text-[var(--dark-text)] relative group/popular flex flex-col gap-6 p-8   bg-[var(--light-foreground)]   rounded items-start justify-center ">
-      <h1 className="sm:text-[25px] text-[20px] font-semibold  tracking-wider ">
+    <div className="w-full h-full text-[var(--dark-text)] relative group/popular flex flex-col gap-6  sm:p-8 p-3   bg-[var(--light-foreground)]   rounded items-start justify-center ">
+      <h1 className="sm:text-[25px] text-[16px]   font-semibold  tracking-wider ">
         Popular products
       </h1>
       <div
@@ -71,38 +71,17 @@ export const PopularProduct = () => {
             ) : (
               <div className="flex w-full gap-4 ">
                 <Skeleton
-                  height={230}
-                  width={330}
+                  className="w-full flex   h-full"
+                  containerClassName="lg:w-[1200px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                   baseColor="var(--light-background)"
                   highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={230}
-                  width={330}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={230}
-                  width={330}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
-                />
-                <Skeleton
-                  height={230}
-                  width={330}
-                  baseColor="var(--light-background)"
-                  highlightColor="var(--light-foreground)"
-                  count={1}
+                  count={5}
                 />
               </div>
             )}
           </div>
           {initialData?.length > 0 && (
-            <div className="absolute z-50 flex justify-between invisible w-full px-1 duration-200 -translate-x-8 opacity-0 group-hover/popular:visible group-hover/popular:opacity-100 top-[10rem] sm:top-48">
+            <div className="absolute z-50 flex justify-between invisible w-full px-1 duration-200 -translate-x-8 opacity-0 group-hover/popular:visible group-hover/popular:opacity-100 top-[8rem] sm:top-48">
               <button
                 onClick={() => {
                   cardReference.current?.scrollBy({

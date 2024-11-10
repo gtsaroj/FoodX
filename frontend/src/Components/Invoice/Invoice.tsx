@@ -5,7 +5,6 @@
     View,
     Document,
     StyleSheet,
-  PDFViewer,
   } from "@react-pdf/renderer";
   import { Product } from "../../models/product.model";
   import { OrderStatus } from "../../models/order.model";

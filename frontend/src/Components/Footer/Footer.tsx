@@ -15,7 +15,7 @@ const Footer: React.FC = () => {
       <footer className="w-full mt-16  rounded-t  bg-[var(--primary-color)] text-white place-items-center grid px-5">
         <div className="flex flex-col items-center justify-between w-full gap-5 p-3 border-b-4 border-b-[var(--light-border)] sm:flex-row">
           <div className="px-5 py-3 bg-[var(--light-background)] rounded">
-            <img src={CollegeLogo} className="max-h-[60px] " />
+            <img src={CollegeLogo} alt="logo" className="max-h-[60px] " />
           </div>
           <div className="flex flex-col items-center justify-center gap-3">
             <p className="text-lg font-bold tracking-wide ">Follow us: </p>

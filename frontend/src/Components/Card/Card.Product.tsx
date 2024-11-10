@@ -183,19 +183,20 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         className={`flex flex-col  ${
           style
             ? "  w-full md:w-[250px]"
-            : "sm:h-[280px]  w-[220px] h-[170px]  sm:w-[250px]"
+            : "sm:h-[280px]  w-[220px] h-[165px]  sm:w-[250px]"
         }  group/heart  cursor-pointer rounded-xl border border-[var(--dark-border)] pb-3 overflow-hidden  relative snap-start
           `}
       >
-        <div className="w-full h-[100px] sm:h-[180px] ">
+        <div className="w-full h-[103px] sm:h-[180px] ">
           <img
+            alt={prop.name}
             src={prop?.image}
             className="w-full h-full object-cover rounded-t-md"
           />
         </div>
         <div className="flex  items-center text-[var(--dark-text)] justify-between gap-1 px-5 pt-2 sm:pt-4 pb-2">
           <div className="flex flex-col gap-1 pt-2">
-            <h4 className="font-semibold tracking-wide text-[14px] sm:text-[16px] ">
+            <h4 className="font-semibold tracking-wide text-[13px] sm:text-[16px] ">
               {prop.name}
             </h4>
             <p className="flex gap-2 tracking-wider text-[12px] sm:text-[14px] ">
@@ -213,7 +214,10 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
         >
           {activeCart ? (
             <div className="flex items-center gap-2 px-1 text-xs select-none ">
-              <button onClick={() => handleClick(prop.id)}>
+              <button
+                aria-label="cart-button"
+                onClick={() => handleClick(prop.id)}
+              >
                 <Minus
                   className={` sm:size-5 size-3 hover:text-[var(--secondary-color)]`}
                   aria-disabled={"true"}
