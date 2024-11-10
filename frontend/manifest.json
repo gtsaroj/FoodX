@@ -1,0 +1,25 @@
+{
+    "name": "FoodX",
+    "short_name": "FoodX",
+    "description": "Browse menus, customize orders, and place them online with the FoodX platform.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1d4ed8",
+    "icons": [
+      {
+        "src": "../src/assets/logo/Fx.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "../src/assets/logo/Fx.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "lang": "en",
+    "orientation": "portrait",
+    "scope": "/"
+  }
+  
