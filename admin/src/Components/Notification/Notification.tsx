@@ -4,16 +4,14 @@ import {
   Notification,
   ResponseNotification,
 } from "../../models/notification.model";
-import {
-  deleteNotification,
-  fetchNotifications,
-} from "../../Services/notification.services";
+import { fetchNotifications } from "../../Services/notification.services";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { RotatingLines } from "react-loader-spinner";
 import dayjs from "dayjs";
-import { ChevronDown } from "lucide-react";
+import { GiRingingBell } from "react-icons/gi";
+import { getRemainingTime } from "../../Utility/date.utility";
 interface Notifications {
   isOpen: boolean;
 }
@@ -77,27 +75,18 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
         uid: user.uid as string,
         currentFirstDoc: null,
         currentLastDoc: null,
-        pageSize: 5,
+        pageSize: 10,
         sort: "desc",
         direction: "next",
       });
     }
   }, [isOpen]);
 
-  const removeNotification = async (id: string) => {
-    try {
-      await deleteNotification({ id: id });
-      setNotifications((prev) => {
-        return prev.filter((notification) => notification.id !== id);
-      });
-    } catch (error) {
-      throw new Error("Error while remove notifcation " + error);
-    }
-  };
-
   return (
-    <div className="p-4 sm:w-[400px] min-w-[330px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
-      <h2 className="mb-4 text-lg text-[var(--dark-text)] font-semibold">Notifications</h2>
+    <div className="p-4 w-full  min-w-[400px] min-h-40  bg-[var(--light-foreground)] border-[var(--dark-border)] border-[1px]  rounded-xl ">
+      <h2 className="mb-4 text-lg text-[var(--dark-text)] font-semibold">
+        Notifications
+      </h2>
       <div
         id="notification"
         className="w-full h-[350px] flex   justify-center pr-4 scrollbar-custom"
@@ -110,7 +99,7 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
             getNotification({
               currentFirstDoc: currentDoc?.currentFirstDoc || null,
               currentLastDoc: currentDoc?.currentLastDoc || null,
-              pageSize: 5,
+              pageSize: 10,
               sort: "desc",
               uid: user.uid as string,
               direction: "next",
@@ -141,7 +130,6 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
                 key={notification.id}
                 isLoading={loader}
                 notification={notification}
-                closeNotification={(id) => removeNotification(id)}
               />
             ))
           )}
@@ -153,48 +141,60 @@ export const NotificationPage: React.FC<Notifications> = ({ isOpen }) => {
 
 interface NotificationProp {
   notification: Notification;
-  closeNotification: (id: string) => void;
+  closeNotification?: (id: string) => void;
   isLoading: boolean;
 }
-const NoticationContainer: React.FC<NotificationProp> = ({
-  notification,
-}: {
-  notification: Notification;
-  closeNotification: (id: string) => void;
-  isLoading: boolean;
-}) => {
-  const [open, setOpen] = useState<boolean>(false);
+const NoticationContainer: React.FC<NotificationProp> = ({ notification }) => {
+  const [openId, setOpenId] = useState<string>("");
+
+  const handleToggle = (id: string) => {
+    setOpenId((prev) => (prev === id ? "" : id));
+  };
 
   return (
     <div
+      onClick={() => handleToggle(notification.id)}
       key={notification.uid}
-      className="relative  border-b-[1px] text-[var(--dark-text)] border-[var(--dark-border)] flex w-full bg-[var(--light-foreground)] items-start p-4 mb-4  "
+      className="relative cursor-pointer min-w-[344px] flex flex-col p-2 mb-4 bg-[var(--light-foreground)] rounded-lg shadow-md border border-[var(--dark-border)] transition-transform duration-150"
     >
+      {/* Notification Header */}
       <div
-        className={`sm:w-[280px] w-[215px]
-        } duration-150 `}
+        // onClick={() => handleToggle(notification.id)}
+        className="flex items-center justify-between cursor-pointer w-full"
       >
-        <div
-          onClick={() => setOpen(!open)}
-          className="w-full flex  items-center justify-between pr-5"
-        >
-          <h4 className="font-semibold">{notification.title}</h4>
-          <p className="text-xs text-gray-500">
-            {dayjs.unix(notification?.createdAt?._seconds).format("YYYY-MM-DD")}
-          </p>
+        <div className="flex items-start gap-3">
+          <div className="bg-blue-500  p-2 rounded-full flex items-center justify-center text-white">
+            {/* Placeholder icon or notification type icon */}
+            <GiRingingBell className="text-white size-5 " />
+          </div>
+          <div>
+            <h4 className="text-[15px] text-[var(--dark-text)] font-semibold">
+              {notification.title}
+            </h4>
+            <p className="text-xs text-[var(--dark-secondary-text)]">
+              {notification.id}
+            </p>
+          </div>
         </div>
-        <p
-          className={`text-sm  duration-150 ${
-            open ? "visible opacity-[100] " : " hidden opacity-0"
-          } `}
-        >
-          {notification.message}
-        </p>
       </div>
-      <button onClick={() => setOpen(!open)}>
-        {" "}
-        <ChevronDown className={`${open ? "rotate-180" : ""} duration-200 `} />
-      </button>
+
+      {/* Notification Message */}
+      <p
+        className={`text-sm cursor-pointer text-gray-400 mt-2 transition-all duration-300 overflow-hidden ${
+          openId === notification.id ? "max-h-[500px] " : " "
+        }`}
+      >
+        {openId === notification.id
+          ? notification.message
+          : notification.message.substring(0, 40) + "..."}
+      </p>
+
+      {/* Chevron Icon and Time */}
+      <div className="flex justify-end items-center pt-2 text-xs text-[var(--dark-secondary-text)]">
+        <span>
+          {getRemainingTime(dayjs.unix(notification?.createdAt._seconds))} ago
+        </span>
+      </div>
     </div>
   );
 };
