@@ -53,11 +53,14 @@ export const signIn = async (
       userRole: user.role as UserRole["role"],
     });
     toast.dismiss(toastLoader);
-    toast.success("User logged in successfully");
+    toast.success(response.data.message);
     return user;
-  } catch (error) {
-    toast.dismiss(toastLoader);
+  } catch (error: any) {
+    toast.error(error?.response?.data?.message || "Invalid email or password");
+
     throw new Error("Error while login -> " + error);
+  } finally {
+    toast.dismiss(toastLoader);
   }
 };
 export const signUp = async (data: Register) => {

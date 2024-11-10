@@ -16,6 +16,8 @@ import { Revenue } from "../../models/revenue.model";
 import { RotatingLines } from "react-loader-spinner";
 import { useQuery } from "react-query";
 import { useAllRevenue } from "../../Hooks/useAllRevenue";
+import { Empty } from "../Common/Empty/Empty";
+import NoData from "../../assets/customer.png";
 
 export const WeekReveneuChart: React.FC = () => {
   const getLineChartData = async (): Promise<
@@ -78,7 +80,7 @@ export const WeekReveneuChart: React.FC = () => {
       enabled: initialData && initialData?.length > 0 ? true : false,
     }
   );
-  return (
+  return initialData && initialData?.length > 0 ? (
     <div className="flex  flex-col items-center justify-center w-full gap-5 px-3 py-5 rounded">
       <div className="flex items-center justify-between w-full gap-3 px-2">
         <div className="text-left text-xl text-[var(--dark-text)] flex justify-center items-center gap-3">
@@ -186,9 +188,17 @@ export const WeekReveneuChart: React.FC = () => {
             ]}
           ></LineChart>
         ) : (
-          ""
+          <Empty />
         )}
       </div>
+    </div>
+  ) : (
+    <div className="pb-6 w-full">
+      <Empty
+        parent={NoData}
+        loading={loading}
+        children="We aren't found today's order to show reveneu"
+      />
     </div>
   );
 };
@@ -468,7 +478,7 @@ export const MonthlyRevenueChart: React.FC = () => {
               noDataOverlay: {
                 message: "No Data to display.",
                 sx: {
-                  fill :"var(--dark-text)",
+                  fill: "var(--dark-text)",
                   fontSize: "16px",
                 },
               },
@@ -770,7 +780,7 @@ export const MonthlyOrderLinechart: React.FC = () => {
               noDataOverlay: {
                 message: "No Data to display.",
                 sx: {
-                  fill :"var(--dark-text)",
+                  fill: "var(--dark-text)",
                   fontSize: "16px",
                 },
               },

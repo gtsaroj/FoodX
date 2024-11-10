@@ -151,7 +151,7 @@ export const MenuType: React.FC = () => {
             <div className="flex w-full gap-4 ">
               <Skeleton
                 className="w-full flex   h-full"
-                containerClassName="lg:w-[1500px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
+                containerClassName="lg:w-[1520px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                 baseColor="var(--light-background)"
                 highlightColor="var(--light-foreground)"
                 count={4}

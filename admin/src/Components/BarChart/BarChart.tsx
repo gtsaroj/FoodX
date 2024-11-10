@@ -60,12 +60,7 @@ export const MonthlyOrderChart: React.FC = () => {
       <div className="w-full py-2  text-xl text-[var(--dark-text)] tracking-wider gap-2 flex items-center justify-between">
         <div className="flex items-center justify-start gap-2">
           <span>Top Products</span>
-          {/* <p className="text-[16px] tracking-wider  text-[var(--green-text)]  flex justify-center items-center gap-0.5  rounded-lg">
-            <span>10%</span>
-            <span className="mb-[2px]">
-              <MoveUp strokeWidth={3} size={12} />
-            </span>
-          </p> */}
+
         </div>
         <div>
           <Button

@@ -6,7 +6,6 @@ import {
   updateUserAction,
 } from "../Actions/user.actions";
 import { UpdateProfileInfo } from "../Pages/Profile/AdminProfile";
-import toast from "react-hot-toast";
 
 interface authState {
   success: boolean;
@@ -89,7 +88,6 @@ const authSlice = createSlice({
       state.userInfo = action.payload as User;
     });
     builder.addCase(signInAction.rejected, (state) => {
-      toast.error("Invalid login credentials");
       state.error = true;
       state.loading = false;
       state.userInfo = {
