@@ -20,9 +20,9 @@ interface UploadBannerProp {
 }
 const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
   const reference = useRef<HTMLDivElement>();
-  const [name, setName] = useState<string>();
-  const [image, setImage] = useState<string>();
-  const [link, setLink] = useState<string>();
+  const [name, setName] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+  const [link, setLink] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const [banner, setBanner] = useState<"banners" | "sponsors">("banners");
@@ -75,6 +75,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
           detail: `sponsor : ${name} `,
         });
       }
+      queryClient.invalidateQueries({ queryKey: "banners" });
       setImage("");
       setName("");
       toast.dismiss(toastLoader);
@@ -85,20 +86,13 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
       setLoading(false);
       setImage("");
       setName("");
+      setLink("");
       closeModal();
     }
   };
 
   const { mutate } = useMutation({
     mutationFn: handleSubmit,
-    onSuccess: () => {
-      toast.success("Banner added successfully!");
-      queryClient.invalidateQueries({ queryKey: "banners" });
-    },
-    onError: (error) => {
-      toast.error("Error while adding " + banner);
-      throw new Error("Error while adding " + banner + " " + error);
-    },
   });
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -157,6 +151,7 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
               onChange={(event: ChangeEvent<HTMLInputElement>) =>
                 setName(event.target.value)
               }
+              value={name}
               type="text"
               placeholder="Pizza"
               className="w-full border-[1px] border-[var(--dark-border)] bg-[var(--light-foreground)] outline-none placeholder:text-sm py-2 px-4 rounded"
