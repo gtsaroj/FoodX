@@ -15,14 +15,9 @@ export const ProgressiveImage = ({
 
   return (
     <img
-      className={`w-full ${className}  h-full`}
+      className={` ${loaded ? className : "bg-slate-50 border w-[100px] blur h-[70px] brightness-50 rounded-full "} `}
       src={loaded ? highResSrc : lowResSrc}
       alt={alt}
-      style={{
-        filter: loaded ? "none" : "blur(10px)",
-       
-        transition: "filter 0.5s ease-in-out", 
-      }}
       onLoad={() => setLoaded(true)}
     />
   );

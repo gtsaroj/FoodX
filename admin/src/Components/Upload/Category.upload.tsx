@@ -4,12 +4,16 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import toast from "react-hot-toast";
 import { addCategory } from "../../Services/category.services";
 import { addLogs } from "../../Services/log.services";
+import { compressImage } from "../../Utility/imageCompressor";
+import { useMutation, useQueryClient } from "react-query";
 
 interface CategoryModal {
   closeModal: () => void;
 }
 
 export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
+  const queryClient = useQueryClient();
+
   const reference = useRef<HTMLDivElement>();
   // const [Scroll, setScroll] = useState<boolean>(false);
   const [categoryName, setCategoryName] = useState<string>("");
@@ -40,21 +44,53 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
       });
       toast.dismiss(toastLoader);
       toast.success("Successfully updated");
-      closeModal();
-      setCategoryName("");
-      setImageURL("");
     } catch (error) {
       toast.dismiss(toastLoader);
       console.error("Error adding category:", error);
       toast.error("Failed to add category");
+    } finally {
+      closeModal();
+      setCategoryName("");
+      setImageURL("");
     }
-    closeModal();
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+      const compressedImage = await compressImage(file, {
+        maxHeight: 150,
+        maxWidth: 150,
+        quality: 0.6,
+      });
+      const imageURL = URL.createObjectURL(compressedImage as Blob);
+      setImageURL(imageURL);
+
+      storeImageInFirebase(compressedImage as File, {
+        folder: "categories",
+      }).then((url) => setImageURL(url));
+    } else {
+      toast.error("Only image files are allowed");
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   useEffect(() => {
     const currentRef = reference.current;
     if (currentRef) currentRef.addEventListener("scroll", scroller);
     return () => currentRef?.removeEventListener("scroll", scroller);
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: handleSave,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: "categories-1" });
+    },
   });
 
   return (
@@ -69,7 +105,7 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
 
         <form
           onSubmit={(e) => {
-            handleSave(e);
+            mutate(e);
           }}
           action=""
           className="sm:w-[600px]  text-[var(--dark-text)]  w-full px-5 min-w-full py-7 gap-16 flex flex-col items-start justify-center"
@@ -97,18 +133,27 @@ export const UploadCategory: React.FC<CategoryModal> = ({ closeModal }) => {
             </div>
           ) : (
             <div
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
               onClick={() => fileRef.current?.click()}
               className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--dark-border)] stroke-[1px] py-20"
             >
               <input
                 ref={fileRef as any}
-                onChange={(event) => {
-                  if (event.target.files)
-                    storeImageInFirebase(event.target.files[0], {
+                onChange={async (event) => {
+                  if (event.target.files) {
+                    const compressedImage = await compressImage(
+                      event.target.files[0],
+                      { maxHeight: 150, maxWidth: 150, quality: 0.7 }
+                    );
+
+                    setImageURL(URL.createObjectURL(compressedImage as Blob));
+                    storeImageInFirebase(compressedImage as File, {
                       folder: "categories",
                     }).then((res) => {
                       setImageURL(res);
                     });
+                  }
                 }}
                 type="file"
                 className="hidden"

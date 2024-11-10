@@ -15,6 +15,8 @@ const Carousel: React.FC<CarouselProp> = ({
   link,
 }) => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [loadedImage, setLoadedImage] = useState<string>("");
+
   const imageRef = useRef<HTMLDivElement>(null);
   const sliderRef = useRef<any>();
 
@@ -48,11 +50,18 @@ const Carousel: React.FC<CarouselProp> = ({
 
   useEffect(() => {
     imageRef.current?.addEventListener("animationend", removeAnimation);
-
     autoPlay();
     return () => {
       pauseSlider();
       imageRef.current?.addEventListener("animationend", removeAnimation);
+    };
+  }, [currentSlide]);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = props[currentSlide].image;
+    img.onload = () => {
+      setLoadedImage(props[currentSlide].image);
     };
   }, [currentSlide]);
 
@@ -69,7 +78,10 @@ const Carousel: React.FC<CarouselProp> = ({
           className="w-full h-full overflow-hidden duration-500 bg-center bg-no-repeat bg-cover rounded-xl"
           ref={imageRef}
           style={{
-            backgroundImage: `url(${props[currentSlide]?.image})`,
+            backgroundImage: `url(${
+              loadedImage ||
+              "https://hireamarketer.com/wp-content/themes/funnelgorgeous/images/default-thumbnail.png"
+            })`,
           }}
         >
           {actions && (
