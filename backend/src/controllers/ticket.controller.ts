@@ -24,11 +24,11 @@ const addNewTicket = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding tickets to database.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -52,11 +52,11 @@ const updateTicket = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while updating tickets in database.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -75,11 +75,11 @@ const deleteTicket = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
-          400,
+        new ApiResponse(
+          500,
+          error as string[],
           "Error deleting ticket from firestore.",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -134,11 +134,11 @@ const fetchTickets = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching tickets from database",
-          null,
-          error as string[]
+          false
         )
       );
   }

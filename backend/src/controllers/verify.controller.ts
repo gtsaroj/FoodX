@@ -54,17 +54,14 @@ export const verifyOtp = asyncHandler(async (req: any, res: any) => {
       return res.status(400).json(new ApiError(400, "Invalid otp."));
     }
   } catch (error) {
-    return res
-      .status(400)
-      .json(
-        new ApiError(
-          400,
-          "Error verifying otp.",
-          null,
-          error as string[],
-          undefined,
-          false
-        )
-      );
+    return res.status(500).json(
+      new ApiResponse(
+        500,
+        error as string[],
+        "Error verifying otp.",
+
+        false
+      )
+    );
   }
 });

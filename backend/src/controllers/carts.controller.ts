@@ -1,4 +1,3 @@
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
@@ -33,11 +32,11 @@ const addCarts = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding item into carts.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -68,11 +67,11 @@ const removeCarts = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while removing item from carts.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -99,11 +98,11 @@ const getCarts = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while fetching item from carts.",
-            null,
-            error as string[]
+            false
           )
         );
     }

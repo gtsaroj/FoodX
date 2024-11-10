@@ -5,7 +5,6 @@ import {
   getAllCategoryFromDatabase,
   updateCategoryInDatabase,
 } from "../firebase/db/category.firestore.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import express from "express";
@@ -35,11 +34,11 @@ const addNewCategory = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding category.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -67,11 +66,11 @@ const getAllCategory = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while fetching category.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -102,11 +101,11 @@ const updateCategory = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while updating category.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -137,11 +136,11 @@ const deleteCategory = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while deleting category.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -174,11 +173,11 @@ const deleteCategoriesInBulk = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Error while deleting categories.",
-          null,
-          error as string[]
+          false
         )
       );
   }

@@ -40,7 +40,7 @@ const getOrderByUserIdFromDatabase = asyncHandler(
         user.uid
       );
 
-      res.status(200).json(
+      return res.status(200).json(
         new ApiResponse(
           200,
           {
@@ -57,11 +57,11 @@ const getOrderByUserIdFromDatabase = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Something went wrong while fetching user's order from database",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -76,16 +76,18 @@ const addNewOrder = asyncHandler(
       io.to("chef").emit("new_order", { ...order, orderId });
       return res
         .status(200)
-        .json(new ApiResponse(200, orderId, "Orders fetched successfully", true));
+        .json(
+          new ApiResponse(200, orderId, "Orders fetched successfully", true)
+        );
     } catch (error) {
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while adding orders to database.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -118,11 +120,11 @@ const updateOrder = asyncHandler(
       return res
         .status(500)
         .json(
-          new ApiError(
+          new ApiResponse(
             500,
+            error as string[],
             "Error while updating order.",
-            null,
-            error as string[]
+            false
           )
         );
     }
@@ -155,7 +157,7 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
       status,
       userId
     );
-    res.status(200).json(
+    return res.status(200).json(
       new ApiResponse(
         200,
         {
@@ -172,11 +174,11 @@ const fetchOrders = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching orders from database",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -210,7 +212,7 @@ const getOrderBasedOnUid = asyncHandler(async (req: any, res: any) => {
       uid
     );
 
-    res.status(200).json(
+    return res.status(200).json(
       new ApiResponse(
         200,
         {
@@ -227,11 +229,11 @@ const getOrderBasedOnUid = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching user's order from database on id.",
-          null,
-          error as string[]
+          false
         )
       );
   }

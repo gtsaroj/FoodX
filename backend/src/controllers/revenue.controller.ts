@@ -3,7 +3,6 @@ import {
   getRevenueDataFromFirestore,
 } from "../firebase/db/revenue.firestore.js";
 import { Revenue } from "../models/revenue.model.js";
-import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
 
@@ -25,11 +24,11 @@ const addRevenueData = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while adding revenue to database",
-          null,
-          error as string[]
+          false
         )
       );
   }
@@ -59,11 +58,11 @@ const fetchRevenue = asyncHandler(async (req: any, res: any) => {
     return res
       .status(500)
       .json(
-        new ApiError(
+        new ApiResponse(
           500,
+          error as string[],
           "Something went wrong while fetching revenue from database",
-          null,
-          error as string[]
+          false
         )
       );
   }
