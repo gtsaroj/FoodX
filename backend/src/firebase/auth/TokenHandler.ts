@@ -17,8 +17,12 @@ export const getAccessToken = async (uid: string, role: RoleType) => {
       { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
     );
   } catch (error) {
-    console.error(error);
-    throw new ApiError(400, "Error while generating access token.");
+    throw new ApiError(
+      400,
+      "Error while generating access token.",
+      null,
+      error as string[]
+    );
   }
 };
 

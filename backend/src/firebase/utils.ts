@@ -45,7 +45,6 @@ export const paginateFnc = async (
   }
   const lengthOfDoc = await query.get();
   const totalLength = lengthOfDoc.size;
-  console.log(`Length in number : -> ${totalLength}`);
   if (direction === "next" && startAfterDoc) {
     const getStartAfterDoc = await db
       .collection(collection)

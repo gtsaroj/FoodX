@@ -40,7 +40,6 @@ const getTicketByIdFromFirestore = async (id: string) => {
       tickets.push(data);
     });
 
-    console.log(tickets);
     return { tickets, doc: doc.id };
   } catch (error) {
     throw new ApiError(400, "No ticket found.");
@@ -107,15 +106,18 @@ const updateTicketInFirestore = async (
   if (!ticketRef) throw new ApiError(400, "No collection available.");
   try {
     const res = await getTicketByIdFromFirestore(id);
-    console.log(res);
 
     await ticketRef.doc(res.doc).update({
       [`status`]: newData,
       updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
-    console.error(error);
-    throw new ApiError(401, "Unable to update ticket data.");
+    throw new ApiError(
+      401,
+      "Unable to update ticket data.",
+      null,
+      error as string[]
+    );
   }
 };
 const deleteTicketFromDatabase = async (id: string) => {

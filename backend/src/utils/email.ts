@@ -11,8 +11,7 @@ export const sendEmail = async (email: string, otp: string) => {
   });
 
   if (error) {
-    return console.error({ error });
+    return 
   }
 
-  console.log({ data });
 };
