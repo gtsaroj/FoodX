@@ -155,7 +155,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({ notification }) => {
     <div
       onClick={() => handleToggle(notification.id)}
       key={notification.uid}
-      className="relative cursor-pointer min-w-[344px] flex flex-col p-2 mb-4 bg-[var(--light-foreground)] rounded-lg shadow-md border border-[var(--dark-border)] transition-transform duration-150"
+      className="relative  min-w-[344px] flex flex-col p-2 mb-4 bg-[var(--light-foreground)] rounded-lg shadow-md border border-[var(--dark-border)] transition-transform duration-150"
     >
       {/* Notification Header */}
       <div

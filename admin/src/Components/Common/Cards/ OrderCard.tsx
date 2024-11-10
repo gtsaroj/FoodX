@@ -30,6 +30,12 @@ export const OrderCard: React.FC<RecentOrder> = ({
 
   const ogDate = dayjs(orderRequest).format("h:mm:ss A");
 
+  const message = {
+    completed: "Your order has been successfully completed.",
+    cancelled:
+      "Your order has been cancelled. Please contact customer support for assistance.",
+  };
+
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
@@ -41,10 +47,10 @@ export const OrderCard: React.FC<RecentOrder> = ({
         price: id === orderId ? price : 0,
         userId: uid as string,
       });
-      if (newStatus === "completed") {
+      if (newStatus === "completed" || newStatus === "cancelled") {
         await addNotification({
-          message: "Your order has been successfully completed.",
-          title: "Order Completed",
+          message: message[newStatus],
+          title: "Order " + newStatus,
           userId: uid as string,
         });
       }

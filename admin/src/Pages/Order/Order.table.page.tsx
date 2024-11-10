@@ -37,6 +37,12 @@ export const OrderTable: React.FC<orderTableProp> = ({
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(false);
   const [initialOrder, setInitialOrder] = useState<OrderModal[]>([]);
 
+  const message = {
+    completed: "Your order has been successfully completed.",
+    cancelled:
+      "Your order has been cancelled. Please contact customer support for assistance.",
+  };
+
   const statusChangeFn = async (newStatus: status["status"]) => {
     if (!newStatus && !id) return toast.error("Order doesn't exist");
     const toastLoader = toast.loading("Updating status...");
@@ -53,10 +59,13 @@ export const OrderTable: React.FC<orderTableProp> = ({
         userId: order?.uid as string,
       });
 
-      if (newStatus === "completed" && order?.uid) {
+      if (
+        (newStatus === "completed" || newStatus === "cancelled") &&
+        order?.uid
+      ) {
         await addNotification({
-          message: "Your order has been successfully completed.",
-          title: "Order Completed",
+          message: message[newStatus],
+          title: "Order " + newStatus,
           userId: order?.uid as string,
         });
       }
