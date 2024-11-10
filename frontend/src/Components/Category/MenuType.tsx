@@ -99,14 +99,14 @@ export const MenuType: React.FC = () => {
   return (
     <div className="flex flex-col flex-wrap w-full gap-8 py-8 ">
       <div className="flex flex-col items-center w-full sm:gap-8 gap-7 ">
-        <div className="w-full flex items-center ">
+        <div className="flex items-center w-full ">
           <h3 className="h-[1px] w-full sm:text-[22px] text-[16px]  bg-gradient-to-r from-black/100 dark:from-white/100  to-black/0 dark:to-white/0"></h3>
           <p className="font-semibold text-center sm:text-[22px] text-[12px] sm:min-w-[300px] w-[512px] tracking-wide text-[var(--dark-text)]">
-            What's on you mind ?
+            What's on your mind ?
           </p>
           <h3 className="h-[1px] w-full  bg-gradient-to-r from-black/0 dark:from-white/0 to-black/100 dark:to-white/100"></h3>
         </div>
-        <div className="flex w-full items-center gap-4 overflow-auto">
+        <div className="flex items-center w-full gap-4 overflow-auto">
           {data?.map((tag, index) => (
             <FoodCategory
               action={(data) => setInitialTag(data)}
@@ -150,7 +150,7 @@ export const MenuType: React.FC = () => {
           ) : (
             <div className="flex w-full gap-4 ">
               <Skeleton
-                className="w-full flex   h-full"
+                className="flex w-full h-full"
                 containerClassName="lg:w-[1400px] lg:min-w-[1300px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                 baseColor="var(--light-background)"
                 highlightColor="var(--light-foreground)"
