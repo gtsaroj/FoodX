@@ -66,7 +66,7 @@ export const OrderCard: React.FC<RecentOrder> = ({
           <img
             src={image.includes("assets") ? Avatar : image}
             loading="lazy"
-            className="w-full rounded-full  h-full"
+            className="w-full max-w-[50px] rounded-full max-h-[50px]  h-full"
             alt="order"
           />
         </div>

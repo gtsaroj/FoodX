@@ -7,7 +7,7 @@ type CompressImageOptions = {
 export function compressImage(
   file: File,
   options: CompressImageOptions
-): Promise<Blob | null> {
+): Promise<File> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -49,8 +49,16 @@ export function compressImage(
         // Convert canvas to a Blob
         canvas.toBlob(
           (blob) => {
-            if (blob) resolve(blob);
-            else reject(new Error("Image compression failed"));
+            if (blob) {
+              // Convert Blob to File
+              const compressedFile = new File([blob], file.name, {
+                type: "image/jpeg",
+                lastModified: file.lastModified,
+              });
+              resolve(compressedFile);
+            } else {
+              reject(new Error("Image compression failed"));
+            }
           },
           "image/jpeg",
           options.quality
@@ -64,3 +72,4 @@ export function compressImage(
     reader.readAsDataURL(file);
   });
 }
+

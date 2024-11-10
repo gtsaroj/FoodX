@@ -5,7 +5,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "./index";
-import toast from "react-hot-toast";
 const signUpNewUser = async (
   firstName: string,
   lastName: string,
@@ -47,7 +46,6 @@ const signInUser = async (email: string, password: string) => {
 
     return userInfo.user;
   } catch (error) {
-    toast.error("INVALID_LOGIN_CREDENTIALS");
     throw new Error(`Error while signing user. ${error}`);
   }
 };

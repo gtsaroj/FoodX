@@ -6,7 +6,7 @@ import { AuthFooter } from "../../Components/Footer/AuthFooter";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
 import { signInAction } from "../../Actions/user.actions";
 import { UserRole } from "../../models/user.model";
@@ -38,12 +38,12 @@ const LoginContainer: React.FC<LoginProp> = ({ role }) => {
     try {
       await dispatch(signInAction({ email, password, userRole: role }));
     } catch (error) {
-      toast.error("Invalid email or password");
       throw new Error(`Error occuring while sending form : ${error}`);
+    } finally {
+      setPassword("");
+      setEmail("");
+      setDataSend(false);
     }
-    setPassword("");
-    setEmail("");
-    setDataSend(false);
   };
 
   useEffect(() => {

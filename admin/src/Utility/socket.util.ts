@@ -18,6 +18,7 @@ export const useSocket = (isLoggedIn: boolean) => {
         transports: ["websocket", "polling"],
         path: "/socket.io",
       });
+
       setSocket(newSocket);
       setLoading(false);
 
