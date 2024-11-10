@@ -84,7 +84,7 @@ const SpecialCardsContainer: React.FC<SpecialProductProp> = ({ products }) => {
           <div className="flex w-full gap-4 ">
             <Skeleton
               className="w-full flex h-full"
-              containerClassName="lg:w-[1024px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
+              containerClassName="lg:w-[1024px] lg:min-w-[1000px]  lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
               count={3}
@@ -108,7 +108,7 @@ export const SpecialCardsContainer1: React.FC<SpecialProductProp> = ({
           <div className="flex w-full gap-4">
             <Skeleton
               className="w-full lg:w-[1000px] flex h-full"
-              containerClassName="lg:w-[1024px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
+              containerClassName="lg:w-[1024px] lg:min-w-[1000px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
               count={3}

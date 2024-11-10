@@ -72,7 +72,7 @@ export const PopularProduct = () => {
               <div className="flex w-full gap-4 ">
                 <Skeleton
                   className="w-full flex   h-full"
-                  containerClassName="lg:w-[1200px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
+                  containerClassName="lg:w-[1200px] lg:min-w-[1450px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                   baseColor="var(--light-background)"
                   highlightColor="var(--light-foreground)"
                   count={5}

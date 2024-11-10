@@ -127,7 +127,7 @@ export const MenuType: React.FC = () => {
         </p>
 
         <div className="flex flex-wrap items-center justify-center w-full gap-8 sm:gap-20 sm:justify-evenly lg:justify-start">
-          {isLoading || loading ? (
+          {isLoading || !loading ? (
             initialData?.length <= 0 ? (
               <div className="flex flex-col items-center justify-center w-full h-full p-4 text-center">
                 <img
@@ -151,7 +151,7 @@ export const MenuType: React.FC = () => {
             <div className="flex w-full gap-4 ">
               <Skeleton
                 className="w-full flex   h-full"
-                containerClassName="lg:w-[1300px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
+                containerClassName="lg:w-[1400px] lg:min-w-[1300px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                 baseColor="var(--light-background)"
                 highlightColor="var(--light-foreground)"
                 count={4}
