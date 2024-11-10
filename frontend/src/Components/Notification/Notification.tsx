@@ -4,9 +4,7 @@ import {
   Notification,
   ResponseNotification,
 } from "../../models/notification.model";
-import {
-  fetchNotifications,
-} from "../../Services/notification.services";
+import { fetchNotifications } from "../../Services/notification.services";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
@@ -172,6 +170,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({ notification }) => {
 
   return (
     <div
+      onClick={() => handleToggle(notification.id)}
       key={notification.uid}
       className="relative flex flex-col p-2 mb-4 bg-[var(--light-foreground)] rounded-lg shadow-md border border-[var(--dark-border)] transition-transform duration-150"
     >
@@ -196,8 +195,7 @@ const NoticationContainer: React.FC<NotificationProp> = ({ notification }) => {
 
       {/* Notification Message */}
       <p
-        onClick={() => handleToggle(notification.id)}
-        className={`text-sm text-gray-400 mt-2 transition-all duration-300 overflow-hidden ${
+        className={`text-sm cursor-pointer text-gray-400 mt-2 transition-all duration-300 overflow-hidden ${
           openId === notification.id ? "max-h-[500px] " : " "
         }`}
       >
