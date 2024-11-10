@@ -102,7 +102,7 @@ const VerificationPage = () => {
             </div>
             <button
               type="submit"
-              className="text-[var(--dark-text)] duration-150 py-2 px-10 mt-6 rounded-md bg-[var(--secondary-color)] hover:bg-[var(--primary-color)]"
+              className="text-[var(--dark-text)] duration-150 py-2 px-10 mt-6 rounded-md bg-[var(--primary-color)] hover:bg-[var(--primary-color)]"
             >
               Verify OTP
             </button>

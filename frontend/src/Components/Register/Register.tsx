@@ -11,11 +11,14 @@ import { FaUserEdit } from "react-icons/fa";
 // import { useDispatch } from "react-redux";
 // import { AppDispatch } from "../../Store";
 import { useNavigate } from "react-router-dom";
-import { checkValidNumber, validatePasswordOnChange } from "./RegisterHandler";
+import {
+  checkValidNumber,
+  validateEmail,
+  validatePasswordOnChange,
+} from "./RegisterHandler";
 import { allFieldsRequired } from "./RegisterHandler";
 import { storeImageInFirebase } from "../../firebase/storage";
 import { AuthFooter } from "../Footer/AuthFooter";
-import avatar from "../../assets/logo/avatar.png";
 import logo from "../../assets/logo/Fx.png";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
@@ -74,6 +77,7 @@ export const RegisterContainer: React.FC = () => {
 
   function Validation(error: Record<string, string>) {
     allFieldsRequired(RegisterValue, error);
+    validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
 
     validatePasswordOnChange(RegisterValue, error);
@@ -95,7 +99,10 @@ export const RegisterContainer: React.FC = () => {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
         setLoading(true);
-        await signUp({ ...RegisterValue, role: "customer" });
+        await signUp({
+          ...RegisterValue,
+          role: "customer",
+        });
         navigate("/email-verification");
       }
     } catch (error) {
@@ -143,7 +150,7 @@ export const RegisterContainer: React.FC = () => {
               />
             ) : (
               <img
-                src={avatar}
+                src={"https://res.cloudinary.com/dhnvpzxt6/image/upload/v1731246336/avatar_gqze8g.png"}
                 alt=""
                 className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
               />

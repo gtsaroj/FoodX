@@ -7,9 +7,11 @@ export const allFieldsRequired = (
   for (const inputValue in RegisterValue) {
     if (
       RegisterValue.hasOwnProperty(inputValue) &&
-      RegisterValue[inputValue as keyof ValidationType] === ""
-    )
+      RegisterValue[inputValue as keyof ValidationType] === "" &&
+      inputValue !== "avatar"
+    ) {
       error[inputValue] = `* Required`;
+    }
   }
 
   if (Object.keys(error).length !== 0) {
@@ -24,9 +26,10 @@ export const validateEmail = (
   //TODO: Change this according to college/school.
   const collegeEmail = "texascollege.edu.np";
   const email = RegisterValue.email;
-
+  if (error.email) return;
   const emailAddress = email.toLowerCase().trim();
   const validateCollegeEmail = emailAddress.split("@")[1];
+
   if (!emailAddress || validateCollegeEmail !== collegeEmail)
     return (error.email = "Please enter valid email");
 };
