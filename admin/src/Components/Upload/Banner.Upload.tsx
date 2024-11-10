@@ -12,6 +12,7 @@ import { addBanner } from "../../Services/banner.services";
 import { addLogs } from "../../Services/log.services";
 import { Selector } from "../Selector/Selector";
 import { useMutation, useQueryClient } from "react-query";
+import { compressImage } from "../../Utility/imageCompressor";
 
 interface UploadBannerProp {
   closeModal: () => void;
@@ -177,10 +178,16 @@ const UploadBanner: React.FC<UploadBannerProp> = ({ closeModal }) => {
             className="w-full h-[400px] transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)]  stroke-[1px] py-20"
           >
             <input
-              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              onChange={async (event: ChangeEvent<HTMLInputElement>) => {
                 const image = event.target.files && event.target.files[0];
-                setImage(URL.createObjectURL(image as File));
-                storeImageInFirebase(image as File, {
+                const compressedImg = await compressImage(image as File, {
+                  maxHeight: 600,
+                  maxWidth: 1440,
+                  quality: 0.85,
+                });
+
+                setImage(URL.createObjectURL(compressedImg as File));
+                storeImageInFirebase(compressedImg as File, {
                   folder: "banners",
                 }).then((response) => setImage(response));
               }}

@@ -13,11 +13,12 @@ const Specials: React.FC = () => {
   const specialsRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-8 py-8 rounded">
-      <div className="w-full py-5">
-        <h2 className="text-xl md:text-3xl font-bold tracking-wide text-[var(--dark-text)]">
-          Today's Specials 🎉
+    <div className="flex flex-col bg-[var(--light-foreground)] w-full h-full gap-8 px-3 sm:px-8 py-8 rounded">
+      <div className="w-full flex justify-start items-center gap-1  ">
+        <h2 className=" font-semibold sm:text-[22px] text-[16px] sm:min-w-[350px] w-[340px] tracking-wide text-[var(--dark-text)]">
+          Don’t Miss Today’s Treats! 🎉
         </h2>
+        <h3 className="h-[1px] w-full  bg-gradient-to-r from-black/100 dark:from-white/100  to-black/0 dark:to-white/0"></h3>
       </div>
       <div className="flex justify-between gap-8 group/data" id="specials">
         <div className=" min-w-[300px] w-[2000px] relative ">
@@ -34,7 +35,7 @@ const Specials: React.FC = () => {
           </div>
           {data && data?.length > 0 && (
             <div className="w-full invisible group-hover/data:visible opacity-0 group-hover/data:opacity-100 duration-200 absolute z-50 sm:top-[17.87rem] top-[11rem] flex justify-between">
-              <button
+              <button aria-label="prev"
                 onClick={() => {
                   specialsRef.current?.scrollBy({
                     behavior: "smooth",
@@ -45,7 +46,7 @@ const Specials: React.FC = () => {
               >
                 <ChevronLeft className="sm:size-6 size-5 " />
               </button>
-              <button
+              <button aria-label="next"
                 onClick={() => {
                   specialsRef.current?.scrollBy({
                     behavior: "smooth",
@@ -82,25 +83,11 @@ const SpecialCardsContainer: React.FC<SpecialProductProp> = ({ products }) => {
         ) : (
           <div className="flex w-full gap-4 ">
             <Skeleton
-              height={230}
-              width={330}
+              className="w-full flex h-full"
+              containerClassName="lg:w-[1024px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
-              count={1}
-            />
-            <Skeleton
-              height={230}
-              width={330}
-              baseColor="var(--light-background)"
-              highlightColor="var(--light-foreground)"
-              count={1}
-            />
-            <Skeleton
-              height={230}
-              width={330}
-              baseColor="var(--light-background)"
-              highlightColor="var(--light-foreground)"
-              count={1}
+              count={3}
             />
           </div>
         )}
@@ -120,25 +107,11 @@ export const SpecialCardsContainer1: React.FC<SpecialProductProp> = ({
         ) : (
           <div className="flex w-full gap-4">
             <Skeleton
-              height={230}
-              width={330}
+              className="w-full lg:w-[1000px] flex h-full"
+              containerClassName="lg:w-[1024px] lg:h-[200px] flex gap-2 lg:w-[280px] sm:w-[800px] w-[600px] h-[120px] sm:h-[160px]"
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
-              count={1}
-            />
-            <Skeleton
-              height={230}
-              width={330}
-              baseColor="var(--light-background)"
-              highlightColor="var(--light-foreground)"
-              count={1}
-            />
-            <Skeleton
-              height={230}
-              width={330}
-              baseColor="var(--light-background)"
-              highlightColor="var(--light-foreground)"
-              count={1}
+              count={3}
             />
           </div>
         )}

@@ -202,3 +202,8 @@
     right: -146px;
   }
 }
+
+.banner-skeleton{
+  width: 600px;
+  height: 400px;
+}

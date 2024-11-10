@@ -22,22 +22,22 @@ const Banner: React.FC = () => {
     <div className="flex items-center justify-center w-full h-full">
       <div className="lg:h-[600px] lg:min-w-[700px] flex items-center min-w-[300px] w-[400px] h-[300px] sm:w-[600px] sm:h-[350px] md:w-[500px] md:h-[450px] duration-500 xl:w-[1000px] flex-grow">
         {isLoading ? (
-          <div className="flex w-full gap-4 rounded-xl ">
+          <div className="flex w-full h-full items-center justify-center gap-4 rounded-xl ">
             <Skeleton
               borderRadius={"13px"}
-              width="980px"
-              height="530px"
-              style={{
-                minHeight: "300px",
-                maxHeight: "545px",
-              }}
+              className="w-full h-full"
+              containerClassName="w-[900px] h-[300px] h-[220px] md:h-[400px] lg:h-[600px] "
+
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
               count={1}
             />
           </div>
         ) : (
-          <Carousel props={data as BannerModal[]} time={5000} />
+          data &&
+          data.length > 0 && (
+            <Carousel props={data as BannerModal[]} time={5000} />
+          )
         )}
       </div>
     </div>
@@ -65,21 +65,24 @@ export const Sponsor: React.FC = () => {
           <div className="lg:flex hidden w-full gap-4 rounded-xl ">
             <Skeleton
               borderRadius={"13px"}
-              width="450px"
-              height="534px"
+              className="w-full h-full"
+              containerClassName="w-[400px] h-[600px] "
               baseColor="var(--light-background)"
               highlightColor="var(--light-foreground)"
               count={1}
             />
           </div>
         ) : (
-          <div className="w-full h-full">
-            <Carousel
-              actions={false}
-              props={data as BannerModal[]}
-              time={25000}
-            />
-          </div>
+          data &&
+          data.length > 0 && (
+            <div className="w-full h-full">
+              <Carousel
+                actions={false}
+                props={data as BannerModal[]}
+                time={25000}
+              />
+            </div>
+          )
         )}
       </div>
     </div>

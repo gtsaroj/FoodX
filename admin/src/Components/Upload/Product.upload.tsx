@@ -17,6 +17,7 @@ import { storeImageInFirebase } from "../../firebase/storage";
 import { getCategories } from "../../Services/category.services";
 import { Category } from "../../models/category.model";
 import { useMutation, useQueryClient } from "react-query";
+import { compressImage } from "../../Utility/imageCompressor";
 
 interface UploadFoodProp {
   closeModal: () => void;
@@ -43,6 +44,38 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
     } catch (error) {
       throw new Error("Error while fetching category " + error);
     }
+  };
+
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const compressedImage = await compressImage(file, {
+        maxWidth: 150,
+        maxHeight: 150,
+        quality: 0.7,
+      });
+      const imageURL = URL.createObjectURL(compressedImage as Blob);
+      setAddFood((prev) => ({
+        ...prev,
+        product: { ...prev.product, image: imageURL },
+      }));
+
+      storeImageInFirebase(file, {
+        folder: "products",
+      }).then((url) =>
+        setAddFood((prev) => ({
+          ...prev,
+          product: { ...prev.product, image: url },
+        }))
+      );
+    } else {
+      toast.error("Only image files are allowed");
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -218,6 +251,8 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
             </div>
           ) : (
             <div
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
               onClick={() => fileRef.current?.click()}
               className="w-full transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2.5px] rounded border-[var(--dark-border)] stroke-[1px] py-20"
             >
@@ -225,9 +260,19 @@ const UploadFood: React.FC<UploadFoodProp> = ({ closeModal }) => {
                 ref={fileRef as any}
                 onChange={async (event: ChangeEvent<HTMLInputElement>) => {
                   if (!event.target.files) return;
-
-                  const imageUrl = await storeImageInFirebase(
+                  const compresssedImage = await compressImage(
                     event.target.files[0],
+                    { maxWidth: 150, maxHeight: 150, quality: 0.7 }
+                  );
+                  setAddFood((prev) => ({
+                    ...prev,
+                    product: {
+                      ...prev.product,
+                      image: URL.createObjectURL(compresssedImage as Blob),
+                    },
+                  }));
+                  const imageUrl = await storeImageInFirebase(
+                    compresssedImage as File,
                     { folder: "products" }
                   );
                   setAddFood((prev) => ({

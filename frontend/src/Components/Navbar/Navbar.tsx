@@ -67,7 +67,7 @@ export const NavbarContainer = () => {
             to={item.url}
             key={index}
             className={
-              "h-full px-5 py-4 text-[var(--dark-text)] hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)]  text-start w-full md:w-[100px] " +
+              "h-full px-5 py-4 text-[var(--dark-text)] contrast-125 hover:bg-[var(--primary-color)] hover:font-bold hover:text-[var(--secondary-color)]  text-start w-full md:w-[100px] " +
               (location.pathname === item.url
                 ? " font-bold text-[var(--secondary-color)] "
                 : " ")
@@ -226,7 +226,11 @@ export const Navbar: React.FC = () => {
       >
         <div className="flex items-center justify-start gap-4">
           <div ref={menuReference as any} className="flex w-full md:hidden ">
-            <button className="" onClick={() => setOpen(!open)}>
+            <button
+              aria-label="menu-button"
+              className=""
+              onClick={() => setOpen(!open)}
+            >
               {open ? (
                 <X className="cursor-pointer md:size-10 size-[30px] sm:size-8" />
               ) : (
@@ -264,13 +268,18 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center justify-center h-full gap-3 place-items-center">
             <div ref={searchReference}>
               <button
+                aria-label="search"
+                aria-labelledby="search-button"
                 className={`py-2.5 sm:flex hidden rounded-r-lg duration-150`}
                 onClick={() => setOpenSearch(!openSearch)}
               >
                 {openSearch ? (
                   <X className=" size-[30px] sm:size-7 " />
                 ) : (
-                  <Search className="size-[30px] sm:size-7" />
+                  <Search
+                    id="search-button"
+                    className="size-[30px] sm:size-7"
+                  />
                 )}
               </button>
 
@@ -492,6 +501,7 @@ export const Navbar: React.FC = () => {
         className={` sm:hidden w-[280px]  bg-[var(--light-background)] text-[var(--dark-text)]  ml-[22px] px-1  flex border-[var(--dark-border)] border-[1px] rounded-lg  items-center justify-start  duration-150 `}
       >
         <button
+          aria-label="search"
           className="  py-1.5 px-1 text-[var(--dark-secondary-text)] rounded-r-lg bg-[var(--light-background)] "
           onClick={() => setOpenSearch(false)}
         >
@@ -560,8 +570,16 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         >
           <img className="w-full h-full" src={CollegeLogo} alt="" />
         </div>
-        <button onClick={() => action()} className="">
-          <X className="duration-150 size-[30px] sm:size-7 hover:text-red-600" />
+        <button
+          aria-labelledby="close-button"
+          aria-label="close"
+          onClick={() => action()}
+          className=""
+        >
+          <X
+            id="close-button"
+            className="duration-150 size-[30px] sm:size-7 hover:text-red-600"
+          />
         </button>
       </div>
       <div className="flex items-center justify-start w-full gap-5 pl-3">
@@ -632,6 +650,8 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         </ul>
       </div>
       <button
+        aria-labelledby="logout-button"
+        aria-label="logout"
         disabled={loading}
         onClick={() => {
           logout();
@@ -640,7 +660,7 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
         className="flex top-[85vh] bg-[var(--light-foreground)] z-[100] left-2 right-2 absolute items-center justify-start gap-5  cursor-pointer hover:bg-[#e8e8e8] dark:hover:bg-[#121b28]     p-3 rounded duration-150"
       >
         <LogOut className="size-5" />
-        Logout
+        <p id="logout-button"> Logout</p>
       </button>
     </div>
   );
@@ -667,10 +687,10 @@ export const Header: React.FC = () => {
 
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
-      <div className={"bg-[var(--primary-color)] sm:flex hidden "}>
+      <div className={"bg-[var(--primary-color)] contrast-150 sm:flex hidden "}>
         <div className="flex items-center gap-2 px-5 py-2">
           <Phone className="text-[var(--secondary-color)] sm:size-6 size-5 " />
-          <p className="text-xs text-[var(--light-secondary-text)] ">
+          <p className="text-xs text-gray-300 ">
             01-4589134, 01-4588627,9801644462
           </p>
         </div>
@@ -771,10 +791,15 @@ export const SearchProductCard: React.FC<Product> = (data) => {
         )}
       </div>
       <button
+        aria-labelledby="cart"
+        aria-label="cart-button"
         className="bg-[var(--primary-color)] text-white py-2 px-2 sm:px-3 rounded-md hover:bg-[var(--primary-dark)] duration-150 sm:text-[14px]"
         onClick={() => addProductToCartFn(data)}
       >
-        <MdOutlineShoppingCartCheckout className="sm:size-6 size-5 text-[var(--dark-text)] " />
+        <MdOutlineShoppingCartCheckout
+          id="cart"
+          className="sm:size-6 size-5 text-[var(--dark-text)] "
+        />
       </button>
     </div>
   );

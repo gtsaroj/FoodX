@@ -5,12 +5,10 @@ import { getCategories } from "../../Services/category.services";
 import Skeleton from "react-loading-skeleton";
 
 import { getProductsByTag } from "../../Services/product.services";
-import { Frown } from "lucide-react";
+import Empty from "../../assets/empty.png";
 import { Category } from "../../models/category.model";
 import { useQuery } from "react-query";
 import { specialProducts } from "../../Hooks/useAllProducts";
-import { ProgressiveImage } from "../../Utility/progressImage";
-import FoodX from "../../assets/logo/Fx.png";
 
 export interface categoriesTagOption {
   name: string;
@@ -100,36 +98,48 @@ export const MenuType: React.FC = () => {
 
   return (
     <div className="flex flex-col flex-wrap w-full gap-8 py-8 ">
-      <div className="flex items-center w-full gap-4 overflow-auto">
-        {data?.map((tag, index) => (
-          <FoodCategory
-            action={(data) => setInitialTag(data)}
-            prop={tag}
-            color={{
-              backgroundColor: gradientColorPalette[index],
-              textColor: interactiveTextColorPalette[index],
-            }}
-            key={tag.id}
-          />
-        ))}
+      <div className="flex flex-col items-center w-full sm:gap-8 gap-7 ">
+        <div className="w-full flex items-center ">
+          <h3 className="h-[1px] w-full sm:text-[22px] text-[16px]  bg-gradient-to-r from-black/100 dark:from-white/100  to-black/0 dark:to-white/0"></h3>
+          <p className="font-semibold text-center sm:text-[22px] text-[12px] sm:min-w-[300px] w-[512px] tracking-wide text-[var(--dark-text)]">
+            What's on you mind ?
+          </p>
+          <h3 className="h-[1px] w-full  bg-gradient-to-r from-black/0 dark:from-white/0 to-black/100 dark:to-white/100"></h3>
+        </div>
+        <div className="flex w-full items-center gap-4 overflow-auto">
+          {data?.map((tag, index) => (
+            <FoodCategory
+              action={(data) => setInitialTag(data)}
+              prop={tag}
+              color={{
+                backgroundColor: gradientColorPalette[index],
+                textColor: interactiveTextColorPalette[index],
+              }}
+              key={tag.id}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="flex  w-full flex-col items-start rounded-md bg-[var(--light-foreground)] px-8 gap-5  py-5">
-        <p className="text-2xl  pt-4 text-[var(--dark-text)] font-bold tracking-wider">
-          {initialTag?.name}
+        <p className="sm:text-2xl text-[16px]  pt-4 text-[var(--dark-text)] font-bold tracking-wider">
+          {initialTag?.name.charAt(0).toUpperCase() + initialTag?.name.slice(1)}
         </p>
 
         <div className="flex flex-wrap items-center justify-center w-full gap-8 sm:gap-20 sm:justify-evenly lg:justify-start">
           {isLoading || !loading ? (
             initialData?.length <= 0 ? (
-              <div className="flex flex-col items-center justify-center w-full p-4 text-center">
-                <Frown className="size-32 text-[var(--dark-secondary-text)] " />
-                <h2 className="text-xl text-[var(--dark-text)] font-semibold mb-2">
-                  No Products Found
-                </h2>
-                <p className="text-gray-500">
-                  Sorry, we couldn't find any products in this category. Please
-                  try searching for something else.
+              <div className="flex flex-col items-center justify-center w-full h-full p-4 text-center">
+                <img
+                  src={Empty}
+                  alt="No orders found"
+                  className="mb-4 size-40"
+                />
+                <h4 className="text-xl text-[var(--dark-secondary-text)] mb-2">
+                  No products found
+                </h4>
+                <p className="text-sm text-[var(--dark-secondary-text)] mb-4">
+                  Try browsing other categories for more options.
                 </p>
               </div>
             ) : (
@@ -138,34 +148,13 @@ export const MenuType: React.FC = () => {
               ))
             )
           ) : (
-            <div className="flex  overflow-auto items-center w-full gap-4  ">
+            <div className="flex w-full gap-4 ">
               <Skeleton
-                height={230}
-                width={330}
+                className="w-full flex   h-full"
+                containerClassName="lg:w-[1500px] lg:h-[200px] sm:flex overflow-auto   gap-2 lg:w-[280px] sm:w-[800px] w-[900px] h-[120px] sm:h-[160px]"
                 baseColor="var(--light-background)"
                 highlightColor="var(--light-foreground)"
-                count={1}
-              />
-              <Skeleton
-                height={230}
-                width={330}
-                baseColor="var(--light-background)"
-                highlightColor="var(--light-foreground)"
-                count={1}
-              />
-              <Skeleton
-                height={230}
-                width={330}
-                baseColor="var(--light-background)"
-                highlightColor="var(--light-foreground)"
-                count={1}
-              />
-              <Skeleton
-                height={230}
-                width={330}
-                baseColor="var(--light-background)"
-                highlightColor="var(--light-foreground)"
-                count={1}
+                count={4}
               />
             </div>
           )}
@@ -198,7 +187,7 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
   return (
     <div
       onClick={() => action({ ...prop })}
-      className="w-full min-w-[130px] h-[160px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
+      className="w-full min-w-[120px] h-[140px]  sm:min-w-[180px] cursor-pointer rounded-xl overflow-hidden relative sm:h-[240px] z-30"
       key={prop.id}
     >
       <div
@@ -208,16 +197,15 @@ export const FoodCategory: React.FC<FoodCategoryProp> = ({
         className="w-full bg-slate-300 hover:opacity-[0.9] duration-150 absolute z-[2] h-full"
       >
         <div className="flex -bottom-5 items-end h-full w-full z-[-1] rounded-xl justify-end overflow-hidden absolute -right-8   ">
-          <ProgressiveImage
-            className="sm:w-[260px] w-[240px] scale-[0.9] sm:scale-[1.05] h-[130px] sm:h-[180px] rounded-3xl"
-            highResSrc={prop.image}
+          <img
+            className="sm:w-[260px] w-[240px] scale-[0.9] sm:scale-[1.05] h-[110px] sm:h-[180px] rounded-3xl"
+            src={prop.image}
             alt={prop.name}
-            lowResSrc={FoodX}
           />
         </div>
         <h1
           style={{ color: color.textColor }}
-          className="absolute top-7 left-4 tracking-wider text-[14px] sm:text-[17px]  font-semibold "
+          className="absolute top-7 left-4 tracking-wider text-[13px] sm:text-[17px]  font-semibold "
         >
           {prop.name}
         </h1>
