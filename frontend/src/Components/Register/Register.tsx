@@ -71,10 +71,11 @@ export const RegisterContainer: React.FC = () => {
     });
     setRegisterValue({ ...RegisterValue, avatar: imageUrl });
   };
+
   function Validation(error: Record<string, string>) {
     allFieldsRequired(RegisterValue, error);
-    // validateEmail(RegisterValue, error);
     checkValidNumber(RegisterValue, error);
+
     validatePasswordOnChange(RegisterValue, error);
 
     if (Object.keys(error).length === 0) {
@@ -100,14 +101,7 @@ export const RegisterContainer: React.FC = () => {
     } catch (error) {
       toast.error(`User already logged in`);
     }
-    console.log(error);
-    RegisterValue.avatar = "";
-    RegisterValue.firstName = "";
-    RegisterValue.lastName = "";
-    RegisterValue.password = "";
-    RegisterValue.confirmpassword = "";
-    RegisterValue.email = "";
-    RegisterValue.phoneNumber = "";
+
     setLoading(false);
   };
 
@@ -138,7 +132,7 @@ export const RegisterContainer: React.FC = () => {
         <form
           action=""
           onSubmit={handleFormSubmit}
-          className=" flex flex-col   sm:w-[550px] w-full  items-center gap-3 bg-[var(--light-foreground)] p-2 sm:p-6 rounded-lg text-[var(--dark-text)] "
+          className=" flex flex-col    sm:w-[550px] w-full  items-center gap-4 bg-[var(--light-foreground)] p-2 sm:p-6 rounded-lg text-[var(--dark-text)] "
         >
           <div className="relative flex flex-col sm:mb-6 mb-2 items-center justify-center gap-1 duration-150 group/image">
             {RegisterValue.avatar ? (
@@ -154,11 +148,7 @@ export const RegisterContainer: React.FC = () => {
                 className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
               />
             )}
-            {ValidateError["avatar"] && (
-              <div className="text-[12px] text-[#af2e2e] ">
-                {ValidateError["avatar"]}
-              </div>
-            )}
+
             <input
               type="file"
               accept="image/*"
@@ -190,7 +180,7 @@ export const RegisterContainer: React.FC = () => {
               />
               {
                 <div className="text-[12px] text-[#af2e2e]">
-                  {ValidateError.firstname}
+                  {ValidateError.firstName}
                 </div>
               }
             </div>
@@ -205,7 +195,7 @@ export const RegisterContainer: React.FC = () => {
               />
               {ValidateError && (
                 <div className="text-[12px] text-[#af2e2e] ">
-                  {ValidateError.lastname}
+                  {ValidateError.lastName}
                 </div>
               )}
             </div>
@@ -247,7 +237,7 @@ export const RegisterContainer: React.FC = () => {
             />
             {ValidateError["email"] && (
               <div className="text-[12px] text-[#af2e2e] flex flex-col ">
-                {ValidateError["number"]}
+                {ValidateError["phoneNumber"]}
               </div>
             )}
           </div>

@@ -21,18 +21,21 @@ const Footer: React.FC = () => {
             <p className="text-lg font-bold tracking-wide ">Follow us: </p>
             <div className="flex items-center gap-9">
               <a
+                aria-label="go to facebook"
                 target="_blank"
                 href="https://www.facebook.com/texasintlcollege"
               >
                 <Facebook className="sm:size-6 size-5 duration-150 hover:text-[var(--secondary-color)] " />
               </a>
               <a
+                aria-label="go to instagram"
                 href="https://www.instagram.com/texasinternationalcollege/"
                 target="_blank"
               >
                 <Instagram className="sm:size-6 size-5 duration-150 hover:text-[var(--secondary-color)] " />
               </a>
               <a
+                aria-label="go to linkedin"
                 href="https://www.linkedin.com/company/texas-college-of-management-it/"
                 target="_blank"
               >

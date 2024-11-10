@@ -9,7 +9,7 @@ export const allFieldsRequired = (
       RegisterValue.hasOwnProperty(inputValue) &&
       RegisterValue[inputValue as keyof ValidationType] === ""
     )
-      error[inputValue] = `All are required`;
+      error[inputValue] = `* Required`;
   }
 
   if (Object.keys(error).length !== 0) {
@@ -43,7 +43,7 @@ export const validatePasswordOnChange = (
   const upperCase = new RegExp("(?=.*[A-Z])");
   const digit = new RegExp("(?=.*\\d)");
   const special = new RegExp("(?=.*[!@#$%^&*])");
-
+  if (error.password) return;
   if (!lowerCase.test(passkey))
     return (error.password = "Must contain a lowercase character.");
   if (!upperCase.test(passkey))
@@ -56,7 +56,8 @@ export const validatePasswordOnChange = (
     return (error.password = "Password atleast contains 8 characters");
   }
   if (RegisterValue.password !== RegisterValue.confirmpassword) {
-    return (error.password = "password does not match");
+    error.password = "Password does not match";
+    error.confirmpassword = "Password does not match";
   }
 };
 
@@ -64,7 +65,7 @@ export const checkValidNumber = (
   registervalue: ValidationType,
   error: Record<string, string>
 ) => {
-  if (registervalue.phoneNumber.length < 10) {
-    return (error.number = "Invalid Number");
+  if (!error.phoneNumber && registervalue.phoneNumber.length < 10) {
+    return (error.phoneNumber = "Invalid Number");
   }
 };
