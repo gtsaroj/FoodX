@@ -12,7 +12,6 @@ import { User, UserRole, GetUserModal, Register } from "../models/user.model";
 import { getRoleFromAccessToken } from "../Utility/jwt.util";
 import Cookies from "js-cookie";
 import { Store } from "../Store";
-import { da } from "date-fns/locale";
 
 export const searchUser = async (search: string) => {
   try {
