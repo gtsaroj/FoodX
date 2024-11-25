@@ -8,7 +8,6 @@ import { LuDownloadCloud } from "react-icons/lu";
 import Empty from "../../../assets/empty.png";
 import { useNavigate } from "react-router-dom";
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export declare namespace Table {
   interface TableModalProps<T> {
     data: Array<T>;

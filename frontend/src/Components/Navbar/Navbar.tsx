@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import CollegeLogo from "../../assets/logo/texas.png";
 import {
   Bell,
@@ -669,6 +669,12 @@ export const MobileSlider: React.FC<MobileSliderProp> = ({ action, open }) => {
 //header
 export const Header: React.FC = () => {
   const [nav, setNav] = useState<boolean>(false);
+  const [isDark, setIsDark] = useState<boolean>(() => {
+    const prefersDarkScheme = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    return prefersDarkScheme;
+  });
   const changeColor = () => {
     if (window.scrollY >= 10) {
       setNav(true);
@@ -676,6 +682,15 @@ export const Header: React.FC = () => {
       setNav(false);
     }
   };
+
+  useEffect(() => {
+    if (isDark) {
+      document.body.classList.add("dark");
+    }
+    if (!isDark) {
+      document.body.classList.remove("dark");
+    }
+  });
 
   useEffect(() => {
     window.addEventListener("scroll", changeColor);
@@ -687,14 +702,47 @@ export const Header: React.FC = () => {
 
   return (
     <header className="w-full min-w-[100vw] h-full relative ">
-      <div className={"bg-[var(--primary-color)] contrast-150 sm:flex hidden "}>
+      <div
+        className={
+          "bg-[var(--primary-color)] contrast-150 sm:flex items-center justify-between hidden "
+        }
+      >
         <div className="flex items-center gap-2 px-5 py-2">
           <Phone className="text-[var(--secondary-color)] sm:size-6 size-5 " />
           <p className="text-xs text-gray-300 ">
             01-4589134, 01-4588627,9801644462
           </p>
         </div>
-        <div></div>
+        <button className="cursor-pointer">
+          <label htmlFor="theme" className="  theme">
+            <span className="theme__toggle-wrap">
+              <input
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setIsDark(event.target.checked)
+                }
+                checked={isDark}
+                id="theme"
+                className="theme__toggle"
+                type="checkbox"
+                role="switch"
+                name="theme"
+                value="dark"
+              />
+              <span className="theme__fill"></span>
+              <span className="theme__icon">
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+                <span className="theme__icon-part"></span>
+              </span>
+            </span>
+          </label>
+        </button>
       </div>
       <div
         className={

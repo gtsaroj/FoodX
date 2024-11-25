@@ -3,6 +3,7 @@ import Specials from "./Specials";
 import { MenuType } from "../../Components/Category/MenuType";
 import OrderNotification from "../Order/Order.Notification";
 import { PopularProduct } from "../Product/Product.Popular";
+import FeedbackForm from "../../Components/Feedback/Feedback";
 const Home = () => {
   return (
     <div className="flex items-center justify-center w-full h-full px-3 py-6 ">
@@ -24,6 +25,7 @@ const Home = () => {
         >
           <MenuType />
         </div>
+        <FeedbackForm/>
       </div>
     </div>
   );
