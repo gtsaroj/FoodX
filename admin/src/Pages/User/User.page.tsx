@@ -13,6 +13,9 @@ const CustomerList: React.FC = () => {
   const [initialCustomer, setInitialCustomer] = useState<User[]>([]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [loading, setLoading] = useState<boolean>(false);
+  const [bulkSelectedCustomer, setBulkSelectedCustomer] = useState<
+    { id: string; role: "customer" | "admin" | "chef" }[]
+  >([]);
   const [pagination, setPagination] = useState<{
     currentPage: number;
     perPage: number;
@@ -107,6 +110,49 @@ const CustomerList: React.FC = () => {
     setLoading(false);
   };
 
+  const handleBulkSelected = (id: string, isChecked: boolean) => {
+    const refreshIds = bulkSelectedCustomer?.filter((user) => user.id !== id);
+
+    isChecked
+      ? setBulkSelectedCustomer(
+          (prev): { id: string; role: "customer" | "admin" | "chef" }[] => {
+            const newCustomer = prev?.filter((category) => category.id !== id);
+            const findCustomer = initialCustomer.find(
+              (category) => category?.id === id
+            );
+            return newCustomer
+              ? [
+                  ...newCustomer,
+                  {
+                    id: findCustomer?.id as string,
+                    role: findCustomer?.role as "customer" | "admin" | "chef",
+                  },
+                ]
+              : [
+                  {
+                    id: findCustomer?.id as string,
+                    role: findCustomer?.role as "customer" | "admin" | "chef",
+                  },
+                ];
+          }
+        )
+      : setBulkSelectedCustomer(refreshIds);
+  };
+
+  const handleAllSelected = (isChecked: boolean) => {
+    if (isChecked) {
+      const AllCategories = initialCustomer?.map((customer) => {
+        return { id: customer.id as string, role: customer.role };
+      });
+      setBulkSelectedCustomer(
+        AllCategories as { id: string; role: "customer" | "admin" | "chef" }[]
+      );
+    }
+    if (!isChecked) {
+      setBulkSelectedCustomer([]);
+    }
+  };
+
   const debouncedHandleChange = useCallback(debounce(handleChange, 350), [
     initialCustomer,
   ]);
@@ -187,6 +233,7 @@ const CustomerList: React.FC = () => {
     filter?.sortFilter?.sort,
     filter?.typeFilter?.type,
     pagination.pageDirection,
+    sortOrder,
   ]);
 
   return (
@@ -341,12 +388,17 @@ const CustomerList: React.FC = () => {
         )}
       </div>
       <CustomerTable
+        selectedData={bulkSelectedCustomer?.map((customer)=> customer.id)}
         actions={{
           checkAllFn: (isChecked: boolean) => {
+            handleAllSelected(isChecked);
             if (!isChecked) return setExportedData([]);
-            if (isChecked) setExportedData(initialCustomer);
+            if (isChecked) {
+              setExportedData(initialCustomer);
+            }
           },
           checkFn: (id: string, isChecked: boolean) => {
+            handleBulkSelected(id, isChecked)
             const findUser = initialCustomer?.find((user) => user.id === id);
             if (!isChecked && id) {
               setExportedData((prev) => {

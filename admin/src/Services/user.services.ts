@@ -12,6 +12,7 @@ import { User, UserRole, GetUserModal, Register } from "../models/user.model";
 import { getRoleFromAccessToken } from "../Utility/jwt.util";
 import Cookies from "js-cookie";
 import { Store } from "../Store";
+import { da } from "date-fns/locale";
 
 export const searchUser = async (search: string) => {
   try {
@@ -125,12 +126,12 @@ export const updateUser = async (data: {
     const response = await makeRequest({
       method: "put",
       url: "/users/update-user",
-      data: { ...data },
+      data: { id: data.id, role: data.role, [data.field]: data.newData },
     });
     return response.data.data;
-  } catch (error) {
-    toast.error("Unable to update user");
-    throw new Error("Unable to update user");
+  } catch (error: any) {
+    toast.error(error.response.data.message);
+    throw new Error("Error while updating user " + error);
   }
 };
 export const deletUser = async (data: { uid: string; role: string }) => {

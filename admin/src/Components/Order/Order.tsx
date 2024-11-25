@@ -13,49 +13,48 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { aggregateOrders, usePaginateOrders } from "../../Pages/Order/order";
 
-
 export const RecentOrders = () => {
   const [url, setUrl] = useState<string>();
 
   const [isClicked, setIsClicked] = useState<boolean>(false);
 
-  const { initialOrders, setInitialOrders, loading } = usePaginateOrders(
-    {
-      pageSize: 5,
-      sort: "desc",
-      status: "pending",
-    }
-  );
+  const { initialOrders, setInitialOrders, loading } = usePaginateOrders({
+    pageSize: 5,
+    sort: "desc",
+    status: "pending",
+  });
 
   const store = useSelector((state: RootState) => state.root);
 
-  const { socket } = useSocket(store?.user?.success);
+  const { socket, loading: loader } = useSocket(store?.user?.success);
 
   useEffect(() => {
-    const handleNewOrder = async (order: Order) => {
-      const user = await getUserByUid(order.uid as string);
-      const aggregateOrder = aggregateOrders([order]);
-      const promiseResolve = await Promise.all(aggregateOrder);
-      setInitialOrders((prev) => [...promiseResolve, ...prev]);
-      const audio = new Audio(Bell);
-      audio.play();
-      customToast({
-        orderId: order.orderId,
-        products: order.products,
-        orderRequest: order.orderRequest,
-        name: user?.fullName as string,
-        note: order.note as string,
-      });
-    };
+    if (!loader) {
+      const handleNewOrder = async (order: Order) => {
+        const user = await getUserByUid(order.uid as string);
+        const aggregateOrder = aggregateOrders([order]);
+        const promiseResolve = await Promise.all(aggregateOrder);
+        setInitialOrders((prev) => [...promiseResolve, ...prev]);
+        const audio = new Audio(Bell);
+        audio.play();
+        customToast({
+          orderId: order.orderId,
+          products: order.products,
+          orderRequest: order.orderRequest,
+          name: user?.fullName as string,
+          note: order.note as string,
+        });
+      };
 
-    // Listen for the 'new_order' event
-    socket?.on("new_order", handleNewOrder);
+      // Listen for the 'new_order' event
+      socket?.on("new_order", handleNewOrder);
 
-    // Cleanup listener when component unmounts
-    return () => {
-      socket?.off("new_order", handleNewOrder);
-    };
-  }, [socket, setInitialOrders]);
+      // Cleanup listener when component unmounts
+      return () => {
+        socket?.off("new_order", handleNewOrder);
+      };
+    }
+  }, [socket, setInitialOrders, loader]);
 
   return (
     <div className="flex flex-col px-2 py-4 w-full h-full  lg:max-w-[600px]">
