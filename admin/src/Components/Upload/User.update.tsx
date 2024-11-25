@@ -13,10 +13,10 @@ interface UpdateCategoryType {
 }
 
 const UpdateCategoryOption: UpdateCategoryType[] = [
-  { label: "Name", value: "name" },
+  { label: "FullName", value: "fullName" },
   {
     label: "Image",
-    value: "image",
+    value: "avatar",
   },
   {
     label: "Role",
@@ -43,10 +43,14 @@ interface UpdateCustomerProp {
   closeModal: () => void;
 }
 
-const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
-  
+const UpdateCustomer: React.FC<UpdateCustomerProp> = ({
+  customerInfo,
+  closeModal,
+}) => {
   const [newData, setNewData] = useState<string>("");
-  const [field, setField] = useState<"image" | "name" | "role">("name");
+  const [field, setField] = useState<"avatar" | "fullName" | "role">(
+    "fullName"
+  );
 
   const fileRef = useRef<HTMLImageElement>();
   const handleSubmit = async (event: FormEvent) => {
@@ -76,7 +80,6 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
         field: field,
         newData: newData,
       });
-
       await addLogs({
         action: "update",
         date: new Date(),
@@ -84,12 +87,17 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
       });
       toast.dismiss(toastLoader);
       toast.success("User update successfully");
-    } catch (error) {
+    } catch (error: any) {
+      throw new Error("Unable to update user" + error);
+    } finally {
       toast.dismiss(toastLoader);
-      toast.error("User not updated");
-      throw new Error("Unable to update category" + error);
+      setField("fullName");
+      closeModal();
+      setNewData("");
     }
   };
+
+  console.log(field);
   const handleChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     const image = event.target.files[0];
@@ -107,12 +115,13 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
         onSubmit={(event) => handleSubmit(event)}
       >
         <Selector
-          
           categoryOption={UpdateCategoryOption}
-          setField={(value) => setField(value as "image" | "role" | "name")}
+          setField={(value) =>
+            setField(value as "avatar" | "role" | "fullName")
+          }
         />
 
-        {field === "image" ? (
+        {field === "avatar" ? (
           newData ? (
             <div className="w-full    overflow-hidden transition-all hover:bg-[var(--light-foreground)] cursor-pointer relative border-dotted border-[2px] rounded border-[var(--light-foreground)] stroke-[1px]">
               {" "}
@@ -140,7 +149,7 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
               </div>
             </div>
           )
-        ) : field === "name" ? (
+        ) : field === "fullName" ? (
           <div className="w-full py-1 border-[1px] border-[var(--dark-border)] rounded px-2 bg-[var(--light-foreground)]">
             <input
               className="w-full bg-[var(--light-foreground)] text-[var(--dark-text)] outline-none placeholder:text-sm py-1.5 px-4 rounded "
@@ -153,7 +162,9 @@ const UpdateCustomer: React.FC<UpdateCustomerProp> = ({ customerInfo }) => {
           </div>
         ) : field === "role" ? (
           <Selector
-            categoryOption={roleOptions?.filter((role)=> role.value !== customerInfo.role) }
+            categoryOption={roleOptions?.filter(
+              (role) => role.value !== customerInfo.role
+            )}
             setField={(value) => setNewData(value as string)}
           />
         ) : (

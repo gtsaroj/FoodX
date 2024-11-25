@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 import { Download, Filter, X } from "lucide-react";
 import Delete, { DeleteButton } from "../../Components/Common/Delete/Delete";
 import Modal from "../../Components/Common/Popup/Popup";
-import UpdateCustomer from "../../Components/Upload/User.upload";
+import UpdateCustomer from "../../Components/Upload/User.update";
 import { debounce } from "../../Utility/debounce";
 import { GetUserModal } from "../../models/user.model";
 import { Button } from "../../Components/Common/Button/Button";
