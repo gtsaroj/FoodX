@@ -7,12 +7,15 @@ import { PersistGate } from "redux-persist/integration/react";
 import { Toaster } from "react-hot-toast";
 import { Suspense } from "react";
 import { Loading } from "./Components/Common/Loader/Loader";
+import { ThemeContextProvider } from "./Context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <Suspense fallback={<Loading isLoading={true} loadingFn={() => false} />}>
     <Provider store={Store}>
       <PersistGate persistor={persistor} loading={"loading"}>
-        <App />
+        <ThemeContextProvider>
+          <App />
+        </ThemeContextProvider>
       </PersistGate>
       <Toaster />
     </Provider>

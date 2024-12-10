@@ -85,7 +85,7 @@ export const MonthlyAnalytics: React.FC = () => {
                 </button>
               </div>
             )}
-            {filter?.normalFilter && (
+            {filter?.normalFilter?.id && (
               <div className="flex px-1 py-0.5 gap-2 border-[var(--dark-secondary-text)]  items-center rounded border  justify-start">
                 <div className="flex gap-1 items-center justify-center">
                   <span className="text-[15px] text-[var(--dark-secondary-text)]">

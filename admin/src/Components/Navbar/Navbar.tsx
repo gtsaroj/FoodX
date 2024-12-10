@@ -6,15 +6,9 @@ import "../../index.css";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Profile from "../../Auth/AuthProfile";
 import { NotificationPage } from "../Notification/Notification";
+import { useThemeContext } from "../../Context/ThemeContext";
 
 const Navbar = () => {
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return prefersDarkScheme;
-  });
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
 
@@ -50,30 +44,28 @@ const Navbar = () => {
     };
   }, [isOpen, openNotification]);
 
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add("dark");
-    }
-    if (!isDark) {
-      document.body.classList.remove("dark");
-    }
-  });
+  const { display, setDisplay } = useThemeContext();
 
   return (
     <div className="w-full  shadow-md shadow-[var(--light-foreground)] border-b-2 border-[var(--light-background)] h-[80px] hidden xl:flex justify-between  items-center gap-5 px-5 py-4">
       <h1 className="px-3 text-[var(--dark-text)] text-2xl">
         Welcome back,{" "}
         <span className="font-semibold tracking-wide">
-          { user.fullName && user?.fullName.charAt(0).toUpperCase() + user?.fullName?.slice(1)}
+          {user.fullName &&
+            user?.fullName.charAt(0).toUpperCase() + user?.fullName?.slice(1)}
         </span>
       </h1>
       <div className="flex gap-5 items-center justify-start">
         <label className="switch">
           <input
-            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-              setIsDark(event.target.checked)
-            }
-            checked={isDark}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
+              if (event.target.checked) {
+                setDisplay("dark");
+              } else {
+                setDisplay("light");
+              }
+            }}
+            checked={display === "dark" ? true : false}
             type="checkbox"
           />
           <span className="slider"></span>
