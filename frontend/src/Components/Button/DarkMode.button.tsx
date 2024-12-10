@@ -1,6 +1,7 @@
 import { ChevronDown, Moon, SunMoon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { MdDisplaySettings } from "react-icons/md";
+import { useThemeContext } from "../../Context/ThemeContext";
 
 const mode = [
   {
@@ -14,13 +15,13 @@ const mode = [
 ];
 
 export const DarkMode = () => {
-  const [displayMode, setDisplayMode] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
   const modeReference = useRef<HTMLDivElement | null>(null);
 
-  function displayModeFn(type: string) {
-    setDisplayMode(type);
+  const {setDisplay} = useThemeContext()
+  function displayModeFn(type: "dark" | "light") {
+     setDisplay(type)
     setOpen(false);
   }
 
@@ -42,29 +43,6 @@ export const DarkMode = () => {
     };
   }, [open]);
 
-  useEffect(() => {
-    const windowPreference = window.matchMedia("(prefers-color-scheme: dark)");
-
-    // Set the initial mode based on system preference if no user selection is made
-    if (!displayMode) {
-      setDisplayMode(windowPreference.matches ? "Dark" : "Light");
-    }
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (!displayMode) {
-        setDisplayMode(e.matches ? "Dark " : "Light ");
-      }
-    };
-
-    windowPreference.addEventListener("change", handleChange);
-
-    if (displayMode === "Dark") {
-      document.body.classList.add("dark");
-    } else if (displayMode === "Light") {
-      document.body.classList.remove("dark");
-    }
-
-    return () => windowPreference.removeEventListener("change", handleChange);
-  }, [displayMode]);
 
   return (
     <div ref={modeReference} className="w-full relative">
@@ -90,7 +68,7 @@ export const DarkMode = () => {
         {mode?.map((type, index) => (
           <button
             key={index}
-            onClick={() => displayModeFn(type.name)}
+            onClick={() => displayModeFn(type.name.toLowerCase() as "dark" |"light")}
             className="text-[15.5px] rounded-lg duration-150 w-full py-2 text-[var(--dark-secondary-text)]  hover:bg-[var(--light-background)] px-5  gap-5   flex items-center justify-start "
           >
             {type.name}
