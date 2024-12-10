@@ -26,6 +26,7 @@ import { RootState } from "../../Store";
 import Profile from "../../Auth/AuthProfile";
 import { NotificationPage } from "../Notification/Notification";
 import { useNavigate } from "react-router-dom";
+import { useThemeContext } from "../../Context/ThemeContext";
 
 interface DesktopSliderProp {
   closeFn?: () => void;
@@ -278,12 +279,7 @@ export const DesktopSlider: React.FC<DesktopSliderProp> = ({
 
 export const MobileSlider: React.FC = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [isDark, setIsDark] = useState<boolean>(() => {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return prefersDarkScheme;
-  });
+  const { display, setDisplay } = useThemeContext();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [openNotification, setOpenNotification] = useState<boolean>(false);
 
@@ -308,17 +304,10 @@ export const MobileSlider: React.FC = () => {
       document.addEventListener("mousedown", closeModal);
     }
 
-    if (isDark) {
-      document.body.classList.add("dark");
-    }
-    if (!isDark) {
-      document.body.classList.remove("dark");
-    }
-
     return () => {
       document.removeEventListener("mousedown", closeModal);
     };
-  }, [isDark, isOpen, openNotification]);
+  }, [isOpen, openNotification]);
   const reference = useRef<HTMLDivElement>(null);
   const user = useSelector((state: RootState) => state.root.user.userInfo);
   const navigate = useNavigate();
@@ -344,10 +333,14 @@ export const MobileSlider: React.FC = () => {
         <div className="flex gap-5 items-center justify-start">
           <label className="switch">
             <input
-              checked={isDark}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setIsDark(event.target.checked)
-              }
+              checked={display === "dark" ? true : false}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                if (event.target.checked) {
+                  setDisplay("dark");
+                } else {
+                  setDisplay("light");
+                }
+              }}
               type="checkbox"
             />
             <span className="slider"></span>

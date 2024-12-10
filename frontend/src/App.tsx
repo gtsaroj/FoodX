@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Routes,
   Route,
-  BrowserRouter,
   Outlet,
   Navigate,
 } from "react-router-dom";
@@ -54,26 +53,11 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { showToast } from "./Components/Toast/Toast.tsx";
 import OrderSuccess from "./Pages/Order.Success.page.tsx";
 import useScrollToTop from "./Hooks/scrollToTop.ts";
-import {  updateOrder } from "./Reducer/order.reducer.ts";
+import { updateOrder } from "./Reducer/order.reducer.ts";
 
 const HomePage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const store = useSelector((state: RootState) => state.root);
-
-  const [isDark] = useState<boolean>(() => {
-    const prefersDarkScheme = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    return prefersDarkScheme;
-  });
-
-  useEffect(() => {
-    if (isDark) {
-      document.body.classList.add("dark");
-    } else {
-      document.body.classList.remove("dark");
-    }
-  }, [isDark]);
 
   const getFavouireProducts = async () => {
     try {
@@ -92,7 +76,7 @@ const HomePage: React.FC = () => {
   }, [store?.auth?.userInfo?.uid]);
 
   const { socket } = useSocket(store?.auth?.success);
-  
+
   useEffect(() => {
     const handleNotification = async (order: OrderType) => {
       try {
@@ -144,54 +128,52 @@ export const App: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/login"
-            element={showContent ? <Navigate to={"/"} /> : <Login />}
-          />
-          <Route
-            path="/register"
-            element={showContent ? <Navigate to={"/"} /> : <Register />}
-          />
-          <Route
-            path="/email-verification"
-            element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
-          />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route>
-            <Route path="/" element={<HomePage />}>
-              <Route index element={<Home />} />
-              <Route path="/cart" element={<CartPage />}></Route>
-              <Route element={<PrivateRoute userRole={["customer"]} />}>
-                <Route path="/profile" element={<AdminProfile />} />
-              </Route>
-              <Route
-                element={
-                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
-                }
-              >
-                <Route path="/orders" element={<Order />} />
-              </Route>
-              <Route
-                element={
-                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
-                }
-              >
-                <Route path="/cart/checkout" element={<CheckoutPage />} />
-              </Route>
-              <Route
-                element={
-                  <PrivateRoute userRole={["customer", "chef", "admin"]} />
-                }
-              >
-                <Route path="/order/success" element={<OrderSuccess />} />
-              </Route>
+      <Routes>
+        <Route
+          path="/login"
+          element={showContent ? <Navigate to={"/"} /> : <Login />}
+        />
+        <Route
+          path="/register"
+          element={showContent ? <Navigate to={"/"} /> : <Register />}
+        />
+        <Route
+          path="/email-verification"
+          element={showContent ? <Navigate to={"/"} /> : <VerificationPage />}
+        />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route>
+          <Route path="/" element={<HomePage />}>
+            <Route index element={<Home />} />
+            <Route path="/cart" element={<CartPage />}></Route>
+            <Route element={<PrivateRoute userRole={["customer"]} />}>
+              <Route path="/profile" element={<AdminProfile />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/orders" element={<Order />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/cart/checkout" element={<CheckoutPage />} />
+            </Route>
+            <Route
+              element={
+                <PrivateRoute userRole={["customer", "chef", "admin"]} />
+              }
+            >
+              <Route path="/order/success" element={<OrderSuccess />} />
             </Route>
           </Route>
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
+        </Route>
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
     </QueryClientProvider>
   );
 };

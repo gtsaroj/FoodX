@@ -13,14 +13,20 @@ import { Toaster } from "react-hot-toast";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Suspense } from "react";
 import { Loader } from "./Components/Loader/Loader";
+import { ThemeContextProvider } from "./Context/ThemeContext";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <Suspense fallback={<Loader isLoading={true} loadingFn={() => false} />}>
     <Provider store={Store}>
       <PersistGate persistor={persistor} loading={"loading"}>
-        <App />
+        <BrowserRouter>
+          <ThemeContextProvider>
+            <App />
+          </ThemeContextProvider>
+        </BrowserRouter>
         <Toaster position="top-center" />
-      </PersistGate>  
+      </PersistGate>
     </Provider>
   </Suspense>
 );
