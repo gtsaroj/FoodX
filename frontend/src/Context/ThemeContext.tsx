@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../Store";
 import { useLocation } from "react-router-dom";
 
 interface ThemeContextProp {

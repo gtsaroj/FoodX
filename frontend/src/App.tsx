@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Routes,
   Route,
-  BrowserRouter,
   Outlet,
   Navigate,
 } from "react-router-dom";
