@@ -130,9 +130,6 @@ export const LoginContainer: React.FC = () => {
 };
 
 const Login: React.FC = () => {
-  useEffect(() => {
-    document.body.classList.remove("dark");
-  }, []);
   return (
     <div className=" min-w-[100vw] w-full  h-full bg-[var(--body-bg)] overflow-x-hidden">
       {/* Mobile */}

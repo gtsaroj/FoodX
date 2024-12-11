@@ -417,3 +417,18 @@
     --toggle-size: 10px;
   }
 }
+
+
+.ant-picker {
+  width: 120px;
+ border-color: var(--dark-border);
+ background-color: #f9f9fa;
+ 
+
+}
+/* Change placeholder color for all TimePicker components */
+.ant-picker input::placeholder {
+  color: rgb(253, 253, 253); /* Replace 'gray' with your desired color */
+  opacity: 1; /* Ensure the color is fully applied */
+}
+

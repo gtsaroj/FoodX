@@ -13,7 +13,7 @@ import { addOrder as addNewOrder } from "../../Reducer/order.reducer";
 
 import { resetCart } from "../../Reducer/product.reducer";
 import { removeProductFromCart } from "../../Services/cart.services";
-// import { Product } from "../../models/product.model";
+import TimePicker from "../TimePicker/TimePicker";
 
 export const Payment: React.FC = () => {
   const [selectedPayment, setSelectedPayment] = useState<string>("esewa");
@@ -134,7 +134,7 @@ export const Payment: React.FC = () => {
         </div>
 
         {/* Note Section */}
-        <div className="flex flex-col w-full mt-4">
+        <div className="flex relative flex-col w-full mt-4">
           <label className="text-[var(--dark-secondary-text)]">
             Add a Note (Optional)
           </label>
@@ -145,6 +145,23 @@ export const Payment: React.FC = () => {
             placeholder="Special requests or instructions"
             rows={3}
           />
+          <div className="w-full bottom-0 absolute flex justify-end mt-0.5  ">
+            <TimePicker
+              onChange={(time) =>
+                setNote((prev) => {
+                  if (prev?.includes("Arrival Time: ")) {
+                    return prev.replace(
+                      /(Arrival Time: ).*$/,
+                      `$1${dayjs(time).format("h:mm:ss A")}`
+                    );
+                  }
+                  return ` ${prev}  \n Arrival Time: ${dayjs(time).format(
+                    "h:mm:ss A"
+                  )} `;
+                })
+              }
+            />
+          </div>
         </div>
 
         {/* Order Summary */}
