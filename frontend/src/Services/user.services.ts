@@ -23,8 +23,12 @@ export const signIn = async (
     });
 
     const responseData = response.data.data;
-    Cookies.set("accessToken", responseData.accessToken);
-    Cookies.set("refreshToken", responseData.refreshToken);
+    Cookies.set("accessToken", responseData.accessToken, {
+      secure: true,
+    });
+    Cookies.set("refreshToken", responseData.refreshToken, {
+      secure: true,
+    });
     toast.dismiss(toastLoader);
     await addLogs({
       action: "login",

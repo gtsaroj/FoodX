@@ -117,9 +117,9 @@ export const RegisterContainer: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center w-full  lg:py-10 lg:flex-row lg:gap-3 gap-6  justify-between lg:items-center lg:justify-evenly ">
+    <div className="flex flex-col items-center bg-white w-full  lg:py-10 lg:flex-row lg:gap-3 gap-6  justify-between lg:items-center lg:justify-evenly ">
       <div className="flex lg:w-auto w-full flex-col items-center justify-start  ">
-        <div className="bg-[var(--light-foreground)] sm:static fixed z-50 shadow sm:shadow-none lg:bg-transparent w-full lg:w-auto py-2 mb-4 flex justify-start">
+        <div className="bg-[#fbfbfb] sm:static fixed z-50 shadow sm:shadow-none lg:bg-transparent w-full lg:w-auto py-2 mb-4 flex justify-start">
           <img
             src={logo}
             alt="FoodX Logo"
@@ -129,7 +129,7 @@ export const RegisterContainer: React.FC = () => {
         <h1 className="text-center text-[20px] px-2 sm:mt-0 mt-24  sm:text-[28px] md:text-[36px] font-semibold text-[var(--primary-color)] leading-tight sm:mb-6">
           Join FoodX Today & Taste the Best!
         </h1>
-        <p className="sm:flex hidden text-center text-[16px] text-[var(--dark-text)] mb-4">
+        <p className="sm:flex hidden text-center text-[16px] text-[#202020] mb-4">
           Discover a world of flavor and convenience – Sign up now and
           experience food like never before.
         </p>
@@ -139,27 +139,27 @@ export const RegisterContainer: React.FC = () => {
         <form
           action=""
           onSubmit={handleFormSubmit}
-          className=" flex flex-col    sm:w-[550px] w-full  items-center gap-4 bg-[var(--light-foreground)] p-2 sm:p-6 rounded-lg text-[var(--dark-text)] "
+          className=" flex flex-col    sm:w-[550px] w-full  items-center gap-4 bg-[#fbfbfb] p-2 sm:p-6 rounded-lg text-[#202020] "
         >
           <div className="relative flex flex-col sm:mb-6 mb-2 items-center justify-center gap-1 duration-150 group/image">
             {RegisterValue.avatar ? (
               <img
                 src={RegisterValue.avatar}
                 alt=""
-                className="rounded-full w-[100px] h-[100px] border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[var(--light-background)] outline-none"
+                className="rounded-full w-[100px] h-[100px] border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[#f4f6f8] outline-none"
               />
             ) : (
               <img
                 src={"https://res.cloudinary.com/dhnvpzxt6/image/upload/v1731246336/avatar_gqze8g.png"}
                 alt=""
-                className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none"
+                className="rounded-full w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[#f4f6f8] outline-none"
               />
             )}
 
             <input
               type="file"
               accept="image/*"
-              className=" hidden rounded-full  w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[var(--light-background)] outline-none  "
+              className=" hidden rounded-full  w-[100px] h-[100px] border-[1px] opacity-[0px] bg-[#f4f6f8] outline-none  "
               ref={uploadRef as any}
               onChange={imageChange}
             />
@@ -183,7 +183,7 @@ export const RegisterContainer: React.FC = () => {
                 type="text"
                 value={RegisterValue["firstName"]}
                 onChange={(e) => handleInputChange(e, "firstName")}
-                className=" w-full  outline-none py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px]"
+                className=" w-full  outline-none py-[7px] px-[8px] bg-[#fbfbfb] border-[#5d50772d] rounded-md border-[1px]"
               />
               {
                 <div className="text-[12px] text-[#af2e2e]">
@@ -198,7 +198,7 @@ export const RegisterContainer: React.FC = () => {
                 type="text"
                 value={RegisterValue["lastName"]}
                 onChange={(e) => handleInputChange(e, "lastName")}
-                className=" w-full bg-[var(--light-foreground)] border-[var(--dark-border)] outline-none  py-[7px] px-[8px] rounded-md border-[1px]"
+                className=" w-full bg-[#fbfbfb] border-[#5d50772d] outline-none  py-[7px] px-[8px] rounded-md border-[1px]"
               />
               {ValidateError && (
                 <div className="text-[12px] text-[#af2e2e] ">
@@ -218,7 +218,7 @@ export const RegisterContainer: React.FC = () => {
               onChange={(e) =>
                 handleInputChange(e, "email" as keyof ValidationType)
               }
-              className="outline-none py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
+              className="outline-none py-[7px] px-[8px] bg-[#fbfbfb] border-[#5d50772d] rounded-md border-[1px] w-full"
             />
             {ValidateError["email"] && (
               <div className="text-[12px] text-[#af2e2e] flex flex-col ">
@@ -240,7 +240,7 @@ export const RegisterContainer: React.FC = () => {
               onChange={(e) =>
                 handleInputChange(e, "phoneNumber" as keyof ValidationType)
               }
-              className="outline-none py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full "
+              className="outline-none py-[7px] px-[8px] bg-[#fbfbfb] border-[#5d50772d] rounded-md border-[1px] w-full "
             />
             {ValidateError["email"] && (
               <div className="text-[12px] text-[#af2e2e] flex flex-col ">
@@ -262,11 +262,11 @@ export const RegisterContainer: React.FC = () => {
                 onChange={(e) =>
                   handleInputChange(e, "password" as keyof ValidationType)
                 }
-                className="outline-none py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
+                className="outline-none py-[7px] px-[8px] bg-[#fbfbfb] border-[#5d50772d] rounded-md border-[1px] w-full"
               />
 
               <div
-                className="absolute top-[33px] text-[var(--dark-secondary-text)]  right-[14px] w-[15px] h-[15px]"
+                className="absolute top-[33px] text-[#646168]  right-[14px] w-[15px] h-[15px]"
                 onClick={() => setShowPassword(!ShowPassword)}
               >
                 {ShowPassword ? (
@@ -297,11 +297,11 @@ export const RegisterContainer: React.FC = () => {
                     "confirmpassword" as keyof ValidationType
                   )
                 }
-                className="outline-none  relative py-[7px] px-[8px] bg-[var(--light-foreground)] border-[var(--dark-border)] rounded-md border-[1px] w-full"
+                className="outline-none  relative py-[7px] px-[8px] bg-[#fbfbfb] border-[#5d50772d] rounded-md border-[1px] w-full"
               />
 
               <div
-                className="absolute  top-[33px]  right-[14px] w-[15px] h-[15px] text-[var(--dark-secondary-text)] "
+                className="absolute  top-[33px]  right-[14px] w-[15px] h-[15px] text-[#646168] "
                 onClick={() => setShowPassword(!ShowPassword)}
               >
                 {ShowPassword ? (
@@ -333,7 +333,7 @@ export const RegisterContainer: React.FC = () => {
               )}
             </button>
             <p
-              className="text-sm text-[var(--dark-secondary-text)]  font-Poppins hover:underline cursor-pointer"
+              className="text-sm text-[#646168]  font-Poppins hover:underline cursor-pointer"
               onClick={() => navigate("/login")}
             >
               Already have an account?{" "}
@@ -348,9 +348,9 @@ export const RegisterContainer: React.FC = () => {
 
 export const Register = () => {
   return (
-    <div className="flex flex-col items-center justify-between w-full h-screen 2xl:justify-center lg:py-5">
+    <div className="flex bg-white flex-col items-center justify-between w-full h-screen 2xl:justify-center lg:py-5">
       <RegisterContainer />
-      <div className="w-full pt-10 ">
+      <div className="w-full bg-white pt-10 ">
         <AuthFooter />
       </div>
     </div>

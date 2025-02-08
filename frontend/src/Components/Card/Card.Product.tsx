@@ -251,7 +251,7 @@ export const SpecialCards: React.FC<MenuProp> = ({ prop, style }: MenuProp) => {
               data?.findIndex((product) => product.id === prop.id) !== -1
                 ? "visible"
                 : "invisible"
-            } absolute bg-[var(--light-background)] rounded-full p-1.5 shadow-sm cursor-pointer  text-[var(--dark-text)] left-0 top-2`}
+            } absolute bg-[var(--orange-bg)] font-semibold rounded-full p-1.5  flex items-center justify-center  shadow-sm cursor-pointer  text-[var(--dark-text)] left-0 top-2`}
           >
             <p className={`text-[var(--dark-text)] text-sm tracking-`}>
               #
