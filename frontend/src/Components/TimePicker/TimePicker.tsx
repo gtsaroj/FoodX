@@ -1,12 +1,12 @@
 import React from "react";
 import { TimePicker as TimePick } from "antd";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import "../../index.css";
 dayjs.extend(customParseFormat);
 
 interface TimePickerProps {
-  onChange: (time: Date, timeString: string) => void;
+  onChange: (date: Dayjs, dateString: string | string[]) => void;
 }
 
 const TimePicker: React.FC<TimePickerProps> = ({ onChange }) => (

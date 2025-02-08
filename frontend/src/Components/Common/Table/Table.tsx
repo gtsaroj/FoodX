@@ -4,7 +4,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { LiaRedoAltSolid } from "react-icons/lia";
-import { LuDownloadCloud } from "react-icons/lu";
+import { LuDownload } from "react-icons/lu";
 import Empty from "../../../assets/empty.png";
 import { useNavigate } from "react-router-dom";
 
@@ -207,7 +207,7 @@ function Table<T extends { id: string }>({
                         }}
                       >
                         <div className=" text-[var(--dark-secondary-text)] border-none">
-                          <LuDownloadCloud
+                          <LuDownload
                             className="text-[var(--dark-secondary-text)] size-4 sm:size-6 "
                             style={{ border: "none" }}
                             strokeWidth={2}

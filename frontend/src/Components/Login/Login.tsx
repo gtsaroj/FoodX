@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Logo from "../../assets/logo/Fx.png";
 import { AuthNavbar } from "../Navbar/AuthNavbar";
@@ -40,15 +40,15 @@ export const LoginContainer: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-full px-3 py-8">
-      <div className="w-full  bg-[var(--light-foreground)] flex flex-col gap-8 rounded-lg shadow-sm">
+    <div className="flex bg-white items-center justify-center w-full h-full px-3 py-8">
+      <div className="w-full  bg-white flex flex-col gap-8 rounded-lg shadow-sm">
         <div className="w-full flex flex-col items-center gap-3 px-3 py-6  text-[25px] sm:text-[30px] font-bold text-[var(--primary-color)] tracking-wide text-center">
           <h1>Welcome Back to FoodX</h1>
         </div>
         <div className="px-3 py-4">
           <form
             autoComplete="off"
-            className="flex  text-[var(--dark-text)] flex-col gap-4 p-2"
+            className="flex  text-[#202020] flex-col gap-4 p-2"
             onSubmit={LoginFormSubmit}
           >
             <label className="relative flex flex-col gap-1">
@@ -60,7 +60,7 @@ export const LoginContainer: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className=" logPassword border-[var(--dark-border)] border-[1px] sm:text-[16px] text-[14px]  bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
+                className=" logPassword border-[#5d50772d] border-[1px] sm:text-[16px] text-[14px]  bg-transparent rounded-md  h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
             </label>
             <label className="relative flex flex-col gap-1">
@@ -73,19 +73,19 @@ export const LoginContainer: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="border-[var(--dark-border)] sm:text-[16px] text-[14px] border-[1px] bg-transparent rounded-md h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
+                className="border-[#5d50772d] sm:text-[16px] text-[14px] border-[1px] bg-transparent rounded-md h-[35px] sm:h-[40px] outline-none px-5 py-3 text-md"
               />
 
               {show ? (
                 <div
-                  className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
+                  className="text-[#646168] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
                   <Eye className=" size-5 sm:size-6" />
                 </div>
               ) : (
                 <div
-                  className="text-[var(--dark-secondary-text)] absolute top-[37px] right-[10px] cursor-pointer"
+                  className="text-[#646168] absolute top-[37px] right-[10px] cursor-pointer"
                   onClick={showPassword}
                 >
                   <EyeOff className=" size-5 sm:size-6" />
@@ -95,7 +95,7 @@ export const LoginContainer: React.FC = () => {
 
             <p
               onClick={() => navigate("/forgot-password")}
-              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline select-none"
+              className="text-[#646168] text-sm cursor-pointer hover:underline select-none"
             >
               Forgot Password?
             </p>
@@ -114,7 +114,7 @@ export const LoginContainer: React.FC = () => {
               )}
             </button>
             <p
-              className="text-[var(--dark-secondary-text)] text-sm cursor-pointer hover:underline text-center mt-2 select-none"
+              className="text-[#646168] text-sm cursor-pointer hover:underline text-center mt-2 select-none"
               onClick={() => navigate("/register")}
             >
               Don't have an account?{" "}
@@ -131,7 +131,7 @@ export const LoginContainer: React.FC = () => {
 
 const Login: React.FC = () => {
   return (
-    <div className=" min-w-[100vw] w-full  h-full bg-[var(--body-bg)] overflow-x-hidden">
+    <div className=" min-w-[100vw] w-full  h-full bg-white overflow-x-hidden">
       {/* Mobile */}
       <div className="flex flex-col items-center w-full h-full lg:hidden min-h-[90vh] gap-8">
         <AuthNavbar />

@@ -15,6 +15,22 @@ import { Suspense } from "react";
 import { Loader } from "./Components/Loader/Loader";
 import { ThemeContextProvider } from "./Context/ThemeContext";
 import { BrowserRouter } from "react-router-dom";
+import { registerSW } from "virtual:pwa-register";
+
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker
+//       .register('/service-worker.js')  // Ensure the path is correct
+//       .then((registration) => {
+//         console.log('Service Worker Registered:', registration.scope);
+//       })
+//       .catch((error) => {
+//         console.error('Service Worker Registration Failed:', error);
+//       });
+//   });
+// }
+
+registerSW();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <Suspense fallback={<Loader isLoading={true} loadingFn={() => false} />}>

@@ -47,7 +47,7 @@ const Modal: React.FC<ModelProp> = ({
       <div
         className={` overflow-auto ${
           isExport ? "pt-16" : "sm:p-4 p-0 "
-        } rounded  bg-[var(--light-foreground)] text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150  relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  `}
+        } rounded  bg-white text-[var(--primary-color)] hover:text-[var(--primary-light)] duration-150  relative md:w-[800px] w-full shadow-[var(--dark-text)]    z-[60]  `}
         ref={modalRef}
       >
         <div className="w-full z-[100]  overflow-auto">{children}</div>
