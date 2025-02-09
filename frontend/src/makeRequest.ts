@@ -1,11 +1,11 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { Store } from "./Store";
-import { authLogout } from "./Reducer/user.reducer";
-import { resetCart } from "./Reducer/product.reducer";
-import { resetFavourite } from "./Reducer/favourite.reducer";
-import { resetOrder } from "./Reducer/order.reducer";
+import { Store } from "./store";
+import { authLogout } from "./reducer/user.reducer";
+import { resetCart } from "./reducer/product.reducer";
+import { resetFavourite } from "./reducer/favourite.reducer";
+import { resetOrder } from "./reducer/order.reducer";
 
 // Flag to track if the token is being refreshed
 let isRefreshing = false;
