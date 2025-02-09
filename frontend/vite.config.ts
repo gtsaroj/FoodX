@@ -11,7 +11,7 @@ export default defineConfig({
       includeAssets: ["favicon.ico"],
       manifest: {
         name: " ",
-        short_name: "FX",
+        short_name: " ",
         description: "Digitalize your canteen and cafeteria with Foodx.",
         display: "standalone",
         start_url: "/",
@@ -43,24 +43,24 @@ export default defineConfig({
           },
         ],
       },
-      workbox: {
-        globPatterns: ["*/**/*.{css,html,js,png,svg,jpg}"],
-        globDirectory: "./dist",
-        cacheId: "foodXCache",
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) =>
-              url.pathname.startsWith("https://foodx-xnga.onrender.com/"),
-            handler: "CacheFirst" as const,
-            options: {
-              cacheName: "api-cache",
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-        ],
-      },
+      // workbox: {
+      //   globPatterns: ["*/**/*.{css,html,js,png,svg,jpg}"],
+      //   globDirectory: "./dist",
+      //   cacheId: "foodXCache",
+      //   runtimeCaching: [
+      //     {
+      //       urlPattern: ({ url }) =>
+      //         url.pathname.startsWith("https://foodx-xnga.onrender.com/"),
+      //       handler: "CacheFirst" as const,
+      //       options: {
+      //         cacheName: "api-cache",
+      //         cacheableResponse: {
+      //           statuses: [0, 200],
+      //         },
+      //       },
+      //     },
+      //   ],
+      // },
     }),
   ],
   root: "./",
@@ -71,11 +71,10 @@ export default defineConfig({
     },
   },
   server: {
+    allowedHosts: true, 
     host: "0.0.0.0",
   },
   preview: {
-    allowedHosts: ["6371-103-163-182-228.ngrok-free.app"],
-    cors: false,
-    port: 4000,
+  allowedHosts: true
   },
 });
