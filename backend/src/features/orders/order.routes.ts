@@ -11,12 +11,19 @@ import {
 import { AddOrderSchema } from "../../utils/validate/order/add/addOrderSchema.js";
 import { validateRequest } from "../../middlewares/validator/validator.middleware.js";
 import { UpdateOrderSchema } from "../../utils/validate/order/update/updateOrderSchema.js";
-
+import { createPaginationSchema } from "../../utils/validate/pagination/paginationSchema.js";
 const orderRoutes = Router();
 
 orderRoutes.post(
   "/user-order",
   verifyRoles(["admin", "chef", "customer"]),
+  validateRequest(
+    createPaginationSchema({
+      userId: true,
+      status: true,
+      direction: true,
+    })
+  ),
   getOrderByUserIdFromDatabase
 );
 
@@ -36,11 +43,28 @@ orderRoutes.put(
   updateOrder
 );
 
-orderRoutes.post("/get-orders", verifyRoles(["chef", "admin"]), fetchOrders);
+orderRoutes.post(
+  "/get-orders",
+  verifyRoles(["chef", "admin"]),
+  validateRequest(
+    createPaginationSchema({
+      status: true,
+      direction: true,
+    })
+  ),
+  fetchOrders
+);
 
 orderRoutes.post(
   "/find",
   verifyRoles(["admin", "chef"]),
+  validateRequest(
+    createPaginationSchema({
+      status: true,
+      direction: true,
+      userId: true,
+    })
+  ),
   searchOrderBasedOnUid
 );
 

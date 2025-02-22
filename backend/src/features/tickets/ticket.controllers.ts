@@ -7,7 +7,7 @@ import { getTicketsFromFirestore } from "../../actions/ticket/get/getTickets.js"
 import { AddTicketSchemaType } from "../../utils/validate/ticket/add/addTicketSchema.js";
 import { APIError } from "../../helpers/error/ApiError.js";
 import { TicketStatusSchemaType } from "../../utils/validate/ticket/ticketStatusSchema.js";
-
+import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
 const addNewTicket = asyncHandler(
   async (req: Request<{}, {}, AddTicketSchemaType>, res: Response) => {
     let response: API.ApiResponse;
@@ -78,52 +78,42 @@ const deleteTicket = asyncHandler(
   }
 );
 
-const fetchTickets = asyncHandler(async (req: any, res: any) => {
-  let {
-    pageSize,
-    sort,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-    status,
-    category,
-    uid,
-  }: {
-    pageSize: number;
-    sort: "asc" | "desc";
-    direction: "prev" | "next";
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-    status?: "pending" | "resolved" | "cancelled";
-    uid?: string;
-    category?: string;
-  } = req.body;
+const fetchTickets = asyncHandler(
+  async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
+    let {
+      pageSize,
+      sort,
+      direction,
+      startAtDoc,
+      startAfterDoc,
+      status,
+      userId,
+    } = req.body;
+    let ticketStatus = status as TicketStatusSchemaType;
 
-  let response: API.ApiResponse;
+    let { tickets, firstDoc, lastDoc, length } = await getTicketsFromFirestore(
+      pageSize,
+      sort,
+      direction === "next" ? startAfterDoc : null,
+      direction === "prev" ? startAtDoc : null,
+      direction,
+      status ? ticketStatus : undefined,
+      userId ? userId : undefined
+    );
 
-  let { tickets, firstDoc, lastDoc, length } = await getTicketsFromFirestore(
-    pageSize,
-    sort,
-    direction === "next" ? currentLastDoc : null,
-    direction === "prev" ? currentFirstDoc : null,
-    direction,
-    status ? status : undefined,
-    uid ? uid : undefined,
-    category ? category : undefined
-  );
-
-  response = {
-    status: 200,
-    data: {
-      tickets,
-      currentFirstDoc: firstDoc,
-      currentLastDoc: lastDoc,
-      length,
-    },
-    message: "Successfully fetched tickets from database",
-    success: true,
-  };
-  return res.status(200).json(response);
-});
+    const response: API.ApiResponse = {
+      status: 200,
+      data: {
+        tickets,
+        currentFirstDoc: firstDoc,
+        currentLastDoc: lastDoc,
+        length,
+      },
+      message: "Successfully fetched tickets from database",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
 
 export { addNewTicket, updateTicket, deleteTicket, fetchTickets };

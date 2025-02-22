@@ -1,3 +1,4 @@
+import { APIError } from "../../../helpers/error/ApiError.js";
 import { paginateFnc } from "../../../helpers/paginate/paginate.js";
 
 export const getTicketsFromFirestore = async (
@@ -43,6 +44,6 @@ export const getTicketsFromFirestore = async (
       length: totalLength,
     };
   } catch (error) {
-    throw new Error("Error fetching tickets from database. " + error);
+    throw new APIError("Error fetching tickets from database. " + error, 500);
   }
 };

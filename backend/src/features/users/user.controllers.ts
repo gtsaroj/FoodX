@@ -20,6 +20,7 @@ import {
 } from "../../utils/validate/user/update/user.update.schema.js";
 import { UserSchemaType } from "../../utils/validate/user/user.schema.js";
 import { BulkDeleteSchemaType } from "../../utils/validate/user/delete/bulk-delete.schema.js";
+import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
 
 const updateAccount = asyncHandler(
   async (req: Request<{}, {}, AccountUpdateSchemaType>, res: Response) => {
@@ -175,47 +176,46 @@ const getUser = asyncHandler(
   }
 );
 
-const fetchUsers = asyncHandler(async (req: any, res: any) => {
-  let {
-    path,
-    pageSize,
-    filter,
-    sort,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-  }: {
-    path: "customer" | "admin" | "chef";
-    pageSize: number;
-    filter: keyof User.UserInfo;
-    sort: "asc" | "desc";
-    direction: "prev" | "next";
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-  } = req.body;
+const fetchUsers = asyncHandler(
+  async (
+    req: Request<
+      {},
+      {},
+      PaginationSchemaType & {
+        path: "customer" | "admin" | "chef";
+        filter?: keyof User.UserInfo;
+      }
+    >,
+    res: Response
+  ) => {
+    let { path, pageSize, filter, sort, direction, startAtDoc, startAfterDoc } =
+      req.body;
 
-  let { users, firstDoc, lastDoc, length } = await getUsersFromDatabase(
-    path,
-    pageSize,
-    filter,
-    sort,
-    direction === "next" ? currentLastDoc : null,
-    direction === "prev" ? currentFirstDoc : null,
-    direction
-  );
-  const response: API.ApiResponse = {
-    status: 200,
-    data: {
-      users,
-      currentFirstDoc: firstDoc,
-      currentLastDoc: lastDoc,
-      length,
-    },
-    message: "Successfully fetched users from database",
-    success: true,
-  };
-  return res.status(200).json(response);
-});
+    if (!path) throw new APIError("Path is required.", 400);
+
+    let { users, firstDoc, lastDoc, length } = await getUsersFromDatabase(
+      path,
+      pageSize ? pageSize : 10,
+      filter,
+      sort,
+      direction === "next" ? startAfterDoc : null,
+      direction === "prev" ? startAtDoc : null,
+      direction
+    );
+    const response: API.ApiResponse = {
+      status: 200,
+      data: {
+        users,
+        currentFirstDoc: firstDoc,
+        currentLastDoc: lastDoc,
+        length,
+      },
+      message: "Successfully fetched users from database",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
 
 const deleteAccount = asyncHandler(
   async (req: Request<{}, {}, UserSchemaType>, res: Response) => {

@@ -6,11 +6,7 @@ import { validateRequest } from "../../middlewares/validator/validator.middlewar
 
 const revenueRouter = Router();
 
-revenueRouter.post(
-  "/get",
-  verifyRoles(["chef", "admin"]),
-  fetchRevenue
-);
+revenueRouter.post("/get", verifyRoles(["chef", "admin"]), fetchRevenue);
 revenueRouter.post(
   "/add",
   verifyRoles(["admin", "chef", "customer"]),

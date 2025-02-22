@@ -7,38 +7,28 @@ import { io } from "../../index.js";
 import { userSocketMap } from "../../utils/socket/index.js";
 import { AddOrderSchemaType } from "../../utils/validate/order/add/addOrderSchema.js";
 import { UpdateOrderSchemaType } from "../../utils/validate/order/update/updateOrderSchema.js";
+import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
+import { APIError } from "../../helpers/error/ApiError.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
-  async (req: any, res: any) => {
-    let {
-      pageSize,
-      direction,
-      currentFirstDoc,
-      currentLastDoc,
-      status,
-    }: {
-      pageSize: number;
-      currentFirstDoc: any | null;
-      currentLastDoc: any | null;
-      direction?: "prev" | "next";
-      status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
-    } = req.body;
+  async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
+    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
+      req.body;
 
-    let response: API.ApiResponse;
-    const user: User.UserData = req.user;
-    if (!user) throw new Error("No user found. Please login first.");
+    const user = req.user;
+    if (!user) throw new APIError("No user found. Please login first.", 401);
 
-    const limitPage = +pageSize;
+    const limitPage = pageSize ? +pageSize : 10;
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       limitPage,
-      direction === "next" ? currentLastDoc : null,
-      direction === "prev" ? currentFirstDoc : null,
+      direction === "next" ? startAfterDoc : null,
+      direction === "prev" ? startAtDoc : null,
       direction,
       status,
-      user.uid
+      userId
     );
 
-    response = {
+    const response: API.ApiResponse = {
       status: 200,
       data: {
         orders,
@@ -99,90 +89,66 @@ const updateOrder = asyncHandler(
     return res.status(200).json(response);
   }
 );
-const fetchOrders = asyncHandler(async (req: any, res: any) => {
-  let {
-    pageSize,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-    status,
-    userId,
-  }: {
-    pageSize: number;
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-    direction?: "prev" | "next";
-    status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
-    userId?: string;
-  } = req.body;
+const fetchOrders = asyncHandler(
+  async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
+    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
+      req.body;
 
-  let response: API.ApiResponse;
-  const limitPage = +pageSize;
-  let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
-    limitPage,
-    direction === "next" ? currentLastDoc : null,
-    direction === "prev" ? currentFirstDoc : null,
-    direction,
-    status,
-    userId
-  );
-  response = {
-    status: 200,
-    data: {
-      orders,
-      currentFirstDoc: firstDoc,
-      currentLastDoc: lastDoc,
-      length,
-    },
-    message: "Successfully fetched orders from database.",
-    success: true,
-  };
-  return res.status(200).json(response);
-});
+    const limitPage = pageSize ? +pageSize : 10;
+    let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
+      limitPage,
+      direction === "next" ? startAfterDoc : null,
+      direction === "prev" ? startAtDoc : null,
+      direction,
+      status,
+      userId
+    );
+    const response: API.ApiResponse = {
+      status: 200,
+      data: {
+        orders,
+        currentFirstDoc: firstDoc,
+        currentLastDoc: lastDoc,
+        length,
+      },
+      message: "Successfully fetched orders from database.",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
 
-const searchOrderBasedOnUid = asyncHandler(async (req: any, res: any) => {
-  let {
-    pageSize,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-    status,
-  }: {
-    pageSize: number;
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-    direction?: "prev" | "next";
-    status?: "pending" | "preparing" | "prepared" | "completed" | "cancelled";
-  } = req.body;
+const searchOrderBasedOnUid = asyncHandler(
+  async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
+    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
+      req.body;
 
-  const { uid }: { uid: string } = req.body;
-  if (!uid) throw new Error("No user found. Please login first.");
-  let response: API.ApiResponse;
+    const limitPage = pageSize ? +pageSize : 10;
 
-  const limitPage = +pageSize;
-  let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
-    limitPage,
-    direction === "next" ? currentLastDoc : null,
-    direction === "prev" ? currentFirstDoc : null,
-    direction,
-    status,
-    uid
-  );
+    let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
+      limitPage,
+      direction === "next" ? startAfterDoc : null,
+      direction === "prev" ? startAtDoc : null,
+      direction,
+      status,
+      userId
+    );
 
-  response = {
-    status: 200,
-    data: {
-      orders,
-      currentFirstDoc: firstDoc,
-      currentLastDoc: lastDoc,
-      length,
-    },
-    message: "Successfully fetched orders from database based on uid.",
-    success: true,
-  };
+    const response: API.ApiResponse = {
+      status: 200,
+      data: {
+        orders,
+        currentFirstDoc: firstDoc,
+        currentLastDoc: lastDoc,
+        length,
+      },
+      message: "Successfully fetched orders from database based on uid.",
+      success: true,
+    };
 
-  return res.status(200).json(response);
-});
+    return res.status(200).json(response);
+  }
+);
 export {
   getOrderByUserIdFromDatabase,
   addNewOrder,

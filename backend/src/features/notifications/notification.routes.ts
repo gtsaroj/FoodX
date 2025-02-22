@@ -5,6 +5,8 @@ import {
   deleteNotification,
   fetchNotifications,
 } from "./notification.controllers.js";
+import { validateRequest } from "../../middlewares/validator/validator.middleware.js";
+import { createPaginationSchema } from "../../utils/validate/pagination/paginationSchema.js";
 
 const notificationRouter = Router();
 
@@ -17,6 +19,12 @@ notificationRouter.post(
 notificationRouter.post(
   "/fetch",
   verifyRoles(["admin", "chef", "customer"]),
+  validateRequest(
+    createPaginationSchema({
+      direction: true,
+      userId: true
+    })
+  ),
   fetchNotifications
 );
 

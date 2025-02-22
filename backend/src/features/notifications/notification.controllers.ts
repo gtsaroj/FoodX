@@ -1,9 +1,10 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { addNotificationToDatabase } from "../../actions/notification/add/addNotification.js";
 import { deleteNotificationFromDatabase } from "../../actions/notification/delete/deleteNotification.js";
 import { getNotificationsFromDatabase } from "../../actions/notification/get/getNotifications.js";
 import { asyncHandler } from "../../helpers/asyncHandler/asyncHandler.js";
 import { APIError } from "../../helpers/error/ApiError.js";
+import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
 
 const addNotification = asyncHandler(
   async (
@@ -35,46 +36,35 @@ const addNotification = asyncHandler(
   }
 );
 
-const fetchNotifications = asyncHandler(async (req: any, res: any) => {
-  let {
-    pageSize,
-    sort,
-    direction,
-    currentFirstDoc,
-    currentLastDoc,
-    uid,
-  }: {
-    pageSize: number;
-    sort: "asc" | "desc";
-    currentFirstDoc: any | null;
-    currentLastDoc: any | null;
-    direction?: "prev" | "next";
-    uid: string;
-  } = req.body;
+const fetchNotifications = asyncHandler(
+  async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
+    let { pageSize, sort, direction, startAtDoc, startAfterDoc, userId } =
+      req.body;
 
-  let response: API.ApiResponse;
-  let { notifications, firstDoc, lastDoc, length } =
-    await getNotificationsFromDatabase(
-      pageSize,
-      sort,
-      direction === "next" ? currentLastDoc : null,
-      direction === "prev" ? currentFirstDoc : null,
-      direction,
-      uid
-    );
-  response = {
-    status: 200,
-    data: {
-      notifications,
-      currentFirstDoc: firstDoc,
-      currentLastDoc: lastDoc,
-      length,
-    },
-    message: "Successfully fetched notifications from database",
-    success: true,
-  };
-  return res.status(200).json(response);
-});
+    let { notifications, firstDoc, lastDoc, length } =
+      await getNotificationsFromDatabase(
+        pageSize || 10,
+        sort || "desc",
+        direction === "next" ? startAfterDoc : null,
+        direction === "prev" ? startAtDoc : null,
+        direction,
+        userId
+      );
+
+    const response: API.ApiResponse = {
+      status: 200,
+      data: {
+        notifications,
+        currentFirstDoc: firstDoc,
+        currentLastDoc: lastDoc,
+        length,
+      },
+      message: "Successfully fetched notifications from database",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
 
 const deleteNotification = asyncHandler(
   async (req: Request<{}, {}, { id: string }>, res: Response) => {

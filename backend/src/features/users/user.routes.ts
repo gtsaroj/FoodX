@@ -20,6 +20,7 @@ import {
 } from "../../utils/validate/user/update/user.update.schema.js";
 import { userSchema } from "../../utils/validate/user/user.schema.js";
 import { bulkDeleteSchema } from "../../utils/validate/user/delete/bulk-delete.schema.js";
+import { PaginationSchema } from "../../utils/validate/pagination/paginationSchema.js";
 
 const userRouter = Router();
 
@@ -41,7 +42,12 @@ userRouter.put(
   updateAccount
 );
 
-userRouter.post("/get-users", verifyRoles(["admin"]), fetchUsers);
+userRouter.post(
+  "/get-users",
+  verifyRoles(["admin"]),
+  validateRequest(PaginationSchema),
+  fetchUsers
+);
 
 userRouter.delete(
   "/delete-user",

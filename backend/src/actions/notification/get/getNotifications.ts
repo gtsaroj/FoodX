@@ -1,5 +1,5 @@
+import { APIError } from "../../../helpers/error/ApiError.js";
 import { paginateFnc } from "../../../helpers/paginate/paginate.js";
-
 
 export const getNotificationsFromDatabase = async (
   pageSize: number,
@@ -7,7 +7,7 @@ export const getNotificationsFromDatabase = async (
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
   direction?: "prev" | "next",
-  uid?: string
+  userId?: string
 ) => {
   try {
     const { query, totalLength } = await paginateFnc(
@@ -18,7 +18,7 @@ export const getNotificationsFromDatabase = async (
       pageSize,
       sort,
       direction,
-      uid
+      userId
     );
     const notificationDoc = await query.get();
     const notifications: Notification.NotificationDetail[] = [];
@@ -37,6 +37,9 @@ export const getNotificationsFromDatabase = async (
       length: totalLength,
     };
   } catch (error) {
-    throw new Error("Error fetching notifications from database. " + error);
+    throw new APIError(
+      "Error fetching notifications from database. " + error,
+      500
+    );
   }
 };

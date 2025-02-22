@@ -1,5 +1,5 @@
 import { db } from "../../../firebase/index.js";
-
+import { APIError } from "../../../helpers/error/ApiError.js";
 export const getRevenueDataFromFirestore = async (
   startDate: string,
   endDate?: string
@@ -22,8 +22,9 @@ export const getRevenueDataFromFirestore = async (
     });
     return revenue;
   } catch (error) {
-    throw new Error(
-      "Something went wrong while fetching revenue from database. " + error
+    throw new APIError(
+      "Something went wrong while fetching revenue from database. " + error,
+      500
     );
   }
 };

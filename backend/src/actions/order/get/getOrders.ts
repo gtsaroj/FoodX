@@ -1,3 +1,4 @@
+import { APIError } from "../../../helpers/error/ApiError.js";
 import { paginateFnc } from "../../../helpers/paginate/paginate.js";
 
 export const getOrdersFromDatabase = async (
@@ -38,6 +39,6 @@ export const getOrdersFromDatabase = async (
       length: totalLength,
     };
   } catch (error) {
-    throw new Error("Error fetching orders from database. " + error);
+    throw new APIError("Error fetching orders from database. " + error, 500);
   }
 };
