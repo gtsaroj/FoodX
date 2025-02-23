@@ -1,27 +1,35 @@
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import { app, server, io } from "./app.js";
-import { verifySocketUser } from "./middlewares/socket.middlewares.js";
-
+import { rootRouter } from "./routes/root.routes.js";
+import { initializeSocket } from "./utils/socket/index.js";
+import errorHandler from "./middlewares/error/errorHandler.js";
 dotenv.config();
-server.listen(process.env.PORT || 8000, () => {
-  console.log(`Server is running in port ${process.env.PORT}`);
-});
+
+const app = express();
+
 app.get("/test", (_, res) => {
-  res.json("Tesing..");
+  res.status(200).send("Running on server.");
 });
 
-export const userSocketMap: Record<string, string> = {};
-io.use(verifySocketUser);
+app.use(cors());
+app.use(cookieParser());
 
-io.on("connection", (socket) => {
-  const user = socket.user;
-  const userId = user!.uid;
-  userSocketMap[userId] = socket.id;
-  if (user?.role === "chef") {
-    socket.join("chef");
-  }
-  socket.on("disconnect", () => {
-    delete userSocketMap[userId];
-    socket.disconnect();
-  });
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(express.static("public"));
+
+const { io, server } = initializeSocket(app);
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
+
+//route handling
+app.use("/api/v1", rootRouter);
+
+app.use(errorHandler);
+
+export default app;
+export { io };
