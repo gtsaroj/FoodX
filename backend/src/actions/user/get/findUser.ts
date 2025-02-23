@@ -1,4 +1,5 @@
 import { db } from "../../../firebase/index.js";
+import { APIError } from "../../../helpers/error/ApiError.js";
 
 export const findUserInDatabase = async (id: string) => {
   const collections = ["customer", "admin", "chef"];
@@ -13,9 +14,10 @@ export const findUserInDatabase = async (id: string) => {
         break;
       }
     }
-    if (!foundUser) throw new Error("User not found.");
+    if (!foundUser) throw new APIError("User not found.", 404);
     return foundUser;
   } catch (error) {
-    throw new Error("Error finding user in database.");
+    if (error instanceof APIError) throw error;
+    throw new APIError("Error finding user in database.", 500);
   }
 };

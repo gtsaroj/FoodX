@@ -1,4 +1,5 @@
 import { db } from "../../../firebase/index.js";
+import { APIError } from "../../../helpers/error/ApiError.js";
 
 export const getUserBasedOnRoleFromDatabase = async (
   path: User.RoleType
@@ -6,10 +7,15 @@ export const getUserBasedOnRoleFromDatabase = async (
   try {
     const userRef = db.collection(`${path}`);
     const userDoc = await userRef.get();
-    if (userDoc.empty) throw new Error("No document found. Contact admin.");
+    if (userDoc.empty)
+      throw new APIError("No document found. Contact admin.", 404);
     const userData = userDoc.docs.map((doc) => doc.data()) as User.UserInfo[];
     return userData;
   } catch (error) {
-    throw new Error(error as string);
+    if (error instanceof APIError) throw error;
+    throw new APIError(
+      "Something went wrong while getting user based on role. " + error,
+      500
+    );
   }
 };

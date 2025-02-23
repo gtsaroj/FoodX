@@ -1,9 +1,10 @@
 import { db } from "../../../firebase/index.js";
+import { APIError } from "../../../helpers/error/ApiError.js";
 
 export const bulkDeleteNotificationsFromDatabase = async (id: string[]) => {
   const notificationRef = db.collection("notifications");
   if (!notificationRef)
-    throw new Error("No notifications collection available.");
+    throw new APIError("No notifications collection available.", 404);
   try {
     const batch = db.batch();
 
@@ -13,8 +14,9 @@ export const bulkDeleteNotificationsFromDatabase = async (id: string[]) => {
     });
     await batch.commit();
   } catch (error) {
-    throw new Error(
-      "Unable to bulk delete notifications from database. " + error
+    throw new APIError(
+      "Unable to bulk delete notifications from database. " + error,
+      500
     );
   }
 };

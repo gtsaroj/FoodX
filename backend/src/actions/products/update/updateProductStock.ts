@@ -1,5 +1,6 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../../../firebase/index.js";
+import { APIError } from "../../../helpers/error/ApiError.js";
 
 export const updateProductStockInFirestore = async (
   collection: Product.Collection["name"],
@@ -13,6 +14,9 @@ export const updateProductStockInFirestore = async (
       updatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
-    throw new Error("Error updating product stock in database. " + error);
+    throw new APIError(
+      "Error updating product stock in database. " + error,
+      500
+    );
   }
 };
