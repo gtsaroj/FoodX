@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import fs from "fs";
 import { asyncHandler } from "../../helpers/asyncHandler/asyncHandler.js";
-import { uploadImageToFirebase } from "../../utils/storage/uploadImage.js";
+import { compressAndSaveImage } from "../../utils/storage/compressImage.js";
+import { sanitizeFolderName } from "../../helpers/sanitize/sanitizeFolderName.js";
+// import { uploadImageToFirebase } from "../../utils/storage/uploadImage.js";
+// import fs from "fs";
 
 export const Upload = asyncHandler(async (req: Request, res: Response) => {
   const { file } = req;
@@ -26,18 +28,18 @@ export const Upload = asyncHandler(async (req: Request, res: Response) => {
     return res.status(400).json(response);
   }
   const filePath = file.path;
-  const folderName = req.body.folderName || "default";
+  const folderName = sanitizeFolderName(req.body.folderName || "default");
 
-  const firebaseUrl = await uploadImageToFirebase(folderName, filePath);
+  await compressAndSaveImage(filePath, folderName, file.filename);
 
   response = {
-    data: firebaseUrl,
+    data: {
+      filename: file.filename,
+      folderName: folderName,
+    },
     message: "Image uploaded successfully.",
     success: true,
     status: 200,
   };
-  if (fs.existsSync(filePath)) {
-    await fs.promises.unlink(filePath);
-  }
   return res.status(200).json(response);
 });

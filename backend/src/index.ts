@@ -19,6 +19,16 @@ app.use(cookieParser());
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
+app.use("/assets", express.static("uploads"));
+
+app.use("/assets", (_, res) => {
+  res.status(404).json({
+    message: "Asset not found",
+    success: false,
+    status: 404,
+    data: null,
+  });
+});
 
 const { io, server } = initializeSocket(app);
 const PORT = process.env.PORT || 8000;

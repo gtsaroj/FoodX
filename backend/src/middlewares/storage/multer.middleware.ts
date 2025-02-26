@@ -1,5 +1,6 @@
 import multer from "multer";
 import fs from "fs";
+import { generateRandomId } from "../../utils/random/randomId.js";
 
 const uploadDir = "./public/uploads";
 if (!fs.existsSync(uploadDir)) {
@@ -13,7 +14,7 @@ const storage = multer.diskStorage({
   filename: function (_, file, cb) {
     const date = new Date();
     const timeStamp = date.toISOString().replace(/:/g, "-");
-    cb(null, `${file.originalname}-${timeStamp}`);
+    cb(null, `${timeStamp}-${generateRandomId()}-${file.originalname}`);
   },
 });
 

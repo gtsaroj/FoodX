@@ -4,7 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node ./dist/index.js"
+    "start": "tsc && node ./dist/index.js",
+    "dev": "concurrently \"tsc --watch\" \"nodemon ./dist/index.js\""
   },
   "keywords": [
     "FoodX"
@@ -35,6 +36,7 @@
     "nanoid": "^5.0.6",
     "redis": "^4.7.0",
     "resend": "^4.0.0",
+    "sharp": "^0.33.5",
     "socket.io": "^4.7.5",
     "ts-node": "^10.9.2",
     "uuid": "^11.0.5",
