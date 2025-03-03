@@ -12,6 +12,7 @@ import { revenueRouter } from "../features/revenues/revenue.routes.js";
 import { ticketRouter } from "../features/tickets/ticket.routes.js";
 import { userRouter } from "../features/users/user.routes.js";
 import { uploadRouter } from "../features/upload/upload.routes.js";
+import { feedbackRouter } from "../features/feedback/feedback.routes.js";
 
 const rootRouter = Router();
 
@@ -27,6 +28,7 @@ rootRouter.use("/banners", bannerRouter);
 rootRouter.use("/revenue", revenueRouter);
 rootRouter.use("/favourites", favouriteRouter);
 rootRouter.use("/notification", notificationRouter);
+rootRouter.use("/feedback", feedbackRouter);
 rootRouter.use("/images", uploadRouter)
 
 export { rootRouter };
