@@ -10,13 +10,13 @@ import { updateFeedbackInDatabase } from "../../actions/feedback/update/updateFe
 
 const addFeedbacks = asyncHandler(
   async (req: Request<{}, {}, FeedbackSchemaType>, res: Response) => {
-    const { message, productId, rating, userId, image } = req.body;
+    const { message, productId, rating, uid, image } = req.body;
 
     const feedback = await addFeedback({
       message,
       productId,
       rating,
-      userId,
+      userId: uid,
       image,
     });
 

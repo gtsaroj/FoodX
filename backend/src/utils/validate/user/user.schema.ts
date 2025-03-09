@@ -2,7 +2,7 @@ import { z } from "zod";
 import { roleSchema } from "../auth/roleSchema.js";
 
 export const userSchema = z.object({
-  id: z.string({ required_error: "User id is required." }),
+  uid: z.string({ required_error: "User id is required." }),
   role: roleSchema,
 });
 

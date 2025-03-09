@@ -75,8 +75,8 @@ const addNewOrder = asyncHandler(
 
 const updateOrder = asyncHandler(
   async (req: Request<{}, {}, UpdateOrderSchemaType>, res: Response) => {
-    const { id, status, price, userId } = req.body;
-    const socketId = userSocketMap[userId];
+    const { id, status, price, uid } = req.body;
+    const socketId = userSocketMap[uid];
 
     let response: API.ApiResponse;
     const totalPrice = +price;

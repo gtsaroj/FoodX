@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const FeedbackSchema = z.object({
-  userId: z.string({ required_error: "User ID is required." }),
+  uid: z.string({ required_error: "User ID is required." }),
   productId: z.string({ required_error: "Product ID is required." }),
   message: z
     .string({ required_error: "Message is required." })

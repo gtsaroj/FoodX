@@ -74,10 +74,10 @@ const updateAccount = asyncHandler(
 
 const updateUser = asyncHandler(
   async (req: Request<{}, {}, UserUpdateSchemaType>, res: Response) => {
-    const { id, role, fullName, phoneNumber, avatar } = req.body;
+    const { uid, role, fullName, phoneNumber, avatar } = req.body;
     let response: API.ApiResponse;
 
-    if (!id || !role)
+    if (!uid || !role)
       throw new APIError(
         "User id and role is required to update user data.",
         400
@@ -86,18 +86,18 @@ const updateUser = asyncHandler(
       throw new APIError("No data provided to update.", 400);
 
     if (fullName) {
-      await updateUserDataInFirestore(id, role, "fullName", fullName);
+      await updateUserDataInFirestore(uid, role, "fullName", fullName);
     }
 
     if (phoneNumber) {
-      await updateUserDataInFirestore(id, role, "phoneNumber", phoneNumber);
+      await updateUserDataInFirestore(uid, role, "phoneNumber", phoneNumber);
     }
 
     if (avatar) {
-      await updateUserDataInFirestore(id, role, "avatar", avatar);
+      await updateUserDataInFirestore(uid, role, "avatar", avatar);
     }
 
-    const updatedUser = await getUserWithIdFromDatabase(role, id);
+    const updatedUser = await getUserWithIdFromDatabase(role, uid);
     response = {
       status: 200,
       data: updatedUser,
@@ -110,13 +110,13 @@ const updateUser = asyncHandler(
 
 const updateUserRole = asyncHandler(
   async (req: Request<{}, {}, UserRoleUpdateSchemaType>, res: Response) => {
-    const { id, role, newRole } = req.body;
+    const { uid, role, newRole } = req.body;
 
     let response: API.ApiResponse;
-    const user = await getUserWithIdFromDatabase(role, id);
+    const user = await getUserWithIdFromDatabase(role, uid);
     if (!user) throw new APIError("User not found.", 404);
 
-    await deleteUserFromFireStore(id, user.role);
+    await deleteUserFromFireStore(uid, user.role);
     user.role = newRole;
     const newUser = await addUserToFirestore(
       {
@@ -226,8 +226,8 @@ const fetchUsers = asyncHandler(
 
 const deleteAccount = asyncHandler(
   async (req: Request<{}, {}, UserSchemaType>, res: Response) => {
-    const { id, role } = req.body;
-    const foundUser = await getUserWithIdFromDatabase(role, id);
+    const { uid, role } = req.body;
+    const foundUser = await getUserWithIdFromDatabase(role, uid);
     if (!foundUser) throw new APIError("User not found.", 404);
 
     await deleteUserFromFireStore(foundUser.uid, foundUser.role);
@@ -248,8 +248,8 @@ const deleteAccount = asyncHandler(
 
 const deleteUser = asyncHandler(
   async (req: Request<{}, {}, UserSchemaType>, res: Response) => {
-    const { id, role } = req.body;
-    const foundUser = await getUserWithIdFromDatabase(role, id);
+    const { uid, role } = req.body;
+    const foundUser = await getUserWithIdFromDatabase(role, uid);
     if (!foundUser) throw new APIError("User not found.", 404);
 
     await deleteUserFromFireStore(foundUser.uid, foundUser.role);
