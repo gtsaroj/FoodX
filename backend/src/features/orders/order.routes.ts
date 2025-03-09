@@ -7,6 +7,7 @@ import {
   searchOrderBasedOnUid,
   getOrderByUserIdFromDatabase,
   updateOrder,
+  orderContGetOrder,
 } from "./order.controllers.js";
 import { AddOrderSchema } from "../../utils/validate/order/add/addOrderSchema.js";
 import { validateRequest } from "../../middlewares/validator/validator.middleware.js";
@@ -66,6 +67,12 @@ orderRoutes.post(
     })
   ),
   searchOrderBasedOnUid
+);
+
+orderRoutes.get(
+  "/:id",
+  verifyRoles(["admin", "chef", "customer"]),
+  orderContGetOrder
 );
 
 export { orderRoutes };

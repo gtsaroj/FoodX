@@ -9,6 +9,7 @@ import { AddOrderSchemaType } from "../../utils/validate/order/add/addOrderSchem
 import { UpdateOrderSchemaType } from "../../utils/validate/order/update/updateOrderSchema.js";
 import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
 import { APIError } from "../../helpers/error/ApiError.js";
+import { getOrder } from "../../actions/order/get/getOrder.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
@@ -167,10 +168,26 @@ const searchOrderBasedOnUid = asyncHandler(
     return res.status(200).json(response);
   }
 );
+
+const orderContGetOrder = asyncHandler(
+  async (req: Request<{ id: string }>, res: Response) => {
+    const { id } = req.params;
+    if (!id) throw new APIError("No id provided.", 400);
+    const order = await getOrder(id);
+    const response: API.ApiResponse = {
+      status: 200,
+      data: order,
+      message: "Successfully fetched order from database.",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
 export {
   getOrderByUserIdFromDatabase,
   addNewOrder,
   updateOrder,
   fetchOrders,
   searchOrderBasedOnUid,
+  orderContGetOrder,
 };
