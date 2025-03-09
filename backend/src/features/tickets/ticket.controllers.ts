@@ -84,8 +84,8 @@ const fetchTickets = asyncHandler(
       pageSize,
       sort,
       direction,
-      startAtDoc,
-      startAfterDoc,
+      currentFirstDoc,
+      currentLastDoc,
       status,
       userId,
     } = req.body;
@@ -94,8 +94,8 @@ const fetchTickets = asyncHandler(
     let { tickets, firstDoc, lastDoc, length } = await getTicketsFromFirestore(
       pageSize,
       sort,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction,
       status ? ticketStatus : undefined,
       userId ? userId : undefined

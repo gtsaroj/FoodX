@@ -12,8 +12,14 @@ import { APIError } from "../../helpers/error/ApiError.js";
 
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
-    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
-      req.body;
+    let {
+      pageSize,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+      status,
+      userId,
+    } = req.body;
 
     const user = req.user;
     if (!user) throw new APIError("No user found. Please login first.", 401);
@@ -21,8 +27,8 @@ const getOrderByUserIdFromDatabase = asyncHandler(
     const limitPage = pageSize ? +pageSize : 10;
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       limitPage,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction,
       status,
       userId
@@ -91,14 +97,20 @@ const updateOrder = asyncHandler(
 );
 const fetchOrders = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
-    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
-      req.body;
+    let {
+      pageSize,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+      status,
+      userId,
+    } = req.body;
 
     const limitPage = pageSize ? +pageSize : 10;
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       limitPage,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction,
       status,
       userId
@@ -120,15 +132,21 @@ const fetchOrders = asyncHandler(
 
 const searchOrderBasedOnUid = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
-    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
-      req.body;
+    let {
+      pageSize,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+      status,
+      userId,
+    } = req.body;
 
     const limitPage = pageSize ? +pageSize : 10;
 
     let { orders, firstDoc, lastDoc, length } = await getOrdersFromDatabase(
       limitPage,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction,
       status,
       userId

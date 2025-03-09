@@ -4,8 +4,8 @@ import { orderStatusSchema } from "../order/OrderStatusSchema.js";
 export const createPaginationSchema = (
   config: {
     pageSize?: boolean;
-    startAfterDoc?: boolean;
-    startAtDoc?: boolean;
+    currentFirstDoc?: boolean;
+    currentLastDoc?: boolean;
     direction?: boolean;
     status?: boolean;
     userId?: boolean;
@@ -16,8 +16,8 @@ export const createPaginationSchema = (
     pageSize: config.pageSize
       ? z.number().min(1)
       : z.number().min(1).optional(),
-    startAfterDoc: config.startAfterDoc ? z.any() : z.any().optional(),
-    startAtDoc: config.startAtDoc ? z.any() : z.any().optional(),
+    currentFirstDoc: config.currentFirstDoc ? z.any() : z.any().optional(),
+    currentLastDoc: config.currentLastDoc ? z.any() : z.any().optional(),
     direction: config.direction
       ? z.enum(["prev", "next"])
       : z.enum(["prev", "next"]).optional(),

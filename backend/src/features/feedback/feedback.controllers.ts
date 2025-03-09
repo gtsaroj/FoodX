@@ -32,14 +32,20 @@ const addFeedbacks = asyncHandler(
 
 const fetchFeedbacks = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
-    let { pageSize, direction, startAtDoc, startAfterDoc, status, userId } =
-      req.body;
+    let {
+      pageSize,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+      status,
+      userId,
+    } = req.body;
 
     const limitPage = pageSize ? +pageSize : 10;
     let { feedbacks, firstDoc, lastDoc, length } = await fetchAllFeedback(
       limitPage,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction,
       userId
     );

@@ -188,8 +188,15 @@ const fetchUsers = asyncHandler(
     >,
     res: Response
   ) => {
-    let { path, pageSize, filter, sort, direction, startAtDoc, startAfterDoc } =
-      req.body;
+    let {
+      path,
+      pageSize,
+      filter,
+      sort,
+      direction,
+      currentFirstDoc,
+      currentLastDoc,
+    } = req.body;
 
     if (!path) throw new APIError("Path is required.", 400);
 
@@ -198,8 +205,8 @@ const fetchUsers = asyncHandler(
       pageSize ? pageSize : 10,
       filter,
       sort,
-      direction === "next" ? startAfterDoc : null,
-      direction === "prev" ? startAtDoc : null,
+      direction === "next" ? currentLastDoc : null,
+      direction === "prev" ? currentFirstDoc : null,
       direction
     );
     const response: API.ApiResponse = {

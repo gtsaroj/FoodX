@@ -38,15 +38,15 @@ const addNotification = asyncHandler(
 
 const fetchNotifications = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
-    let { pageSize, sort, direction, startAtDoc, startAfterDoc, userId } =
+    let { pageSize, sort, direction, currentLastDoc, currentFirstDoc, userId } =
       req.body;
 
     let { notifications, firstDoc, lastDoc, length } =
       await getNotificationsFromDatabase(
         pageSize || 10,
         sort || "desc",
-        direction === "next" ? startAfterDoc : null,
-        direction === "prev" ? startAtDoc : null,
+        direction === "next" ? currentLastDoc : null,
+        direction === "prev" ? currentFirstDoc : null,
         direction,
         userId
       );
