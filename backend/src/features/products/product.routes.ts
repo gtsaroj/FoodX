@@ -10,6 +10,7 @@ import {
   getPopularProducts,
   getProductByTag,
   getSpecialProducts,
+  productContGetProductById,
   searchProduct,
   updateProduct,
 } from "./product.controllers.js";
@@ -29,6 +30,7 @@ productRouter.get(
   getPopularProducts
 );
 
+productRouter.get("/:id", productContGetProductById);
 productRouter.post(
   "/add/:collection",
   rateLimiter(60, 20),

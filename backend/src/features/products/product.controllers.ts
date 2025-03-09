@@ -12,6 +12,7 @@ import { deleteProductFromDatabase } from "../../actions/products/delete/deleteP
 import { APIError } from "../../helpers/error/ApiError.js";
 import { addProductSchemaType } from "../../utils/validate/product/add/addProductSchema.js";
 import { updateProductSchemaType } from "../../utils/validate/product/update/updateProductSchema.js";
+import { getProductById } from "../../actions/products/get/getProductById.js";
 
 const getPopularProducts = asyncHandler(async (_: Request, res: Response) => {
   const products = await getPopularProductsFromDatabase();
@@ -265,6 +266,34 @@ const deleteProduct = asyncHandler(
   }
 );
 
+const productContGetProductById = asyncHandler(
+  async (
+    req: Request<
+      { id: string },
+      null,
+      null,
+      {
+        collection: "products" | "specials";
+      }
+    >,
+    res: Response
+  ) => {
+    const id = req.params.id;
+    const collection = req.query.collection;
+    if (!id || !collection)
+      throw new APIError("No id or collection provided.", 400);
+
+    const product = await getProductById(id, collection);
+    const response: API.ApiResponse = {
+      status: 200,
+      data: product,
+      message: "Product fetched successfully.",
+      success: true,
+    };
+    return res.status(200).json(response);
+  }
+);
+
 export {
   getAllProducts,
   getSpecialProducts,
@@ -275,4 +304,5 @@ export {
   deleteProduct,
   getPopularProducts,
   searchProduct,
+  productContGetProductById,
 };
