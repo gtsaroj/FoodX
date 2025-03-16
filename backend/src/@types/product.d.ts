@@ -7,6 +7,10 @@ declare namespace Product {
     image: string;
     tagId: string;
     totalSold: number;
+    description: string;
+    cookingTime: string;
+    rating: string;
+    bannerImage?: string;
   }
   interface UploadProductType {
     product: Product;
