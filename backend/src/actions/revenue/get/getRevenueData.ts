@@ -17,6 +17,10 @@ export const getRevenueDataFromFirestore = async (
     }
     const revenue: Revenue.RevenueInfo[] = [];
 
+    if (querySnapShot.empty) {
+      return revenue;
+    }
+
     querySnapShot?.docs.forEach((doc) => {
       revenue.push(doc.data() as Revenue.RevenueInfo);
     });

@@ -30,6 +30,15 @@ export const getTicketsFromFirestore = async (
 
     const tickets: Ticket.NewTicket[] = [];
 
+    if (ticketsDoc.empty) {
+      return {
+        tickets,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
+
     ticketsDoc.docs.forEach((doc) => {
       tickets.push(doc.data() as Ticket.NewTicket);
     });

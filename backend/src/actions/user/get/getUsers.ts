@@ -23,6 +23,15 @@ export const getUsersFromDatabase = async (
     const usersDoc = await query.get();
     const users: User.UserInfo[] = [];
 
+    if (usersDoc.empty) {
+      return {
+        users,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
+
     usersDoc.docs.forEach((doc) => {
       users.push(doc.data() as User.UserInfo);
     });
