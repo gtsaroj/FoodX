@@ -30,6 +30,7 @@ productRouter.get(
   getPopularProducts
 );
 
+productRouter.get("/all", cacheMiddleware("products"), getAllProducts);
 productRouter.get("/:id", productContGetProductById);
 productRouter.post(
   "/add/:collection",
@@ -60,8 +61,6 @@ productRouter.delete(
   verifyRoles(["chef", "admin"]),
   deleteProductsInBulk
 );
-
-productRouter.get("/all", cacheMiddleware("products"), getAllProducts);
 
 productRouter.get(
   "/product-tag/:tag",

@@ -24,13 +24,21 @@ export const getOrdersFromDatabase = async (
     const orderDoc = await query.get();
     const orders: Order.Order[] = [];
 
+    if (orderDoc.empty) {
+      return {
+        orders,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
     orderDoc.docs.forEach((doc) => {
-      orders.push(doc.data() as Order.Order);
+      orders.push(doc?.data() as Order.Order);
     });
 
-    const firstDoc = orderDoc.docs[0].data().orderId || null;
+    const firstDoc = orderDoc?.docs[0]?.data()?.orderId || null;
     const lastDoc =
-      orderDoc.docs[orderDoc.docs.length - 1].data().orderId || null;
+      orderDoc.docs[orderDoc.docs.length - 1]?.data()?.orderId || null;
 
     return {
       orders,

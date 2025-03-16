@@ -22,6 +22,15 @@ export const fetchAllFeedback = async (
     const feedbackDoc = await query.get();
     const feedbacks: Feedback.FeedbackDetail[] = [];
 
+    if (feedbackDoc.empty) {
+      return {
+        feedbacks,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
+
     feedbackDoc.docs.forEach((doc) => {
       feedbacks.push(doc.data() as Feedback.FeedbackDetail);
     });

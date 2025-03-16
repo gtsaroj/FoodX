@@ -34,6 +34,15 @@ export const getLogsFromDatabase = async (
     const logsDoc = await query.get();
     const logs: Logs.LogData[] = [];
 
+    if (logsDoc.empty) {
+      return {
+        logs,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
+
     logsDoc.docs.forEach((doc) => {
       logs.push(doc.data() as Logs.LogData);
     });

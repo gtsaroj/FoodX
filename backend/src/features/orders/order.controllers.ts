@@ -38,7 +38,7 @@ const getOrderByUserIdFromDatabase = asyncHandler(
     const response: API.ApiResponse = {
       status: 200,
       data: {
-        orders,
+        orders: orders.length > 0 ? orders : [],
         currentFirstDoc: firstDoc,
         currentLastDoc: lastDoc,
         length,

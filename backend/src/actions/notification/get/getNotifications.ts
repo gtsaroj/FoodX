@@ -23,6 +23,15 @@ export const getNotificationsFromDatabase = async (
     const notificationDoc = await query.get();
     const notifications: Notification.NotificationDetail[] = [];
 
+    if (notificationDoc.empty) {
+      return {
+        notifications,
+        firstDoc: null,
+        lastDoc: null,
+        length: 0,
+      };
+    }
+
     notificationDoc.docs.forEach((doc) => {
       notifications.push(doc.data() as Notification.NotificationDetail);
     });
