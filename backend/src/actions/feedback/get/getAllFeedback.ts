@@ -35,9 +35,9 @@ export const fetchAllFeedback = async (
       feedbacks.push(doc.data() as Feedback.FeedbackDetail);
     });
 
-    const firstDoc = feedbackDoc.docs[0].data().orderId || null;
+    const firstDoc = feedbackDoc.docs[0].data().id || null;
     const lastDoc =
-      feedbackDoc.docs[feedbackDoc.docs.length - 1].data().orderId || null;
+      feedbackDoc.docs[feedbackDoc.docs.length - 1].data().id || null;
 
     return {
       feedbacks,
