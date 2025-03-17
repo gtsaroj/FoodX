@@ -10,4 +10,10 @@ declare namespace Auth {
     lastName: string;
     phoneNumber: string;
   }
+  interface ChangePassword {
+    newPassword: string;
+    oldPassword: string;
+    uid: string;
+    role: "customer" | "chef" | "admin";
+  }
 }

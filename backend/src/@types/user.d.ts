@@ -29,4 +29,6 @@ declare namespace User {
   }
 
   type RoleType = "customer" | "chef" | "admin";
+
+  interface UserInfoWithOutPassword extends Omit<UserData, "password"> {}
 }

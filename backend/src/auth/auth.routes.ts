@@ -10,6 +10,7 @@ import { validateRequest } from "../middlewares/validator/validator.middleware.j
 import { signInSchema } from "../utils/validate/auth/signInSchema.js";
 import { signUpSchema } from "../utils/validate/auth/signUpSchema.js";
 import { LogoutSchema } from "../utils/validate/auth/logoutSchema.js";
+import { ChangePassword } from "./password/password.controllers.js";
 
 const authRouter = Router();
 
@@ -24,5 +25,11 @@ authRouter.post(
 );
 authRouter.post("/refresh", rateLimiter(60, 5), refreshAccessToken);
 authRouter.post("/verify", verifyOtp);
+authRouter.post(
+  "/change-password",
+  verifyRoles(["admin", "chef", "customer"]),
+  rateLimiter(60, 10),
+  ChangePassword
+);  
 
 export { authRouter };

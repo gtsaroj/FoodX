@@ -21,7 +21,7 @@ export const getUsersFromDatabase = async (
       direction
     );
     const usersDoc = await query.get();
-    const users: User.UserInfo[] = [];
+    const users: User.UserInfoWithOutPassword[] = [];
 
     if (usersDoc.empty) {
       return {
@@ -33,7 +33,7 @@ export const getUsersFromDatabase = async (
     }
 
     usersDoc.docs.forEach((doc) => {
-      users.push(doc.data() as User.UserInfo);
+      users.push(doc.data() as User.UserInfoWithOutPassword);
     });
 
     const firstDoc = usersDoc.docs[0]?.data().uid || null;
