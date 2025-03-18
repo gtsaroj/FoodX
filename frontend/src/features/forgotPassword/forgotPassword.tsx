@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Logo from "../../assets/logo/Fx.png";
-import {AuthFooter, AuthNavbar } from "../../components"
+import Logo from "@/assets/logo/Fx.png";
+import {AuthFooter, AuthNavbar } from "@/components"
 import { useNavigate } from "react-router-dom";
 
 const LoginContainer: React.FC = () => {

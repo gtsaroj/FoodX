@@ -12,18 +12,20 @@ import {
   validatePasswordOnChange,
   allFieldsRequired,
 } from "./registerHandler";
-import { storeImageInFirebase } from "../../firebase/storage";
-import { AuthFooter } from "../footer/authFooter";
-import logo from "../../assets/logo/Fx.png";
+import { userUpload } from "@/services";
+import { AuthFooter } from "@/components";
+import logo from "@/assets/logo/Fx.png";
 import toast from "react-hot-toast";
 import ClipLoader from "react-spinners/HashLoader";
-import { signUp } from "../../services/user.services";
-import { compressImage } from "../../helpers/imageCompressor";
-import { Icons } from "../../utils";
+import { signUp } from "@/services";
+import { ApiError, compressImage } from "@/helpers";
+import { Icons } from "@/utils";
+import { signUpAction } from "@/actions";
+import { useAppDispatch } from "@/hooks";
 
 export const RegisterContainer: React.FC = () => {
   const navigate = useNavigate();
-  // const dispatch = useDispatch<AppDispatch>();
+
   const [RegisterValue, setRegisterValue] = useState<Auth.ValidationType>({
     avatar: "",
     firstName: "",
@@ -54,19 +56,29 @@ export const RegisterContainer: React.FC = () => {
     if (!event.target.files) {
       throw new Error("Uploading failed...");
     }
-    const file = event.target.files[0];
-    const compressedImg = await compressImage(file, {
-      maxWidth: 150,
-      maxHeight: 150,
-      quality: 0.6,
-    });
+    try {
+      const file = event.target.files[0];
+      const compressedImg = await compressImage(file, {
+        maxWidth: 150,
+        maxHeight: 150,
+        quality: 0.6,
+      });
 
-    setRegisterValue({
-      ...RegisterValue,
-      avatar: URL.createObjectURL(compressedImg as Blob),
-    });
-    const imageUrl = await storeImageInFirebase(compressedImg as File, "users");
-    setRegisterValue({ ...RegisterValue, avatar: imageUrl });
+      setRegisterValue({
+        ...RegisterValue,
+        avatar: URL.createObjectURL(compressedImg as Blob),
+      });
+      const imageUrl = await userUpload(file, "users");
+      console.log(imageUrl);
+      setRegisterValue({
+        ...RegisterValue,
+        avatar: `${imageUrl?.data?.folderName}/${imageUrl?.data?.filename} `,
+      });
+    } catch (error) {
+      if (error instanceof ApiError) {
+        toast.error(error?.message);
+      }
+    }
   };
 
   function Validation(error: Record<string, string>) {
@@ -83,6 +95,8 @@ export const RegisterContainer: React.FC = () => {
     }
   }
 
+  const dispatch = useAppDispatch();
+
   const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const error: Record<string, string> = {};
@@ -93,11 +107,12 @@ export const RegisterContainer: React.FC = () => {
       const validatedRegister = Validation(error);
       if (validatedRegister === null || undefined) {
         setLoading(true);
-        await signUp({
-          ...RegisterValue,
-          role: "customer",
-        });
-        navigate("/email-verification");
+        await dispatch(
+          signUpAction({
+            ...RegisterValue,
+            role: "customer",
+          })
+        );
       }
     } catch (error) {
       toast.error(`User already logged in`);
@@ -138,7 +153,9 @@ export const RegisterContainer: React.FC = () => {
           <div className="relative flex flex-col sm:mb-6 mb-2 items-center justify-center gap-1 duration-150 group/image">
             {RegisterValue.avatar ? (
               <img
-                src={RegisterValue.avatar}
+                src={
+                  import.meta.env.VITE_URI + "assets/" + RegisterValue.avatar
+                }
                 alt=""
                 className="rounded-full w-[100px] h-[100px] border-[2px] border-[var(--primary-color)] opacity-[0px] bg-[#f4f6f8] outline-none"
               />

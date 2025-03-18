@@ -1,8 +1,5 @@
 import { useQuery, useQueryClient } from "react-query";
-import {
-  getNormalProducts,
-  getSpecialProducts,
-} from "../services/product.services";
+import { getNormalProducts, getSpecialProducts } from "@/services";
 
 const getAllProducts = async (
   specialProducts: Ui.Product[]
@@ -10,11 +7,23 @@ const getAllProducts = async (
   try {
     let existProducts: Ui.Product[];
     const normalProducts = await getNormalProducts();
+    const aggregateProducts = normalProducts?.data?.map((product) => {
+      return {
+        ...product,
+        collection: "products" as Common.ProductCollection,
+      };
+    });
     if (!specialProducts) {
       const unExistProducts = await getSpecialProducts();
-      existProducts = [...normalProducts.data, ...unExistProducts.data];
+      const aggregateSpecialProducts = unExistProducts?.data?.map((product) => {
+        return {
+          ...product,
+          collection: "specials" as Common.ProductCollection,
+        };
+      });
+      existProducts = [...aggregateProducts, ...aggregateSpecialProducts];
     } else {
-      existProducts = [...normalProducts.data, ...specialProducts];
+      existProducts = [...aggregateProducts, ...specialProducts];
     }
     return existProducts;
   } catch (error) {
@@ -39,10 +48,15 @@ export const useAllProducts = () => {
 
 export const specialsProductsFn = async (): Promise<Ui.Product[]> => {
   try {
-    const normalProducts = await getSpecialProducts();
+    const products = await getSpecialProducts();
 
-    const products = normalProducts.data as Ui.Product[];
-    return products;
+    const aggregateSpecialProducts = products?.data?.map((product) => {
+      return {
+        ...product,
+        collection: "specials" as Common.ProductCollection,
+      };
+    });
+    return aggregateSpecialProducts;
   } catch (error) {
     throw new Error("Error while fetching specials products");
   }

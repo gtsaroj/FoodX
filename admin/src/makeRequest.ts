@@ -1,8 +1,8 @@
 import axios, { AxiosInstance } from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { Store } from "./Store";
-import { authLogout } from "./Reducer/user.reducer";
+import { Store } from "./store";
+import { authLogout } from "./reducer/user";
 
 // Flag to track if the token is being refreshed
 let isRefreshing = false;
@@ -33,8 +33,10 @@ makeRequest.interceptors.response.use(
   },
   async (error) => {
     const status = error.response ? error.response.status : null;
-
-    if (status === 401) {
+    if (
+      error?.response?.data?.message ===
+      "Error verifying your token. Please try again later. TokenExpiredError: jwt expired"
+    ) {
       // Unauthorized - likely due to an expired access token
       const refreshToken = Cookies.get("refreshToken");
 
@@ -54,7 +56,7 @@ makeRequest.interceptors.response.use(
 
         try {
           const response = await axios.post(
-            `${import.meta.env.VITE_API_URL}/users/refresh-token`,
+            `${import.meta.env.VITE_API_URL}/auth/refresh`,
             { refreshToken }
           );
 

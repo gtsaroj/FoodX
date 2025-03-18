@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-const PrivateRoute = React.lazy(() => import("./routes/privateRoute.tsx"));
+const PrivateRoute = React.lazy(() =>
+  import("@/routes").then((module) => ({ default: module.PrivateRoute }))
+);
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import { routes } from "./routes/routes.tsx";
-import { useAppSelector } from "./hooks/useActions.ts";
+import { routes } from "./routes";
+import { useAppSelector } from "@/hooks";
 const HomePage = React.lazy(() =>
-  import("./routes/index.tsx").then((module) => ({
+  import("@/routes").then((module) => ({
     default: module.HomePage,
   }))
 );
@@ -24,7 +26,7 @@ export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>
-      {Object.entries(routes).map(([pathName, config]) =>
+        {Object.entries(routes).map(([pathName, config]) =>
           config.isAccessibleToPublicOnly ? (
             <Route
               key={pathName}
@@ -60,7 +62,6 @@ export const App: React.FC = () => {
             );
           })}
         </Route>
-
       </Routes>
     </QueryClientProvider>
   );

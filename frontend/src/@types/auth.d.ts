@@ -21,10 +21,10 @@ declare namespace Auth {
     success: boolean;
   }
 
-  interface ValidationType extends Omit<User, "fullName"> {
-    firstName: string;
-    lastName: string;
+  interface ValidationType extends Partial<Omit<User, "fullName">> {
+    firstName?: string;
+    lastName?: string;
     password: string;
-    confirmPassword: string;
+    confirmPassword?: string;
   }
 }

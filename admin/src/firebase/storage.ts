@@ -1,6 +1,6 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "./index";
-import { ImageFolders } from "../models/authentication.model";
+import { ImageFolders } from "../@types/authentication.model";
 
 const storeImageInFirebase = async (image: File, folder: ImageFolders) => {
   if (!image) throw new Error("No image Found.");
