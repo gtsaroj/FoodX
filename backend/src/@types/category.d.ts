@@ -3,9 +3,10 @@ declare namespace Category {
     id: string;
     name: string;
     image: string;
+    bannerImage: string;
   }
 
-  interface CategoryInfo extends Category {
+  interface CategoryInfo extends CategoryData {
     createdAt: any;
     updatedAt: any;
   }

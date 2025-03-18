@@ -6,7 +6,8 @@ export const fetchAllFeedback = async (
   startAfterDoc: any | null = null,
   startAtDoc: any | null = null,
   direction?: "prev" | "next",
-  userId?: string
+  userId?: string,
+  productId?: string
 ) => {
   try {
     const { query, totalLength } = await paginateFnc(
@@ -17,7 +18,11 @@ export const fetchAllFeedback = async (
       pageSize,
       "desc",
       direction,
-      userId
+      userId,
+      null,
+      null,
+      null,
+      productId
     );
     const feedbackDoc = await query.get();
     const feedbacks: Feedback.FeedbackDetail[] = [];

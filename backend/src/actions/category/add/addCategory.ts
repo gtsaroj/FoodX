@@ -2,7 +2,11 @@ import { FieldValue } from "firebase-admin/firestore";
 import { db } from "../../../firebase/index.js";
 import { APIError } from "../../../helpers/error/ApiError.js";
 
-export const addNewCategoryInDatabase = async (name: string, image: string) => {
+export const addNewCategoryInDatabase = async (
+  name: string,
+  image: string,
+  bannerImage: string
+) => {
   const categoryRef = db.collection("category");
   if (!categoryRef) throw new APIError("No category collection found.", 404);
   try {
@@ -11,6 +15,7 @@ export const addNewCategoryInDatabase = async (name: string, image: string) => {
         id: "",
         name,
         image,
+        bannerImage,
       })
       .then((docRef) =>
         docRef.update({
