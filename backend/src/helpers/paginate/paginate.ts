@@ -14,7 +14,8 @@ export const paginateFnc = async (
     | "preparing"
     | "prepared"
     | "completed"
-    | "cancelled",
+    | "cancelled"
+    | null,
   action?:
     | "login"
     | "register"
@@ -22,9 +23,11 @@ export const paginateFnc = async (
     | "create"
     | "update"
     | "delete"
-    | "checkout",
-  ticketStatus?: "pending" | "resolved" | "cancelled",
-  category?: string
+    | "checkout"
+    | null,
+  ticketStatus?: "pending" | "resolved" | "cancelled" | null,
+  category?: string,
+  productId?: string
 ) => {
   let query = db.collection(collection).orderBy(orderBy, sort);
   if (uid) {
@@ -41,6 +44,9 @@ export const paginateFnc = async (
   }
   if (category) {
     query = query.where("category", "==", category);
+  }
+  if (productId) {
+    query = query.where("productId", "==", productId);
   }
   const lengthOfDoc = await query.get();
   const totalLength = lengthOfDoc.size;

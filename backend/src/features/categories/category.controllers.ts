@@ -10,16 +10,17 @@ import { APIError } from "../../helpers/error/ApiError.js";
 
 const addNewCategory = asyncHandler(
   async (
-    req: Request<{}, {}, { name: string; image: string }>,
+    req: Request<{}, {}, { name: string; image: string; bannerImage: string }>,
     res: Response
   ) => {
-    const { name, image } = req.body;
+    const { name, image, bannerImage } = req.body;
 
-    if (!name || !image) throw new APIError("No name or image provided.", 400);
+    if (!name || !image || !bannerImage)
+      throw new APIError("No name, image or bannerImage provided.", 400);
 
     let response: API.ApiResponse;
 
-    await addNewCategoryInDatabase(name, image);
+    await addNewCategoryInDatabase(name, image, bannerImage);
     await redisClient.del("category");
 
     const updatedCategory = await getAllCategoryFromDatabase();
@@ -58,7 +59,7 @@ const updateCategory = asyncHandler(
     req: Request<
       {},
       {},
-      { id: string; field: "name" | "image"; newData: string }
+      { id: string; field: "name" | "image" | "bannerImage"; newData: string }
     >,
     res: Response
   ) => {

@@ -4,7 +4,7 @@ import { APIError } from "../../../helpers/error/ApiError.js";
 
 export const updateCategoryInDatabase = async (
   id: string,
-  field: "name" | "image",
+  field: "name" | "image" | "bannerImage",
   newData: string
 ) => {
   const categoryRef = db.collection("category");

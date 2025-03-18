@@ -37,7 +37,7 @@ const fetchFeedbacks = asyncHandler(
       direction,
       currentFirstDoc,
       currentLastDoc,
-      status,
+      productId,
       userId,
     } = req.body;
 
@@ -47,7 +47,8 @@ const fetchFeedbacks = asyncHandler(
       direction === "next" ? currentLastDoc : null,
       direction === "prev" ? currentFirstDoc : null,
       direction,
-      userId
+      userId,
+      productId
     );
     const response: API.ApiResponse = {
       status: 200,
@@ -76,6 +77,7 @@ const deleteFeedback = asyncHandler(
       message: "Successfully deleted feedback from database.",
       success: true,
     };
+    return res.status(200).json(response);
   }
 );
 
@@ -86,14 +88,18 @@ const updateFeedback = asyncHandler(
     const {
       field,
       newData,
-    }: { field: keyof Feedback.FeedbackInfo; newData: string | number } =
-      req.body;
+      uid,
+    }: {
+      field: keyof Feedback.FeedbackInfo;
+      newData: string | number;
+      uid: string;
+    } = req.body;
 
     if (!field || !newData) {
       throw new APIError("No field or updated data provided.", 400);
     }
 
-    const feedback = await updateFeedbackInDatabase(id, field, newData);
+    const feedback = await updateFeedbackInDatabase(id, field, newData, uid);
 
     const response: API.ApiResponse = {
       status: 200,

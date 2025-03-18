@@ -83,14 +83,13 @@ const getProductByTag = asyncHandler(
     console.log(tag);
     if (!tag) throw new APIError("No tag was provided.", 400);
     const products = await getProductByTagFromDatabase(tag, "products");
-    if (products.length < 1) throw new APIError("Products not found", 404);
     await redisClient.set(`product:${tag}`, JSON.stringify(products), {
       EX: 3600,
     });
 
     const response: API.ApiResponse = {
       status: 200,
-      data: products,
+      data: products ?? [],
       message: "Product based on tags are fetched successfully.",
       success: true,
     };
