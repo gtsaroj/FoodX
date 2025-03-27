@@ -7,7 +7,6 @@ export const addBannerToFirestore = async (
   image: string,
   collection: string,
   link: string,
-  type: string,
   description?: string
 ) => {
   const bannerRef = db.collection(collection);
@@ -19,7 +18,6 @@ export const addBannerToFirestore = async (
         title,
         image,
         link,
-        type,
         description: description && description,
         date: new Date(),
       })

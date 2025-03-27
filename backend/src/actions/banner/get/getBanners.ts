@@ -8,7 +8,7 @@ export const getBannersFromDatabase = async (collection: string) => {
   try {
     const bannerDocs = await bannerRef.get();
     let banners: Banner.BannerInfo[] = [];
-    if (bannerDocs.empty) throw new APIError("No banners found.", 404);
+    if (bannerDocs.empty) return { banners: [], collection };
     bannerDocs.forEach((doc) => {
       const data = doc.data() as Banner.BannerInfo;
       banners.push(data);

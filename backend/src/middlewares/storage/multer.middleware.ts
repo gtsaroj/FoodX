@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
   filename: function (_, file, cb) {
     const date = new Date();
     const timeStamp = date.toISOString().replace(/:/g, "-");
-    cb(null, `${timeStamp}-${generateRandomId()}-${file.originalname}`);
+    cb(null, `${timeStamp}-${generateRandomId()}`);
   },
 });
 
