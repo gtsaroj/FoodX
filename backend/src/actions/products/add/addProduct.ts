@@ -12,9 +12,31 @@ export const addProductToFirestore = async (
   if (!productRef) throw new APIError("No document found.", 400);
   try {
     const id = generateRandomId();
-    const { image, name, price, quantity, tagId } = product;
+    const {
+      image,
+      name,
+      price,
+      quantity,
+      tagId,
+      cookingTime,
+      description,
+      rating,
+      bannerImage,
+    } = product;
     await productRef
-      .add({ id, name, price, image, quantity, tagId, totalSold: 0 })
+      .add({
+        id,
+        name,
+        price,
+        image,
+        quantity,
+        tagId,
+        totalSold: 0,
+        cookingTime: cookingTime ? cookingTime : null,
+        description: description ? description : null,
+        rating: rating ? rating : 0,
+        bannerImage: bannerImage ? bannerImage : null,
+      })
       .then((docRef) =>
         docRef.update({
           id: docRef.id,

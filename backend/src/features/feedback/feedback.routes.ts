@@ -27,14 +27,14 @@ feedbackRouter.post(
   fetchFeedbacks
 );
 feedbackRouter.patch(
-  "/update",
+  "/update/:id",
   rateLimiter(60, 10),
   verifyRoles(["admin", "chef", "customer"]),
   updateFeedback
 );
 
 feedbackRouter.delete(
-  "/delete",
+  "/delete/:id",
   rateLimiter(60, 10),
   verifyRoles(["admin", "chef", "customer"]),
   deleteFeedback

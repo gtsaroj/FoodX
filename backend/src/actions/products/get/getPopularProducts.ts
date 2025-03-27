@@ -14,8 +14,7 @@ export const getPopularProductsFromDatabase = async () => {
 
     const normalProducts = await normalProductRef.get();
     const specialProducts = await specialProductRef.get();
-    if (normalProducts.empty && specialProducts.empty)
-      throw new APIError("No products found", 404);
+    if (normalProducts.empty && specialProducts.empty) return [];
 
     let result: Product.ProductInfo[] = [
       ...normalProducts.docs.map((doc) => ({

@@ -7,7 +7,7 @@ export const getAllCategoryFromDatabase = async () => {
   try {
     const category = await categoryRef.get();
     let categories: Category.CategoryInfo[] = [];
-    if (category.empty) throw new APIError("No category found.", 404);
+    if (category.empty) return [];
     category.docs.forEach((doc) => {
       const data = doc.data() as Category.CategoryInfo;
       categories.push(data);
