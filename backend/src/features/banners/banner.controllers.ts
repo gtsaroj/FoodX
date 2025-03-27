@@ -6,6 +6,7 @@ import { bulkDeleteBannersFromDatabase } from "../../actions/banner/delete/bulkD
 import { deleteBannerFromDatabase } from "../../actions/banner/delete/deleteBanner.js";
 import { redisClient } from "../../utils/cache/cache.js";
 import { BannerSchemaType } from "../../utils/validate/banner/bannerSchema.js";
+import { APIError } from "../../helpers/error/ApiError.js";
 
 const addNewBanner = asyncHandler(
   async (req: Request<{}, {}, BannerSchemaType>, res: Response) => {
@@ -60,6 +61,7 @@ const deleteBannersInBulk = asyncHandler(async (req: any, res: any) => {
     path: string;
   } = req.body;
   let response: API.ApiResponse;
+  if (!ids || ids.length < 1) throw new APIError("No ids provided.", 400);
   const collection = await bulkDeleteBannersFromDatabase(ids, path);
   await redisClient.del(path);
   const getBanners = await getBannersFromDatabase(collection);
