@@ -4,6 +4,7 @@ declare namespace Category {
     name: string;
     image: string;
     bannerImage: string;
+    description?: string;
   }
 
   interface CategoryInfo extends CategoryData {
