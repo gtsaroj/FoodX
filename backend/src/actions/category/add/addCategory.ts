@@ -5,7 +5,8 @@ import { APIError } from "../../../helpers/error/ApiError.js";
 export const addNewCategoryInDatabase = async (
   name: string,
   image: string,
-  bannerImage: string
+  bannerImage: string,
+  description?: string
 ) => {
   const categoryRef = db.collection("category");
   if (!categoryRef) throw new APIError("No category collection found.", 404);
@@ -16,6 +17,7 @@ export const addNewCategoryInDatabase = async (
         name,
         image,
         bannerImage,
+        description: description ? description : "",
       })
       .then((docRef) =>
         docRef.update({
