@@ -10,6 +10,7 @@ declare namespace User {
     role: RoleType;
     totalOrder: number;
     totalSpent: number;
+    isVerified: boolean;
   }
 
   interface UserInfo extends UserData {

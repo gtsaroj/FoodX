@@ -11,6 +11,8 @@ import { signInSchema } from "../utils/validate/auth/signInSchema.js";
 import { signUpSchema } from "../utils/validate/auth/signUpSchema.js";
 import { LogoutSchema } from "../utils/validate/auth/logoutSchema.js";
 import { ChangePassword } from "./password/password.controllers.js";
+import { VerifyOtpSchema } from "../utils/validate/auth/verifyOtpSchema.js";
+import { resetPasswordController } from "./reset/reset.controllers.js";
 
 const authRouter = Router();
 
@@ -24,12 +26,23 @@ authRouter.post(
   logOutUser
 );
 authRouter.post("/refresh", rateLimiter(60, 5), refreshAccessToken);
-authRouter.post("/verify", verifyOtp);
+authRouter.post(
+  "/verify",
+  verifyRoles(["admin", "chef", "customer"]),
+  rateLimiter(60, 10),
+  validateRequest(VerifyOtpSchema),
+  verifyOtp
+);
 authRouter.post(
   "/change-password",
   verifyRoles(["admin", "chef", "customer"]),
   rateLimiter(60, 10),
   ChangePassword
-);  
-
+);
+authRouter.get(
+  "/reset/:uid",
+  verifyRoles(["admin", "chef", "customer"]),
+  rateLimiter(60, 10),
+  resetPasswordController
+);
 export { authRouter };
