@@ -1,4 +1,4 @@
-export const OptGenerator = async () => {
+export const OptGenerator = () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
   return otp;
 };

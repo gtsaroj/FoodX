@@ -6,7 +6,7 @@ export const updateUserDataInFirestore = async (
   uid: string,
   access: User.RoleType,
   field: keyof User.UserInfo,
-  data: string
+  data: string | number | boolean | any
 ) => {
   try {
     const customerDocRef = db.collection(access).doc(uid);

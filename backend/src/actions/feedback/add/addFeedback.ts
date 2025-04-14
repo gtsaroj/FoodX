@@ -15,7 +15,7 @@ export const addFeedback = async (feedback: Feedback.FeedbackInfo) => {
         productId,
         message,
         rating,
-        image,
+        image: image ? image : "",
       })
       .then((docData) => {
         docData.update({

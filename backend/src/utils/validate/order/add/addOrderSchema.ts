@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { addProductSchema } from "../../product/add/addProductSchema.js";
 import { orderStatusSchema } from "../OrderStatusSchema.js";
+import { roleSchema } from "../../auth/roleSchema.js";
 
 export const AddOrderSchema = z.object({
   uid: z.string({ required_error: "User ID is required." }),
@@ -13,6 +14,7 @@ export const AddOrderSchema = z.object({
   status: orderStatusSchema,
   note: z.string().optional(),
   orderRequest: z.string({ required_error: "Order request is required." }),
+  role: roleSchema.default("customer"),
 });
 
 export type AddOrderSchemaType = z.infer<typeof AddOrderSchema>;

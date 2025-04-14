@@ -10,6 +10,9 @@ import { UpdateOrderSchemaType } from "../../utils/validate/order/update/updateO
 import { PaginationSchemaType } from "../../utils/validate/pagination/paginationSchema.js";
 import { APIError } from "../../helpers/error/ApiError.js";
 import { getOrder } from "../../actions/order/get/getOrder.js";
+import { sendOrderStatusEmail } from "../../utils/messaging/email.js";
+import { getUserWithIdFromDatabase } from "../../actions/user/get/getUserWithId.js";
+
 
 const getOrderByUserIdFromDatabase = asyncHandler(
   async (req: Request<{}, {}, PaginationSchemaType>, res: Response) => {
@@ -62,7 +65,14 @@ const addNewOrder = asyncHandler(
       note: order.note || "",
       orderFullFilled: null,
     });
+    const user = await getUserWithIdFromDatabase(order.role, order.uid);
     io.to("chef").emit("new_order", { ...order, orderId });
+    await sendOrderStatusEmail(
+      user.email,
+      orderId,
+      `${user.fullName}`,
+      "pending"
+    );
 
     response = {
       status: 201,
@@ -76,7 +86,7 @@ const addNewOrder = asyncHandler(
 
 const updateOrder = asyncHandler(
   async (req: Request<{}, {}, UpdateOrderSchemaType>, res: Response) => {
-    const { id, status, price, uid } = req.body;
+    const { id, status, price, uid, role } = req.body;
     const socketId = userSocketMap[uid];
 
     let response: API.ApiResponse;
@@ -86,7 +96,9 @@ const updateOrder = asyncHandler(
       status,
       totalPrice
     );
+    const user = await getUserWithIdFromDatabase(role, uid);
     io.to(socketId).emit("order_status", { ...updatedOrder, id, status });
+    await sendOrderStatusEmail(user.email, id, `${user.fullName}`, status);
     response = {
       status: 200,
       data: updatedOrder,
