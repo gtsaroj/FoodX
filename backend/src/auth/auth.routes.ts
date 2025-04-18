@@ -13,6 +13,7 @@ import { LogoutSchema } from "../utils/validate/auth/logoutSchema.js";
 import { ChangePassword } from "./password/password.controllers.js";
 import { VerifyOtpSchema } from "../utils/validate/auth/verifyOtpSchema.js";
 import { resetPasswordController } from "./reset/reset.controllers.js";
+import { resendOtpController } from "./resend/resend.controllers.js";
 
 const authRouter = Router();
 
@@ -45,4 +46,5 @@ authRouter.get(
   rateLimiter(60, 10),
   resetPasswordController
 );
+authRouter.post("/resend", rateLimiter(60, 1), resendOtpController);
 export { authRouter };
